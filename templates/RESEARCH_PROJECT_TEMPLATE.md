@@ -1,3 +1,5 @@
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+
 # Research Project: [Title]
 
 > **Project ID:** OFRL-[AREA]-[NUMBER]  
