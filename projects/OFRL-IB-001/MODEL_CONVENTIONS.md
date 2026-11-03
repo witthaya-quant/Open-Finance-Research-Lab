@@ -42,6 +42,8 @@ Revenue is projected using a period-specific growth assumption. COGS and operati
 - EBT = EBIT − interest expense.
 - Net income = EBT − tax expense.
 
+COGS excludes depreciation and amortisation. Operating expenses also exclude depreciation and amortisation, interest, and income tax. Interest expense excludes interest income; interest income is not modelled in this release.
+
 COGS and operating expense percentages are non-negative. They are not capped at 100%, because a loss-making operating period is a valid model outcome. Revenue growth may be negative, but revenue cannot become negative.
 
 ## 4. Working-capital definitions
@@ -151,7 +153,32 @@ The model is a simplified analytical model with an explicit presentation policy.
 
 Interest and dividend cash-flow classifications, tax mechanics, lease accounting, depreciation policy, and other areas can differ by applicable reporting framework and entity facts. A future framework-specific version must identify the authoritative standard, effective date, policy choices, and required review.
 
-## 12. Numerical conventions
+## 12. Input domains and validation rules
+
+The initial implementation must validate these proposed input domains before calculation:
+
+| Input / balance | Permitted domain |
+|---|---|
+| Revenue | Greater than or equal to zero |
+| Revenue growth | Greater than or equal to -100% |
+| COGS as % of revenue | Greater than or equal to zero; no 100% cap |
+| Operating expenses as % of revenue | Greater than or equal to zero; no 100% cap |
+| DSO, DIO, DPO | Greater than or equal to zero |
+| CapEx as % of revenue | Greater than or equal to zero |
+| Depreciation rate | 0% to 100% |
+| Debt drawdowns | Greater than or equal to zero |
+| Principal repayments | Greater than or equal to zero and no greater than opening debt plus drawdowns |
+| Interest rate | Greater than or equal to zero in this release |
+| Tax rate | 0% to 100% |
+| Dividend payout ratio | 0% to 100% |
+| Cash, receivables, inventory, gross PP&E, debt, payables, and share capital | Non-negative balances, except that forecast cash may be negative as a reported funding-feasibility failure |
+| Accumulated depreciation | Greater than or equal to zero and no greater than gross PP&E |
+| Retained earnings | May be negative |
+| All numeric inputs | Finite; NaN and positive / negative infinity are rejected |
+
+A zero denominator in a historical ratio produces N/A with an explanatory note. The model must not silently replace invalid or missing numeric inputs with zero.
+
+## 13. Numerical conventions
 
 - Calculations use full available precision.
 - Rounding is presentation-only.
