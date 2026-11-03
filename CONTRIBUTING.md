@@ -1,3 +1,5 @@
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+
 # Contributing to OFRL
 
 Thank you for taking an interest in Open Finance Research Lab. OFRL values careful thinking, technical clarity, reproducible work, and constructive disagreement.
