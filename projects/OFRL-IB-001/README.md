@@ -9,18 +9,28 @@
 
 ## Purpose
 
-Develop a transparent, auditable three-statement model for a generic non-financial operating company. The model will connect the Income Statement, Balance Sheet, and Cash Flow Statement through explicit operating assumptions and supporting schedules.
+Develop a transparent, driver-based three-statement model for a generic non-financial operating company, with a Rust-native calculation engine at its centre.
 
-The objective is not merely to produce a workbook that calculates. It is to make the financial mechanics traceable, the assumptions inspectable, and the accounting relationships testable.
+The objective is to make financial mechanics traceable, assumptions inspectable, and accounting relationships testable. Rust is the canonical calculation and validation implementation—not a secondary port of a spreadsheet model.
 
 ## Research question
 
-Can a compact, driver-based financial model produce internally consistent projected financial statements while exposing every material assumption, schedule linkage, and reconciliation check required for independent review?
+Can a Rust-native, deterministic calculation engine generate internally consistent projected financial statements while exposing the assumptions, schedule linkages, and reconciliation checks required for independent review?
+
+## Rust-first delivery model
+
+- **Rust calculation engine:** canonical implementation of financial formulas and statement integration.
+- **Rust validation suite:** unit, integration, property-based, boundary, and golden tests.
+- **Rust CLI:** deterministic scenario execution and validation reporting.
+- **JSON / CSV:** canonical first-release input and exact decimal-string output formats.
+- **Excel workbook:** analyst-facing reporting and interoperability artifact generated from the Rust model.
+- **Python:** not required by the first release.
+
+The spreadsheet must not become an undocumented second source of truth. Any future interactive spreadsheet calculation must be reconciled against the Rust engine.
 
 ## Scope at a glance
 
-- Three annual historical periods supplied as reported or explicitly synthetic inputs.
-- Five annual forecast periods.
+- Three annual historical periods and five annual forecast periods.
 - One generic non-financial operating entity.
 - Revenue and operating-cost drivers.
 - Working-capital schedule using DSO, DIO, and DPO.
@@ -28,37 +38,28 @@ Can a compact, driver-based financial model produce internally consistent projec
 - Debt drawdown, repayment, and interest schedule.
 - Simplified tax and dividend assumptions.
 - Integrated Income Statement, Balance Sheet, and indirect Cash Flow Statement.
-- A synthetic example dataset for reproducible testing.
+- Synthetic example inputs for deterministic testing.
 
-The model is an analytical and educational framework. It is not a statutory reporting engine, audit opinion, tax calculation system, or representation that a company complies with a particular accounting framework.
+The model is not a statutory reporting engine, audit opinion, tax calculation system, or representation of compliance with a particular accounting framework.
 
 ## Project documents
 
-1. [Research Specification](RESEARCH_SPECIFICATION.md) — question, scope, equations, assumptions, and proposed deliverables.
-2. [Model Conventions](MODEL_CONVENTIONS.md) — accounting mechanics, sign conventions, and formula definitions.
-3. [Validation Matrix](VALIDATION_MATRIX.md) — pre-defined structural, numerical, scenario, and release gates.
-4. [Decision Log](DECISION_LOG.md) — explicit decisions, open questions, and changes.
+1. [Research Specification](RESEARCH_SPECIFICATION.md)
+2. [Model Conventions](MODEL_CONVENTIONS.md)
+3. [Rust-First Technical Architecture](RUST_ARCHITECTURE.md)
+4. [Validation Matrix](VALIDATION_MATRIX.md)
+5. [Decision Log](DECISION_LOG.md)
 
 ## Current phase
 
-**Specification only. No model code or workbook has been released.**
+**Specification only. No Rust code, calculation engine, or workbook has been released.**
 
-The next gate is founder review of the scope and accounting conventions. Implementation should begin only after the specification and pass/fail criteria are accepted.
+The next gate is approval of the financial rules and architecture, followed by a small Rust Decimal and serialization proof-of-concept before the model engine is implemented.
 
 ## Out of scope for the first release
 
-Banks, insurers, REITs, consolidated groups, multi-currency operations, leases, pensions, share-based compensation, deferred tax, tax-loss carryforwards, acquisitions, disposals, revolvers, cash sweeps, and DCF/LBO/M&A valuation are excluded from the first release. These require separate accounting and modelling choices and should not be hidden inside a generic model.
+Banks, insurers, REITs, consolidated groups, multi-currency operations, leases, pensions, share-based compensation, deferred tax, tax-loss carryforwards, acquisitions, disposals, revolvers, cash sweeps, and DCF/LBO/M&A valuation.
 
 ## Data and licensing
 
-The first reproducible example will use synthetic data created for this project. No company financial statements or licensed market-data feeds will be redistributed. This repository currently has no explicit content or software licence; see the root-level LICENSE_POLICY.md.
-
-## Project status language
-
-- Proposed: specification and acceptance criteria are under review.
-- Exploratory: implementation exists, but results are provisional.
-- Reproducible: documented steps reproduce the reported outputs.
-- Robustness Validated: defined robustness and failure tests are complete.
-- Independently Replicated: an independent reviewer reproduces the principal outputs.
-
-A status label describes evidence maturity, not profitability or accounting-framework compliance.
+The first reproducible case will use synthetic data created for this project. No company financial statements or licensed market-data feeds will be redistributed. This repository currently has no explicit content or software licence; see the root-level LICENSE_POLICY.md.
