@@ -1,10 +1,10 @@
-<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: CC-BY-4.0 -->
 
 # Open Finance Research Lab (OFRL)
 
 **Open Knowledge. Rigorous Research. Practical Finance.**
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+[![Code: Apache-2.0](https://img.shields.io/badge/Code-Apache--2.0-blue.svg)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/Docs-CC--BY--4.0-lightgrey.svg)](LICENSE-docs)
 
 OFRL is an independent, founder-led research initiative focused on financial modelling, quantitative finance, investment research, financial engineering, risk analytics, and computational methods.
 
