@@ -76,13 +76,20 @@ OFRL uses evidence-maturity levels to describe the state of a project:
 
 These levels describe the maturity of evidence. They do **not** certify profitability, guarantee predictive power, or imply academic peer review.
 
-## Initial research priority
+## Current research programme
 
-The first planned flagship project is an **Integrated Three-Statement Financial Model**.
+### OFRL-IB-001 — Integrated Three-Statement Financial Model
 
-The objective is to build a transparent model linking the Income Statement, Balance Sheet, and Cash Flow Statement, supported by schedules for working capital, debt, depreciation and amortisation, and operating assumptions. Automated checks will test accounting identities and model integrity.
+**Status:** Proposed — specification stage. Rust-first architecture.
 
-The work is intended to provide a sound foundation for later research in DCF valuation, scenario analysis, capital structure, LBO, and M&A modelling. This is an initial research priority, not a claim that the project is already complete.
+The first project will develop a Rust-native calculation engine for a transparent three-statement model, with a Rust validation suite and analyst-facing Excel reporting. Rust is the canonical implementation; Python is not required by the first release.
+
+- [Project overview](projects/OFRL-IB-001/README.md)
+- [Research specification](projects/OFRL-IB-001/RESEARCH_SPECIFICATION.md)
+- [Model conventions](projects/OFRL-IB-001/MODEL_CONVENTIONS.md)
+- [Rust-first architecture](projects/OFRL-IB-001/RUST_ARCHITECTURE.md)
+- [Validation matrix](projects/OFRL-IB-001/VALIDATION_MATRIX.md)
+- [Decision log](projects/OFRL-IB-001/DECISION_LOG.md)
 
 ## Research principles
 
