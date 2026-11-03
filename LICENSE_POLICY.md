@@ -46,7 +46,7 @@ OFRL does not require a separate CLA for ordinary contributions at this stage. T
 
 ## Copyright and attribution
 
-Contributors retain copyright ownership of their original contributions while granting the rights set out in Apache-2.0. The repository-root LICENSE identifies the current project copyright notice. Future source files should carry an appropriate SPDX identifier and copyright notice. Modified files redistributed by recipients must carry prominent notices describing the changes as required by the licence.
+Contributors retain copyright ownership of their original contributions while granting the rights set out in Apache-2.0. The root README carries the current project attribution notice. Future source files should carry an appropriate SPDX identifier and copyright notice. Modified files redistributed by recipients must carry prominent notices describing the changes as required by the licence.
 
 ## Patent and trademark notes
 
