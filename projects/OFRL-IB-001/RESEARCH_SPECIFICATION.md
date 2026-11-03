@@ -19,7 +19,7 @@ The project treats model integrity as a first-class requirement. Every material 
 
 The first release will use three annual historical periods and five annual forecast periods. A synthetic case will provide a lawful, deterministic baseline for testing and reproduction. Real-company data integration is deliberately excluded from the initial release.
 
-The project is Rust-based. A Rust-based calculation engine is the canonical implementation of financial mechanics, and a Rust validation suite is the primary engineering deliverable. A Rust CLI will run deterministic scenarios from versioned JSON/CSV inputs. An analyst-facing Excel workbook will be generated as an interoperability and reporting artifact from canonical Rust outputs. Python is not required by the first release. No Rust code, workbook, calculation engine, or empirical result is claimed to exist at this stage.
+The calculation logic, validation suite, and command-line tool will be implemented in Rust. The resulting engine will be the reference for financial calculations. Versioned JSON/CSV files will provide the documented input and output format, with monetary values represented as decimal strings. An Excel workbook will be generated from the engine's outputs for analyst review. No model code, workbook, calculation engine, or empirical result is claimed to exist at this stage.
 
 ## 2. Research question
 
