@@ -1,6 +1,10 @@
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+
 # Open Finance Research Lab (OFRL)
 
 **Open Knowledge. Rigorous Research. Practical Finance.**
+
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
 OFRL is an independent, founder-led research initiative focused on financial modelling, quantitative finance, investment research, financial engineering, risk analytics, and computational methods.
 
@@ -91,6 +95,10 @@ The work is intended to provide a sound foundation for later research in DCF val
 7. **Respect data rights.** Public availability does not automatically permit redistribution or commercial reuse.
 8. **Protect legitimate proprietary work.** OFRL does not publish confidential information, client data, or private trading strategies.
 
+## Licensing
+
+Original OFRL software, documentation, research specifications, and OFRL-created synthetic materials in this repository are licensed under the Apache License 2.0. Third-party code, datasets, publications, images, and other external materials remain subject to their own terms. See [LICENSE](LICENSE) and [LICENSE_POLICY.md](LICENSE_POLICY.md) for details.
+
 ## Collaboration
 
 OFRL welcomes thoughtful research proposals, technical discussion, constructive review, and independent replication. Contributions should be clear about their sources, assumptions, limitations, and the work performed by each contributor.
@@ -107,3 +115,5 @@ I set the research direction, define the questions worth investigating, and take
 ---
 
 *OFRL is an independent research initiative. Unless a project states otherwise, published research is educational and analytical in nature and is not personalised investment, legal, tax, or financial advice.*
+
+© 2026 Kenny and individual contributors. Original OFRL material in this repository is licensed under Apache-2.0.
