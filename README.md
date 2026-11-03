@@ -1,3 +1,5 @@
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+
 # Open Finance Research Lab (OFRL)
 
 **Open Knowledge. Rigorous Research. Practical Finance.**
@@ -98,3 +100,5 @@ I set the research direction, define the questions worth investigating, and take
 ---
 
 *OFRL is an independent research initiative. Unless a project states otherwise, published research is educational and analytical in nature and is not personalised investment, legal, tax, or financial advice.*
+
+© 2026 Kenny and individual contributors. Original OFRL material in this repository is licensed under Apache-2.0.
