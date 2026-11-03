@@ -14,7 +14,7 @@ My work in financial markets began in 2012. Since then, I have worked across pro
 
 I created OFRL to develop and share this work in a form that other people can inspect, challenge, reproduce, and build on. The research questions and direction come from my own interests, experience, and judgement. Software engineering is how I turn those questions into models and tools that can be tested and improved.
 
-I am putting particular effort into developing with Rust. My aim is to become a stronger systems developer, use Rust to build reliable financial software, and contribute useful work to the wider Rust ecosystem as the projects mature. I would rather release a small component that solves a real problem than publish abstractions before they are ready.
+I am deliberately building deeper systems-engineering capability with Rust. The aim is to apply it to real financial software and, as the work matures, contribute reusable components and improvements to the wider Rust ecosystem. I would rather release a small component that solves a real problem than publish abstractions before they are ready.
 
 ## Research areas
 
