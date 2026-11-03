@@ -97,7 +97,13 @@ The work is intended to provide a sound foundation for later research in DCF val
 
 ## Licensing
 
-Original OFRL software, documentation, research specifications, and OFRL-created synthetic materials in this repository are licensed under the Apache License 2.0. Third-party code, datasets, publications, images, and other external materials remain subject to their own terms. See [LICENSE](LICENSE) and [LICENSE_POLICY.md](LICENSE_POLICY.md) for details.
+OFRL uses separate licences by content type:
+
+- **Software, source code, and computational financial models:** Apache-2.0.
+- **Research writing, documentation, specifications, and explanatory materials:** CC BY 4.0.
+- **Data:** source-specific rights; original OFRL synthetic research datasets are CC BY 4.0 by default.
+
+See [LICENSE](LICENSE), [LICENSE-docs](LICENSE-docs), [LICENSE_POLICY.md](LICENSE_POLICY.md), and [DATA_POLICY.md](DATA_POLICY.md). Third-party materials are not relicensed by OFRL.
 
 ## Collaboration
 
