@@ -1,3 +1,5 @@
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+
 # OFRL Licensing and Reuse Policy
 
 ## Default licence: Apache License 2.0
