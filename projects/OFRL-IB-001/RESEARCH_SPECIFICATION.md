@@ -17,7 +17,7 @@ The project treats model integrity as a first-class requirement. Every material 
 
 The first release will use three annual historical periods and five annual forecast periods. A synthetic case will provide a lawful, deterministic baseline for testing and reproduction. Real-company data integration is deliberately excluded from the initial release.
 
-The practitioner-facing model format and validation implementation will be selected after this specification is reviewed. The proposed direction is a spreadsheet model supported by independent automated validation, potentially using Python. No workbook, calculation engine, or empirical result is claimed to exist at this stage.
+The project is Rust-first. A Rust-native calculation engine is the canonical implementation of financial mechanics, and a Rust validation suite is the primary engineering deliverable. A Rust CLI will run deterministic scenarios from versioned JSON/CSV inputs. An analyst-facing Excel workbook will be generated as an interoperability and reporting artifact from canonical Rust outputs. Python is not required by the first release. No Rust code, workbook, calculation engine, or empirical result is claimed to exist at this stage.
 
 ## 2. Research question
 
@@ -117,6 +117,8 @@ The proposed logical dependency chain is:
 10. **Integrity, liquidity, and audit checks**
 
 The statements must be outputs of linked schedules and assumptions. The model must not use the Balance Sheet as an arbitrary balancing mechanism.
+
+The calculation engine must be implemented in Rust. Spreadsheet formulas, if introduced in a later phase, are secondary representations and must reconcile to the canonical Rust calculation engine.
 
 ### 5.1 Input classification
 
@@ -282,16 +284,17 @@ Undefined ratios must be shown as N/A with a reason, not as infinity, a misleadi
 
 The project will proceed in controlled stages:
 
-1. Approve this specification and model conventions.
-2. Design the normalized input schema and synthetic reference case.
-3. Implement the calculation model and supporting schedules.
-4. Implement independent validation and reconciliation tests.
-5. Build the practitioner-facing workbook or other approved interface.
-6. Reconcile the interface outputs against the independent reference calculations.
-7. Run boundary, scenario, and sensitivity tests.
-8. Document results, limitations, reproduction steps, and release status.
+1. Approve this specification, model conventions, and Rust-first architecture.
+2. Define a versioned JSON/CSV input schema with decimal-string monetary values and create a deterministic synthetic reference case.
+3. Run a focused Rust Decimal and serialization proof-of-concept; document precision, range, rounding, overflow, and conversion boundaries.
+4. Implement the Rust domain model, operating forecast, and supporting schedules as deterministic functions.
+5. Integrate the three statements and implement typed validation outcomes.
+6. Build unit, integration, property-based, golden, and boundary tests in Rust.
+7. Build a thin Rust CLI for scenario execution and validation reports.
+8. Generate an analyst-facing XLSX report from canonical Rust outputs and reconcile displayed values within documented export tolerances.
+9. Document results, limitations, dependency decisions, reproduction steps, and release status.
 
-The implementation language, spreadsheet engine, library choices, and workbook design are implementation decisions. They must be documented before code is committed; they are not assumed by this research specification.
+The Rust workspace, crate selection, schema, and workbook export policy are specified in [RUST_ARCHITECTURE.md](RUST_ARCHITECTURE.md). Dependencies remain provisional until the proof-of-concept and licence/maintenance review are complete.
 
 ## 11. Validation and pass/fail criteria
 
@@ -323,15 +326,16 @@ These limitations must remain visible in the workbook and project report.
 
 Proposed deliverables:
 
-1. This research specification and model-conventions document.
-2. A normalized synthetic input case with documented data dictionary.
-3. An integrated three-statement model in an agreed practitioner-facing format.
-4. An independent automated validation suite.
-5. A validation report showing each PASS/FAIL result and any warnings.
-6. User documentation, assumptions register, and reproduction instructions.
-7. A technical report describing methodology, tests, limitations, and future extensions.
+1. Rust Cargo workspace containing the canonical calculation library and a thin CLI.
+2. Versioned JSON/CSV input schema and synthetic reference dataset.
+3. Rust implementation of operating forecasts, schedules, and integrated financial statements.
+4. Rust validation suite covering unit, integration, property-based, golden, serialization, and boundary tests.
+5. Deterministic validation report showing each PASS/FAIL result and any warnings.
+6. Analyst-facing XLSX reporting workbook generated from canonical Rust outputs.
+7. User documentation, assumptions register, dependency record, and reproduction instructions.
+8. Technical report describing methodology, implementation choices, tests, limitations, and future extensions.
 
-No deliverable is considered complete solely because a file exists or a workbook opens.
+No deliverable is considered complete solely because a file exists, the project compiles, or a workbook opens.
 
 ## 14. Definition of done
 
@@ -340,7 +344,10 @@ The project may be described as **Reproducible** only when:
 - All structural integrity hard gates pass.
 - Historical inputs and forecast outputs reconcile.
 - The synthetic case is reproducible from documented inputs.
-- The documented validation suite passes.
+- The documented Rust validation suite passes, including required property and boundary tests.
+- cargo fmt --all -- --check, the agreed Clippy command, and the full workspace test command pass in the documented environment.
+- Decimal serialization round-trips without precision loss in the canonical JSON/CSV path.
+- The XLSX report reconciles to canonical Rust outputs within the declared display tolerance.
 - Funding-feasibility results and any failures are disclosed.
 - All material assumptions and limitations are documented.
 - No restricted or unlicensed data or third-party material is included.
