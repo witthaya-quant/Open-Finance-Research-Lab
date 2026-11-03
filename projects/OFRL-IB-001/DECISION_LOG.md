@@ -14,7 +14,11 @@ This log records material scope and modelling decisions. Proposed items are not 
 | D-008 | Do not auto-fund negative cash | Proposed | Exposes a funding gap instead of hiding it through a circular debt plug |
 | D-009 | Separate Structural Integrity from Scenario Feasibility | Proposed | A model can balance arithmetically yet remain unfunded |
 | D-010 | Do not claim IFRS, US GAAP, or local statutory compliance | Proposed | The model is an analytical learning framework, not a framework-specific accounting system |
-| D-011 | Select spreadsheet and validation implementation tools after specification review | Open | Avoids committing to tooling before requirements and validation design are agreed |
+| D-011 | Rust is the canonical calculation and validation implementation; Excel is a generated analyst-facing artifact | Proposed | Aligns the project with Rust systems engineering while preserving finance-industry spreadsheet interoperability |
+| D-012 | Use versioned JSON/CSV with decimal-string amounts as the canonical first-release input/output contract | Proposed | Avoids introducing Excel binary floating-point precision boundaries into the authoritative calculation path |
+| D-013 | Do not require Python in the first release | Proposed | Keep the initial implementation and validation toolchain Rust-native |
+| D-014 | Start with one Rust library crate and one CLI crate in a Cargo workspace | Proposed | Keep architecture extensible without premature multi-crate fragmentation |
+| D-015 | Treat crate selection as a proof-of-concept decision, not a popularity contest | Proposed | Validate precision, MSRV, licence, maintenance, security, and compatibility before adoption |
 
 ## Open questions for approval
 
@@ -22,7 +26,9 @@ This log records material scope and modelling decisions. Proposed items are not 
 2. Should the first workbook use USD thousands as its illustrative default, while remaining configurable?
 3. Is the generic non-financial operating-company profile the right baseline entity?
 4. Are the simplified tax, interest-payment, dividend, and PP&E assumptions acceptable for a teaching and modelling framework?
-5. Should the practitioner-facing spreadsheet be the primary deliverable, with Python used as an independent validation harness?
+5. Is the Rust calculation engine the canonical model, with Excel generated as an analyst-facing report and no Python requirement in v1?
+6. Are JSON/CSV decimal-string inputs and outputs acceptable as the canonical reproducible data contract?
+7. Should the initial Cargo workspace begin with one library crate and one CLI crate, with further crate extraction deferred until stable boundaries emerge?
 
 ## Change control
 
