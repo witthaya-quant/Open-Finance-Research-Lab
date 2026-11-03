@@ -1,3 +1,5 @@
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+
 # OFRL-IB-001 — Integrated Three-Statement Financial Model
 
 > **Division:** Financial Modelling & Valuation  
