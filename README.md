@@ -2,7 +2,7 @@
 
 # Open Finance Research Lab (OFRL)
 
-**Open Knowledge. Rigorous Research. Practical Finance.**
+**Financial Research · Quantitative Methods · Software Engineering**
 
 [![Code: Apache-2.0](https://img.shields.io/badge/Code-Apache--2.0-blue.svg)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/Docs-CC--BY--4.0-lightgrey.svg)](LICENSE-docs)
 
