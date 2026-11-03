@@ -1,3 +1,5 @@
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+
 # OFRL Research Standards
 
 These standards define the minimum structure and quality controls expected of research published under Open Finance Research Lab (OFRL).
