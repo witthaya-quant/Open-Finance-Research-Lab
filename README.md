@@ -36,45 +36,28 @@ OFRL is a research initiative—not a signal service, copy-trading operation, in
 
 Research methodology and validation are cross-cutting requirements. They apply to every area rather than serving as a final box to tick.
 
-## From industry requirements to independent research
+## Industry-to-Research
 
-OFRL uses an **Industry-to-Research** approach:
+OFRL observes publicly available role requirements, extracts recurring competencies, and turns them into independently designed research questions. The objective is to connect practical industry work with open methods, transparent implementation, and reproducible evidence.
 
-1. **Observe** — review publicly available role requirements and recurring industry skill demands.
-2. **Translate** — identify the underlying financial, mathematical, analytical, and engineering competencies.
-3. **Formulate** — turn those competencies into independent research questions and testable hypotheses.
-4. **Build** — develop a model, analytical method, or computational implementation.
-5. **Validate** — test correctness, sensitivity, robustness, and known failure modes.
-6. **Publish** — document the method, evidence, assumptions, limitations, and reproduction steps.
-
-Job descriptions are inputs for competency analysis, not material to copy. Research projects are independently framed and developed. OFRL does not publish confidential employer material or reproduce proprietary work.
+Job descriptions are inputs for competency analysis, not material to copy. OFRL does not publish confidential employer material or reproduce proprietary work.
 
 ## Current research programme
 
 ### OFRL-IB-001 — Integrated Three-Statement Financial Model
 
-**Status:** Proposed — specification stage. No model implementation has been released.
+**Status:** Proposed — specification stage. Rust-first architecture.
 
-The first project will define and test a transparent model linking the Income Statement, Balance Sheet, and Cash Flow Statement for a generic non-financial operating company. The specification defines the model scope, supporting schedules, accounting conventions, and pre-agreed PASS/FAIL criteria before implementation begins.
+The first project will develop a Rust-native calculation engine for a transparent three-statement model, with a Rust validation suite and analyst-facing Excel reporting. Rust is the canonical implementation; Python is not required by the first release.
 
 - [Project overview](projects/OFRL-IB-001/README.md)
 - [Research specification](projects/OFRL-IB-001/RESEARCH_SPECIFICATION.md)
 - [Model conventions](projects/OFRL-IB-001/MODEL_CONVENTIONS.md)
+- [Rust-first architecture](projects/OFRL-IB-001/RUST_ARCHITECTURE.md)
 - [Validation matrix](projects/OFRL-IB-001/VALIDATION_MATRIX.md)
 - [Decision log](projects/OFRL-IB-001/DECISION_LOG.md)
 
-## How research is evaluated
-
-A project should make it possible for another person to understand:
-
-- What question is being investigated and why it matters.
-- Which theory, equations, assumptions, and data support the work.
-- How the model or analysis was implemented.
-- Which tests were performed and what they establish.
-- Where the method works, where it fails, and what remains uncertain.
-- How the results can be reproduced.
-
-OFRL uses evidence-maturity levels to describe the state of a project:
+## Evidence maturity
 
 | Level | Meaning |
 |---|---|
@@ -84,7 +67,7 @@ OFRL uses evidence-maturity levels to describe the state of a project:
 | **3 — Robustness validated** | Relevant sensitivity, robustness, and failure-mode checks have been completed |
 | **4 — Independently replicated** | An independent contributor has reproduced the principal result |
 
-These levels describe the maturity of evidence. They do **not** certify profitability, guarantee predictive power, or imply academic peer review.
+These levels describe the maturity of evidence. They do not certify profitability, guarantee predictive power, or imply academic peer review.
 
 ## Research principles
 
@@ -101,7 +84,7 @@ These levels describe the maturity of evidence. They do **not** certify profitab
 
 OFRL welcomes thoughtful research proposals, technical discussion, constructive review, and independent replication. Contributions should be clear about their sources, assumptions, limitations, and the work performed by each contributor.
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [research standards](RESEARCH_STANDARDS.md). For the current position on reuse and licensing, read [LICENSE_POLICY.md](LICENSE_POLICY.md).
+Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md). For reuse and licensing, read [LICENSE_POLICY.md](LICENSE_POLICY.md).
 
 ## Founder
 
