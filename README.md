@@ -1,10 +1,10 @@
-<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: CC-BY-4.0 -->
 
 # Open Finance Research Lab (OFRL)
 
 **Open Knowledge. Rigorous Research. Practical Finance.**
 
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+[![Code: Apache-2.0](https://img.shields.io/badge/Code-Apache--2.0-blue.svg)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/Docs-CC--BY--4.0-lightgrey.svg)](LICENSE-docs)
 
 OFRL is an independent, founder-led research initiative focused on financial modelling, quantitative finance, investment research, financial engineering, risk analytics, and computational methods.
 
@@ -83,6 +83,10 @@ These levels describe the maturity of evidence. They do not certify profitabilit
 6. **Evidence is not advice.** Empirical findings must be distinguished from investment recommendations.
 7. **Respect data rights.** Public availability does not automatically permit redistribution or commercial reuse.
 8. **Protect legitimate proprietary work.** OFRL does not publish confidential information, client data, or private trading strategies.
+
+## Licensing
+
+Original OFRL software and computational models are licensed under Apache-2.0. Original written research and documentation are licensed under CC BY 4.0. Data is governed by source-specific rights, with OFRL-created synthetic research datasets released under CC BY 4.0 unless designated as integral software test fixtures. See [LICENSE](LICENSE), [LICENSE-docs](LICENSE-docs), [LICENSE_POLICY.md](LICENSE_POLICY.md), and [DATA_POLICY.md](DATA_POLICY.md).
 
 ## Collaboration
 
