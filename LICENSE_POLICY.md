@@ -1,61 +1,95 @@
-<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright 2026 Kenny. SPDX-License-Identifier: CC-BY-4.0 -->
 
 # OFRL Licensing and Reuse Policy
 
-## Default licence: Apache License 2.0
+OFRL uses a content-type-specific licensing model. The default for original material is determined by the kind of work, not merely by the fact that it appears in this repository.
 
-Unless a file or directory contains a clear, specific alternative notice, original material created for and published by Open Finance Research Lab (OFRL) in this repository is licensed under the **Apache License, Version 2.0**.
+## 1. Software, code, and computational models — Apache-2.0
 
-This default applies to OFRL-authored:
+Original OFRL software and computational implementations are licensed under the Apache License, Version 2.0.
 
-- Rust source code and other original software.
-- Documentation, research specifications, technical reports, and examples.
-- Original schemas, configuration, and build files.
-- Synthetic datasets and fixtures created specifically for OFRL, where OFRL has the rights needed to license them.
-- Original diagrams and other project materials.
+This includes, unless a file or project states otherwise:
 
-The complete licence text is in the repository-root [LICENSE](LICENSE) file. The SPDX identifier is \`Apache-2.0\`.
+- Rust source code, libraries, binaries, and CLI applications.
+- Source code in other programming languages.
+- Build scripts, tests, CI workflows, executable notebooks, and machine-readable configuration.
+- Schemas and interfaces intended to be consumed by software.
+- Financial calculation implementations, including formula-driven model workbooks and reusable computational models.
+- Code examples that are distributed as standalone source files.
 
-## What Apache-2.0 permits
+The full terms are in the repository-root LICENSE file. SPDX identifier: Apache-2.0.
 
-Subject to its conditions, Apache-2.0 grants recipients broad rights to use, reproduce, modify, distribute, sublicense, and commercially exploit the licensed work. It also includes a contributor patent licence with a specific patent-litigation termination provision.
+Apache-2.0 permits commercial use, modification, distribution, and sublicensing subject to its conditions. It includes a contributor patent licence with the specific termination provision stated in the licence. It does not grant rights to OFRL trademarks or logos.
 
-Recipients must comply with the licence conditions, including supplying a copy of the licence, retaining applicable notices, and marking modified files with prominent notices. The licence does not grant permission to use OFRL names, logos, or trademarks as an endorsement.
+## 2. Documentation and research works — CC BY 4.0
 
-## Scope and exclusions
+Original OFRL written and explanatory works are licensed under the Creative Commons Attribution 4.0 International License.
 
-The repository-wide default does **not** relicense material OFRL does not own or have authority to license. The following remain governed by their own terms unless the relevant rights holder has expressly permitted otherwise:
+This includes, unless a file or project states otherwise:
 
-- Third-party libraries, crates, code snippets, and tools.
-- Market data, company financial statements, vendor datasets, and other external data.
-- Third-party text, papers, charts, images, fonts, logos, and trademarks.
-- Materials contributed under a separately agreed licence.
-- Content explicitly marked with a different licence or attribution notice.
+- README files, research specifications, charters, policies, and contribution guidance.
+- Research papers, technical reports, explanatory Markdown, and written tutorials.
+- Mathematical derivations and explanatory prose.
+- Original diagrams, figures, and presentation material.
+- Documentation templates and project narratives.
 
-A link to an external source does not make that source part of OFRL's Apache-licensed work. A publicly accessible dataset is not automatically available for redistribution.
+The licence notice and canonical legal code are in LICENSE-docs. SPDX identifier: CC-BY-4.0.
 
-Where third-party material is included, the relevant project must identify its origin, applicable licence or terms, and any redistribution restrictions. If rights are unclear, do not include or redistribute the material. Prefer a data manifest and lawful acquisition instructions.
+CC BY 4.0 allows sharing and adaptation, including commercial reuse, provided the attribution and other licence conditions are met. Users must identify changes where applicable and must not imply endorsement by OFRL or the original authors.
 
-## Contributions
+Executable notebooks are treated as software artifacts under Apache-2.0 because they contain runnable code. Their separate written reports and documentation are CC BY 4.0. Where a notebook contains substantial third-party or separately licensed material, that material must be clearly identified.
 
-Under Section 5 of Apache-2.0, a contribution intentionally submitted for inclusion in OFRL is submitted under Apache-2.0 unless the contributor explicitly states otherwise or a separate written agreement applies.
+## 3. Data — source-specific, with a defined rule for OFRL-created data
 
-Contributors must have the legal right to submit their work under these terms. Do not submit employer-owned, client-owned, confidential, or otherwise restricted work without appropriate authority. Attribution must accurately describe each contributor's substantive work.
+Data is not automatically covered by either repository licence. Every dataset must have a documented provenance and rights status.
 
-OFRL does not require a separate CLA for ordinary contributions at this stage. The project may adopt a documented contributor agreement later if its governance or ownership model requires one.
+| Data class | OFRL policy |
+|---|---|
+| Original synthetic datasets created independently by OFRL | CC BY 4.0 by default, with attribution and dataset metadata |
+| Synthetic test fixtures embedded in software tests | Apache-2.0 when they are integral software test assets; otherwise CC BY 4.0 |
+| Third-party market data and vendor datasets | Original provider licence and contract terms only |
+| Public company filings and financial statements | Source-specific rights and terms; public accessibility alone is not permission to redistribute |
+| Curated, transformed, or derived third-party datasets | Review source rights, database rights, terms, and transformation constraints before release |
+| Data with unclear rights | Do not redistribute; use a data manifest and lawful acquisition instructions where permitted |
 
-## Copyright and attribution
+A public URL, free download, or public filing does not automatically grant redistribution or commercial-use rights. Do not copy vendor feeds, exchange data, paid datasets, employer data, client data, or other restricted information into this repository without the required rights.
 
-Contributors retain copyright ownership of their original contributions while granting the rights set out in Apache-2.0. The root README carries the current project attribution notice. Future source files should carry an appropriate SPDX identifier and copyright notice. Modified files redistributed by recipients must carry prominent notices describing the changes as required by the licence.
+For each dataset, document at minimum: source/provider, source URL or identifier, access date, coverage, schema, time zone and frequency where relevant, transformations, exclusions, licence or terms, redistribution status, and any required attribution. If redistribution is prohibited or uncertain, publish only the metadata and lawful retrieval instructions.
 
-## Patent and trademark notes
+CC BY 4.0 can apply to original datasets and, where the licensor has the relevant rights, applicable database rights. It cannot clear third-party rights that OFRL does not own.
 
-Apache-2.0 contains an express, limited patent grant from each contributor for patent claims necessarily infringed by that contributor's contribution. It is not a blanket licence to every patent held by a contributor.
+## 4. Third-party code and content
 
-Apache-2.0 does not grant rights to use OFRL's name, logo, or other trademarks beyond customary attribution and description of the origin of the work.
+The default licences do not relicense material OFRL does not own or have authority to license.
 
-## Licence changes
+Third-party crates, libraries, code snippets, papers, books, charts, images, fonts, company data, and other external content remain subject to their own licences, terms, and applicable rights. Preserve required notices and identify exclusions clearly.
 
-This policy describes the default for the work covered by this repository. Any future exception must be explicit at the relevant file or project level. A future change of the repository's default licence does not automatically revoke permissions already granted for versions distributed under Apache-2.0.
+Before adding a dependency or external asset, record its source, version, licence, and any applicable notice or attribution obligation. If compatibility or redistribution rights are unclear, do not include the material until reviewed.
+
+## 5. Contributions and ownership
+
+Contributors retain copyright in their original contributions while licensing submitted work under the applicable OFRL content-type licence:
+
+- Software and computational model contributions: Apache-2.0.
+- Documentation and research-writing contributions: CC BY 4.0.
+- Original synthetic datasets: CC BY 4.0 unless they are integral software test fixtures, in which case Apache-2.0 may apply as stated above.
+
+By intentionally submitting a contribution for inclusion, a contributor confirms that they have the authority to submit it under the applicable terms. Do not submit employer-owned, client-owned, confidential, or restricted material without appropriate authority.
+
+OFRL does not require a separate CLA for ordinary contributions at this stage. If the project later requires a CLA or a different governance structure, that change must be documented before it takes effect for new contributions.
+
+## 6. Attribution, patents, and trademarks
+
+Keep copyright, licence, attribution, and third-party notices required by the applicable licence. Identify modifications where required.
+
+Apache-2.0 includes a limited contributor patent licence as described in its text. CC BY 4.0 does not grant patent or trademark rights. Neither licence grants permission to use OFRL names, logos, or marks as an endorsement.
+
+## 7. No warranty or endorsement
+
+The materials are provided under the relevant licence terms and disclaimers. Publication does not mean that OFRL endorses a downstream use, model result, investment decision, or modified work.
+
+## 8. Licence changes
+
+Permissions already granted for a version under its applicable licence are not automatically revoked by a later change to the repository's default policy. Any future exception or change must be explicit and versioned.
 
 This policy is an operational guide, not legal advice.
