@@ -48,9 +48,13 @@ Avoid bundling unrelated changes into one pull request.
 
 ## Attribution and contribution rights
 
-Describe each contributor's substantive role accurately. Do not claim authorship of work performed by someone else. Before submitting substantial contributions, review the repository's [LICENSE_POLICY.md](LICENSE_POLICY.md).
+Describe each contributor's substantive role accurately. Do not claim authorship of work performed by someone else. Review the repository's [LICENSE_POLICY.md](LICENSE_POLICY.md) before contributing.
 
-This repository currently has no explicit content or software licence. A public repository is not, by itself, permission to reuse or redistribute its contents. Until a licence and contribution terms are published, please discuss substantial contributions before submitting them.
+Unless you explicitly state otherwise or a separate written agreement applies, contributions intentionally submitted for inclusion are licensed under Apache-2.0 in accordance with Section 5 of the licence. By submitting a contribution, you confirm that you have the authority to submit it under those terms.
+
+Do not submit employer-owned, client-owned, confidential, restricted, or third-party material unless you have the necessary rights and permissions. Identify third-party components and their licences. Contributors retain copyright in their original contributions while granting the rights stated in Apache-2.0.
+
+OFRL does not require a separate CLA for ordinary contributions at this stage.
 
 ## Review approach
 
