@@ -50,11 +50,18 @@ Avoid bundling unrelated changes into one pull request.
 
 ## Attribution and contribution rights
 
-Describe each contributor's substantive role accurately. Do not claim authorship of work performed by someone else. Review the repository's [LICENSE_POLICY.md](LICENSE_POLICY.md) before contributing.
+Describe each contributor's substantive role accurately. Do not claim authorship of work performed by someone else. Review the repository's [LICENSE_POLICY.md](LICENSE_POLICY.md) and [DATA_POLICY.md](DATA_POLICY.md) before contributing.
 
-Unless you explicitly state otherwise or a separate written agreement applies, contributions intentionally submitted for inclusion are licensed under Apache-2.0 in accordance with Section 5 of the licence. By submitting a contribution, you confirm that you have the authority to submit it under those terms.
+Unless a separate written agreement or an explicit file-level notice states otherwise, contributions intentionally submitted for inclusion are licensed according to their content type:
 
-Do not submit employer-owned, client-owned, confidential, restricted, or third-party material unless you have the necessary rights and permissions. Identify third-party components and their licences. Contributors retain copyright in their original contributions while granting the rights stated in Apache-2.0.
+- Software, source code, tests, build/configuration files, executable notebooks, and computational financial models: Apache-2.0.
+- Documentation, research writing, reports, diagrams, and explanatory materials: CC BY 4.0.
+- Original synthetic datasets: CC BY 4.0, except synthetic fixtures that are integral software test assets and are expressly identified as Apache-2.0.
+- Third-party data or content: its original licence and terms; submitting a contribution does not give OFRL permission to relicense it.
+
+By submitting a contribution, you confirm that you have the rights and authority to make it available under the applicable licence. Contributors retain copyright in their original contributions while granting the rights stated in the relevant licence.
+
+Do not submit employer-owned, client-owned, confidential, restricted, or third-party material unless you have the necessary rights and permissions. Identify third-party components, data sources, and their licences. A publicly accessible source is not automatically redistributable.
 
 OFRL does not require a separate CLA for ordinary contributions at this stage.
 
