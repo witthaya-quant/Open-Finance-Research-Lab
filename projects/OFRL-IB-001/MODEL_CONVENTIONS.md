@@ -186,3 +186,20 @@ A zero denominator in a historical ratio produces N/A with an explanatory note. 
 - Undefined ratios use N/A and a reason.
 - Inputs must reject NaN, positive infinity, and negative infinity.
 - Model outputs must not silently coerce invalid inputs to zero.
+
+## 14. Canonical numeric and Excel interoperability policy
+
+The Rust calculation engine is authoritative. Monetary calculations use the approved fixed-point Decimal representation and checked operations. Intermediate calculations are not rounded.
+
+Canonical JSON/CSV inputs and outputs represent monetary values and rates as decimal strings, accompanied by currency, scale, period, and schema-version metadata. This is the authoritative reproducibility path.
+
+The Excel workbook is generated for analyst review and presentation. Excel stores and calculates numeric values with 15 significant digits of precision. Therefore:
+
+- The XLSX artifact must declare its display precision and rounding policy.
+- The workbook must not be treated as the authoritative store of full-precision model values.
+- The export process must not silently convert high-precision Rust Decimal values to binary floating-point and then claim exact equality.
+- Canonical decimal-string outputs must be retained alongside the workbook.
+- Any future formula-driven workbook must be reconciled against the Rust engine using an explicit tolerance and a documented spreadsheet calculation engine.
+- The model must never enable a "precision as displayed" setting as a hidden workaround.
+
+This boundary is a deliberate design decision, not a defect to conceal.
