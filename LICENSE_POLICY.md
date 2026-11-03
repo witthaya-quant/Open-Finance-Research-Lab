@@ -4,6 +4,10 @@
 
 OFRL uses a content-type-specific licensing model. The default for original material is determined by the kind of work, not merely by the fact that it appears in this repository.
 
+## Licence transition note
+
+Earlier repository revisions were published while Apache-2.0 was presented as the repository-wide default. This content-specific policy clarifies the licence allocation for the current and future versions: software and computational models under Apache-2.0, written documentation under CC BY 4.0, and data under the source-specific rules below. This change does not revoke permissions already granted for earlier versions or copies distributed under Apache-2.0.
+
 ## 1. Software, code, and computational models — Apache-2.0
 
 Original OFRL software and computational implementations are licensed under the Apache License, Version 2.0.
