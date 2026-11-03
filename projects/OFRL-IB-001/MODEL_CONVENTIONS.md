@@ -1,4 +1,4 @@
-<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: CC-BY-4.0 -->
 
 # OFRL-IB-001 — Model Conventions
 
