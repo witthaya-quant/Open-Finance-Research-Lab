@@ -2,6 +2,8 @@
 
 **Open Knowledge. Rigorous Research. Practical Finance.**
 
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+
 OFRL is an independent, founder-led research initiative focused on financial modelling, quantitative finance, investment research, financial engineering, risk analytics, and computational methods.
 
 I started OFRL with a straightforward objective: build finance research that can be examined, reproduced, challenged, and improved. I am interested in the reasoning behind a model—not only its output. That means making assumptions explicit, showing the mathematics where it matters, testing implementation integrity, and being honest about limitations.
