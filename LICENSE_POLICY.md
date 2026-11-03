@@ -1,41 +1,59 @@
-# Licensing and Reuse Policy
+# OFRL Licensing and Reuse Policy
 
-## Current status: no explicit licence
+## Default licence: Apache License 2.0
 
-This repository currently has **no LICENSE file**. That is intentional while the project decides how to license different classes of material.
+Unless a file or directory contains a clear, specific alternative notice, original material created for and published by Open Finance Research Lab (OFRL) in this repository is licensed under the **Apache License, Version 2.0**.
 
-A public GitHub repository is not automatically an open-source-licensed repository. In the absence of an applicable licence, copyright and other rights remain with their respective owners, subject to the platform's terms and applicable law. Do not assume that public visibility grants permission to copy, modify, redistribute, or commercially reuse the material.
+This default applies to OFRL-authored:
 
-## Proposed licensing model
+- Rust source code and other original software.
+- Documentation, research specifications, technical reports, and examples.
+- Original schemas, configuration, and build files.
+- Synthetic datasets and fixtures created specifically for OFRL, where OFRL has the rights needed to license them.
+- Original diagrams and other project materials.
 
-OFRL expects to use different terms for different kinds of work rather than force every asset into one licence.
+The complete licence text is in the repository-root [LICENSE](LICENSE) file. The SPDX identifier is \`Apache-2.0\`.
 
-| Material | Proposed default | Important qualification |
-|---|---|---|
-| Original software and reusable code | Apache License 2.0 | Only where the contributors have the rights to license the code |
-| Original written research and documentation | Creative Commons Attribution 4.0 International (CC BY 4.0) | Third-party quotations, figures, and other excluded material retain their own terms |
-| Datasets and market data | Source-specific terms | No blanket licence; provider terms and redistribution rights control |
-| Third-party libraries and tools | Their original licences | Preserve notices and comply with their conditions |
-| Trademarks, names, and logos | Not granted by the above licences unless expressly stated | Brand use requires separate permission |
+## What Apache-2.0 permits
 
-These are proposed defaults, not licences currently granted by this repository.
+Subject to its conditions, Apache-2.0 grants recipients broad rights to use, reproduce, modify, distribute, sublicense, and commercially exploit the licensed work. It also includes a contributor patent licence with a specific patent-litigation termination provision.
 
-## Why separate licences?
+Recipients must comply with the licence conditions, including supplying a copy of the licence, retaining applicable notices, and marking modified files with prominent notices. The licence does not grant permission to use OFRL names, logos, or trademarks as an endorsement.
 
-Software and research writing are different forms of work with different reuse needs. Apache 2.0 is a permissive software licence that includes an express patent grant. CC BY 4.0 is designed for sharing and adaptation of licensed creative and informational material with attribution. Neither licence grants rights to third-party data that OFRL does not own or control.
+## Scope and exclusions
 
-## Before a licence is added
+The repository-wide default does **not** relicense material OFRL does not own or have authority to license. The following remain governed by their own terms unless the relevant rights holder has expressly permitted otherwise:
 
-For each repository or project, OFRL should confirm:
+- Third-party libraries, crates, code snippets, and tools.
+- Market data, company financial statements, vendor datasets, and other external data.
+- Third-party text, papers, charts, images, fonts, logos, and trademarks.
+- Materials contributed under a separately agreed licence.
+- Content explicitly marked with a different licence or attribution notice.
 
-1. Who owns the material and has authority to license it.
-2. Whether contributors have agreed to the applicable terms.
-3. Whether all third-party code, text, images, and data are compatible.
-4. Which files are excluded or subject to separate terms.
-5. How attribution, notices, and contribution history will be maintained.
+A link to an external source does not make that source part of OFRL's Apache-licensed work. A publicly accessible dataset is not automatically available for redistribution.
 
-A licence should be added only after this review. Do not add a generic licence badge or describe a project as open source before the applicable licence is in place.
+Where third-party material is included, the relevant project must identify its origin, applicable licence or terms, and any redistribution restrictions. If rights are unclear, do not include or redistribute the material. Prefer a data manifest and lawful acquisition instructions.
 
-## Questions about reuse
+## Contributions
 
-For a proposed reuse that is not clearly covered by a published licence, seek written permission from the relevant rights holder. This policy is an operational statement, not legal advice.
+Under Section 5 of Apache-2.0, a contribution intentionally submitted for inclusion in OFRL is submitted under Apache-2.0 unless the contributor explicitly states otherwise or a separate written agreement applies.
+
+Contributors must have the legal right to submit their work under these terms. Do not submit employer-owned, client-owned, confidential, or otherwise restricted work without appropriate authority. Attribution must accurately describe each contributor's substantive work.
+
+OFRL does not require a separate CLA for ordinary contributions at this stage. The project may adopt a documented contributor agreement later if its governance or ownership model requires one.
+
+## Copyright and attribution
+
+Contributors retain copyright ownership of their original contributions while granting the rights set out in Apache-2.0. The repository-root LICENSE identifies the current project copyright notice. Future source files should carry an appropriate SPDX identifier and copyright notice. Modified files redistributed by recipients must carry prominent notices describing the changes as required by the licence.
+
+## Patent and trademark notes
+
+Apache-2.0 contains an express, limited patent grant from each contributor for patent claims necessarily infringed by that contributor's contribution. It is not a blanket licence to every patent held by a contributor.
+
+Apache-2.0 does not grant rights to use OFRL's name, logo, or other trademarks beyond customary attribution and description of the origin of the work.
+
+## Licence changes
+
+This policy describes the default for the work covered by this repository. Any future exception must be explicit at the relevant file or project level. A future change of the repository's default licence does not automatically revoke permissions already granted for versions distributed under Apache-2.0.
+
+This policy is an operational guide, not legal advice.
