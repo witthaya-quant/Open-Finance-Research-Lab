@@ -49,6 +49,20 @@ OFRL uses an **Industry-to-Research** approach:
 
 Job descriptions are inputs for competency analysis, not material to copy. Research projects are independently framed and developed. OFRL does not publish confidential employer material or reproduce proprietary work.
 
+## Current research programme
+
+### OFRL-IB-001 — Integrated Three-Statement Financial Model
+
+**Status:** Proposed — specification stage. No model implementation has been released.
+
+The first project will define and test a transparent model linking the Income Statement, Balance Sheet, and Cash Flow Statement for a generic non-financial operating company. The specification defines the model scope, supporting schedules, accounting conventions, and pre-agreed PASS/FAIL criteria before implementation begins.
+
+- [Project overview](projects/OFRL-IB-001/README.md)
+- [Research specification](projects/OFRL-IB-001/RESEARCH_SPECIFICATION.md)
+- [Model conventions](projects/OFRL-IB-001/MODEL_CONVENTIONS.md)
+- [Validation matrix](projects/OFRL-IB-001/VALIDATION_MATRIX.md)
+- [Decision log](projects/OFRL-IB-001/DECISION_LOG.md)
+
 ## How research is evaluated
 
 A project should make it possible for another person to understand:
@@ -71,14 +85,6 @@ OFRL uses evidence-maturity levels to describe the state of a project:
 | **4 — Independently replicated** | An independent contributor has reproduced the principal result |
 
 These levels describe the maturity of evidence. They do **not** certify profitability, guarantee predictive power, or imply academic peer review.
-
-## Initial research priority
-
-The first planned flagship project is an **Integrated Three-Statement Financial Model**.
-
-The objective is to build a transparent model linking the Income Statement, Balance Sheet, and Cash Flow Statement, supported by schedules for working capital, debt, depreciation and amortisation, and operating assumptions. Automated checks will test accounting identities and model integrity.
-
-The work is intended to provide a sound foundation for later research in DCF valuation, scenario analysis, capital structure, LBO, and M&A modelling. This is an initial research priority, not a claim that the project is already complete.
 
 ## Research principles
 
