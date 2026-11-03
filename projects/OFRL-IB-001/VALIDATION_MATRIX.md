@@ -126,10 +126,35 @@ Sensitivity analysis is intended to establish model behaviour and identify fundi
 | RR-06 | Test evidence | Test results are recorded with pass/fail status and version reference |
 | RR-07 | Limitations | Exclusions and known weaknesses are clearly stated |
 | RR-08 | Review | A review has checked formula logic, accounting links, and presentation claims |
+| RR-09 | Rust toolchain | Formatting, Clippy, workspace tests, and documentation build pass in the recorded toolchain | 
+| RR-10 | Decimal fidelity | Canonical JSON/CSV Decimal strings round-trip without precision loss; checked arithmetic errors are surfaced | 
+| RR-11 | Excel export boundary | Workbook values follow the documented display precision; full-precision canonical outputs are preserved separately | 
+| RR-12 | Rust-first architecture | Financial calculations and authoritative validation are implemented in Rust; no Python dependency is required for v1 |
 
 A failed release gate blocks a Reproducible status claim. It must be recorded, fixed, or explicitly scoped out before release.
 
-## 9. Overall status rules
+## 9. Rust-specific engineering gates
+
+The following commands are proposed baseline checks once the Cargo workspace exists:
+
+~~~bash
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --all-targets
+cargo doc --workspace --no-deps
+~~~
+
+The implementation must also demonstrate:
+- No binary floating-point arithmetic in authoritative monetary calculations.
+- Checked Decimal arithmetic for operations that may overflow or divide by zero.
+- Decimal-string serialization and deserialization round-trip.
+- Deterministic output for identical inputs and model version.
+- Property-based tests for the accounting and schedule invariants.
+- Excel export precision explicitly documented and reconciled to canonical output.
+
+A passing compiler or test command does not, by itself, prove accounting integrity.
+
+## 10. Overall status rules
 
 - **Structural Integrity PASS:** every SI hard gate passes.
 - **Scenario Feasibility PASS:** every SF hard gate passes.
