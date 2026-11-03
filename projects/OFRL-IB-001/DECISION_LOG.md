@@ -1,3 +1,5 @@
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: Apache-2.0 -->
+
 # OFRL-IB-001 — Decision Log
 
 This log records material scope and modelling decisions. Proposed items are not final until approved by the project owner.
