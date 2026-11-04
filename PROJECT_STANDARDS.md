@@ -140,6 +140,25 @@ Required:
 - Rollback, recovery, and dependency/service outage behavior.
 - Explicit approval before interacting with production accounts or external systems.
 
+### 3.9 Project type and template mapping
+
+Use the templates as starting points, not as substitutes for project-specific reasoning. A project may combine several types and therefore require several documents.
+
+| Project type | Required project-local documents | Starting templates |
+|---|---|---|
+| All projects | `README.md`, `project.json`, `DECISION_LOG.md`, `VALIDATION_MATRIX.md`, project charter/specification | [Project README](templates/PROJECT_README_TEMPLATE.md), [Project Charter](templates/PROJECT_CHARTER_TEMPLATE.md), [Project Manifest](templates/PROJECT_MANIFEST_TEMPLATE.json), [Decision Log](templates/PROJECT_DECISION_LOG_TEMPLATE.md), [Validation Matrix](templates/VALIDATION_MATRIX_TEMPLATE.md) |
+| Research | `RESEARCH_SPECIFICATION.md` or `PROJECT_SPECIFICATION.md` | [Research Specification](templates/RESEARCH_SPECIFICATION_TEMPLATE.md) |
+| Quantitative research | Research Specification plus quantitative sample, bias, benchmark, and robustness evidence | [Research Specification](templates/RESEARCH_SPECIFICATION_TEMPLATE.md), [Data Manifest](templates/DATA_MANIFEST_TEMPLATE.md), [Benchmark Specification](templates/BENCHMARK_SPECIFICATION_TEMPLATE.md) |
+| Financial model | `MODEL_CONVENTIONS.md`, `NUMERIC_ENVELOPE.md` | [Model Conventions](templates/MODEL_CONVENTIONS_TEMPLATE.md), [Numeric Envelope](templates/NUMERIC_ENVELOPE_TEMPLATE.md) |
+| Software | `ENGINEERING_ARCHITECTURE.md` and a project-owned validation workflow | [Engineering Architecture](templates/ENGINEERING_ARCHITECTURE_TEMPLATE.md) |
+| Data | `DATA_MANIFEST.md` and data-quality/rights validation | [Data Manifest](templates/DATA_MANIFEST_TEMPLATE.md) |
+| Benchmark | `BENCHMARK_SPECIFICATION.md` | [Benchmark Specification](templates/BENCHMARK_SPECIFICATION_TEMPLATE.md) |
+| Prototype | `PROTOTYPE_PLAN.md` | [Prototype Plan](templates/PROTOTYPE_PLAN_TEMPLATE.md) |
+| Infrastructure | `ENGINEERING_ARCHITECTURE.md`, `THREAT_MODEL.md` | [Engineering Architecture](templates/ENGINEERING_ARCHITECTURE_TEMPLATE.md), [Threat Model](templates/THREAT_MODEL_TEMPLATE.md) |
+| R3 — Operational / sensitive | `THREAT_MODEL.md` plus security validation profile | [Threat Model](templates/THREAT_MODEL_TEMPLATE.md) |
+
+For every type-specific document, add the actual project-local filename to `required_documents` in `project.json`. The registry validator checks both existence and manifest declaration. A template may be adapted or combined where that improves clarity, but the required control and evidence must remain present.
+
 ## 4. Risk tiers
 
 Risk tier measures the potential impact of incorrect behavior, misuse, exposure, or failure. It is not the same as evidence maturity or project importance.
