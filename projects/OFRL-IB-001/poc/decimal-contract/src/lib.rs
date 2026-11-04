@@ -99,7 +99,26 @@ where
         ));
     }
 
-    Decimal::from_str(&text).map_err(serde::de::Error::custom)
+    if let Some((_, fractional)) = text.split_once('.') {
+        if fractional.len() > Decimal::MAX_SCALE as usize {
+            return Err(serde::de::Error::custom(
+                "amount scale exceeds the selected Decimal maximum",
+            ));
+        }
+    }
+
+    let parsed = Decimal::from_str(&text).map_err(serde::de::Error::custom)?;
+
+    // rust_decimal 1.43.0 may accept an over-scale string and reduce it to
+    // the maximum scale. Require exact lexical round-trip to prevent silent
+    // precision loss at the input boundary.
+    if parsed.to_string() != text {
+        return Err(serde::de::Error::custom(
+            "amount is not exactly representable by the selected Decimal type",
+        ));
+    }
+
+    Ok(parsed)
 }
 
 /// Check the canonical lexical grammar before Decimal parsing.
@@ -317,13 +336,21 @@ mod tests {
     #[test]
     fn values_beyond_supported_scale_or_range_never_silently_change() {
         let beyond_scale = "0.00000000000000000000000000001";
-        if let Ok(parsed) = Decimal::from_str(beyond_scale) {
-            assert_eq!(
-                parsed.to_string(),
-                beyond_scale,
-                "a parsed value must not silently round or truncate the source text"
-            );
-        }
+
+        // The pinned raw parser accepts this 29th fractional digit but rounds
+        // it to zero at scale 28. This test documents why the input adapter
+        // must validate scale and exact round-trip before accepting a value.
+        let unguarded = Decimal::from_str(beyond_scale)
+            .expect("the pinned POC candidate currently parses this over-scale input");
+        assert_ne!(unguarded.to_string(), beyond_scale);
+
+        let over_scale_json = format!(
+            r#"{{"schema_version":"0.1.0","model_id":"OFRL-IB-001","period":"FY2026","line_item":"revenue","currency":"USD","unit_scale":"thousands","amount":"{beyond_scale}"}}"#
+        );
+        assert!(
+            serde_json::from_str::<AmountRecord>(&over_scale_json).is_err(),
+            "over-scale strings must be rejected before precision can be lost"
+        );
 
         let beyond_range = r#"{
             "schema_version":"0.1.0",
