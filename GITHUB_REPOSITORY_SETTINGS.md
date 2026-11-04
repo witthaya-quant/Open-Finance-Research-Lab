@@ -22,12 +22,13 @@ As checked on 2026-11-04 through the GitHub repository and Rulesets APIs:
 | Pull Request requirement | Enabled; 0 required approvals; conversation resolution required |
 | Deletion / force-push protection | Enabled |
 | Bypass actors | None; API reports current user bypass as `never` |
-| Required status checks | **Incomplete:** required-status-check rule exists, but its selected check list is empty |
-| Additional enabled rules | Code quality (all severities) and automatic Copilot code review on pushes and draft PRs; these were not part of the intended Stage 0 baseline and should be disabled unless explicitly adopted |
+| Up-to-date requirement | Enabled (`strict_required_status_checks_policy: true`) |
+| Required status checks | **Exactly six** GitHub Actions contexts; all six are bound to integration ID `15368` and passed on the PR #14 / PR #18 heads checked |
+| Code Quality / Copilot Review | Both disabled; neither appears in the current Ruleset response |
 | Merge methods | Merge commit, rebase, and squash enabled |
 | Repository permissions available to current account | Admin, maintain, push, pull, triage |
 
-The ruleset was created at `2026-11-04 15:14:25 +07:00`. It is active, but this snapshot is **not a completed branch-protection acceptance**: six required status checks still need to be selected, and the two additional rules need to be reviewed. Do not close Issue #15 until the ruleset API read-back confirms the exact required checks and intended rules only.
+The Ruleset is active and its Stage 0 configuration has passed the API read-back: exactly six required check contexts are stored, each bound to GitHub Actions integration ID `15368`; no malformed extra context remains. All six checks passed on the PR #14 head targeting `main` and the PR #18 audit head. The documentation-only smoke test should be repeated after the workflow changes merge to `main`, but the Ruleset configuration itself is complete.
 
 This is a snapshot, not a guarantee that settings remain unchanged. Recheck after configuration changes and after the repository moves to an Organization.
 
@@ -102,9 +103,9 @@ Do not guess check names.
 5. Select only the exact check names that are stable and applicable.
 6. Test a failing check and confirm it blocks merge; test a passing check and confirm the control behaves as intended.
 
-**Current OFRL status (2026-11-04):** both OFRL-IB-001 project workflows have been changed to run on every Pull Request (their `paths` filters have been removed). The six exact check-run names were observed on the latest successful PR #18 head and on PR #14, which targets `main`. All six were reported by the GitHub Actions app and completed successfully.
+**Current OFRL status (2026-11-04):** both OFRL-IB-001 project workflows have been changed to run on every Pull Request (their `paths` filters have been removed). The six exact check-run names were observed on the latest successful PR #18 head and on PR #14, which targets `main`. All six are reported by the GitHub Actions app and completed successfully.
 
-Require these exact names:
+The Rulesets API read-back at 2026-11-04 confirmed **exactly six required entries**, each with integration ID `15368` (GitHub Actions), and no other required context:
 
 - `repository-policy`
 - `Model input JSON Schema`
@@ -113,7 +114,11 @@ Require these exact names:
 - `Semantic validator (Rust 1.85.0)`
 - `Semantic validator (Rust 1.99.1)`
 
-When GitHub offers an expected source for each check, select **GitHub Actions**. Do not add a new check to the required list until it is configured to report on every Pull Request or is covered by a stable always-running gate. GitHub documents that checks skipped by path or branch filtering remain pending and can block merges; see [Skipping workflow runs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs) and [Troubleshooting required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
+All six exact check runs were present and successful on the PR #14 head targeting `main` and on the PR #18 audit head. The malformed extra context previously observed has been removed. Revalidate after any workflow-name or Ruleset changes.
+
+**Post-merge smoke test:** after PR #18 and the resulting PR #14 changes are merged to `main`, create or use a documentation-only PR to verify that all six required checks still report and complete. This has not yet been performed on `main`.
+
+GitHub documents that checks skipped by path or branch filtering remain pending and can block merges; see [Skipping workflow runs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs) and [Troubleshooting required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
 
 A workflow that runs only on pushes to the default branch is not sufficient evidence that it protects Pull Requests.
 
@@ -123,14 +128,14 @@ Maintain a short record when repository settings are changed:
 
 | Field | Record |
 |---|---|
-| Date | YYYY-MM-DD |
-| Changed by | GitHub user / role |
-| Branch or tag target | |
-| Rule or ruleset name | |
-| Settings enabled | |
-| Required check names | |
-| Verification PR | |
-| Exceptions and expiry / review date | |
+| Date | 2026-11-04 |
+| Changed by | Repository owner (user-reported configuration; actor identity is not returned by the Rulesets API) |
+| Branch or tag target | `~DEFAULT_BRANCH` (`main`) |
+| Rule or ruleset name | `OFRL-main-protection` / ID `26516806` |
+| Settings enabled | Active; Pull Request required; 0 approvals; conversation resolution; strict up-to-date; deletion restriction; force-push block; no bypass actors |
+| Required check names | Exactly six; all bound to GitHub Actions integration ID `15368` |
+| Verification PR | PR #14 targeting `main`; PR #18 validates all six workflow checks on the audit branch |
+| Exceptions and expiry / review date | No configuration exception. Repeat a documentation-only PR smoke test after the workflow changes are merged to `main`. |
 
 Review the settings after changing the default branch, adding or changing workflows, moving to an Organization, changing repository visibility, or changing Maintainer roles.
 
