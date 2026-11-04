@@ -102,9 +102,9 @@ mod tests {
 
     #[test]
     fn bounded_reader_accepts_utf8_json_text() {
-        let input = br#"{"schema_version":"0.1.0","model_name":"บริษัท"}"#;
-        let output =
-            read_bounded_utf8(Cursor::new(input)).expect("valid UTF-8 should be preserved");
+        let input = r#"{"schema_version":"0.1.0","model_name":"บริษัท"}"#;
+        let output = read_bounded_utf8(Cursor::new(input.as_bytes()))
+            .expect("valid UTF-8 should be preserved");
 
         assert!(output.contains("บริษัท"));
     }
