@@ -10,27 +10,27 @@ This document translates OFRL Governance into GitHub repository controls for a r
 
 ## 1. Current observed state
 
-As checked on 2026-11-04 through the repository metadata and GitHub Rulesets API:
+As checked on 2026-11-04 through repository metadata and the GitHub Rulesets API:
 
 | Control | Observed state |
 |---|---|
 | Repository owner | Personal account: `witthaya-quant` |
-| Default branch | `main` |
-| Repository visibility | Public |
-| Active ruleset | `OFRL-main-protection` (ID `26516806`) |
+| Default branch / visibility | `main` / Public |
+| Active ruleset | `OFRL-main-protection`, ID `26516806` |
 | Enforcement / target | Active; `~DEFAULT_BRANCH` (currently `main`) |
-| Require Pull Request | Enabled |
+| Pull Request requirement | Enabled |
 | Required approving reviews | 0 (Stage 0 single-maintainer policy) |
-| Require conversation resolution | Enabled |
+| Conversation resolution | Required |
 | Required status checks | Exactly six GitHub Actions contexts listed below |
-| Require branches to be up to date | Enabled (`strict_required_status_checks_policy: true`) |
+| Up-to-date requirement | Enabled (`strict_required_status_checks_policy: true`) |
 | Branch deletion | Blocked |
-| Non-fast-forward / force push | Blocked |
-| Bypass actors | None; API reports current user cannot bypass |
-| Code Quality / Copilot review rules | Not configured in this Ruleset |
+| Non-fast-forward / force-push | Blocked |
+| Bypass actors | None; API reports current user bypass as `never` |
+| Code Quality / Copilot Review rules | Not configured in this Ruleset |
 | Merge methods | Merge commit, rebase, and squash enabled |
+| Repository permissions available to connected account | Admin, maintain, push, pull, triage |
 
-Required contexts (exact spelling and case):
+Required contexts (exact spelling and case; each is bound to GitHub Actions integration ID `15368`):
 
 1. `repository-policy`
 2. `Model input JSON Schema`
@@ -39,7 +39,9 @@ Required contexts (exact spelling and case):
 5. `Semantic validator (Rust 1.85.0)`
 6. `Semantic validator (Rust 1.99.1)`
 
-The Ruleset configuration is active and complete. The `repository-policy` workflow is introduced by PR #14 and hardened in stacked PR #18; it is not yet present on the current `main` commit at this audit snapshot. PR #14 and PR #18 both reported the exact required contexts successfully on their inspected heads. The post-merge verification must confirm the workflow exists on `main` and that a fresh documentation-only and project-code PR both report all six contexts.
+The Ruleset is active and contains exactly these six required entries. PR #14 introduces the always-running `repository-policy` workflow. PR #18 removes path filters from both OFRL-IB-001 validation workflows so their required job contexts are reported on documentation-only as well as model-code Pull Requests.
+
+**Base-branch integration status:** the current `main` snapshot still contains the older path-filtered project workflows and does not yet contain `repository-policy.yml`. The PR #14 / PR #18 branch stack includes the corrected workflows. After the stack is integrated into `main`, verify the workflow files on `main` and create fresh documentation-only and model-code PRs to confirm all six contexts report and complete. Do not weaken or remove a required check to bypass this sequencing dependency.
 
 This is a dated snapshot, not a guarantee that settings remain unchanged. Re-read the Rulesets API after any configuration change and after the repository moves to an Organization.
 
@@ -47,21 +49,20 @@ This is a dated snapshot, not a guarantee that settings remain unchanged. Re-rea
 
 Configure a branch protection rule or repository ruleset targeting the exact default branch, currently `main`.
 
-| Setting | Stage 0 baseline | Reason |
+| Setting | Stage 0 observed baseline | Reason |
 |---|---|---|
-| Require a Pull Request before merging | **Enable** | Prevent routine direct changes to the default branch |
-| Required approving reviews | **0 / disabled** | A sole maintainer cannot obtain an independent approval from another person; do not create a false review control |
-| Require conversation resolution | **Enable** | Keep review discussions resolved before merge |
-| Require status checks | Enable only for stable, named checks that reliably run on every relevant PR | Avoid blocking all merges on checks that are absent, conditional, or unstable |
-| Require branch to be up to date | Enable only after required checks are selected and reliable | Avoid an unusable or misleading gate |
-| Allow force pushes | **Disable** | Preserve default-branch history |
-| Allow deletions | **Disable** | Prevent accidental default-branch deletion |
-| Require signed commits | Optional; enable only after the signing workflow is adopted and tested | Avoid an unworkable control that causes accidental lockout |
-| Require linear history | Optional; decide alongside merge-method policy | Do not enable without confirming the chosen merge workflow |
-| Code-owner review | Not applicable until a meaningful `CODEOWNERS` file and eligible owners exist | Avoid a nominal control with no reviewer coverage |
-| Admin bypass | Enable **Do not allow bypassing the above settings / include administrators** where available; otherwise record the owner-bypass limitation as a residual risk | Branch protection does not automatically constrain administrators; verify the rule against the repository owner's account |
+| Require a Pull Request before merging | **Enabled** | Prevent routine direct changes to the default branch |
+| Required approving reviews | **0 / disabled** | A sole maintainer cannot obtain an independent approval; do not simulate one |
+| Require conversation resolution | **Enabled** | Keep review discussions resolved before merge |
+| Required status checks | **Exactly six named contexts; enabled** | Validate repository policy, schema, Decimal contract, and Rust semantic validation |
+| Require branch to be up to date | **Enabled** | Require testing against the latest base branch |
+| Allow force pushes | **Disabled** | Preserve default-branch history |
+| Allow deletions | **Disabled** | Prevent accidental default-branch deletion |
+| Bypass actors | **None** | Keep the same merge gate for the owner and collaborators |
+| Code Quality / Copilot Review rules | Not configured in this Ruleset | No extra automated review rule is currently active |
+| Signed commits / linear history | Not configured as Ruleset requirements | Do not impose controls without a tested signing or linear-history workflow |
 
-The Founder may merge a Founder-authored PR under Stage 0 because independent review is not available. The PR checklist and validation evidence remain mandatory. This must be described as a single-maintainer decision, not an independent approval.
+The Founder may merge a Founder-authored PR under Stage 0 because independent review is not available. The PR checklist and validation evidence remain mandatory. This must be described as a single-maintainer decision, not an independent approval. The Rulesets API read-back reports an empty bypass list and confirms that the connected current user cannot bypass this Ruleset.
 
 ## 3. Stage 1 baseline — invited contributors under the personal account
 
@@ -114,26 +115,26 @@ Do not guess check names.
 5. Select only the exact check names that are stable and applicable.
 6. Test a failing check and confirm it blocks merge; test a passing check and confirm the control behaves as intended.
 
-**Current OFRL integration note:** the current `main` revision still contains path-filtered OFRL-IB-001 workflows. PR #18 removes those path filters so the two model validation workflows report their stable job names on every Pull Request. PR #14 adds the always-running `repository-policy` workflow. These changes must be integrated and then smoke-tested before the six-context baseline is considered fully exercised across both documentation-only and model-code changes.
+**Current OFRL integration note:** PR #14 introduces the always-running `repository-policy` workflow, and PR #18 removes path filters from both OFRL-IB-001 validation workflows. These changes make the six required contexts available on the combined PR #14 / PR #18 branch stack. They must reach `main` before the six-context configuration is considered fully exercised on the protected base branch. The active Ruleset itself has already been verified through the API.
 
 A workflow that runs only on pushes to the default branch is not sufficient evidence that it protects Pull Requests.
 
 ## 7. Configuration and verification record
 
-Maintain a short record when repository settings are changed:
+Latest observed record — 2026-11-04:
 
 | Field | Record |
 |---|---|
-| Date | YYYY-MM-DD |
-| Changed by | GitHub user / role |
-| Branch or tag target | |
-| Rule or ruleset name | |
-| Settings enabled | |
-| Required check names | |
-| Verification PR | |
-| Exceptions and expiry / review date | |
+| Date | 2026-11-04 |
+| Changed by | Not returned by the Rulesets API; repository owner has Admin permission |
+| Branch or tag target | `~DEFAULT_BRANCH` (`main`) |
+| Rule or ruleset name | `OFRL-main-protection`, ID `26516806` |
+| Settings enabled | Active; PR required; 0 approvals; conversation resolution; strict up-to-date; deletion and non-fast-forward restrictions; no bypass actors |
+| Required check names | Exactly six listed in Section 1; all bound to GitHub Actions integration ID `15368` |
+| Verification PRs | PR #14 targeting `main`; PR #18 validates the same six contexts on the audit branch |
+| Exceptions / follow-up | No Ruleset exception. Documentation-only and model-code smoke tests remain required after workflow integration into `main`. |
 
-Review the settings after changing the default branch, adding or changing workflows, moving to an Organization, changing repository visibility, or changing Maintainer roles.
+Re-read the Rulesets API after changing the default branch, adding or changing workflows, moving to an Organization, changing repository visibility, or changing Maintainer roles. Keep the read-back and the corresponding verification PR references together.
 
 ## 8. How to configure
 
