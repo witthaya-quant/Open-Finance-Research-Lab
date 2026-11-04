@@ -18,11 +18,11 @@ const schemaPath = path.join(
   "schemas",
   "ofrl-ib-001-model-input-0.1.0.schema.json"
 );
-const fixturePath = path.join(
+const corpusPath = path.join(
   rootDir,
   "fixtures",
-  "synthetic",
-  "ofrl-ib-001-case-a.input.v0.1.0.json"
+  "contracts",
+  "ofrl-ib-001-shared-corpus.v0.1.0.json"
 );
 
 function readJson(filePath) {
@@ -73,10 +73,17 @@ function assertInvalid(validate, label, payload) {
 
 function main() {
   const schema = readJson(schemaPath);
-  const fixture = readJson(fixturePath);
+  const corpus = readJson(corpusPath);
 
   if (schema.$schema !== "https://json-schema.org/draft/2020-12/schema") {
     throw new Error("Input schema must declare JSON Schema Draft 2020-12");
+  }
+  if (
+    corpus.corpus_version !== "0.1.0" ||
+    !Array.isArray(corpus.cases) ||
+    corpus.cases.length === 0
+  ) {
+    throw new Error("Shared contract corpus must have version 0.1.0 and a non-empty cases array");
   }
 
   const ajv = new Ajv2020({
@@ -88,65 +95,49 @@ function main() {
 
   console.log("Ajv version: " + require("ajv/package.json").version);
   console.log("Schema: " + path.relative(rootDir, schemaPath));
-  console.log("Fixture: " + path.relative(rootDir, fixturePath));
+  console.log("Corpus: " + path.relative(rootDir, corpusPath));
 
-  // Compilation is itself a validation gate: malformed or unsupported
-  // schema constructs must stop the job before any payload is accepted.
+  // Schema compilation is a gate: unsupported or malformed schema constructs
+  // must stop the job before any payload can be accepted.
   const validate = ajv.compile(schema);
   console.log("PASS: Draft 2020-12 schema compiled");
 
-  assertValid(validate, "canonical synthetic Case A fixture", fixture);
+  const rootPrefix = rootDir.endsWith(path.sep) ? rootDir : rootDir + path.sep;
+  const seenIds = new Set();
 
-  const maximumScale = clone(fixture);
-  maximumScale.forecast_periods[0].assumptions.dso =
-    "0.1234567890123456789012345678";
-  assertValid(
-    validate,
-    "28-digit fractional scale remains schema-valid",
-    maximumScale
-  );
+  for (const item of corpus.cases) {
+    if (!item || typeof item.id !== "string" || !item.id || seenIds.has(item.id)) {
+      throw new Error("Every shared corpus case must have a unique non-empty id");
+    }
+    seenIds.add(item.id);
 
-  const numericToken = clone(fixture);
-  numericToken.historical_periods[0].income_statement.revenue = 1000;
-  assertInvalid(validate, "JSON numeric token for Decimal field", numericToken);
+    if (typeof item.input !== "string" || typeof item.schema_valid !== "boolean") {
+      throw new Error("Corpus case " + item.id + " must declare input and schema_valid");
+    }
 
-  const unknownRootField = clone(fixture);
-  unknownRootField.unexpected_field = "must be rejected";
-  assertInvalid(validate, "unknown root field", unknownRootField);
+    const inputPath = path.resolve(rootDir, item.input);
+    if (!inputPath.startsWith(rootPrefix)) {
+      throw new Error("Corpus case " + item.id + " resolves outside the repository root");
+    }
 
-  const unknownNestedField = clone(fixture);
-  unknownNestedField.forecast_periods[0].assumptions.unapproved_driver = "1";
-  assertInvalid(validate, "unknown nested assumption", unknownNestedField);
+    const payload = readJson(inputPath);
+    const actualSchemaValidity = validate(payload);
+    if (actualSchemaValidity !== item.schema_valid) {
+      throw new Error(
+        "Schema expectation mismatch for " + item.id + ": expected " +
+        item.schema_valid + ", received " + actualSchemaValidity + "\\n" +
+        JSON.stringify(printErrors(validate.errors), null, 2)
+      );
+    }
 
-  const negativeZero = clone(fixture);
-  negativeZero.historical_periods[0].income_statement.net_income = "-0";
-  assertInvalid(validate, "negative zero", negativeZero);
+    console.log(
+      "PASS: " + item.id + " — JSON Schema " +
+      (actualSchemaValidity ? "ACCEPT" : "REJECT")
+    );
+  }
 
-  const excessiveScale = clone(fixture);
-  excessiveScale.forecast_periods[0].assumptions.dso =
-    "1.00000000000000000000000000000";
-  assertInvalid(validate, "29 fractional digits", excessiveScale);
-
-  const nonSyntheticSource = clone(fixture);
-  nonSyntheticSource.historical_periods[0].source.classification =
-    "public_filing";
-  assertInvalid(validate, "non-synthetic source in V1 schema", nonSyntheticSource);
-
-  const missingSourceReference = clone(fixture);
-  delete missingSourceReference.historical_periods[0].source.source_reference;
-  assertInvalid(
-    validate,
-    "missing historical source reference",
-    missingSourceReference
-  );
-
-  const invalidCalendarDate = clone(fixture);
-  invalidCalendarDate.historical_periods[0].end_date = "2023-02-30";
-  assertInvalid(validate, "invalid calendar date", invalidCalendarDate);
-
-  console.log("PASS: all model-input JSON Schema checks completed");
+  console.log("PASS: all " + corpus.cases.length + " shared contract corpus cases completed");
 }
-
 try {
   main();
 } catch (error) {
