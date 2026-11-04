@@ -4,7 +4,7 @@ use rust_decimal::Decimal;
 use serde_json::Value;
 
 use crate::diagnostics::{
-    Diagnostic, DiagnosticCategory, DiagnosticCode, InputStatus, ValidationReport,
+    Diagnostic, DiagnosticCategory, DiagnosticCode, ValidationReport,
 };
 use crate::domain::{
     BalanceSheet, CalendarDate, CashFlowStatement, ForecastAssumptions, HistoricalPeriod,
@@ -340,7 +340,7 @@ fn validate_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
         }
     }
 
-    if model.historical_periods.len() > 0 && model.forecast_periods.len() > 0 {
+    if !model.historical_periods.is_empty() && !model.forecast_periods.is_empty() {
         let last_historical_index = model.historical_periods.len() - 1;
         let first_forecast_index = model.historical_periods.len();
         if let (Some(last_historical), Some(first_forecast)) = (
@@ -1153,7 +1153,7 @@ fn validate_forecast_assumptions(model: &ModelInput, diagnostics: &mut Vec<Diagn
 
         require_minimum(
             assumptions.revenue_growth,
-            Decimal::NEGATIVE_ONE,
+            -Decimal::ONE,
             diagnostics,
             &format!("{pointer}/revenue_growth"),
             period_id,
