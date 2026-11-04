@@ -6,7 +6,7 @@
 **Version:** 1.0.0  
 **Last reviewed:** 2026-11-04
 
-This document translates OFRL Governance into GitHub repository controls. A policy written in Markdown does not itself activate a GitHub setting. The settings below must be configured and then verified in the repository.
+This document translates OFRL Governance into GitHub repository controls for a repository that remains under the Founder's personal GitHub account. A GitHub Organization is optional. A policy written in Markdown does not itself activate a GitHub setting; settings must be configured and verified in GitHub.
 
 ## 1. Current observed state
 
@@ -44,51 +44,62 @@ Configure a branch protection rule or repository ruleset targeting the exact def
 
 The Founder may merge a Founder-authored PR under Stage 0 because independent review is not available. The PR checklist and validation evidence remain mandatory. This must be described as a single-maintainer decision, not an independent approval.
 
-## 3. Stage 1 baseline — independent contributors and maintainers
-
-Before accepting ongoing external contributions:
+## 3. Stage 1 baseline — invited contributors under the personal account
 
 - Keep Pull Requests required for `main`.
-- Require at least one approval from an eligible person other than the PR author and the person who made the latest material push.
+- Continue to accept external work through forks and Pull Requests; a public repository does not require every contributor to become a repository collaborator.
+- Keep direct collaborator access limited to people who genuinely need write access and are trusted with it.
+- When an eligible independent reviewer has write permission, require one approval for material changes where the branch rule can be applied reliably. Do not configure a required approval when no eligible reviewer exists.
 - Dismiss stale approvals when new commits materially change the reviewed diff.
 - Require conversation resolution.
-- Require stable CI checks relevant to the changed code and documentation.
-- Enable Code Owner review only after `CODEOWNERS` reflects real, active domain ownership.
 - Prevent force pushes and deletion of the default branch.
-- Restrict direct write access to Maintainers; ordinary contributors should use forks or scoped write access where appropriate.
 - Do not use a bot, author, or nominal account to simulate an independent reviewer.
 
-For high-risk changes—licensing, data release, security boundaries, core financial calculations, numerical precision, public model claims, and governance—require an appropriate domain review. A second independent review is recommended where the impact is material and reviewer capacity allows.
+On a personal-account repository, GitHub has two permission levels: the owner and collaborators. Collaborators can read and push changes; private repositories owned by personal accounts cannot grant collaborators read-only access. Therefore, do not invite a person as a collaborator merely because they want to propose research or review a public Pull Request. Use fork-based contribution instead. See [GitHub's personal repository permission model](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/permission-levels-for-a-personal-account-repository).
 
-## 4. Stage 2 baseline — Organization-owned repository
+For high-risk changes—licensing, data release, security boundaries, core financial calculations, numerical precision, public model claims, and governance—seek appropriate domain review. The Founder remains accountable for the final merge unless authority is explicitly delegated.
 
-When the repository is transferred to a GitHub Organization:
+## 4. Stage 2 baseline — delegated Maintainers under the personal account
+
+- Apply the same default-branch controls as Stage 0 and Stage 1.
+- Appoint Maintainers by documented scope, not by informal title alone.
+- Grant collaborator write access only to trusted Maintainers who need it; do not use shared accounts.
+- Keep ordinary Contributors on fork-based Pull Requests.
+- Record which projects or technical domains each Maintainer may review and merge.
+- Keep policy, licensing, data-release, account ownership, and official publication decisions reserved to the Founder unless explicitly delegated.
+- Review collaborator access and delegated authority at least annually and whenever a role changes.
+
+This stage can continue indefinitely. If the personal-account permission model remains adequate, no Organization is required.
+
+## 5. Optional Stage 3 baseline — Organization-owned repository
+
+Use this only after a documented decision establishes a concrete need for centralized administration or finer permissions:
 
 - Apply Organization rulesets to the default branch and release tags where appropriate.
 - Use teams and least-privilege repository roles rather than broad member permissions.
-- Keep Organization Owner membership limited to people who need organization-wide control; establish at least two trusted Owners for continuity.
+- Keep Organization Owner membership limited to people who need organization-wide control; establish continuity without granting Owner access solely for convenience.
 - Restrict repository creation, deletion, transfer, and visibility changes to authorized roles.
 - Review Actions permissions, default token permissions, secrets, variables, environments, webhooks, deploy keys, packages, Pages, and third-party Apps.
 - Enable appropriate security features available under the Organization's plan.
 - Review access periodically and immediately after a Maintainer leaves or changes role.
 - Record material Organization-level exceptions and changes.
 
-GitHub organization roles and repository roles are separate. Organization Owner access should not be granted merely to allow someone to review or merge one repository.
-
-## 5. Required check selection procedure
+## 6. Required check selection procedure
 
 Do not guess check names.
 
-1. Open a representative Pull Request that changes the relevant code.
-2. Confirm that the intended workflow runs for that event and branch.
+1. Open representative Pull Requests for code, schema, fixture, and documentation changes.
+2. Confirm which workflows run for each path and event.
 3. Inspect the exact check-run names reported by GitHub.
-4. Confirm that the checks are stable, required for the affected scope, and do not depend on secrets unavailable to forked PRs.
-5. Select the exact check names in the branch protection rule or ruleset.
+4. Confirm that a check runs reliably for every Pull Request to which it will apply and does not depend on secrets unavailable to forked PRs.
+5. Select only the exact check names that are stable and applicable.
 6. Test a failing check and confirm it blocks merge; test a passing check and confirm the control behaves as intended.
+
+**Current OFRL caution:** the existing OFRL-IB-001 workflows use path filters. A documentation-only Pull Request may not run the same jobs as a model-code Pull Request. Do not make those path-filtered jobs globally required until a stable always-running gate or suitable required-workflow design exists. A required check that is skipped or never reported can leave a Pull Request blocked.
 
 A workflow that runs only on pushes to the default branch is not sufficient evidence that it protects Pull Requests.
 
-## 6. Configuration and verification record
+## 7. Configuration and verification record
 
 Maintain a short record when repository settings are changed:
 
@@ -105,9 +116,9 @@ Maintain a short record when repository settings are changed:
 
 Review the settings after changing the default branch, adding or changing workflows, moving to an Organization, changing repository visibility, or changing Maintainer roles.
 
-## 7. How to configure
+## 8. How to configure
 
-For branch protection, open the repository's **Settings → Branches** and add a branch protection rule for `main`. For rulesets, open **Settings → Rules → Rulesets** and create a branch ruleset targeting the default branch. GitHub's interface may change; verify the final rule's enforcement status after saving.
+For branch protection, open the repository's **Settings → Branches** and add a branch protection rule for `main`. For rulesets, open **Settings → Rules → Rulesets** and create a branch ruleset targeting the default branch. These controls are available for public repositories on GitHub Free. GitHub's interface may change; verify the final rule's enforcement status after saving.
 
 Official references:
 
@@ -118,6 +129,6 @@ Official references:
 - [Roles in an organization](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/roles-in-an-organization)
 - [Transferring a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository)
 
-## 8. Important limitation
+## 9. Important limitation
 
-This policy documents the required configuration and verification process. Repository settings must be changed through GitHub's repository or Organization settings by an authorized administrator. A Pull Request that adds this document does not enable branch protection, required reviews, or other platform controls by itself.
+This policy documents the required configuration and verification process. Repository settings must be changed through GitHub's repository settings by the account owner or an authorized administrator. Organization controls apply only if OFRL later elects to transfer the repository. A Pull Request that adds this document does not enable branch protection, required reviews, or other platform controls by itself.
