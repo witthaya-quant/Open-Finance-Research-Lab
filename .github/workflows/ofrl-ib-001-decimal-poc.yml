@@ -50,46 +50,25 @@ jobs:
           rustc --version
           cargo --version
 
-      # Temporary audit instrumentation: generate with the declared MSRV, capture
-      # the real Cargo-resolved lockfile, and inspect the resolved dependency metadata.
-      - name: Bootstrap and inspect isolated POC lockfile (temporary)
-        if: matrix.rust == '1.85.0'
+      - name: Verify frozen dependency graph
         run: |
           set -euo pipefail
-          cargo generate-lockfile
-          cargo metadata --locked --format-version 1 > /tmp/ofrl-poc-metadata.json
-          cargo tree --locked --edges normal,build,dev > /tmp/ofrl-poc-dependency-tree.txt
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          data = json.loads(Path("/tmp/ofrl-poc-metadata.json").read_text())
-          packages = sorted(data["packages"], key=lambda p: (p["name"], p["version"]))
-          print("=== RESOLVED PACKAGE INVENTORY ===")
-          for package in packages:
-              source = package.get("source") or "workspace"
-              license_expr = package.get("license") or "UNDECLARED"
-              print(f'{package["name"]}=={package["version"]} | license={license_expr} | source={source}')
-          print("=== PACKAGE COUNT ===")
-          print(len(packages))
-          PY
-          echo "=== OFRL_POC_CARGO_LOCK_BASE64_BEGIN ==="
-          base64 -w0 Cargo.lock
-          echo
-          echo "=== OFRL_POC_CARGO_LOCK_BASE64_END ==="
+          cargo metadata --locked --format-version 1 > /dev/null
+          cargo tree --locked --edges normal,build,dev
 
       - name: Check formatting
         run: cargo fmt -- --check
 
       - name: Run Clippy
-        run: cargo clippy --all-targets -- -D warnings
+        run: cargo clippy --locked --all-targets -- -D warnings
 
       - name: Run tests
-        run: cargo test --all-targets -- --nocapture
+        run: cargo test --locked --all-targets -- --nocapture
 
       - name: Build documentation
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: cargo doc --no-deps
+        run: cargo doc --locked --no-deps
 
   model-input-schema:
     name: Model input JSON Schema

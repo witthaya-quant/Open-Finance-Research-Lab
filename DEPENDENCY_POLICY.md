@@ -59,7 +59,7 @@ An isolated package excluded from the main Cargo workspace is a separate depende
 - Do not assume the workspace lockfile governs an excluded package.
 - Label POC conclusions as conditional on the tested lockfile, toolchain, features, and test coverage.
 
-The OFRL-IB-001 Decimal POC is a separate package. Its dependency review identifies that no POC-local lockfile was committed at the audit snapshot; that Rust lockfile gap remains open and is tracked for remediation.
+The OFRL-IB-001 Decimal POC is a separate package with its own `Cargo.lock`, generated from its own manifest. Its CI validates the frozen graph with `cargo metadata --locked` and `cargo tree --locked`, then runs Clippy, tests, and documentation with `--locked` on the declared MSRV and the newer compatibility toolchain. The lockfile does not replace source-level licence/security review or release SBOM generation.
 
 ### 4.3 JavaScript / Node validation tools
 
