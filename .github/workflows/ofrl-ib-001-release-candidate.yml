@@ -135,7 +135,7 @@ jobs:
             --git https://github.com/CycloneDX/cyclonedx-rust-cargo.git \
             --rev "$SBOM_GENERATOR_REV" \
             --locked \
-            --package cargo-cyclonedx \
+            cargo-cyclonedx \
             --root "$RUNNER_TEMP/cyclonedx-generator"
           echo "$RUNNER_TEMP/cyclonedx-generator/bin" >> "$GITHUB_PATH"
           export PATH="$RUNNER_TEMP/cyclonedx-generator/bin:$PATH"
