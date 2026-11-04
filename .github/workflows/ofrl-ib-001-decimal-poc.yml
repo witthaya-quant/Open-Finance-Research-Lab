@@ -1,0 +1,66 @@
+name: OFRL-IB-001 Decimal Contract POC
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ofrl-ib-001-decimal-poc.yml"
+      - "projects/OFRL-IB-001/poc/decimal-contract/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ofrl-ib-001-decimal-poc.yml"
+      - "projects/OFRL-IB-001/poc/decimal-contract/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ofrl-ib-001-decimal-contract
+  cancel-in-progress: true
+
+jobs:
+  decimal-contract:
+    name: Decimal and JSON/CSV contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: projects/OFRL-IB-001/poc/decimal-contract
+
+    steps:
+      # actions/checkout v7.0.1, pinned to its verified release commit.
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install Rust stable toolchain
+        working-directory: .
+        run: |
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://sh.rustup.rs \
+              | sh -s -- -y --profile minimal
+          fi
+          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+          rustup default stable
+          rustc --version
+          cargo --version
+
+      - name: Check formatting
+        run: cargo fmt -- --check
+
+      - name: Run Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Run tests
+        run: cargo test --all-targets -- --nocapture
+
+      - name: Build documentation
+        env:
+          RUSTDOCFLAGS: "-D warnings"
+        run: cargo doc --no-deps
