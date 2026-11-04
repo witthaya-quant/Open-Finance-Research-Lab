@@ -10,7 +10,7 @@ The objective is not to maximise the number of notebooks or commits. It is to pr
 
 ## Before opening a contribution
 
-For a new research direction, use the GitHub [Research Proposal issue form](.github/ISSUE_TEMPLATE/research_proposal.yml) or the reusable [Research Proposal Template](templates/RESEARCH_PROPOSAL_TEMPLATE.md). Open an issue or discussion with:
+For a new project or research direction, use the GitHub [Project / Research Proposal issue form](.github/ISSUE_TEMPLATE/research_proposal.yml) or the reusable [Research Proposal Template](templates/RESEARCH_PROPOSAL_TEMPLATE.md). An approved project must be created from the [Project Charter Template](templates/PROJECT_CHARTER_TEMPLATE.md), registered with the [Project Manifest Template](templates/PROJECT_MANIFEST_TEMPLATE.json), and listed in the [Project Catalog](PROJECT_CATALOG.md). Project IDs are assigned by the Founder; contributors must not invent or reuse IDs. Open an issue or discussion with:
 
 1. The problem and why it matters.
 2. The proposed research question.
@@ -35,7 +35,7 @@ For a code contribution, explain the problem being solved, the approach taken, t
 
 ## Research contributions
 
-Substantial research contributions should follow [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md). A proposal does not need to be fully developed before discussion, but it should make the intended question and evidence requirements clear.
+All projects must follow [PROJECT_LIFECYCLE.md](PROJECT_LIFECYCLE.md) and [PROJECT_STANDARDS.md](PROJECT_STANDARDS.md). Research contributions also follow [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md); software, data, benchmark, prototype, and infrastructure contributions follow the additional profiles applicable to their manifest. A proposal does not need to be fully developed before discussion, but it should make the intended question, scope, risk, data rights, and evidence requirements clear.
 
 OFRL welcomes established methods, alternative methods, independent implementations, replications, and well-reasoned challenges to existing work. A contributor does not need to agree with the founder or the current project approach to participate.
 
