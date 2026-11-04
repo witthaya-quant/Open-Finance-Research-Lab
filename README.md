@@ -2,26 +2,19 @@
 
 # Open Finance Research Lab (OFRL)
 
-**Open Knowledge. Rigorous Research. Practical Finance.**
+**Financial Research · Quantitative Methods · Software Engineering**
 
 [![Code: Apache-2.0](https://img.shields.io/badge/Code-Apache--2.0-blue.svg)](LICENSE) [![Docs: CC BY 4.0](https://img.shields.io/badge/Docs-CC--BY--4.0-lightgrey.svg)](LICENSE-docs)
 
-OFRL is an independent, founder-led research initiative focused on financial modelling, quantitative finance, investment research, financial engineering, risk analytics, and computational methods.
+OFRL is an independent finance research and software engineering initiative established by Kenny. It covers financial modelling, quantitative finance, investment research, financial engineering, risk analytics, and the software used to investigate these subjects.
 
-I started OFRL with a straightforward objective: build finance research that can be examined, reproduced, challenged, and improved. I am interested in the reasoning behind a model—not only its output. That means making assumptions explicit, showing the mathematics where it matters, testing implementation integrity, and being honest about limitations.
+## Why I started OFRL
 
-The research agenda is grounded in practical financial questions and developed with the discipline of a research process. Industry requirements can help identify relevant problems, but each project must stand on its own: a clear research question, an independently designed methodology, defensible evidence, and reproducible results.
+My work in financial markets began in 2012. Since then, I have worked across proprietary trading, market-making, and the development of financial products. Those experiences shaped the way I approach financial problems: understand the mechanics, make assumptions explicit, test how a model behaves, and be clear about what the results do—and do not—tell us.
 
-## What OFRL is here to do
+I created OFRL to develop and share this work in a form that other people can inspect, challenge, reproduce, and build on. The research questions and direction come from my own interests, experience, and judgement. Software engineering is how I turn those questions into models and tools that can be tested and improved.
 
-- Develop transparent financial models and quantitative research.
-- Connect financial theory, mathematical methods, and working implementations.
-- Examine methods across both buy-side and sell-side disciplines.
-- Turn relevant industry skill requirements into independent, public research questions.
-- Establish practical standards for model validation, data quality, and reproducibility.
-- Encourage constructive criticism, replication, and collaboration.
-
-OFRL is a research initiative—not a signal service, copy-trading operation, investment newsletter, or performance leaderboard. A research result is not automatically a trading edge or an investment recommendation.
+I am deliberately building deeper systems-engineering capability with Rust. The aim is to apply it to real financial software and, as the work matures, contribute reusable components and improvements to the wider Rust ecosystem. I would rather release a small component that solves a real problem than publish abstractions before they are ready.
 
 ## Research areas
 
@@ -38,33 +31,62 @@ OFRL is a research initiative—not a signal service, copy-trading operation, in
 | **Financial Data Science & Machine Learning** | Statistical learning, regime analysis, financial data engineering, financial NLP |
 | **Research Methodology & Model Validation** | Statistical testing, robustness, model risk, sensitivity analysis, reproducibility |
 
-Research methodology and validation are cross-cutting requirements. They apply to every area rather than serving as a final box to tick.
+Research methodology and model validation apply across all areas. They are part of how work is done, not a separate step added just before publication.
 
-## From industry requirements to independent research
+## How projects take shape
 
-OFRL uses an **Industry-to-Research** approach:
+Industry requirements are one source of research questions. I review publicly available job requirements, identify the underlying financial, quantitative, and engineering skills, then use those skills to frame independent projects.
 
-1. **Observe** — review publicly available role requirements and recurring industry skill demands.
-2. **Translate** — identify the underlying financial, mathematical, analytical, and engineering competencies.
-3. **Formulate** — turn those competencies into independent research questions and testable hypotheses.
-4. **Build** — develop a model, analytical method, or computational implementation.
-5. **Validate** — test correctness, sensitivity, robustness, and known failure modes.
-6. **Publish** — document the method, evidence, assumptions, limitations, and reproduction steps.
+The work should move through a clear sequence:
 
-Job descriptions are inputs for competency analysis, not material to copy. Research projects are independently framed and developed. OFRL does not publish confidential employer material or reproduce proprietary work.
+1. Define the financial or technical problem.
+2. Review the relevant theory, methods, and prior work.
+3. State assumptions and design the model.
+4. Implement the method and test its behaviour.
+5. Examine edge cases, limitations, and alternative explanations.
+6. Publish the method and results in a form others can reproduce.
 
-## How research is evaluated
+Job descriptions are used to understand skills and industry needs; their text is not copied into OFRL publications. Confidential employer material, client information, and proprietary trading strategies do not belong in public repositories.
 
-A project should make it possible for another person to understand:
+## Engineering approach
 
-- What question is being investigated and why it matters.
-- Which theory, equations, assumptions, and data support the work.
+Rust is the main implementation language for OFRL's financial software. In the current project, it is intended for the calculation model, validation logic, command-line tools, and reusable components.
+
+Inputs and outputs should have documented schemas and stable conventions. Financial calculations should be testable independently of the reporting layer. Spreadsheets may be useful for analyst review and presentation, but the calculation rules need a clearly identified source of truth.
+
+Other tools may be used where they add a specific benefit—for example, data inspection, independent comparisons, or interoperability. They should support the research rather than create competing implementations of the same financial logic.
+
+As components become generally useful beyond one project, I intend to consider publishing them for the wider Rust community. A separate crate should have a stable purpose, a clear API, tests, documentation, and a reason to exist independently.
+
+## Current research programme
+
+### OFRL-IB-001 — Integrated Three-Statement Financial Model
+
+**Status:** Proposed — specification stage.
+
+The first project is a financial model for a generic non-financial operating company. The plan is to implement the calculation engine and validation suite in Rust, then provide an Excel report for finance practitioners. The Rust implementation will be the reference for the calculations.
+
+- [Project overview](projects/OFRL-IB-001/README.md)
+- [Research specification](projects/OFRL-IB-001/RESEARCH_SPECIFICATION.md)
+- [Model conventions](projects/OFRL-IB-001/MODEL_CONVENTIONS.md)
+- [Engineering architecture](projects/OFRL-IB-001/ENGINEERING_ARCHITECTURE.md)
+- [Validation matrix](projects/OFRL-IB-001/VALIDATION_MATRIX.md)
+- [Decision log](projects/OFRL-IB-001/DECISION_LOG.md)
+
+No calculation engine or workbook is claimed to be complete at this stage.
+
+## Research standards
+
+A published project should show:
+
+- The question being investigated and why it matters.
+- The relevant theory, equations, assumptions, and data.
 - How the model or analysis was implemented.
-- Which tests were performed and what they establish.
+- Which tests were performed and what those tests establish.
 - Where the method works, where it fails, and what remains uncertain.
-- How the results can be reproduced.
+- How another person can reproduce the work.
 
-OFRL uses evidence-maturity levels to describe the state of a project:
+OFRL records evidence maturity so that an exploratory result is not presented as a validated finding.
 
 | Level | Meaning |
 |---|---|
@@ -74,52 +96,40 @@ OFRL uses evidence-maturity levels to describe the state of a project:
 | **3 — Robustness validated** | Relevant sensitivity, robustness, and failure-mode checks have been completed |
 | **4 — Independently replicated** | An independent contributor has reproduced the principal result |
 
-These levels describe the maturity of evidence. They do **not** certify profitability, guarantee predictive power, or imply academic peer review.
+These levels describe evidence maturity. They do not certify profitability, guarantee predictive power, or imply academic peer review.
 
-## Initial research priority
+## Principles
 
-The first planned flagship project is an **Integrated Three-Statement Financial Model**.
-
-The objective is to build a transparent model linking the Income Statement, Balance Sheet, and Cash Flow Statement, supported by schedules for working capital, debt, depreciation and amortisation, and operating assumptions. Automated checks will test accounting identities and model integrity.
-
-The work is intended to provide a sound foundation for later research in DCF valuation, scenario analysis, capital structure, LBO, and M&A modelling. This is an initial research priority, not a claim that the project is already complete.
-
-## Research principles
-
-1. **Substance over presentation.** A polished chart or notebook is not evidence by itself.
-2. **Assumptions are visible.** Material assumptions must be stated and justified.
-3. **Validation is part of the model.** Tests and failure analysis are designed alongside the implementation.
-4. **Negative results matter.** A well-supported result that a method does not work is a useful contribution.
-5. **Reproducibility matters.** Data provenance, versions, dependencies, and execution steps should be documented.
-6. **Evidence is not advice.** Empirical findings must be distinguished from investment recommendations.
-7. **Respect data rights.** Public availability does not automatically permit redistribution or commercial reuse.
-8. **Protect legitimate proprietary work.** OFRL does not publish confidential information, client data, or private trading strategies.
+- **Show the work.** Make assumptions, calculations, and sources visible.
+- **Test the mechanics.** A model that runs is not necessarily a model that is correct.
+- **Report the limitations.** Negative and inconclusive findings are part of research.
+- **Respect data rights.** Public access does not automatically permit redistribution.
+- **Separate evidence from advice.** Research outputs are not personalised investment recommendations.
+- **Keep proprietary work private.** Do not publish confidential information, client data, or private trading strategies.
 
 ## Licensing
 
 OFRL uses separate licences by content type:
 
-- **Software, source code, and computational financial models:** Apache-2.0.
+- **Software, source code, tests, and computational financial models:** Apache-2.0.
 - **Research writing, documentation, specifications, and explanatory materials:** CC BY 4.0.
 - **Data:** source-specific rights; original OFRL synthetic research datasets are CC BY 4.0 by default.
 
-See [LICENSE](LICENSE), [LICENSE-docs](LICENSE-docs), [LICENSE_POLICY.md](LICENSE_POLICY.md), and [DATA_POLICY.md](DATA_POLICY.md). Third-party materials are not relicensed by OFRL.
+See [LICENSE](LICENSE), [LICENSE-docs](LICENSE-docs), [LICENSE_POLICY.md](LICENSE_POLICY.md), and [DATA_POLICY.md](DATA_POLICY.md). Third-party materials remain subject to their own terms.
 
 ## Collaboration
 
-OFRL welcomes thoughtful research proposals, technical discussion, constructive review, and independent replication. Contributions should be clear about their sources, assumptions, limitations, and the work performed by each contributor.
+I welcome research proposals, technical discussion, careful review, and independent replication. Contributions should identify their sources, assumptions, limitations, and the work performed by each contributor.
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md) and the [research standards](RESEARCH_STANDARDS.md). For the current position on reuse and licensing, read [LICENSE_POLICY.md](LICENSE_POLICY.md).
+Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md).
 
 ## Founder
 
 **Kenny**  
 Founder, Open Finance Research Lab
 
-I set the research direction, define the questions worth investigating, and take responsibility for the assumptions, validation criteria, and conclusions published under this initiative. The standard is not whether a model looks impressive; it is whether its reasoning and evidence can withstand scrutiny.
+OFRL reflects the questions I choose to investigate and the standards I expect of the work. My responsibility is to set the direction, understand the assumptions, and stand behind the methods and conclusions published here.
 
 ---
 
-*OFRL is an independent research initiative. Unless a project states otherwise, published research is educational and analytical in nature and is not personalised investment, legal, tax, or financial advice.*
-
-© 2026 Kenny and individual contributors. Original OFRL material in this repository is licensed under Apache-2.0.
+*OFRL is an independent research initiative. Its publications are educational and analytical in nature and are not personalised investment, legal, tax, or financial advice.*
