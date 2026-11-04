@@ -97,7 +97,7 @@ function isObject(value) {
 
 function existsWithin(projectDir, relativePath) {
   if (typeof relativePath !== "string" || relativePath.length === 0) return false;
-  if (relativePath.startsWith("/") || relativePath.includes("\\\\")) return false;
+  if (relativePath.startsWith("/") || relativePath.includes(String.fromCharCode(92))) return false;
 
   const resolved = path.resolve(projectDir, relativePath);
   const relative = path.relative(projectDir, resolved);
