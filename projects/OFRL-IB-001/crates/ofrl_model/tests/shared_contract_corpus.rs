@@ -1,6 +1,7 @@
 use ofrl_model::{validate_input_json, DiagnosticCode, InputStatus};
 use serde::Deserialize;
 use std::fs;
+use std::path::Path;
 
 const CORPUS: &str =
     include_str!("../../../../../fixtures/contracts/ofrl-ib-001-shared-corpus.v0.1.0.json");
@@ -29,8 +30,15 @@ fn shared_contract_corpus_matches_rust_runtime_expectations() {
     assert!(!corpus.cases.is_empty());
 
     for case in corpus.cases {
-        let input = fs::read_to_string(&case.input)
-            .unwrap_or_else(|error| panic!("{}: cannot read {}: {error}", case.id, case.input));
+        let repository_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../../");
+        let input_path = repository_root.join(&case.input);
+        let input = fs::read_to_string(&input_path).unwrap_or_else(|error| {
+            panic!(
+                "{}: cannot read {}: {error}",
+                case.id,
+                input_path.display()
+            )
+        });
         let report = validate_input_json(&input);
 
         let expected_status = match case.runtime_status.as_str() {
