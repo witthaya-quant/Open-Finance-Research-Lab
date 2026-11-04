@@ -2,21 +2,23 @@
 
 # OFRL-IB-001 — Engineering Audit
 
-**Audit version:** 0.4.0  
+**Audit version:** 0.5.0  
 **Audit date:** 2026-11-04  
-**Production baseline:** `main` at `abd5d5f439f85805ac732d147f5d42d48cabc2aa`  
+**Production baseline:** `main` at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design and CLI changes:** PR #13, open Draft; code and documentation baseline `6941b1f1e2d4b6270fd8cf6d62327b4417d0486b` passed all five applicable project check contexts  
-**Status:** Evidence-based audit; all open PR evidence is distinguished from merged production capability
+**System-design, CLI hardening and Numeric Profile derivation:** PR #13, open Draft; implementation baseline `6941b1f1e2d4b6270fd8cf6d62327b4417d0486b` passed all five applicable project contexts; later changes are documentation-only  
+**Status:** Evidence-based audit at main `cc2d01b`; merged governance and supply-chain controls are distinguished from branch-local OFRL-IB-001 implementation evidence
 
 ## 1. Executive assessment
 
 OFRL-IB-001 has progressed beyond a basic input-validator prototype. The main branch contains a versioned input contract, a strict Decimal-string boundary, historical accounting validation, a deterministic synthetic case, a Rust library/CLI and a two-toolchain CI matrix.
 
-The open research PR #11 materially improves the evidence base: it contains a five-year independent exact-rational baseline, four independent edge scenarios, a standard-library Python reference that checks 800 exact expected outputs, and project-scoped CycloneDX/RustSec automation. A new runtime-cost observation harness has also been added to that branch. These are meaningful research deliverables, but they remain unmerged and do not select a production arithmetic backend.
+The open research PR #11 materially improves the numeric evidence base: it contains a five-year independent exact-rational baseline, four independent edge scenarios, a standard-library Python reference that checks 800 exact expected outputs, candidate arithmetic comparisons and point-in-time CycloneDX/RustSec evidence. Its runtime-cost harness is observational and non-gating. PR #11 remains Draft and does not select a production arithmetic backend. PR #12 remains Draft and contains the isolated schema-validator toolchain lockfile.
 
-The system is **not yet a production forecast model**. The production Rust workspace still validates inputs and historical relationships only. It does not calculate the five forecast years, produce a canonical ModelRun, evaluate Structural Integrity / Scenario Feasibility for calculated results, produce deterministic provenance, or generate an XLSX report.
+Repository governance and supply-chain controls are now on `main` following PR #14, which integrated the reviewed PR #18 / #20 / #22 sequence. The active Ruleset and its six required checks were re-read after merge. Documentation-only and project-code smoke PRs (#24 and #27) each reported and passed all six exact required contexts, then were closed without merge. These changes improve repository controls; they do not create a production forecast engine.
+
+The system is **not yet a production forecast model**. The production Rust workspace still validates inputs and historical relationships only. It does not calculate the five forecast years, produce a canonical ModelRun, evaluate Structural Integrity / Scenario Feasibility for calculated results, produce deterministic provenance, or generate an XLSX report. PR #13 remains Draft and contains branch-local input hardening, shared contract corpus, system design and numeric derivation work.
 
 The principal remaining risk is not simply a lack of code. It is the unresolved boundary between (a) evidence that software follows the currently written equations and (b) approval that those equations, conventions, numeric limits and reporting treatments are appropriate for the declared modelling purpose. The implementation must preserve that distinction.
 
@@ -26,14 +28,13 @@ This audit covers only OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`
 
 | Evidence | Current status | Interpretation |
 |---|---|---|
-| `main` | Merged baseline at `abd5d5f` | Authoritative production code currently available on the default branch; input and historical validation only |
-| PR #11 — numeric research | Open, Draft; head `120ccd3414` | 800 independent exact-rational expected outputs, candidate arithmetic comparison, SBOM/RustSec research and non-gating timing; not production approval |
-| PR #12 — schema tooling | Open, Draft; head `c38f9ad50` | Reproducible Node/AJV toolchain and package lockfile; schema/Rust parity is supplied separately in PR #13 |
-| PR #13 — audit/design/CLI | Open, Draft; baseline head `6941b1f` | Engineering audit, system design, roadmap, Numeric Profile worksheet, bounded CLI reader and shared contract corpus; all five applicable project check contexts passed on that head; `repository-policy` is not yet available from current main |
-| PR #14 — repository foundation | Open, non-Draft; base `main` | Introduces governance and the always-running `repository-policy` workflow; all six expected workflow groups passed on its inspected head |
-| PR #18 — portfolio controls | Open, non-Draft; stacked on PR #14 | Hardens registry/data controls, removes path filters from project workflows and removes mutable Rust bootstrap fallback; all six required checks passed on its inspected head |
-| PR #20 — Decimal POC lockfile | Open, non-Draft; stacked on PR #18 | Adds the isolated POC lockfile and locked CI commands; all six required checks passed on its inspected head |
-| PR #22 — SBOM preview | Open, non-Draft; stacked on PR #20 | Adds a Linux-targeted CLI SBOM/checksum preview only; seven checks/jobs passed on its inspected head; not an official release |
+| `main` | Governance merge `cc2d01b` | Input/history validator plus active Ruleset, repository policy workflow, portfolio/data controls, unfiltered OFRL CI, isolated Decimal POC lockfile and preview-only Linux CLI SBOM |
+| Ruleset / required contexts | Active; exactly six required contexts | Read back from Rulesets API after merge; no bypass actors; strict up-to-date and conversation-resolution rules |
+| PR #24 documentation smoke test | Closed without merge | All six required contexts passed on a documentation-only PR targeting current main |
+| PR #27 project-code smoke test | Closed without merge | All six required contexts passed on a project-code PR targeting current main |
+| PR #11 — numeric research | Open, Draft; head `120ccd3414` | 800 independent exact-rational expected outputs, candidate arithmetic comparison, point-in-time SBOM/RustSec and non-gating timing; no production backend approval |
+| PR #12 — schema tooling | Open, Draft; head `c38f9ad50` | Pinned Node/AJV toolchain and package lockfile; tooling change remains branch-local |
+| PR #13 — audit/design/CLI/numeric derivation | Open, Draft; head `8479193` | Engineering audit, system design, roadmap, bounded CLI reader, shared corpus and symbolic Numeric Profile derivation; branch is behind/diverged from current main and needs synchronization |
 | Finance/accounting review | Not evidenced | No independent sign-off is claimed |
 | Production Forecast Engine | Not implemented | Must remain gated |
 
@@ -50,12 +51,18 @@ A CI pass applies only to the exact commit and workflow scope that ran. It does 
 | Historical accounting | Opening/historical Balance Sheet, Income Statement, Cash Flow Statement and selected NWC, PP&E, debt and retained-earnings roll-forwards |
 | CLI baseline | `validate <input.json>`; no production forecast or export command |
 | Build reproducibility | Production Cargo.lock and two-toolchain CI |
+| Repository governance | Active main Ruleset, PR requirement, no bypass actors, required conversation resolution and six exact required contexts |
+| Repository policy | Always-running `repository-policy` workflow validates local Markdown links, JSON/YAML, project manifests/registry and policy contracts |
+| Portfolio/data controls | Project lifecycle/standards, project manifest schema, repository registry checks and OFRL-IB-001 data manifest |
+| OFRL validation CI | Decimal and semantic validation workflows execute for all Pull Requests on Rust 1.85.0 and 1.99.1 |
+| Decimal POC supply chain | Isolated POC Cargo.lock and locked metadata/tree/Clippy/test/docs commands |
+| CLI SBOM preview | Preview-only CycloneDX 1.5 SBOM and checksum bundle for the current Linux CLI input validator; not a forecast-model release |
 | Calculation engine | Not implemented |
 | Canonical ModelRun / provenance | Not implemented |
 | Forecast integrity / feasibility | Not implemented |
 | XLSX reporting | Not implemented |
 
-The bounded input reader (1 MiB limit, max-plus-one byte read, UTF-8 rejection and four tests) exists on PR #13's branch. It is not on `main` until reviewed and merged.
+The bounded CLI input reader (1 MiB limit, max-plus-one byte read, UTF-8 rejection and regression tests) and the versioned shared Schema/Rust corpus exist on PR #13's branch only. They are not on `main` until PR #13 is synchronized, reviewed, passes all six required contexts and is merged.
 
 ## 4. Updated assessment of research evidence in PR #11
 
@@ -146,7 +153,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Blocker before production dependency approval
 
-**Evidence:** PR #20 adds a committed, isolated Decimal Contract POC lockfile and locked CI on its open branch. PR #22 adds a checksum-verified preview SBOM for the implemented CLI on one Linux target. Neither PR completes source-level licence/notice acceptance or security disposition for an official distributable release.
+**Evidence:** PRs #20 and #22 are merged to `main` through PR #14's governance/supply-chain sequence. The isolated Decimal Contract POC lockfile and locked CI are now on main. The preview-only CLI SBOM/checksum workflow is also on main and covers the current CLI input validator for one Linux target. Neither establishes source-level licence/notice acceptance or security disposition for an official distributable release.
 
 **Risk:** A lockfile, publisher-declared licence field, SBOM or clean point-in-time advisory scan does not establish source trust, legal compatibility, notice obligations, exploitability, maintainability or absence of defects.
 
@@ -252,15 +259,15 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Disposition:** Add a clean-checkout reproduction script/instructions, identify environment and versions, verify hashes and artifacts, and record an independent reproduction report before a reproducible-release claim.
 
-### EA-15 — Required repository-policy check is not yet available on the current main branch
+### EA-15 — Required repository-policy context and main-branch workflow integration
 
-**Severity:** Major merge-sequencing blocker
+**Severity:** Major — RESOLVED on 2026-11-04
 
-**Evidence:** The active main Ruleset (ID `26516806`) is configured with exactly six required GitHub Actions contexts, including `repository-policy`. The `.github/workflows/repository-policy.yml` workflow is present on PR #14's branch and the hardened workflow changes are on stacked PR #18, but the workflow file is not yet present on the current `main` commit. PR #13 consequently reports the five OFRL-specific contexts but no `repository-policy` check on its current branch head; the latest five completed contexts all passed.
+**Evidence:** PR #14 (including the reviewed PR #18 / #20 / #22 sequence) was merged to `main` as `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`. The active Ruleset ID `26516806` was re-read after merge and still contains exactly the six intended GitHub Actions contexts. The repository-policy workflow is present on main and the two OFRL project workflows no longer use path filters. Documentation-only PR #24 and project-code PR #27, both targeting the post-merge main, each reported and passed all six required contexts. Both temporary smoke PRs were closed without merging.
 
-**Risk:** A PR targeting `main` cannot demonstrate every required check while the required workflow has not yet been integrated into the protected base branch. Weakening the Ruleset or renaming/removing the required context would conceal a publication-order problem rather than solve it.
+**Original risk:** A required context that is absent from the protected base workflow set can leave PRs blocked. Weakening the Ruleset would have concealed the publication-order problem.
 
-**Disposition:** Preserve all six required checks. Complete the reviewed governance/supply-chain branch sequence so the always-running repository policy workflow is integrated into `main`; then verify a fresh documentation-only and project-code PR both report all six exact contexts. Keep PR #13 Draft until the base-branch workflow dependency and its own review/acceptance gates are satisfied.
+**Disposition:** RESOLVED. Keep all six contexts unchanged. Repeat the API read-back and representative documentation/project-code smoke tests after material workflow or Ruleset changes. PR #13 still needs to synchronize with current main and pass its own six-context checks; that is a branch freshness/merge-base task, not a remaining governance dependency.
 
 ## 6. Numeric tolerance interpretation
 
@@ -281,11 +288,11 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 | Numeric Profile | Approved finite bounds, formula-chain headroom, source scale, precision, rounding and separate error budgets | OPEN — symbolic derivation complete; all unbounded Model Owner inputs remain TBD |
 | Production arithmetic backend | Profile-based comparison, explicit run-scoped context, serialization and controlled resource evidence | OPEN — no backend selected; POC observations are insufficient |
 | Independent finance/accounting review | Written independent review and disposition of equations, conventions and edge cases | OPEN — not evidenced |
-| Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — PR #20/#22 merged into PR #18 branch; not on main; source/legal and release review open |
+| Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — lockfile and preview SBOM workflow are on main; source-level licence/security and official release review remain open |
 | Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR — research evidence only |
-| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | IMPLEMENTED IN OPEN PR #13 — five applicable project contexts pass on head `6941b1f`; not merged |
+| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | IMPLEMENTED ON PR #13 BRANCH — test baseline passed both Rust toolchains; branch is unmerged and needs six-context CI after synchronization |
 | Typed diagnostics | Stable error variants and JSON Pointer for deserialization failures | OPEN — message-substring mapping remains |
-| Repository required checks | All six Ruleset contexts available on main and reported on fresh PRs | OPEN — corrected workflow stack is under PR #18 / PR #14; main still needs integration and smoke tests |
+| Repository required checks | All six Ruleset contexts available on main and reported on fresh PRs | PASS — post-merge read-back plus documentation-only PR #24 and project-code PR #27 both passed 6/6 |
 | Production forecast engine | Typed Rust schedules and three statements | NOT STARTED — gated |
 | Forecast integrity/feasibility | SI/SF/reportability results over all periods | NOT STARTED |
 | ModelRun provenance | Canonical serialization, SHA-256 and metric lineage | NOT STARTED |
@@ -307,4 +314,4 @@ The next implementation increment should not be a speculative production forecas
 9. Generate XLSX solely from canonical outputs and reconcile it.
 10. Complete clean-checkout reproduction and release review.
 
-No research POC or green CI run is to be represented as production financial-model approval. This audit authorizes work only within OFRL-IB-001.
+No research POC, SBOM preview or green CI run is to be represented as production financial-model approval. Governance controls are merged; Numeric Profile, backend selection and independent Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
