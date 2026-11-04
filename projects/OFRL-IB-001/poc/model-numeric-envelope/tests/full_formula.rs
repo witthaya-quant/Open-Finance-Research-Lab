@@ -122,6 +122,8 @@ fn all_candidates_match_case_a_at_the_two_decimal_test_boundary() {
     assert_eq!(arbitrary_summary.compared_values, 160);
     assert_eq!(fixed_summary.display_mismatches, 0);
     assert_eq!(arbitrary_summary.display_mismatches, 0);
+    assert_ne!(fixed_summary.maximum_absolute_error, "0/1");
+    assert_ne!(arbitrary_summary.maximum_absolute_error, "0/1");
 }
 
 #[test]
