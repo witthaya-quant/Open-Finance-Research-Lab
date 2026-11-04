@@ -35,10 +35,6 @@ function readJson(filePath) {
   }
 }
 
-function clone(value) {
-  return JSON.parse(JSON.stringify(value));
-}
-
 function printErrors(errors) {
   return (errors || []).map((error) => ({
     instancePath: error.instancePath,
@@ -49,29 +45,70 @@ function printErrors(errors) {
   }));
 }
 
-function assertValid(validate, label, payload) {
-  const valid = validate(payload);
-  if (!valid) {
+function assertExpectedKeys(value, expectedKeys, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(label + " must be a JSON object");
+  }
+
+  const actualKeys = Object.keys(value).sort();
+  const sortedExpected = [...expectedKeys].sort();
+  if (
+    actualKeys.length !== sortedExpected.length ||
+    actualKeys.some((key, index) => key !== sortedExpected[index])
+  ) {
     throw new Error(
-      label + " unexpectedly failed:\n" +
-      JSON.stringify(printErrors(validate.errors), null, 2)
+      label + " has an invalid property set; expected " +
+      sortedExpected.join(", ") + "; received " + actualKeys.join(", ")
     );
   }
-  console.log("PASS: " + label);
 }
 
-function assertInvalid(validate, label, payload) {
-  const valid = validate(payload);
-  if (valid) {
-    throw new Error(label + " unexpectedly passed schema validation");
+function isWithin(parentPath, candidatePath) {
+  const relative = path.relative(parentPath, candidatePath);
+  return relative === "" ||
+    (!relative.startsWith(".." + path.sep) &&
+      relative !== ".." &&
+      !path.isAbsolute(relative));
+}
+
+function resolveFixturePath(rootPath, fixturesPath, input, caseId) {
+  if (
+    typeof input !== "string" ||
+    input.length === 0 ||
+    input.includes("\\") ||
+    path.posix.isAbsolute(input)
+  ) {
+    throw new Error(caseId + " must use a non-empty relative POSIX fixture path");
   }
-  console.log(
-    "PASS: invalid payload rejected — " + label +
-    " (" + (validate.errors || []).length + " validation error(s))"
-  );
+
+  const segments = input.split("/");
+  if (
+    segments[0] !== "fixtures" ||
+    segments.some((segment) => segment === "" || segment === "." || segment === "..")
+  ) {
+    throw new Error(caseId + " input must remain under fixtures/ without traversal segments");
+  }
+
+  let resolvedPath;
+  try {
+    resolvedPath = fs.realpathSync(path.resolve(rootPath, input));
+  } catch (error) {
+    throw new Error(caseId + " input cannot be resolved: " + error.message);
+  }
+
+  if (!isWithin(rootPath, resolvedPath) || !isWithin(fixturesPath, resolvedPath)) {
+    throw new Error(caseId + " input resolves outside the repository fixtures directory");
+  }
+  if (!fs.statSync(resolvedPath).isFile()) {
+    throw new Error(caseId + " input does not resolve to a regular file");
+  }
+
+  return resolvedPath;
 }
 
 function main() {
+  const realRoot = fs.realpathSync(rootDir);
+  const realFixtures = fs.realpathSync(path.join(realRoot, "fixtures"));
   const schema = readJson(schemaPath);
   const corpus = readJson(corpusPath);
 
@@ -85,6 +122,9 @@ function main() {
   ) {
     throw new Error("Shared contract corpus must have version 0.1.0 and a non-empty cases array");
   }
+  if (corpus.schema_id !== schema.$id) {
+    throw new Error("Shared contract corpus schema_id does not match the input schema $id");
+  }
 
   const ajv = new Ajv2020({
     allErrors: true,
@@ -94,31 +134,56 @@ function main() {
   addFormats(ajv);
 
   console.log("Ajv version: " + require("ajv/package.json").version);
-  console.log("Schema: " + path.relative(rootDir, schemaPath));
-  console.log("Corpus: " + path.relative(rootDir, corpusPath));
+  console.log("Schema: " + path.relative(realRoot, schemaPath));
+  console.log("Corpus: " + path.relative(realRoot, corpusPath));
 
   // Schema compilation is a gate: unsupported or malformed schema constructs
   // must stop the job before any payload can be accepted.
   const validate = ajv.compile(schema);
   console.log("PASS: Draft 2020-12 schema compiled");
 
-  const rootPrefix = rootDir.endsWith(path.sep) ? rootDir : rootDir + path.sep;
   const seenIds = new Set();
+  const seenInputs = new Set();
+  const expectedCaseKeys = [
+    "id",
+    "input",
+    "schema_valid",
+    "runtime_status",
+    "diagnostic_codes"
+  ];
 
   for (const item of corpus.cases) {
-    if (!item || typeof item.id !== "string" || !item.id || seenIds.has(item.id)) {
+    assertExpectedKeys(item, expectedCaseKeys, "Shared corpus case");
+
+    if (typeof item.id !== "string" || item.id.length === 0 || seenIds.has(item.id)) {
       throw new Error("Every shared corpus case must have a unique non-empty id");
     }
     seenIds.add(item.id);
 
-    if (typeof item.input !== "string" || typeof item.schema_valid !== "boolean") {
-      throw new Error("Corpus case " + item.id + " must declare input and schema_valid");
+    if (
+      typeof item.schema_valid !== "boolean" ||
+      !["accepted", "rejected"].includes(item.runtime_status) ||
+      !Array.isArray(item.diagnostic_codes) ||
+      !item.diagnostic_codes.every((code) => typeof code === "string" && code.length > 0)
+    ) {
+      throw new Error("Corpus case " + item.id + " has invalid expected results");
     }
 
-    const inputPath = path.resolve(rootDir, item.input);
-    if (!inputPath.startsWith(rootPrefix)) {
-      throw new Error("Corpus case " + item.id + " resolves outside the repository root");
+    if (!item.schema_valid && item.runtime_status !== "rejected") {
+      throw new Error(
+        "Schema-invalid case " + item.id + " must also be rejected by the Rust runtime"
+      );
     }
+
+    if (new Set(item.diagnostic_codes).size !== item.diagnostic_codes.length) {
+      throw new Error("Corpus case " + item.id + " contains duplicate diagnostic codes");
+    }
+
+    const inputPath = resolveFixturePath(realRoot, realFixtures, item.input, item.id);
+    if (seenInputs.has(inputPath)) {
+      throw new Error("Shared corpus input path is duplicated: " + item.input);
+    }
+    seenInputs.add(inputPath);
 
     const payload = readJson(inputPath);
     const actualSchemaValidity = validate(payload);
@@ -138,6 +203,7 @@ function main() {
 
   console.log("PASS: all " + corpus.cases.length + " shared contract corpus cases completed");
 }
+
 try {
   main();
 } catch (error) {
