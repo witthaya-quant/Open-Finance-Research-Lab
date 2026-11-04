@@ -48,20 +48,20 @@ The Decimal/string-interchange POC passed on 2026-11-04 at PR #6 head commit 88e
 - A 29-fractional-digit raw parser case was observed to lose precision; the POC input adapter now rejects the over-scale value and checks exact parse-to-string round-trip.
 - Direct package metadata and the effective MSRV are documented in [DEPENDENCY_REVIEW.md](poc/decimal-contract/DEPENDENCY_REVIEW.md).
 
-The POC does not close the complete dependency/security review. No Cargo.lock or complete SBOM is committed at this stage. It also does not validate the full financial model, XLSX export, or three-statement invariants. Those remain explicit implementation gates.
+The Decimal POC does not close the complete dependency/security review. The production application Cargo.lock is committed in PR #10; the separate full-formula numeric POC lockfile is present on the still-open PR #11 branch and is not yet part of main. No complete Rust SBOM/licence/security review is recorded. The POC also does not validate the full production financial model or XLSX export.
 
 ## 2.2 Input contract design decisions
 
 | ID | Decision / constraint | Status | Rationale / consequence |
 |---|---|---|---|
-| C-001 | Use a versioned JSON Schema Draft 2020-12 input contract with closed objects | Schema CI passed; runtime semantic validation pending | Ajv 8.20.0 compiled the schema and accepted/rejected the defined fixture cases; accounting and cross-period checks remain in Rust |
+| C-001 | Use a versioned JSON Schema Draft 2020-12 input contract with closed objects | Schema and Rust runtime semantic validation implemented and CI-verified | Ajv validates the published structural/lexical contract; PR #10 delivered the Rust typed historical semantic validator. Neither gate calculates forecasts |
 | C-002 | V1 schema 0.1.0 accepts synthetic historical data only | Proposed | Real filings and licensed feeds need expanded provenance, accounting-basis, restatement, and normalization metadata |
 | C-003 | Require an opening Balance Sheet immediately before the first historical period | Proposed | Enables three historical years of working-capital, PP&E, debt, cash, and retained-earnings roll-forward checks |
-| C-004 | Require exactly three historical annual periods and five forecast annual periods | Approved V1 scope; semantic validation pending | Keeps the external model horizon deterministic |
+| C-004 | Require exactly three historical annual periods and five forecast annual periods | Approved V1 scope; enforced by the runtime validator | Keeps the external model horizon deterministic and prevents silent horizon changes |
 | C-005 | Separate JSON Schema validation from accounting and cross-period semantic validation | Required design policy | Structural validity does not establish accounting consistency or model correctness |
-| C-006 | Use a typed external diagnostic contract rather than expose dependency-specific error strings | Proposed | Keeps CLI and future consumers stable when internal crates change |
+| C-006 | Use a typed external diagnostic contract rather than expose dependency-specific error strings | Contract and diagnostic types implemented; deserialization path/cause mapping still needs hardening | Stable public codes exist, but the current mapper inspects Serde message text and does not expose a JSON Pointer for every deserialization error |
 
-The schema and synthetic fixture passed standard Draft 2020-12 compilation and positive/negative fixture validation in GitHub Actions on 2026-11-04. This accepts the external structural/lexical schema gate only. The Rust semantic validator, typed error mapper, and all accounting/cross-period checks remain unimplemented.
+The schema and synthetic fixture passed Draft 2020-12 compilation and positive/negative fixture validation in PR #8. PR #10 subsequently delivered the Rust typed input and historical semantic validator, including accounting/cross-period checks, and passed the Rust 1.85.0/1.99.1 CI matrix. This validates input acceptance and historical statements only; forecast calculation, Scenario Feasibility and the production calculation-error surface remain unimplemented.
 
 ## 3. Deferred scope
 
@@ -81,15 +81,17 @@ A deferred item must not be approximated silently. Adding it requires a versione
 
 ## 4. Open engineering gates
 
-These are implementation gates, not unresolved choices about the overall direction:
+The schema and historical semantic-validation gates are complete. The following implementation gates remain open:
 
-1. Complete the Draft 2020-12 schema compilation and positive/negative fixture checks in CI.
-2. Implement the Rust semantic input validator and typed diagnostic mapping; schema validation alone is insufficient.
-3. Finalize the model-specific numeric envelope, maximum intermediate values, error budget, and reporting-rounding policy.
-4. Complete the transitive dependency inventory, SBOM, licence/security review, and Cargo.lock policy for the application workspace.
-5. Implement the Rust calculation core and synthetic reference case with unit, integration, property, golden, and boundary tests.
-6. Verify workbook export precision and canonical-output reconciliation.
-7. Establish full CI, reproducibility instructions, and independent review.
+1. Finalize the model-specific Numeric Profile: supported monetary ranges, rate/day bounds, intermediate headroom, division behaviour, accumulated error budget, reconciliation policy and reporting rounding.
+2. Complete transitive dependency inventories, machine-readable SBOMs, licence/notice audits and security-advisory review for the production Rust workspace and isolated POCs.
+3. Complete an independently derived five-year Case A formula benchmark and an independent accounting/formula review; the Exact Rational POC shares its generic forecast formulas with the candidate backends.
+4. Record the production numeric-backend decision only after the Numeric Profile, dependency review and operational cost/complexity comparison are accepted.
+5. Harden the public diagnostic mapping, including stable typed errors and field-path capture.
+6. Implement the Rust forecast calculation core and deterministic ModelRun result with unit, integration, property, golden and boundary tests.
+7. Validate forecast statement identities, schedule roll-forwards, funding feasibility and reportability without plugs.
+8. Generate the analyst-facing XLSX from canonical Rust outputs and reconcile display values to canonical outputs.
+9. Establish release CI, deterministic run provenance, reproduction instructions and independent review.
 
 ## 5. Change control
 
