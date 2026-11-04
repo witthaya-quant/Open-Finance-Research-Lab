@@ -2,9 +2,9 @@
 
 # OFRL Research Standards
 
-These standards define the minimum structure and quality controls expected of research published under Open Finance Research Lab (OFRL).
+These standards define the research-specific minimum structure and quality controls expected across every OFRL project that makes research claims. They apply in addition to the universal requirements in [PROJECT_STANDARDS.md](PROJECT_STANDARDS.md), which also cover software, data, infrastructure, benchmarks, and prototypes.
 
-They are intended to be rigorous without forcing every project into an academic-paper format. The level of analysis should fit the question, but the reasoning, evidence, and limitations must remain inspectable.
+They are intended to be rigorous without forcing every project into an academic-paper format. The level of analysis should fit the question, but the reasoning, evidence, and limitations must remain inspectable. Project type and risk determine which additional controls apply; no project may opt out of the universal baseline.
 
 ## 1. Required project components
 
@@ -138,4 +138,4 @@ Do not infer that a method is universally superior from performance in one datas
 
 ## 11. Project-specific standards
 
-Projects may add stricter domain standards—for example, accounting reconciliation rules for three-statement models, curve-construction conventions for fixed income, or execution-cost assumptions for market microstructure research. Additional requirements must be documented in the project itself.
+Projects must declare applicable types and risk tiers in `project.json`, then implement the relevant profile requirements in [PROJECT_STANDARDS.md](PROJECT_STANDARDS.md). They may add stricter domain standards—for example, accounting reconciliation rules for three-statement models, curve-construction conventions for fixed income, or execution-cost assumptions for market microstructure research. Additional requirements must be documented in the project itself and reflected in its validation matrix.
