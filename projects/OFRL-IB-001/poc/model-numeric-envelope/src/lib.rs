@@ -927,10 +927,12 @@ pub fn maximum_absolute_metric<N: Numeric>(
 
     let mut maximum: Option<(BigRational, String)> = None;
     for period in forecast {
-        let value = period
-            .values
-            .get(metric)
-            .ok_or_else(|| format!("forecast period {} is missing metric {metric}", period.period_id))?;
+        let value = period.values.get(metric).ok_or_else(|| {
+            format!(
+                "forecast period {} is missing metric {metric}",
+                period.period_id
+            )
+        })?;
         let absolute = value.as_rational().abs();
         let replace = maximum
             .as_ref()
@@ -943,7 +945,10 @@ pub fn maximum_absolute_metric<N: Numeric>(
 
     let (absolute, period_id) =
         maximum.ok_or_else(|| format!("metric {metric} was not measured"))?;
-    Ok((format!("{}/{}", absolute.numer(), absolute.denom()), period_id))
+    Ok((
+        format!("{}/{}", absolute.numer(), absolute.denom()),
+        period_id,
+    ))
 }
 
 pub fn maximum_absolute_value<N: Numeric>(
