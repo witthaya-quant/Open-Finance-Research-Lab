@@ -7,8 +7,7 @@ use crate::diagnostics::{
     Diagnostic, DiagnosticCategory, DiagnosticCode, ValidationReport,
 };
 use crate::domain::{
-    BalanceSheet, CalendarDate, CashFlowStatement, ForecastAssumptions, HistoricalPeriod,
-    IncomeStatement, ModelInput,
+    BalanceSheet, CalendarDate, CashFlowStatement, IncomeStatement, ModelInput,
 };
 
 const V1_SCHEMA_VERSION: &str = "0.1.0";
@@ -311,10 +310,28 @@ fn validate_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
         }
     }
 
-    if let Some(first_historical) = windows.first().and_then(Option::as_ref) {
-        match CalendarDate::parse(&model.opening_balance_sheet.as_of_date) {
-            Some(opening_date) if opening_date.next_day() == Some(first_historical.start) => {}
-            Some(opening_date) => push_semantic(
+    let opening_date = match CalendarDate::parse(&model.opening_balance_sheet.as_of_date) {
+        Some(date) => Some(date),
+        None => {
+            push_semantic(
+                diagnostics,
+                DiagnosticCode::InvalidDate,
+                "opening_balance_sheet.as_of_date is not a valid Gregorian calendar date.",
+                "/opening_balance_sheet/as_of_date",
+                None,
+                Some("as_of_date"),
+                Some("YYYY-MM-DD".to_owned()),
+                Some(model.opening_balance_sheet.as_of_date.clone()),
+            );
+            None
+        }
+    };
+
+    if let (Some(opening_date), Some(first_historical)) =
+        (opening_date, windows.first().and_then(Option::as_ref))
+    {
+        if opening_date.next_day() != Some(first_historical.start) {
+            push_semantic(
                 diagnostics,
                 DiagnosticCode::PeriodHandoffInvalid,
                 "The first historical period must begin on the day immediately after the opening Balance Sheet date.",
@@ -326,17 +343,7 @@ fn validate_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
                     .map(|date| date.to_string())
                     .or_else(|| Some("a date after the maximum supported calendar date".to_owned())),
                 Some(model.opening_balance_sheet.as_of_date.clone()),
-            ),
-            None => push_semantic(
-                diagnostics,
-                DiagnosticCode::InvalidDate,
-                "opening_balance_sheet.as_of_date is not a valid Gregorian calendar date.",
-                "/opening_balance_sheet/as_of_date",
-                None,
-                Some("as_of_date"),
-                Some("YYYY-MM-DD".to_owned()),
-                Some(model.opening_balance_sheet.as_of_date.clone()),
-            ),
+            );
         }
     }
 
@@ -521,6 +528,7 @@ fn validate_opening_balance_sheet(model: &ModelInput, diagnostics: &mut Vec<Diag
 
 fn validate_historical_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
     let mut previous = &model.opening_balance_sheet.balances;
+    let mut previous_balance_sheet_pointer = "/opening_balance_sheet/balances".to_owned();
 
     for (index, period) in model.historical_periods.iter().enumerate() {
         let pointer = format!("/historical_periods/{index}");
@@ -581,6 +589,8 @@ fn validate_historical_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnos
             &period.cash_flow_statement,
             &period.balance_sheet,
             previous,
+            &format!("{pointer}/balance_sheet"),
+            &previous_balance_sheet_pointer,
             &format!("{pointer}/cash_flow_statement"),
             period_id,
             diagnostics,
@@ -597,6 +607,7 @@ fn validate_historical_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnos
         );
 
         previous = &period.balance_sheet;
+        previous_balance_sheet_pointer = format!("{pointer}/balance_sheet");
     }
 }
 
@@ -804,6 +815,8 @@ fn validate_historical_cash_flow(
     cash_flow: &CashFlowStatement,
     balance_sheet: &BalanceSheet,
     previous_balance_sheet: &BalanceSheet,
+    current_balance_sheet_pointer: &str,
+    previous_balance_sheet_pointer: &str,
     pointer: &str,
     period_id: &str,
     diagnostics: &mut Vec<Diagnostic>,
@@ -834,13 +847,13 @@ fn validate_historical_cash_flow(
         calculate_nwc(
             balance_sheet,
             diagnostics,
-            &format!("/historical_periods/{period_id}/balance_sheet"),
+            current_balance_sheet_pointer,
             Some(period_id),
         ),
         calculate_nwc(
             previous_balance_sheet,
             diagnostics,
-            "/historical_previous_balance_sheet",
+            previous_balance_sheet_pointer,
             Some(period_id),
         ),
     ) {
@@ -1341,9 +1354,10 @@ fn checked_add(
     period_id: Option<&str>,
 ) -> Option<Decimal> {
     left.checked_add(right).or_else(|| {
-        push_semantic(
+        push(
             diagnostics,
             DiagnosticCode::DecimalOverflow,
+            DiagnosticCategory::Calculation,
             "Checked Decimal addition exceeded the supported numeric representation.",
             pointer,
             period_id,
@@ -1363,9 +1377,10 @@ fn checked_sub(
     period_id: Option<&str>,
 ) -> Option<Decimal> {
     left.checked_sub(right).or_else(|| {
-        push_semantic(
+        push(
             diagnostics,
             DiagnosticCode::DecimalOverflow,
+            DiagnosticCategory::Calculation,
             "Checked Decimal subtraction exceeded the supported numeric representation.",
             pointer,
             period_id,
