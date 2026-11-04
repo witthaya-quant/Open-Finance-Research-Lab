@@ -1,13 +1,13 @@
 use std::str::FromStr;
 
 use bigdecimal::BigDecimal;
+use num_rational::BigRational;
+use num_traits::One;
 use ofrl_model_numeric_envelope::{
     balance_sheet_differences_are_zero, compare_to_reference, forecast, load_case_a,
     parse_decimal_rational, round_half_even, stress_case_a, ArbitraryDecimal, ExactRational,
     FixedDecimal, Numeric,
 };
-use num_rational::BigRational;
-use num_traits::One;
 use rust_decimal::Decimal;
 
 #[test]
@@ -44,18 +44,14 @@ fn exact_reference_rounds_half_even_symmetrically() {
 
 #[test]
 fn exact_reference_is_not_a_floating_point_or_decimal_oracle() {
-    let exact = parse_decimal_rational("1").unwrap()
-        / parse_decimal_rational("365").unwrap();
+    let exact = parse_decimal_rational("1").unwrap() / parse_decimal_rational("365").unwrap();
     let decimal = FixedDecimal::one()
         .div(&FixedDecimal::from_i64(365))
         .unwrap()
         .as_rational();
 
     assert_ne!(decimal, exact);
-    assert_eq!(
-        round_half_even(&decimal, 12),
-        round_half_even(&exact, 12)
-    );
+    assert_eq!(round_half_even(&decimal, 12), round_half_even(&exact, 12));
 }
 
 #[test]
@@ -86,7 +82,10 @@ fn rust_decimal_large_amount_times_day_count_is_checked() {
     let days = FixedDecimal::parse("3650.0000").unwrap();
     let inventory_numerator = amount.mul(&days).unwrap();
 
-    println!("RUST_DECIMAL_LARGE_AMOUNT_DAY_PRODUCT={}", inventory_numerator.raw_text());
+    println!(
+        "RUST_DECIMAL_LARGE_AMOUNT_DAY_PRODUCT={}",
+        inventory_numerator.raw_text()
+    );
     assert_eq!(
         round_half_even(&inventory_numerator.as_rational(), 0),
         "58400000000000000000"
@@ -114,10 +113,8 @@ fn all_candidates_match_case_a_at_the_two_decimal_test_boundary() {
     let fixed = forecast::<FixedDecimal>(&fixture).unwrap();
     let arbitrary = forecast::<ArbitraryDecimal>(&fixture).unwrap();
 
-    let fixed_summary =
-        compare_to_reference("rust_decimal", &fixed, &reference, 2).unwrap();
-    let arbitrary_summary =
-        compare_to_reference("bigdecimal", &arbitrary, &reference, 2).unwrap();
+    let fixed_summary = compare_to_reference("rust_decimal", &fixed, &reference, 2).unwrap();
+    let arbitrary_summary = compare_to_reference("bigdecimal", &arbitrary, &reference, 2).unwrap();
 
     println!("CASE_A_FIXED={fixed_summary:#?}");
     println!("CASE_A_BIGDECIMAL={arbitrary_summary:#?}");
