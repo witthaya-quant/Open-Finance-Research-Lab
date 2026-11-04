@@ -68,44 +68,73 @@ pub(crate) enum SourceClassification {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct IncomeStatement {
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub revenue: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub cogs: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub operating_expenses: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub depreciation: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub interest_expense: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub income_tax_expense: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub net_income: Decimal,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct BalanceSheet {
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub cash: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub accounts_receivable: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub inventory: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub gross_ppe: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub accumulated_depreciation: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub accounts_payable: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub interest_bearing_debt: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub share_capital: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub retained_earnings: Decimal,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct CashFlowStatement {
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub net_income: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub depreciation_addback: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub change_in_operating_nwc: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub cash_from_operations: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub capex: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub cash_from_investing: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub debt_drawdowns: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub principal_repayments: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub dividends: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub cash_from_financing: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub net_change_in_cash: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub opening_cash: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub closing_cash: Decimal,
 }
 
@@ -121,36 +150,37 @@ pub(crate) struct ForecastPeriod {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct ForecastAssumptions {
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub revenue_growth: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub cogs_pct_revenue: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub operating_expenses_pct_revenue: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub dso: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub dio: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub dpo: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub capex_pct_revenue: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub depreciation_rate: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub debt_drawdowns: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub principal_repayments: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub interest_rate: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub tax_rate: Decimal,
+    #[serde(deserialize_with = "deserialize_decimal")]
     pub dividend_payout_ratio: Decimal,
 }
 
 // Strict decimal-string deserialization is repeated here intentionally: the
 // isolated POC remains self-contained, while the production model owns its
 // application boundary and its own regression tests.
-impl<'de> Deserialize<'de> for DecimalString {
-    fn deserialize<D>(_deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        unreachable!("DecimalString is an internal marker and is not deserialized directly")
-    }
-}
-
-#[derive(Debug)]
-pub(crate) struct DecimalString;
-
 pub(crate) fn deserialize_decimal<'de, D>(deserializer: D) -> Result<Decimal, D::Error>
 where
     D: Deserializer<'de>,
