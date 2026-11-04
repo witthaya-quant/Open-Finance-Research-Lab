@@ -3,7 +3,7 @@
 # OFRL-IB-001 — Dependency Governance and SBOM Policy
 
 **Policy version:** 0.1.0  
-**Status:** Inventory automation implemented; security and licence approval remain open  
+**Status:** SBOM inventory and fail-closed advisory scan automated; source and licence approval remain open  
 **Scope:** OFRL-IB-001 production Rust workspace and its isolated Rust POCs
 
 ## 1. Purpose
@@ -35,13 +35,15 @@ The isolated POCs are not production runtime dependencies. Their dependency grap
 Workflow: `.github/workflows/ofrl-ib-001-dependency-sbom.yml`
 
 Tooling:
-- `cargo-cyclonedx 0.5.9`, pinned at the tool version.
+- `cargo-cyclonedx 0.5.9`, pinned by official release and SHA-256 checksum.
+- `cargo-audit 0.22.2`, pinned by official release and SHA-256 checksum.
 - CycloneDX JSON specification 1.5.
-- Rust toolchain 1.99.1 used only to run the inventory tool; the application MSRV remains unchanged.
+- Rust toolchain 1.99.1 used only to run Cargo metadata; the inventory and audit tools are verified prebuilt binaries, and the application MSRV remains unchanged.
 - `SOURCE_DATE_EPOCH` is set from the source commit timestamp so generated SBOM metadata avoids a random serial number and uses a stable timestamp.
 - CI uses all Cargo features and all target platforms for a conservative dependency inventory.
 - Separate SBOMs are produced for the two production workspace crates and each isolated POC.
 - SHA-256 checksums and source commit metadata accompany the artifact.
+- RustSec advisory checks run separately for the production lockfile and each POC lockfile using `cargo audit --deny warnings --json`. No advisory IDs are ignored by default. A non-zero exit (finding or database/tool error) fails the workflow after the JSON reports have been uploaded, so the evidence remains available for triage.
 
 The workflow does not add `cargo-cyclonedx` or any audit tool to the production Cargo workspace. It does not change production or numeric-POC lockfiles.
 
@@ -60,8 +62,8 @@ The following controls are required but are not claimed as complete by the SBOM 
 | Complete production dependency inventory | CycloneDX SBOM for each production crate | Automated |
 | POC dependency inventory | Separate SBOMs and explicit lockfile status | Automated; Decimal POC remains ephemeral |
 | Lockfile immutability | CI proves committed lockfiles unchanged during generation | Automated |
-| Advisory review | RustSec advisory snapshot and disposition of every applicable finding | Open |
-| Maintenance / unsoundness review | Package status and documented exception rationale | Open |
+| Advisory review | RustSec scan for each lockfile, with JSON report and no implicit ignores | Automated fail-closed; any finding requires triage |
+| Maintenance / unsoundness review | `cargo-audit --deny warnings` findings and documented exception rationale | Automated fail-closed; manual disposition remains required |
 | Licence expression review | Direct + transitive package licence inventory and approved policy | Open |
 | Notice / source obligations | Required notices and source obligations for actual release distribution | Open |
 | Duplicate / untrusted dependency sources | Source and duplicate-version review | Open |
@@ -69,7 +71,7 @@ The following controls are required but are not claimed as complete by the SBOM 
 
 No licence allow-list is introduced in this change. A licence policy must be approved from the actual transitive graph rather than guessing an allow-list before the SBOM is available. Unknown or ambiguous licence metadata must be reviewed, not silently accepted.
 
-The workflow also does not claim a vulnerability-free result. A separate advisory and maintenance check must be configured and run against the committed lockfiles before Phase 2 can exit.
+The workflow does not claim a vulnerability-free result merely because the scanner is configured. The current-head run must pass against the latest fetched RustSec advisory database, and any warning must be triaged with an explicit disposition. The Decimal Contract POC audit is only a snapshot of that run's ephemeral lock resolution until its lockfile is committed.
 
 ## 5. Dependency change control
 
