@@ -127,7 +127,7 @@ N^{PPE}_{AVG,t}=G_{t-1}+G_t
 
 \[
 \overline{N}^{PPE}_{AVG,t}
-le \overline{G}_{t-1}+\overline{G}_t
+\le \overline{G}_{t-1}+\overline{G}_t
 \]
 
 Opening net PP&E is \(G_{t-1}-AccumDep_{t-1}\). Under the V1 validity rule \(0 \le AccumDep_{t-1} \le G_{t-1}\), its absolute value is bounded by \(\overline{G}_{t-1}\).
@@ -170,7 +170,7 @@ N^{Debt}_{AVG,t}=D_{t-1}+D_t
 
 \[
 \overline{N}^{Debt}_{AVG,t}
-le \overline{D}_{t-1}+\overline{D}_t
+\le \overline{D}_{t-1}+\overline{D}_t
 \]
 
 Interest is then bounded by:
