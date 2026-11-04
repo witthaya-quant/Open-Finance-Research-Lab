@@ -16,6 +16,20 @@ I created OFRL to develop and share this work in a form that other people can in
 
 I am deliberately building deeper systems-engineering capability with Rust. The aim is to apply it to real financial software and, as the work matures, contribute reusable components and improvements to the wider Rust ecosystem. I would rather release a small component that solves a real problem than publish abstractions before they are ready.
 
+## Vision, mission & foundation
+
+**Vision:** To build an open, evolving body of financial knowledge, research methods, and practical tools that people can inspect, test, use, adapt, and improve together.
+
+**Mission:** To bring together people with different experiences and areas of expertise to investigate financial and business problems, develop and examine alternative methods, and turn useful research into reproducible models, software, and practical resources.
+
+People may learn the same financial and mathematical foundations but apply them differently in practice. Their methods are shaped by different objectives, assumptions, information, markets, business models, and constraints. I see those differences as an opportunity to learn from one another—not a reason to rank people or assume that one approach is universally superior.
+
+OFRL is not here to prove who is smarter or whose method must win. It is here to understand how different methods work, examine where they are useful, identify where they fall short, and work out what can be improved or built from them.
+
+This does not mean that every method is equally sound or that every idea should be accepted. We remain open to different approaches while examining them against clear objectives, mathematical and financial correctness, implementation quality, evidence, robustness, and practical constraints.
+
+Read [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md) for the full foundation, vision, mission, principles, and collaboration philosophy.
+
 ## Research areas
 
 | Area | Scope |
@@ -112,12 +126,15 @@ These levels describe evidence maturity. They do not certify profitability, guar
 
 ## Principles
 
-- **Show the work.** Make assumptions, calculations, and sources visible.
-- **Test the mechanics.** A model that runs is not necessarily a model that is correct.
-- **Report the limitations.** Negative and inconclusive findings are part of research.
-- **Respect data rights.** Public access does not automatically permit redistribution.
-- **Separate evidence from advice.** Research outputs are not personalised investment recommendations.
-- **Keep proprietary work private.** Do not publish confidential information, client data, or private trading strategies.
+- **Understand before judging.** Explain the problem, objective, assumptions, and context before comparing approaches.
+- **Compare methods, not people.** Technical disagreement is not a contest of credentials, intelligence, or personal worth.
+- **Keep more than one approach possible.** Do not assume that one model, formula, framework, or implementation is universally best.
+- **Be open-minded, but evidence-driven.** Respect different perspectives without treating every claim as equally supported.
+- **Show the work.** Make assumptions, calculations, implementation choices, and sources visible.
+- **Test the mechanics.** A model that runs is not necessarily a model that is correct or fit for its intended use.
+- **Explain trade-offs and limitations.** Negative and inconclusive findings are part of research.
+- **Build for practical use.** Turn useful findings into reusable models, software, tools, and documentation where appropriate.
+- **Respect data and contribution rights.** Give accurate credit and do not publish confidential or restricted material.
 
 ## Licensing
 
@@ -131,16 +148,18 @@ See [LICENSE](LICENSE), [LICENSE-docs](LICENSE-docs), [LICENSE_POLICY.md](LICENS
 
 ## Collaboration
 
-I welcome research proposals, technical discussion, careful review, and independent replication. Contributions should identify their sources, assumptions, limitations, and the work performed by each contributor.
+I welcome research proposals, alternative methods, technical discussion, careful review, independent implementations, and replication. You do not need to agree with the existing approach or the founder to contribute. What matters is whether the work is explained clearly, relevant to the problem, supported by appropriate evidence, and developed with respect for other contributors and their rights.
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md).
+A contribution is not accepted simply because it is different or novel. Reviews focus on the quality of the work: its assumptions, correctness, evidence, implementation, reproducibility, licensing, and maintainability. Critique methods and claims, not people.
+
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), [RESEARCH_CHARTER.md](RESEARCH_CHARTER.md), and [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md).
 
 ## Founder
 
 **Kenny (Witthaya Maidee)**  
 Founder, Open Finance Research Lab
 
-OFRL reflects the questions I choose to investigate and the standards I expect of the work. My responsibility is to set the direction, understand the assumptions, and stand behind the methods and conclusions published here.
+OFRL reflects the questions I choose to investigate and the standards I expect of the work. My responsibility is to set the direction, understand the assumptions, and stand behind the methods and conclusions published here. I do not expect contributors to think like me or use the same methods I use. I want the work to become more useful, more understandable, and more capable of helping the next person build something better.
 
 ---
 
