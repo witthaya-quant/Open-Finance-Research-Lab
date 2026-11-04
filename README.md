@@ -75,6 +75,7 @@ The first project is a financial model for a generic non-financial operating com
 - [Decimal contract POC](projects/OFRL-IB-001/poc/decimal-contract/README.md)
 - [Dependency review](projects/OFRL-IB-001/poc/decimal-contract/DEPENDENCY_REVIEW.md)
 - [Full-formula numeric foundation comparison POC](projects/OFRL-IB-001/poc/model-numeric-envelope/README.md)
+- [Independent FY2026 exact calculation benchmark](projects/OFRL-IB-001/poc/model-numeric-envelope/BENCHMARKS.md)
 - [Model input contract](projects/OFRL-IB-001/MODEL_INPUT_CONTRACT.md)
 - [Numeric envelope and precision policy](projects/OFRL-IB-001/NUMERIC_ENVELOPE.md)
 - [Validation and error contract](projects/OFRL-IB-001/VALIDATION_ERROR_CONTRACT.md)
