@@ -2,20 +2,6 @@ name: OFRL-IB-001 Rust Runtime Semantic Validator
 
 on:
   pull_request:
-    paths:
-      - ".github/workflows/ofrl-ib-001-semantic-validator.yml"
-      - "README.md"
-      - "projects/OFRL-IB-001/Cargo.toml"
-      - "projects/OFRL-IB-001/Cargo.lock"
-      - "projects/OFRL-IB-001/crates/**"
-      - "projects/OFRL-IB-001/MODEL_INPUT_CONTRACT.md"
-      - "projects/OFRL-IB-001/VALIDATION_ERROR_CONTRACT.md"
-      - "projects/OFRL-IB-001/NUMERIC_ENVELOPE.md"
-      - "projects/OFRL-IB-001/ENGINEERING_ARCHITECTURE.md"
-      - "projects/OFRL-IB-001/README.md"
-      - "projects/OFRL-IB-001/RUNTIME_VALIDATOR.md"
-      - "schemas/ofrl-ib-001-model-input-0.1.0.schema.json"
-      - "fixtures/synthetic/**"
   workflow_dispatch:
 
 permissions:
