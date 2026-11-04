@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-finance-research-lab.github.io/schemas/ofrl-ib-001-amount-record-0.1.0.schema.json",
+  "title": "OFRL-IB-001 Amount Record",
+  "description": "Minimal numeric interchange record used by the isolated Decimal contract proof of concept.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "model_id",
+    "period",
+    "line_item",
+    "currency",
+    "unit_scale",
+    "amount"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "period": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "line_item": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "unit_scale": {
+      "type": "string",
+      "enum": [
+        "units",
+        "thousands",
+        "millions"
+      ]
+    },
+    "amount": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+      "description": "Canonical base-10 decimal string. JSON numeric tokens, exponent notation, separators and whitespace are not accepted."
+    }
+  }
+}
