@@ -4,7 +4,7 @@
 
 > **Division:** Financial Modelling & Valuation  
 > **Project ID:** OFRL-IB-001  
-> **Status:** Rust runtime semantic validator implemented and CI-verified; forecast calculation engine not started  
+> **Status:** Input contract and runtime semantic validator CI-verified; comparative numeric POC CI-verified; production numeric foundation not selected; forecast engine not started  
 > **Evidence maturity:** 0 / Proposed  
 > **Specification version:** 0.1.0  
 > **Project owner:** Kenny
@@ -61,13 +61,14 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Schema validation script](../../scripts/validate-ofrl-ib-001-model-input-schema.sh)
 - [Decimal contract POC](poc/decimal-contract/README.md)
 - [Dependency review](poc/decimal-contract/DEPENDENCY_REVIEW.md)
+- [Full-formula numeric foundation comparison POC](poc/model-numeric-envelope/README.md)
 
 
 ## Current stage
 
 **No production financial calculation engine or analyst-facing workbook has been released.** The Rust input-validation library and CLI are implemented and pass the required CI matrix on Rust 1.85.0 and 1.99.1. This is an input-acceptance and historical-accounting validation milestone, not a completed forecast model.
 
-The Draft 2020-12 schema, deterministic synthetic input fixture, Rust runtime validator, and CLI are implemented. The calculation engine, forecast statement generation, Scenario Feasibility evaluation, and workbook remain future milestones.
+The Draft 2020-12 schema, deterministic synthetic input fixture, Rust runtime validator, and CLI are implemented. The comparative numeric POC tests candidate arithmetic, not the financial formula implementation independently. The production calculation engine, forecast statement generation, Scenario Feasibility evaluation, and workbook remain future milestones.
 
 ## Out of scope for the first release
 
