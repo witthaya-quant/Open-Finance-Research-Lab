@@ -1,11 +1,16 @@
 <!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: CC-BY-4.0 -->
 
-# Research Project: [Title]
+# Research Specification: [Title]
 
-> **Project ID:** OFRL-[AREA]-[NUMBER]  
-> **Status:** Proposed | Exploratory | Reproducible | Robustness Validated | Independently Replicated  
-> **Evidence maturity:** 0–4  
+Use this document for the research-specific part of a registered project. Every project must also follow [PROJECT_LIFECYCLE.md](../PROJECT_LIFECYCLE.md) and [PROJECT_STANDARDS.md](../PROJECT_STANDARDS.md), and have a project README, `project.json`, Decision Log, and Validation Matrix. Start a new project with the [Project Charter Template](PROJECT_CHARTER_TEMPLATE.md) and [Project Manifest Template](PROJECT_MANIFEST_TEMPLATE.json).
+
+> **Project ID:** OFRL-XX-NNN  
+> **Lifecycle status:** Proposed | Approved | In Development | Validation | Released | Maintenance | Deprecated | Archived  
+> **Project types:** Research / Quantitative Research / Financial Model / Software / Data / Benchmark / Prototype / Infrastructure  
+> **Risk tier:** R0 | R1 | R2 | R3  
+> **Evidence maturity:** 0–4 (separate from lifecycle status)  
 > **Owner / contributors:**  
+> **Project manifest:** project.json  
 > **Last updated:** YYYY-MM-DD
 
 ## 1. Executive summary

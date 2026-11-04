@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Contribution and governance guidance
+    url: https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/main/GOVERNANCE.md
+    about: Read how OFRL reviews proposals, manages decisions, and accepts contributions.
+  - name: Security and sensitive reports
+    url: https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/main/SECURITY.md
+    about: Do not report vulnerabilities, credentials, or sensitive information in a public issue.

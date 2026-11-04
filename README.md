@@ -60,6 +60,30 @@ No one is expected to disclose confidential know-how, employer or client materia
 
 Read [RESEARCH_CHARTER.md](RESEARCH_CHARTER.md), [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md), and [CONTRIBUTING.md](CONTRIBUTING.md) to understand how this philosophy is put into practice.
 
+## Project portfolio and operating standards
+
+Every current and future project follows the same admission, identity, decision-history, evidence, data-rights, publication, and release baseline. Project-specific controls are selected by project type and risk; OFRL does not mandate one programming language, framework, or validation tool for unrelated disciplines.
+
+- [Project Catalog](PROJECT_CATALOG.md) — registered projects and their current status.
+- [Project Lifecycle](PROJECT_LIFECYCLE.md) — proposal, admission, development, validation, release, maintenance, and archival.
+- [Project Standards](PROJECT_STANDARDS.md) — universal requirements, project-type profiles, risk tiers, and validation profiles.
+- [Project Manifest Schema](schemas/ofrl-project-manifest-1.0.0.schema.json) — machine-readable project metadata contract.
+- [Project Templates](templates/README.md) — reusable starting documents for all project types.
+
+The full foundation and principles are in [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md). [GOVERNANCE.md](GOVERNANCE.md) defines Founder-led authority, contributor roles, review controls, and Decision Records. OFRL is designed to remain under the Founder's personal GitHub account; a GitHub Organization is optional, not a required destination.
+
+[PUBLICATION_AND_IP_BOUNDARY.md](PUBLICATION_AND_IP_BOUNDARY.md) explains what belongs in the public research repository and what should remain private or confidential.
+
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- [GitHub Repository Settings Baseline](GITHUB_REPOSITORY_SETTINGS.md)
+- [Central Decision Register](decisions/README.md)
+- [Contributing Guide](CONTRIBUTING.md)
+- [Research Standards](RESEARCH_STANDARDS.md)
+- [Dependency Policy](DEPENDENCY_POLICY.md)
+- [Release Policy](RELEASE_POLICY.md)
+- [Repository Audit](REPOSITORY_AUDIT.md)
+
 ## Research areas
 
 | Area | Scope |

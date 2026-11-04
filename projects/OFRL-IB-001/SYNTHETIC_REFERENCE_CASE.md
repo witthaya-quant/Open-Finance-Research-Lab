@@ -3,7 +3,7 @@
 # OFRL-IB-001 — Synthetic Reference Case A
 
 **Case ID:** OFRL-IB-001-CASE-A  
-**Status:** Design and canonical input fixture created; schema and runtime semantic validation pending  
+**Status:** Design and canonical input fixture created; Draft 2020-12 schema and Rust runtime semantic validation implemented and CI-verified. Forecast calculation and model-level validation remain unimplemented.  
 **Data class:** Synthetic; generated specifically for OFRL validation  
 **Reporting currency:** USD  
 **Unit scale:** Thousands  
