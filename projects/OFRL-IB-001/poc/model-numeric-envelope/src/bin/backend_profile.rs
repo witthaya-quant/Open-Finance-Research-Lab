@@ -44,20 +44,14 @@ fn measure<N: Numeric>(input: &Value) -> Result<TimingSummary, String> {
     })
 }
 
-fn emit<N: Numeric>(
-    scenario: &str,
-    candidate: &str,
-    input: &Value,
-) -> Result<(), String> {
+fn emit<N: Numeric>(scenario: &str, candidate: &str, input: &Value) -> Result<(), String> {
     let timing = measure::<N>(input).map_err(|error| {
         format!("{scenario}/{candidate}: benchmark calculation failed: {error}")
     })?;
 
     println!(
         "{scenario},{candidate},{ITERATIONS_PER_SAMPLE},{SAMPLE_COUNT},{},{},{}",
-        timing.min_ns_per_forecast,
-        timing.median_ns_per_forecast,
-        timing.max_ns_per_forecast
+        timing.min_ns_per_forecast, timing.median_ns_per_forecast, timing.max_ns_per_forecast
     );
     Ok(())
 }
@@ -68,9 +62,7 @@ fn main() -> Result<(), String> {
         ("stress_1e18", intermediate_stress_case_a()),
     ];
 
-    println!(
-        "# benchmark=OFRL-IB-001 numeric backend timing; release profile; Rust toolchain matrix"
-    );
+    println!("# benchmark=OFRL-IB-001 numeric backend timing; release profile; Rust toolchain matrix");
     println!(
         "# warmup_iterations={WARMUP_ITERATIONS}; samples={SAMPLE_COUNT}; iterations_per_sample={ITERATIONS_PER_SAMPLE}"
     );
