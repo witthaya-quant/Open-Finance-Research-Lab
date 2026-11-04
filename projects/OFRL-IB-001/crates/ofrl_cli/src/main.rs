@@ -20,11 +20,9 @@ fn run() -> Result<ExitCode, String> {
     let path = arguments.next();
 
     if command.as_deref() != Some("validate") || path.is_none() || arguments.next().is_some() {
-        return Err(
-            "Usage: ofrl validate <model-input.json>\n\
-             Validates the V1 input contract and historical accounting semantics."
-                .to_owned(),
-        );
+        return Err("Usage: ofrl validate <model-input.json>\n\
+            Validates the V1 input contract and historical accounting semantics."
+            .to_owned());
     }
 
     let path = path.ok_or_else(|| "Usage: ofrl validate <model-input.json>".to_owned())?;
