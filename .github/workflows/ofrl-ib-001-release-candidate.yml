@@ -1,0 +1,389 @@
+name: OFRL-IB-001 Release Candidate Preview
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ofrl-ib-001-release-candidate.yml"
+      - "projects/OFRL-IB-001/Cargo.toml"
+      - "projects/OFRL-IB-001/Cargo.lock"
+      - "projects/OFRL-IB-001/crates/ofrl_cli/**"
+      - "projects/OFRL-IB-001/crates/ofrl_model/**"
+      - "fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json"
+      - "schemas/ofrl-ib-001-model-input-0.1.0.schema.json"
+      - "RELEASE_POLICY.md"
+      - "DEPENDENCY_POLICY.md"
+      - "templates/RELEASE_RECORD_TEMPLATE.md"
+      - "projects/OFRL-IB-001/project.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-preview:
+    name: Build and inspect release preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      RUST_TOOLCHAIN: "1.85.0"
+      WORKSPACE_MANIFEST: "projects/OFRL-IB-001/Cargo.toml"
+      CLI_MANIFEST: "projects/OFRL-IB-001/crates/ofrl_cli/Cargo.toml"
+      CLI_PACKAGE: "ofrl_cli"
+      INPUT_FIXTURE: "fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json"
+      CYCLONEDX_GENERATOR_VERSION: "0.5.9"
+      CYCLONEDX_SPEC_VERSION: "1.5"
+      SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      SOURCE_REF: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+
+    steps:
+      # actions/checkout v7.0.1, pinned to its verified release commit.
+      - name: Checkout exact source commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Install declared Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.cargo/bin:$PATH"
+          if ! command -v rustup >/dev/null 2>&1; then
+            echo "::error::rustup is not present on the ubuntu-24.04 runner; refusing to execute a remote bootstrap script." >&2
+            exit 1
+          fi
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal
+          rustup default "$RUST_TOOLCHAIN"
+          rustc --version
+          cargo --version
+
+      - name: Resolve the CLI component and build target
+        id: component
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v jq >/dev/null 2>&1 || {
+            echo "::error::jq is required for release metadata validation."
+            exit 1
+          }
+
+          metadata_file="$RUNNER_TEMP/ofrl-ib-001-cargo-metadata.json"
+          cargo metadata --locked --manifest-path "$WORKSPACE_MANIFEST" --format-version 1 --no-deps > "$metadata_file"
+
+          mapfile -t binary_targets < <(
+            jq -r --arg package "$CLI_PACKAGE" '
+              .packages[]
+              | select(.name == $package)
+              | .targets[]
+              | select(.kind | index("bin"))
+              | .name
+            ' "$metadata_file"
+          )
+
+          if [[ "${#binary_targets[@]}" -ne 1 ]]; then
+            echo "::error::Expected exactly one binary target for $CLI_PACKAGE; found ${#binary_targets[@]}."
+            printf '%s\n' "${binary_targets[@]}"
+            exit 1
+          fi
+
+          package_version="$(jq -er --arg package "$CLI_PACKAGE" '
+            [.packages[] | select(.name == $package)][0].version
+          ' "$metadata_file")"
+          target_triple="$(rustc -vV | sed -n 's/^host: //p')"
+          if [[ -z "$target_triple" ]]; then
+            echo "::error::Unable to determine the Rust host target."
+            exit 1
+          fi
+
+          echo "binary_name=${binary_targets[0]}" >> "$GITHUB_OUTPUT"
+          echo "package_version=$package_version" >> "$GITHUB_OUTPUT"
+          echo "target_triple=$target_triple" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "CLI_BINARY_NAME=${binary_targets[0]}"
+            echo "CLI_PACKAGE_VERSION=$package_version"
+            echo "BUILD_TARGET=$target_triple"
+          } >> "$GITHUB_ENV"
+
+      - name: Build the CLI input validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo build --locked --release --target "$BUILD_TARGET" \
+            --manifest-path "$WORKSPACE_MANIFEST" \
+            --package "$CLI_PACKAGE" \
+            --bin "$CLI_BINARY_NAME"
+
+          binary="projects/OFRL-IB-001/target/$BUILD_TARGET/release/$CLI_BINARY_NAME"
+          test -x "$binary"
+          echo "CLI_BINARY_PATH=$binary" >> "$GITHUB_ENV"
+
+      - name: Validate canonical and rejected input behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          "$CLI_BINARY_PATH" validate "$INPUT_FIXTURE"
+
+          invalid_input="$(mktemp)"
+          trap 'rm -f "$invalid_input"' EXIT
+          sed 's/"schema_version": "0.1.0"/"schema_version": "9.9.9"/' \
+            "$INPUT_FIXTURE" > "$invalid_input"
+
+          set +e
+          "$CLI_BINARY_PATH" validate "$invalid_input"
+          status=$?
+          set -e
+
+          if [[ "$status" -ne 2 ]]; then
+            echo "::error::Expected unsupported schema input to exit with code 2; received $status."
+            exit 1
+          fi
+
+      - name: Install pinned CycloneDX generator
+        shell: bash
+        run: |
+          set -euo pipefail
+          tool_root="$RUNNER_TEMP/cargo-cyclonedx"
+          cargo install --locked --version "$CYCLONEDX_GENERATOR_VERSION" \
+            cargo-cyclonedx --root "$tool_root"
+          echo "$tool_root/bin" >> "$GITHUB_PATH"
+          export PATH="$tool_root/bin:$PATH"
+
+          generator_version="$(cargo cyclonedx --version 2>&1)"
+          printf '%s\n' "$generator_version"
+          if ! grep -Fq "$CYCLONEDX_GENERATOR_VERSION" <<< "$generator_version"; then
+            echo "::error::Unexpected cargo-cyclonedx version; expected $CYCLONEDX_GENERATOR_VERSION."
+            exit 1
+          fi
+
+      - name: Generate and validate binary-scoped CycloneDX SBOM
+        id: sbom
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          lockfile="projects/OFRL-IB-001/Cargo.lock"
+          lock_sha_before="$(sha256sum "$lockfile" | awk '{print $1}')"
+          source_epoch="$(git show -s --format=%ct "$SOURCE_SHA")"
+          export SOURCE_DATE_EPOCH="$source_epoch"
+
+          cargo cyclonedx \
+            --manifest-path "$CLI_MANIFEST" \
+            --format json \
+            --describe binaries \
+            --spec-version "$CYCLONEDX_SPEC_VERSION" \
+            --target "$BUILD_TARGET" \
+            --target-in-filename \
+            --all
+
+          lock_sha_after="$(sha256sum "$lockfile" | awk '{print $1}')"
+          if [[ "$lock_sha_before" != "$lock_sha_after" ]]; then
+            echo "::error::SBOM generation changed the committed application Cargo.lock."
+            exit 1
+          fi
+
+          mapfile -t sbom_files < <(
+            find projects/OFRL-IB-001/crates/ofrl_cli \
+              -maxdepth 1 -type f -name '*.cdx.json' -print | sort
+          )
+          if [[ "${#sbom_files[@]}" -ne 1 ]]; then
+            echo "::error::Expected exactly one binary-scoped CycloneDX JSON SBOM; found ${#sbom_files[@]}."
+            printf '%s\n' "${sbom_files[@]}"
+            exit 1
+          fi
+
+          sbom_file="${sbom_files[0]}"
+          jq -e --arg package "$CLI_PACKAGE" --arg version "$CLI_PACKAGE_VERSION" '
+            .bomFormat == "CycloneDX"
+            and .specVersion == "1.5"
+            and .metadata.component.name == $package
+            and .metadata.component.version == $version
+            and ((.components // []) | type == "array")
+            and ((.components // []) | length > 0)
+            and ((.dependencies // []) | type == "array")
+          ' "$sbom_file" > /dev/null
+
+          # Compare the BOM against Cargo's target-filtered package metadata.
+          # The committed Cargo.lock is a cross-platform superset and can contain
+          # packages that are not part of this Linux binary's resolved dependency graph.
+          metadata_file="$RUNNER_TEMP/ofrl-ib-001-target-metadata.json"
+          cargo metadata --locked --manifest-path "$CLI_MANIFEST" \
+            --format-version 1 --filter-platform "$BUILD_TARGET" > "$metadata_file"
+
+          jq -r --arg package "$CLI_PACKAGE" '
+            .packages[]
+            | select(.name != $package)
+            | "\(.name)@\(.version)"
+          ' "$metadata_file" | sort > "$RUNNER_TEMP/expected-sbom-components.txt"
+
+          jq -r '
+            .components[]
+            | "\(.name)@\(.version)"
+          ' "$sbom_file" | sort > "$RUNNER_TEMP/actual-sbom-components.txt"
+
+          if ! diff -u "$RUNNER_TEMP/expected-sbom-components.txt" "$RUNNER_TEMP/actual-sbom-components.txt"; then
+            echo "::error::CycloneDX component set does not match Cargo's target-filtered package metadata."
+            exit 1
+          fi
+
+          missing_registry_metadata="$(jq -r --slurpfile metadata "$metadata_file" '
+            .components[]
+            | . as $component
+            | select(any(
+                $metadata[0].packages[];
+                .name == $component.name
+                and .version == $component.version
+                and ((.source // "") | startswith("registry+"))
+              ))
+            | select(
+                ((.licenses // []) | length) == 0
+                or ((.hashes // []) | length) == 0
+              )
+            | "\($component.name)@\($component.version)"
+          ' "$sbom_file")"
+
+          if [[ -n "$missing_registry_metadata" ]]; then
+            printf '::error::Registry components missing licence metadata or package hashes:\n%s\n' "$missing_registry_metadata"
+            exit 1
+          fi
+
+          echo "Validated SBOM components against target-filtered Cargo metadata."
+          echo "Registry component licence/hash metadata is complete for this target."
+
+          echo "sbom_file=$sbom_file" >> "$GITHUB_OUTPUT"
+          echo "lockfile_sha256=$lock_sha_after" >> "$GITHUB_OUTPUT"
+          echo "source_date_epoch=$source_epoch" >> "$GITHUB_OUTPUT"
+          echo "SBOM_FILE=$sbom_file" >> "$GITHUB_ENV"
+          echo "LOCKFILE_SHA256=$lock_sha_after" >> "$GITHUB_ENV"
+          echo "SOURCE_DATE_EPOCH_VALUE=$source_epoch" >> "$GITHUB_ENV"
+
+      - name: Package preview, build metadata, and checksums
+        id: bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bundle_dir="$(mktemp -d "$RUNNER_TEMP/ofrl-ib-001-preview.XXXXXX")"
+          short_sha="${SOURCE_SHA:0:12}"
+          binary_artifact="ofrl-ib-001-input-validator-preview-$short_sha-$BUILD_TARGET"
+          sbom_artifact="ofrl-ib-001-cli-$BUILD_TARGET.cdx.json"
+
+          cp "$CLI_BINARY_PATH" "$bundle_dir/$binary_artifact"
+          cp "$SBOM_FILE" "$bundle_dir/$sbom_artifact"
+          cp "projects/OFRL-IB-001/Cargo.lock" "$bundle_dir/Cargo.lock"
+
+          source_commit_time="$(git show -s --format=%cI "$SOURCE_SHA")"
+          rustc_version="$(rustc --version)"
+          cargo_version="$(cargo --version)"
+          generator_version="$(cargo cyclonedx --version 2>&1)"
+
+          jq -n \
+            --arg project_id "OFRL-IB-001" \
+            --arg preview_status "PREVIEW_ONLY_NOT_A_RELEASE" \
+            --arg component "$CLI_PACKAGE" \
+            --arg component_version "$CLI_PACKAGE_VERSION" \
+            --arg source_commit "$SOURCE_SHA" \
+            --arg source_ref "$SOURCE_REF" \
+            --arg source_commit_time "$source_commit_time" \
+            --arg source_date_epoch "$SOURCE_DATE_EPOCH_VALUE" \
+            --arg target "$BUILD_TARGET" \
+            --arg rustc "$rustc_version" \
+            --arg cargo "$cargo_version" \
+            --arg generator "$generator_version" \
+            --arg sbom_format "CycloneDX" \
+            --arg sbom_spec_version "$CYCLONEDX_SPEC_VERSION" \
+            --arg lockfile "projects/OFRL-IB-001/Cargo.lock" \
+            --arg lockfile_sha256 "$LOCKFILE_SHA256" \
+            --arg build_command "cargo build --locked --release --target $BUILD_TARGET --manifest-path $WORKSPACE_MANIFEST --package $CLI_PACKAGE --bin $CLI_BINARY_NAME" \
+            --arg validation_scope "CLI input-contract and historical semantic validation only" \
+            --arg limitations "Not a forecast calculation engine, Scenario Feasibility engine, analyst-facing workbook, statutory reporting system, or full three-statement model." \
+            '{
+              schema_version: "1.0.0",
+              project_id: $project_id,
+              artifact_status: $preview_status,
+              component: { name: $component, version: $component_version },
+              source: {
+                commit: $source_commit,
+                ref: $source_ref,
+                commit_time: $source_commit_time,
+                source_date_epoch: $source_date_epoch
+              },
+              build: {
+                target: $target,
+                rustc: $rustc,
+                cargo: $cargo, 
+                command: $build_command
+              },
+              dependency_lockfile: {
+                path: $lockfile,
+                sha256: $lockfile_sha256
+              },
+              sbom: {
+                format: $sbom_format,
+                specification_version: $sbom_spec_version,
+                generator: $generator
+              },
+              validation_scope: $validation_scope,
+              limitations: $limitations,
+              publication: {
+                github_release_created: false,
+                project_release_status_changed:false,
+                release_authorization_granted: false
+              }
+            }' > "$bundle_dir/BUILD-METADATA.json"
+
+          (
+            cd "$bundle_dir"
+            sha256sum \
+              "$binary_artifact" \
+              "$sbom_artifact" \
+              "Cargo.lock" \
+              "BUILD-METADATA.json" > SHA256SUMS
+            sha256sum -c SHA256SUMS
+          )
+
+          echo "bundle_dir=$bundle_dir" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=ofrl-ib-001-release-preview-$short_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Upload immutable preview bundle
+        id: upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ steps.bundle.outputs.artifact_name }}
+          path: ${{ steps.bundle.outputs.bundle_dir }}/*
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
+
+      - name: Summarize preview evidence
+        shell: bash
+        env:
+          ARTIFACT_DIGEST: ${{ steps.upload.outputs.artifact-digest }}
+          BUNDLE_NAME: ${{ steps.bundle.outputs.artifact_name }}
+        run: |
+          {
+            echo "### OFRL-IB-001 release-candidate preview"
+            echo
+            echo "**This is a preview artifact, not an official release.**"
+            echo
+            echo "- Source commit: \`$SOURCE_SHA\`"
+            echo "- Source ref: \`$SOURCE_REF\`"
+            echo "- Target: \`$BUILD_TARGET\`"
+            echo "- CLI component: \`$CLI_PACKAGE@$CLI_PACKAGE_VERSION\`"
+            echo "- SBOM: CycloneDX $CYCLONEDX_SPEC_VERSION JSON via cargo-cyclonedx $CYCLONEDX_GENERATOR_VERSION"
+            echo "- Cargo.lock SHA-256: \`$LOCKFILE_SHA256\`"
+            echo "- SOURCE_DATE_EPOCH: \`$SOURCE_DATE_EPOCH_VALUE\`"
+            echo "- Workflow artifact: \`$BUNDLE_NAME\`"
+            echo "- Workflow artifact archive SHA-256: \`$ARTIFACT_DIGEST\`"
+            echo
+            echo "The preview includes the executable, SBOM, exact Cargo.lock, build metadata, and verified SHA256SUMS."
+            echo "It does not create a GitHub Release, tag, official version, or release authorization."
+          } >> "$GITHUB_STEP_SUMMARY"
