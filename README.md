@@ -22,15 +22,19 @@ I am deliberately building deeper systems-engineering capability with Rust. The 
 
 **Mission:** Bring people with different backgrounds and experience together to examine financial and business problems, develop and compare methods, and turn useful work into models, software, and resources that others can build on.
 
-### Shared foundations, different applications
+### Shared foundations, different methods
 
 Many of us come into finance and business through a shared body of knowledge. We learn common concepts, equations, and frameworks through degrees, professional qualifications, certificates, or independent study. Black–Scholes is one familiar example: people may learn the same foundational model, then apply, extend, parameterise, test, or combine it in different ways.
 
-What differs is often the practical work built around those foundations: the assumptions we choose, the information we rely on, how we structure a model, the constraints we face, and the experience we gain from applying it. Over time, each person or team develops its own **“secret sauce”**—a combination of methods, assumptions, techniques, processes, and judgement refined for a particular purpose.
+What differs is often the practical work built around those foundations: the assumptions we choose, the information we rely on, how we structure a model, the constraints we face, and the experience we gain from applying it. Over time, each person or team develops its own practical approach—its own **“secret sauce”**: a combination of methods, assumptions, techniques, processes, and judgement refined through experience for a particular purpose.
 
 I do not see those differences as a reason to decide who is better, whose qualifications carry more weight, or whose method must be the one correct answer. I see an opportunity to put different approaches alongside one another, understand how each was developed, and learn what each can contribute.
 
+A common formula or qualification is a starting point, not a complete answer to every problem. The way people apply a shared foundation can differ for good reasons: they may be solving different problems, working with different information, or facing different constraints. Those differences are worth examining before we decide what is useful.
+
 ### Focus on useful outcomes
+
+I do not want OFRL to become a place that declares one approach universally right and another universally wrong. A method can be shown to be mathematically incorrect, inconsistent with its own assumptions, or unsuitable for the objective it claims to serve; when that happens, we should explain it and show the evidence. But that should not become a judgement about the person, nor a reason to dismiss methods that address a different problem or operate under different constraints.
 
 The questions that matter to us are practical:
 
