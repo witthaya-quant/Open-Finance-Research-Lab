@@ -36,3 +36,16 @@ updates:
     labels:
       - dependencies
       - github-actions
+
+  - package-ecosystem: npm
+    directory: /scripts/schema-validator
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:45"
+      timezone: Asia/Bangkok
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - node
+      - schema-validation
