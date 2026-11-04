@@ -2,12 +2,12 @@
 
 # OFRL-IB-001 — Engineering Audit
 
-**Audit version:** 0.2.0  
+**Audit version:** 0.3.0  
 **Audit date:** 2026-11-04  
-**Production baseline:** `main` at `323d4da36bd5386d88a64fb67ff8ca77e73c5905`  
+**Production baseline:** `main` at `abd5d5f439f85805ac732d147f5d42d48cabc2aa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design and CLI changes:** PR #13, open Draft (this audit revision)  
+**System-design and CLI changes:** PR #13, open Draft, head `ff34f9aa73fbc04f5341078c020a7d0a78ac1524`  
 **Status:** Evidence-based audit; all open PR evidence is distinguished from merged production capability
 
 ## 1. Executive assessment
@@ -26,14 +26,18 @@ This audit covers only OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`
 
 | Evidence | Current status | Interpretation |
 |---|---|---|
-| `main` | Merged baseline | Authoritative production code currently available on the default branch |
-| PR #11 — numeric research | Open, Draft | Contains research code, independent benchmarks, SBOM workflow and the new timing harness; not yet production capability |
-| PR #12 — schema tooling | Open, Draft | Contains a pinned Node/AJV validator toolchain and lockfile; does not yet prove parity with Rust |
-| PR #13 — audit/design/CLI | Open, Draft | Contains the audit, design, roadmap and bounded CLI reader; not merged |
+| `main` | Merged baseline at `abd5d5f` | Authoritative production code currently available on the default branch; input and historical validation only |
+| PR #11 — numeric research | Open, Draft; head `120ccd3414` | 800 independent exact-rational expected outputs, candidate arithmetic comparison, SBOM/RustSec research and non-gating timing; not production approval |
+| PR #12 — schema tooling | Open, Draft; head `c38f9ad50` | Reproducible Node/AJV toolchain and package lockfile; schema/Rust parity is supplied separately in PR #13 |
+| PR #13 — audit/design/CLI | Open, Draft; head `ff34f9aa` | Engineering audit, system design, roadmap, Numeric Profile worksheet, bounded CLI reader and shared contract corpus; current CI rerun is not yet confirmed complete |
+| PR #14 — repository foundation | Open, non-Draft; base `main` | Introduces governance and the always-running `repository-policy` workflow; all six expected workflow groups passed on its inspected head |
+| PR #18 — portfolio controls | Open, non-Draft; stacked on PR #14 | Hardens registry/data controls, removes path filters from project workflows and removes mutable Rust bootstrap fallback; all six required checks passed on its inspected head |
+| PR #20 — Decimal POC lockfile | Open, non-Draft; stacked on PR #18 | Adds the isolated POC lockfile and locked CI commands; all six required checks passed on its inspected head |
+| PR #22 — SBOM preview | Open, non-Draft; stacked on PR #20 | Adds a Linux-targeted CLI SBOM/checksum preview only; seven checks/jobs passed on its inspected head; not an official release |
 | Finance/accounting review | Not evidenced | No independent sign-off is claimed |
 | Production Forecast Engine | Not implemented | Must remain gated |
 
-A CI pass applies to the exact commit and workflow scope that ran. It does not transfer automatically to a later commit, and it does not approve a financial policy. The timing-harness code commit `334a1f835405d9520b24ebe6371f82b399e4be3d` passed all four workflow groups, including the new timing executable and uploads. The subsequent documentation/evidence update at PR #11 head `120ccd3414fb7018011ea3991800728f86736319` also passed all eight check runs across the four workflow groups.
+A CI pass applies only to the exact commit and workflow scope that ran. It does not transfer automatically to a later commit, approve a financial policy, or imply that an open PR has merged. The PR #11 timing-harness evidence remains observational; PR #20 and PR #22 improve dependency and preview evidence but do not complete source-level licence/security acceptance or authorize a release.
 
 ## 3. Capabilities already implemented on main
 
@@ -88,16 +92,21 @@ A dependency-free release-mode timing executable has completed for Case A and th
 
 ### 4.3 Dependency and supply-chain evidence
 
-PR #11 adds a project-scoped workflow that creates separate CycloneDX 1.5 inventories for the production model, CLI and isolated POCs. It pins `cargo-cyclonedx 0.5.9` and `cargo-audit 0.22.2` release binaries by SHA-256, runs RustSec with `--deny warnings`, preserves JSON reports and checksums, and verifies committed lockfiles remain unchanged.
+PR #11 supplies the candidate-level CycloneDX/RustSec research workflow and 2026-11-04 point-in-time scan evidence. PR #20 adds a separate Cargo-generated lockfile for the Decimal Contract POC (56 package records: the local package plus 55 registry packages), with `cargo metadata --locked`, `cargo tree --locked`, locked Clippy/tests/docs and a publisher-declared licence-metadata check. It does not perform source-level legal review.
 
-The inspected 2026-11-04 scan reported zero vulnerability findings and zero warnings for the production graph (54 package dependencies), Numeric Envelope POC (58), and Decimal Contract POC snapshot (56). This is a point-in-time advisory-database result, not proof that software has no vulnerabilities or application defects.
+PR #22 adds a **preview-only** CycloneDX 1.5 SBOM and SHA-256 bundle for the implemented `ofrl_cli` input validator on `x86_64-unknown-linux-gnu`. Its inspected run compared 41 SBOM components exactly with target-filtered Cargo metadata (40 registry packages plus local `ofrl_model`), verified package hashes/licence metadata and four per-file checksums, and recorded the artifact archive digest. It is not a release of the unfinished three-statement model and does not establish Windows, macOS, ARM or other target support.
+
+The preview generator is pinned to `cargo-cyclonedx 0.5.9`; its published lockfile includes yanked `xml-rs 0.8.19`. This is recorded as a time-bounded, preview-only build-tool exception with review due by 2027-02-04 or earlier if upstream removes the dependency. The reason for the yank was not established; absence of a surfaced advisory is not proof of safety.
 
 Open items remain:
 
-- Decimal Contract POC has no committed Cargo.lock; its scan uses an ephemeral lock snapshot and is not reproducible dependency evidence.
-- Package source provenance, duplicate versions, licence texts, legal alternatives, notices and distribution/source obligations require review.
-- A declared SPDX expression is inventory metadata, not legal acceptance.
-- Broader build provenance, artifact attestation and non-Rust/system dependency coverage are not established by this workflow.
+- Source provenance and source-level licence/notice review for dependencies intended for distribution.
+- Security-advisory review and explicit disposition of every applicable finding/exception at release time.
+- Review or re-approval of the preview-generator exception before any official release.
+- Reproducible builds and artifact evidence for the exact reviewed release tag and each supported target.
+- Broader build provenance/attestation and non-Rust/system dependency coverage where relevant.
+
+A package's publisher-declared SPDX expression is inventory metadata, not legal acceptance. A clean advisory scan is time-bounded evidence, not proof of no vulnerabilities or application defects.
 
 ## 5. Findings and required disposition
 
@@ -137,11 +146,11 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Blocker before production dependency approval
 
-**Evidence:** PR #11 automates SBOM and RustSec inventory, with a point-in-time clean advisory scan. The Decimal Contract POC lockfile is ephemeral. Licence and source review is explicitly open.
+**Evidence:** PR #20 adds a committed, isolated Decimal Contract POC lockfile and locked CI on its open branch. PR #22 adds a checksum-verified preview SBOM for the implemented CLI on one Linux target. Neither PR completes source-level licence/notice acceptance or security disposition for an official distributable release.
 
-**Risk:** A clean advisory scan does not establish source trust, exploitability, licence compatibility, notice obligations, maintainability or absence of defects.
+**Risk:** A lockfile, publisher-declared licence field, SBOM or clean point-in-time advisory scan does not establish source trust, legal compatibility, notice obligations, exploitability, maintainability or absence of defects.
 
-**Disposition:** Commit or retire the Decimal Contract POC; review each direct/transitive component, source, duplicate versions, SPDX expression and original licence text; approve an allow/exception policy; record notices and distribution obligations; retain release-date evidence.
+**Disposition:** Review each direct/transitive component intended for distribution, source provenance, duplicate versions, original licence text and notice requirements; record advisory findings and exceptions with owners/expiry; resolve or re-approve the yanked `xml-rs 0.8.19` preview-generator exception before official release. Preserve exact tag, target, lockfile, SBOM and artifact checksum identity.
 
 ### EA-05 — Forecast engine and result contract are not implemented
 
@@ -167,11 +176,11 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Major
 
-**Evidence:** Schema validation and Rust semantic validation run in separate jobs. PR #12 makes the schema toolchain reproducible but does not yet run one shared positive/negative corpus through both validators.
+**Evidence:** PR #13 now contains a versioned shared positive/negative corpus consumed by both AJV and the Rust runtime. Cases declare schema validity, runtime status and stable Rust diagnostic codes. The Rust test now validates corpus metadata, unique case IDs/fixture paths, canonical fixture paths under `fixtures/`, and rejects path traversal/symlink escape. AJV validation checks schema identity, corpus shape, expected outcome types and fixture containment. CI on the latest hardening commit is still being re-run; this evidence remains branch-local and is not merged to `main`.
 
-**Risk:** Structural rules, field names, enum values and lexical constraints can drift. Passing schema validation does not guarantee Rust acceptance, and vice versa.
+**Risk:** A shared fixture set can still be incomplete or can drift if one side does not enforce the same metadata and expected outcome contract. Schema-invalid fixtures must never be accepted by the runtime; schema-valid fixtures may still correctly fail cross-field/accounting semantic checks.
 
-**Disposition:** Create a versioned shared contract corpus with case ID, JSON document, expected schema result and expected Rust result/code. Run the same files through AJV and Rust in CI. Document intentional differences between structural checks and cross-field/accounting semantics.
+**Disposition:** Complete the current two-toolchain CI run, preserve the intentional structural-versus-semantic distinction, and add future cases whenever the versioned contract changes. Do not claim parity for all possible JSON documents from a finite fixture set.
 
 ### EA-08 — Reconciliation tolerances are proposed, not approved
 
@@ -243,6 +252,16 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Disposition:** Add a clean-checkout reproduction script/instructions, identify environment and versions, verify hashes and artifacts, and record an independent reproduction report before a reproducible-release claim.
 
+### EA-15 — Required repository-policy check is not yet available on the current main branch
+
+**Severity:** Major merge-sequencing blocker
+
+**Evidence:** The active main Ruleset (ID `26516806`) is configured with exactly six required GitHub Actions contexts, including `repository-policy`. The `.github/workflows/repository-policy.yml` workflow is present on PR #14's branch and the hardened workflow changes are on stacked PR #18, but the workflow file is not yet present on the current `main` commit. PR #13 consequently reports the five OFRL-specific contexts but no `repository-policy` check on its current branch head.
+
+**Risk:** A PR targeting `main` cannot demonstrate every required check while the required workflow has not yet been integrated into the protected base branch. Weakening the Ruleset or renaming/removing the required context would conceal a publication-order problem rather than solve it.
+
+**Disposition:** Preserve all six required checks. Complete the reviewed governance/supply-chain branch sequence so the always-running repository policy workflow is integrated into `main`; then verify a fresh documentation-only and project-code PR both report all six exact contexts. Keep PR #13 Draft until the base-branch workflow dependency and its own review/acceptance gates are satisfied.
+
 ## 6. Numeric tolerance interpretation
 
 The proposed tolerance must not be treated as approved merely because it is already written in the Validation Matrix. At large balances the relative term can dominate the absolute term. For example:
@@ -259,14 +278,15 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 
 | Gate | Evidence required | Status |
 |---|---|---|
-| Numeric Profile | Approved input/intermediate bounds, scale, precision, rounding and separate error budgets | OPEN |
-| Production arithmetic backend | Profile-based comparison, arithmetic context, serialization and cost/complexity review | OPEN |
-| Independent finance/accounting review | Written review and disposition of equations, conventions and edge cases | OPEN |
-| Rust dependencies | Locked graphs, SBOM, security disposition, source and licence/notice acceptance | PARTIAL |
-| Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR |
-| Schema/Rust parity | Shared fixture corpus run against both implementations | OPEN |
-| Typed diagnostics | Stable error variants and field-path capture | OPEN |
-| Production forecast engine | Typed Rust schedules and three statements | NOT STARTED |
+| Numeric Profile | Approved input/intermediate bounds, scale, precision, rounding and separate error budgets | OPEN — worksheet remains TBD |
+| Production arithmetic backend | Profile-based comparison, explicit arithmetic context, serialization and cost/resource review | OPEN — no backend selected |
+| Independent finance/accounting review | Written independent review and disposition of equations, conventions and edge cases | OPEN — not evidenced |
+| Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — PR #20/#22 open; official release review open |
+| Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR — research evidence only |
+| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | IMPLEMENTED IN OPEN PR #13 — latest hardening CI pending |
+| Typed diagnostics | Stable error variants and JSON Pointer for deserialization failures | OPEN — message-substring mapping remains |
+| Repository required checks | All six Ruleset contexts available on main and reported on fresh PRs | OPEN — repository-policy workflow not yet on main |
+| Production forecast engine | Typed Rust schedules and three statements | NOT STARTED — gated |
 | Forecast integrity/feasibility | SI/SF/reportability results over all periods | NOT STARTED |
 | ModelRun provenance | Canonical serialization, SHA-256 and metric lineage | NOT STARTED |
 | XLSX | Output-only workbook and canonical reconciliation | NOT STARTED |
@@ -280,8 +300,8 @@ The next implementation increment should not be a speculative production forecas
 2. Complete the production backend decision using correctness, deterministic context, performance, memory and dependency evidence.
 3. Close lockfile, source, licence and advisory dispositions for dependencies intended to remain.
 4. Obtain independent finance/accounting review of V1 conventions and formulas.
-5. Implement typed deserialization errors and shared Schema/Rust contract tests.
-6. Freeze the production calculation/result contracts, then implement the Rust schedules and statements.
+5. Complete and maintain the shared Schema/Rust contract corpus in PR #13; separately replace message-substring deserialization classification with typed error/path mapping.
+6. Freeze the production calculation/result contracts only after all Phase 2 gates, then implement the Rust schedules and statements.
 7. Add SI/SF/reportability checks and property/boundary tests.
 8. Implement canonical ModelRun, deterministic fingerprints and formula lineage.
 9. Generate XLSX solely from canonical outputs and reconcile it.
