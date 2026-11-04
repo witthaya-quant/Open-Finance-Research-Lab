@@ -1,0 +1,125 @@
+name: Research Proposal
+description: Propose a financial, quantitative, business, or engineering research question for OFRL.
+title: "[Research Proposal]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for proposing research to OFRL. Different methods and perspectives are welcome. Please explain the problem, assumptions, intended use, and how the work could be examined. A proposal is not an endorsement or project acceptance.
+  - type: input
+    id: working-title
+    attributes:
+      label: Working title
+      description: Use a clear, descriptive title.
+      placeholder: "Example: Robust alternatives for volatility estimation under regime changes"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and motivation
+      description: What problem are you investigating, and why does it matter?
+      placeholder: Describe the financial, mathematical, business, or engineering problem.
+    validations:
+      required: true
+  - type: textarea
+    id: research-question
+    attributes:
+      label: Research question and intended use
+      description: State the primary question and what the result could be used for.
+    validations:
+      required: true
+  - type: textarea
+    id: background
+    attributes:
+      label: Background and relevant foundations
+      description: Identify established concepts, equations, methods, standards, or prior work.
+    validations:
+      required: true
+  - type: dropdown
+    id: research-area
+    attributes:
+      label: Main research area
+      options:
+        - Quantitative Finance
+        - Financial Modelling and Valuation
+        - Equity Research and Investment Analysis
+        - Fixed Income and Credit
+        - Derivatives and Volatility
+        - Market Microstructure and Liquidity
+        - Portfolio and Risk Analytics
+        - Corporate Finance and Capital Markets
+        - Financial Data Science and Machine Learning
+        - Research Methodology and Model Validation
+        - Cross-disciplinary / Other
+    validations:
+      required: true
+  - type: dropdown
+    id: proposal-type
+    attributes:
+      label: Type of contribution
+      options:
+        - Develop a new method or model
+        - Examine or extend an established method
+        - Compare alternative methods
+        - Independent implementation or replication
+        - Build reusable software or tooling
+        - Investigate a failure, limitation, or negative result
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-method
+    attributes:
+      label: Proposed method and assumptions
+      description: Explain the core idea, logic or equations, inputs, outputs, and operating conditions.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and trade-offs
+      description: Which established or alternative approaches should be considered? What might each method be suitable for?
+    validations:
+      required: false
+  - type: textarea
+    id: data-rights
+    attributes:
+      label: Data sources, rights, and restrictions
+      description: Identify intended data sources and their licences or terms. Do not attach confidential, client, employer-owned, or restricted data.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation and evidence plan
+      description: How could the proposed work be tested, reproduced, compared, or falsified?
+    validations:
+      required: true
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Expected deliverables and smallest next step
+      description: Describe the useful output and the smallest step that would test feasibility.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks, limitations, and conflicts of interest
+      description: Identify uncertainty, potential failure modes, legal or licensing issues, and relevant personal, professional, or commercial interests.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Proposal confirmations
+      options:
+        - label: I have not included confidential, employer-owned, client-owned, personal, or restricted information.
+          required: true
+        - label: I have identified known data sources and will verify usage and redistribution rights before sharing data.
+          required: true
+        - label: I understand that novelty or personal confidence is not evidence of superiority, and that OFRL may accept, defer, redirect, or decline the proposal.
+          required: true
+        - label: I have read the OFRL [Contributing Guide](../../CONTRIBUTING.md) and [Research Standards](../../RESEARCH_STANDARDS.md).
+          required: true
