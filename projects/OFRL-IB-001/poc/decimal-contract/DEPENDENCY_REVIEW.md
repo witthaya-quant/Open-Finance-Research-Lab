@@ -5,7 +5,7 @@
 **Review version:** 0.1.0  
 **Review date:** 2026-11-04  
 **Scope:** Isolated Decimal and JSON/CSV contract POC only  
-**Status:** POC-local lockfile generated and frozen CI commands implemented on the task branch; locked two-toolchain verification and full source-level licence/security review remain open
+**Status:** POC-local lockfile committed; locked CI passed on Rust 1.85.0 and 1.99.1 at commit `35850951dd51a361baa5394a47bcc5bca00e6f75`; source-level licence/security review and release SBOM remain open
 
 ## 1. Executive finding
 
@@ -98,7 +98,7 @@ All other resolved packages likewise expose licence metadata, commonly MIT OR Ap
 
 ### Reproducibility and compatibility
 
-The lockfile was generated with the declared effective MSRV toolchain (Rust 1.85.0). The bootstrap workflow also ran the prior POC test matrix on Rust 1.85.0 and 1.99.1 successfully, but that initial matrix run occurred before the lockfile was committed and therefore was not yet a locked build. The current PR adds `--locked` verification and will be considered complete only after the new workflow head passes both toolchains using this exact committed file.
+The lockfile was generated with the declared effective MSRV toolchain (Rust 1.85.0). The committed file was subsequently verified on both Rust 1.85.0 and 1.99.1 at PR #20 head `35850951dd51a361baa5394a47bcc5bca00e6f75`. On both toolchains, `cargo metadata --locked`, `cargo tree --locked`, formatting, Clippy, all 9 tests, and documentation generation passed. This closes the lockfile reproducibility acceptance criterion for the POC package; it does not constitute a source-level legal review or security audit.
 
 The committed lockfile freezes registry package versions and checksums for the isolated POC. It does not freeze the Rust toolchain installation, operating-system image, compiler/linker, or external services; those remain separately identified in CI configuration.
 
@@ -123,13 +123,14 @@ Before the full model workspace is promoted beyond research use:
 | Repeating division | Behaviour observed and documented | Must be incorporated into model precision policy |
 | Rust 1.85.0 CI | Passed | Effective POC MSRV |
 | Rust 1.99.1 CI | Passed | Current-toolchain compatibility check |
-| Resolved dependency metadata inventory | 55 registry packages; all declare a Cargo `license` value; source-level review remains incomplete | Metadata inventory recorded; legal/security sign-off remains open |
+| Resolved dependency metadata inventory | 55 registry packages; all declare a Cargo `license` value; no `UNDECLARED` records | Inventory and declared licence expressions reviewed; source-archive/notice verification remains a release gate |
+| Locked dependency graph verification | Rust 1.85.0 and 1.99.1; metadata, tree, Clippy, 9 tests, docs | PASS on PR #20 head `35850951dd51a361baa5394a47bcc5bca00e6f75` |
 | Release SBOM and source-level licence/security review | Not completed | Open |
 | Full model calculation accuracy | Not tested by this POC | Not evaluated |
 | XLSX export reconciliation | Not implemented | Open |
 | Three-statement invariants | Not implemented by this POC | Open |
 
-**Conclusion:** rust_decimal 1.43.0 remains a viable candidate for the next model-engine prototype under the tested string-boundary controls. The isolated POC now has a committed, separately generated lockfile and metadata inventory, but final adoption is not approved. Approval still requires model-specific numeric range/scale analysis, calculation tests, locked CI verification, release SBOM generation, source-level licence review, and security review.
+**Conclusion:** rust_decimal 1.43.0 remains a viable candidate for the next model-engine prototype under the tested string-boundary controls. The isolated POC now has a committed, separately generated lockfile and locked CI evidence, but final adoption is not approved. Approval still requires model-specific numeric range/scale analysis, calculation tests, release SBOM generation, source-level licence/notice verification, and security review.
 
 ## 7. Successful CI evidence
 
@@ -140,3 +141,12 @@ Before the full model workspace is promoted beyond research use:
 - Per toolchain: formatting PASS, Clippy PASS, 9 tests PASS, documentation build PASS
 
 This evidence applies to the isolated POC only. It is not a release certification for OFRL-IB-001 or the future three-statement calculation engine.
+
+### Locked dependency verification — PR #20
+
+- PR: [#20 — lock isolated Decimal POC dependencies](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/20)
+- Tested commit: `35850951dd51a361baa5394a47bcc5bca00e6f75`
+- [Repository Policy](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41800093232): PASS
+- [Numeric and Input Contract Checks](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41800093248): PASS — JSON Schema plus Decimal POC on Rust 1.85.0 and 1.99.1
+- [Rust Runtime Semantic Validator](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41800093217): PASS — Rust 1.85.0 and 1.99.1
+- Per POC toolchain: locked metadata/tree validation, formatting, Clippy, 9 tests, and documentation build all PASS
