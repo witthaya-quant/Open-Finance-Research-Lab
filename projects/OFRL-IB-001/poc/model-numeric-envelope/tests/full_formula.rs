@@ -1,6 +1,5 @@
 use std::str::FromStr;
 
-use bigdecimal::BigDecimal;
 use num_rational::BigRational;
 use num_traits::One;
 use ofrl_model_numeric_envelope::{
