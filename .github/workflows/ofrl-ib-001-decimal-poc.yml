@@ -19,6 +19,7 @@ on:
       - "schemas/ofrl-ib-001-amount-record-0.1.0.schema.json"
       - "schemas/ofrl-ib-001-model-input-0.1.0.schema.json"
       - "fixtures/synthetic/**"
+      - "fixtures/contracts/**"
       - "scripts/validate-ofrl-ib-001-model-input-schema.sh"
       - "scripts/validate-ofrl-ib-001-model-input-schema.cjs"
   workflow_dispatch:
