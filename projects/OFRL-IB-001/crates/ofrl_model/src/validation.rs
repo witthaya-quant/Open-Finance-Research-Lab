@@ -145,6 +145,7 @@ fn deserialize_failure(message: String) -> ValidationReport {
     ))
 }
 
+#[allow(clippy::too_many_arguments)]
 fn push(
     diagnostics: &mut Vec<Diagnostic>,
     code: DiagnosticCode,
@@ -168,6 +169,7 @@ fn push(
     ));
 }
 
+#[allow(clippy::too_many_arguments)]
 fn push_semantic(
     diagnostics: &mut Vec<Diagnostic>,
     code: DiagnosticCode,
@@ -259,6 +261,13 @@ fn validate_metadata(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
 }
 
 fn validate_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
+    validate_period_counts(model, diagnostics);
+    let windows = collect_period_windows(model, diagnostics);
+    validate_period_sequence(&windows, diagnostics);
+    validate_opening_period_handoff(model, &windows, diagnostics);
+}
+
+fn validate_period_counts(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
     if model.historical_periods.len() != EXPECTED_HISTORICAL_PERIODS {
         push_semantic(
             diagnostics,
@@ -284,9 +293,14 @@ fn validate_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
             Some(model.forecast_periods.len().to_string()),
         );
     }
+}
 
+fn collect_period_windows(
+    model: &ModelInput,
+    diagnostics: &mut Vec<Diagnostic>,
+) -> Vec<Option<PeriodWindow>> {
     let mut seen = BTreeSet::new();
-    let mut windows: Vec<Option<PeriodWindow>> = Vec::new();
+    let mut windows = Vec::new();
 
     for (index, period) in model.historical_periods.iter().enumerate() {
         let pointer = format!("/historical_periods/{index}");
@@ -314,14 +328,27 @@ fn validate_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
         windows.push(window);
     }
 
-    for index in 1..windows.len() {
-        if let (Some(previous), Some(current)) = (&windows[index - 1], &windows[index]) {
+    windows
+}
+
+fn validate_period_sequence(
+    windows: &[Option<PeriodWindow>],
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    for pair in windows.windows(2) {
+        if let (Some(previous), Some(current)) = (&pair[0], &pair[1]) {
             validate_adjacent_periods(previous, current, diagnostics);
         }
     }
+}
 
+fn validate_opening_period_handoff(
+    model: &ModelInput,
+    windows: &[Option<PeriodWindow>],
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     let opening_date = match CalendarDate::parse(&model.opening_balance_sheet.as_of_date) {
-        Some(date) => Some(date),
+        Some(date) => date,
         None => {
             push_semantic(
                 diagnostics,
@@ -333,30 +360,29 @@ fn validate_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
                 Some("YYYY-MM-DD".to_owned()),
                 Some(model.opening_balance_sheet.as_of_date.clone()),
             );
-            None
+            return;
         }
     };
 
-    if let (Some(opening_date), Some(first_historical)) =
-        (opening_date, windows.first().and_then(Option::as_ref))
-    {
-        if opening_date.next_day() != Some(first_historical.start) {
-            push_semantic(
-                diagnostics,
-                DiagnosticCode::PeriodHandoffInvalid,
-                "The first historical period must begin on the day immediately after the opening Balance Sheet date.",
-                "/opening_balance_sheet/as_of_date",
-                Some(&first_historical.id),
-                Some("as_of_date"),
-                opening_date
-                    .next_day()
-                    .map(|date| date.to_string())
-                    .or_else(|| Some("a date after the maximum supported calendar date".to_owned())),
-                Some(model.opening_balance_sheet.as_of_date.clone()),
-            );
-        }
-    }
+    let Some(first_historical) = windows.first().and_then(Option::as_ref) else {
+        return;
+    };
 
+    if opening_date.next_day() != Some(first_historical.start) {
+        push_semantic(
+            diagnostics,
+            DiagnosticCode::PeriodHandoffInvalid,
+            "The first historical period must begin on the day immediately after the opening Balance Sheet date.",
+            "/opening_balance_sheet/as_of_date",
+            Some(&first_historical.id),
+            Some("as_of_date"),
+            opening_date
+                .next_day()
+                .map(|date| date.to_string())
+                .or_else(|| Some("a date after the maximum supported calendar date".to_owned())),
+            Some(model.opening_balance_sheet.as_of_date.clone()),
+        );
+    }
 }
 
 fn register_period_id(
@@ -386,6 +412,32 @@ fn inspect_period(
     pointer: &str,
     diagnostics: &mut Vec<Diagnostic>,
 ) -> Option<PeriodWindow> {
+    let (start, end) = parse_period_dates(
+        period_id,
+        start_text,
+        end_text,
+        pointer,
+        diagnostics,
+    )?;
+
+    validate_annual_period_duration(start, end, period_id, pointer, diagnostics);
+    validate_period_identifier(period_id, end, pointer, diagnostics);
+
+    Some(PeriodWindow {
+        id: period_id.to_owned(),
+        start,
+        end,
+        pointer: pointer.to_owned(),
+    })
+}
+
+fn parse_period_dates(
+    period_id: &str,
+    start_text: &str,
+    end_text: &str,
+    pointer: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) -> Option<(CalendarDate, CalendarDate)> {
     let start = match CalendarDate::parse(start_text) {
         Some(date) => date,
         None => {
@@ -434,26 +486,43 @@ fn inspect_period(
         return None;
     }
 
+    Some((start, end))
+}
+
+fn validate_annual_period_duration(
+    start: CalendarDate,
+    end: CalendarDate,
+    period_id: &str,
+    pointer: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     let inclusive_days = end.ordinal() - start.ordinal() + 1;
     if ![364, 365, 366, 371].contains(&inclusive_days) {
         push_semantic(
             diagnostics,
             DiagnosticCode::PeriodDurationInvalid,
-            "V1 accepts annual reporting periods of 364, 365, 366, or 371 inclusive calendar days (52-week, standard calendar, leap-year, or 53-week year).",
+            "V1 accepts annual reporting periods of 364, 365, 366, or 371 inclusive calendar days.",
             pointer,
             Some(period_id),
             Some("period_duration"),
-            Some("365 or 366 inclusive calendar days".to_owned()),
+            Some("364, 365, 366, or 371 inclusive calendar days".to_owned()),
             Some(inclusive_days.to_string()),
         );
     }
+}
 
+fn validate_period_identifier(
+    period_id: &str,
+    end: CalendarDate,
+    pointer: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     let id_bytes = period_id.as_bytes();
-    let id_format_valid = id_bytes.len() == 6
+    let format_valid = id_bytes.len() == 6
         && &id_bytes[..2] == b"FY"
         && id_bytes[2..].iter().all(u8::is_ascii_digit);
 
-    if !id_format_valid {
+    if !format_valid {
         push_semantic(
             diagnostics,
             DiagnosticCode::InvalidIdentifierFormat,
@@ -464,28 +533,22 @@ fn inspect_period(
             Some("FYyyyy".to_owned()),
             Some(period_id.to_owned()),
         );
-    } else {
-        let expected_id = format!("FY{:04}", end.year);
-        if period_id != expected_id {
-            push_semantic(
-                diagnostics,
-                DiagnosticCode::PeriodIdYearMismatch,
-                "The V1 period_id must use the calendar year in which the reporting period ends.",
-                format!("{pointer}/period_id"),
-                Some(period_id),
-                Some("period_id"),
-                Some(expected_id),
-                Some(period_id.to_owned()),
-            );
-        }
+        return;
     }
 
-    Some(PeriodWindow {
-        id: period_id.to_owned(),
-        start,
-        end,
-        pointer: pointer.to_owned(),
-    })
+    let expected_id = format!("FY{:04}", end.year);
+    if period_id != expected_id {
+        push_semantic(
+            diagnostics,
+            DiagnosticCode::PeriodIdYearMismatch,
+            "The V1 period_id must use the calendar year in which the reporting period ends.",
+            format!("{pointer}/period_id"),
+            Some(period_id),
+            Some("period_id"),
+            Some(expected_id),
+            Some(period_id.to_owned()),
+        );
+    }
 }
 
 fn validate_adjacent_periods(
@@ -837,6 +900,7 @@ fn validate_historical_income_statement(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn validate_historical_cash_flow(
     income_statement: &IncomeStatement,
     cash_flow: &CashFlowStatement,
@@ -844,6 +908,33 @@ fn validate_historical_cash_flow(
     previous_balance_sheet: &BalanceSheet,
     current_balance_sheet_pointer: &str,
     previous_balance_sheet_pointer: &str,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    validate_cash_flow_income_link(income_statement, cash_flow, pointer, period_id, diagnostics);
+    validate_cash_flow_depreciation_link(income_statement, cash_flow, pointer, period_id, diagnostics);
+    validate_historical_nwc_rollforward(
+        balance_sheet,
+        previous_balance_sheet,
+        cash_flow,
+        current_balance_sheet_pointer,
+        previous_balance_sheet_pointer,
+        pointer,
+        period_id,
+        diagnostics,
+    );
+    validate_cash_flow_opening_cash(previous_balance_sheet, cash_flow, pointer, period_id, diagnostics);
+    validate_cash_from_operations(cash_flow, pointer, period_id, diagnostics);
+    validate_cash_from_investing(cash_flow, pointer, period_id, diagnostics);
+    validate_cash_from_financing(cash_flow, pointer, period_id, diagnostics);
+    validate_net_cash_rollforward(cash_flow, pointer, period_id, diagnostics);
+    validate_cash_flow_closing_cash(balance_sheet, cash_flow, pointer, period_id, diagnostics);
+}
+
+fn validate_cash_flow_income_link(
+    income_statement: &IncomeStatement,
+    cash_flow: &CashFlowStatement,
     pointer: &str,
     period_id: &str,
     diagnostics: &mut Vec<Diagnostic>,
@@ -858,7 +949,15 @@ fn validate_historical_cash_flow(
         "net_income",
         diagnostics,
     );
+}
 
+fn validate_cash_flow_depreciation_link(
+    income_statement: &IncomeStatement,
+    cash_flow: &CashFlowStatement,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     compare_value(
         income_statement.depreciation,
         cash_flow.depreciation_addback,
@@ -869,21 +968,33 @@ fn validate_historical_cash_flow(
         "depreciation_addback",
         diagnostics,
     );
+}
 
-    if let (Some(current_nwc), Some(previous_nwc)) = (
-        calculate_nwc(
-            balance_sheet,
-            diagnostics,
-            current_balance_sheet_pointer,
-            Some(period_id),
-        ),
-        calculate_nwc(
-            previous_balance_sheet,
-            diagnostics,
-            previous_balance_sheet_pointer,
-            Some(period_id),
-        ),
-    ) {
+#[allow(clippy::too_many_arguments)]
+fn validate_historical_nwc_rollforward(
+    balance_sheet: &BalanceSheet,
+    previous_balance_sheet: &BalanceSheet,
+    cash_flow: &CashFlowStatement,
+    current_balance_sheet_pointer: &str,
+    previous_balance_sheet_pointer: &str,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    let current_nwc = calculate_nwc(
+        balance_sheet,
+        diagnostics,
+        current_balance_sheet_pointer,
+        Some(period_id),
+    );
+    let previous_nwc = calculate_nwc(
+        previous_balance_sheet,
+        diagnostics,
+        previous_balance_sheet_pointer,
+        Some(period_id),
+    );
+
+    if let (Some(current_nwc), Some(previous_nwc)) = (current_nwc, previous_nwc) {
         if let Some(change) = checked_sub(
             current_nwc,
             previous_nwc,
@@ -903,7 +1014,15 @@ fn validate_historical_cash_flow(
             );
         }
     }
+}
 
+fn validate_cash_flow_opening_cash(
+    previous_balance_sheet: &BalanceSheet,
+    cash_flow: &CashFlowStatement,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     compare_value(
         previous_balance_sheet.cash,
         cash_flow.opening_cash,
@@ -914,7 +1033,14 @@ fn validate_historical_cash_flow(
         "opening_cash",
         diagnostics,
     );
+}
 
+fn validate_cash_from_operations(
+    cash_flow: &CashFlowStatement,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     let cfo = checked_sum(
         &[cash_flow.net_income, cash_flow.depreciation_addback],
         diagnostics,
@@ -943,7 +1069,14 @@ fn validate_historical_cash_flow(
             diagnostics,
         );
     }
+}
 
+fn validate_cash_from_investing(
+    cash_flow: &CashFlowStatement,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     if let Some(cfi) = checked_sub(
         Decimal::ZERO,
         cash_flow.capex,
@@ -962,7 +1095,14 @@ fn validate_historical_cash_flow(
             diagnostics,
         );
     }
+}
 
+fn validate_cash_from_financing(
+    cash_flow: &CashFlowStatement,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     let cff = checked_sub(
         cash_flow.debt_drawdowns,
         cash_flow.principal_repayments,
@@ -992,7 +1132,14 @@ fn validate_historical_cash_flow(
             diagnostics,
         );
     }
+}
 
+fn validate_net_cash_rollforward(
+    cash_flow: &CashFlowStatement,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     let net_change = checked_sum(
         &[
             cash_flow.cash_from_operations,
@@ -1035,7 +1182,15 @@ fn validate_historical_cash_flow(
             );
         }
     }
+}
 
+fn validate_cash_flow_closing_cash(
+    balance_sheet: &BalanceSheet,
+    cash_flow: &CashFlowStatement,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     compare_value(
         cash_flow.closing_cash,
         balance_sheet.cash,
@@ -1057,13 +1212,52 @@ fn validate_historical_rollforwards(
     period_id: &str,
     diagnostics: &mut Vec<Diagnostic>,
 ) {
-    let pointer = format!("{period_pointer}/balance_sheet");
+    let balance_sheet_pointer = format!("{period_pointer}/balance_sheet");
+    validate_historical_ppe_rollforward(
+        income_statement,
+        balance_sheet,
+        cash_flow,
+        previous,
+        &balance_sheet_pointer,
+        period_id,
+        diagnostics,
+    );
+    validate_historical_debt_rollforward(
+        balance_sheet,
+        cash_flow,
+        previous,
+        &balance_sheet_pointer,
+        period_pointer,
+        period_id,
+        diagnostics,
+    );
+    validate_historical_retained_earnings_rollforward(
+        income_statement,
+        balance_sheet,
+        cash_flow,
+        previous,
+        &balance_sheet_pointer,
+        period_pointer,
+        period_id,
+        diagnostics,
+    );
+    validate_historical_share_capital(previous, balance_sheet, &balance_sheet_pointer, period_id, diagnostics);
+}
 
+fn validate_historical_ppe_rollforward(
+    income_statement: &IncomeStatement,
+    balance_sheet: &BalanceSheet,
+    cash_flow: &CashFlowStatement,
+    previous: &BalanceSheet,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     if let Some(expected_gross_ppe) = checked_add(
         previous.gross_ppe,
         cash_flow.capex,
         diagnostics,
-        &pointer,
+        pointer,
         Some(period_id),
     ) {
         compare_value(
@@ -1082,7 +1276,7 @@ fn validate_historical_rollforwards(
         previous.accumulated_depreciation,
         income_statement.depreciation,
         diagnostics,
-        &pointer,
+        pointer,
         Some(period_id),
     ) {
         compare_value(
@@ -1096,8 +1290,19 @@ fn validate_historical_rollforwards(
             diagnostics,
         );
     }
+}
 
-    let debt_available = checked_add(
+#[allow(clippy::too_many_arguments)]
+fn validate_historical_debt_rollforward(
+    balance_sheet: &BalanceSheet,
+    cash_flow: &CashFlowStatement,
+    previous: &BalanceSheet,
+    balance_sheet_pointer: &str,
+    period_pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    let available = checked_add(
         previous.interest_bearing_debt,
         cash_flow.debt_drawdowns,
         diagnostics,
@@ -1105,7 +1310,7 @@ fn validate_historical_rollforwards(
         Some(period_id),
     );
 
-    if let Some(available) = debt_available {
+    if let Some(available) = available {
         if cash_flow.principal_repayments > available {
             push_semantic(
                 diagnostics,
@@ -1131,15 +1336,27 @@ fn validate_historical_rollforwards(
                 balance_sheet.interest_bearing_debt,
                 DiagnosticCode::HistoricalDebtRollforwardFailed,
                 "Debt closing balance must equal opening debt plus drawdowns less principal repayments.",
-                format!("{pointer}/interest_bearing_debt"),
+                format!("{balance_sheet_pointer}/interest_bearing_debt"),
                 Some(period_id),
                 "interest_bearing_debt",
                 diagnostics,
             );
         }
     }
+}
 
-    if let Some(expected_retained_earnings) = checked_add(
+#[allow(clippy::too_many_arguments)]
+fn validate_historical_retained_earnings_rollforward(
+    income_statement: &IncomeStatement,
+    balance_sheet: &BalanceSheet,
+    cash_flow: &CashFlowStatement,
+    previous: &BalanceSheet,
+    balance_sheet_pointer: &str,
+    period_pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    let expected = checked_add(
         previous.retained_earnings,
         income_statement.net_income,
         diagnostics,
@@ -1154,19 +1371,29 @@ fn validate_historical_rollforwards(
             period_pointer,
             Some(period_id),
         )
-    }) {
+    });
+
+    if let Some(expected) = expected {
         compare_value(
-            expected_retained_earnings,
+            expected,
             balance_sheet.retained_earnings,
             DiagnosticCode::HistoricalRetainedEarningsFailed,
             "Retained earnings closing balance must equal opening retained earnings plus net income less dividends.",
-            format!("{pointer}/retained_earnings"),
+            format!("{balance_sheet_pointer}/retained_earnings"),
             Some(period_id),
             "retained_earnings",
             diagnostics,
         );
     }
+}
 
+fn validate_historical_share_capital(
+    previous: &BalanceSheet,
+    balance_sheet: &BalanceSheet,
+    pointer: &str,
+    period_id: &str,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
     compare_value(
         previous.share_capital,
         balance_sheet.share_capital,
@@ -1338,6 +1565,7 @@ fn calculate_nwc(
     })
 }
 
+#[allow(clippy::too_many_arguments)]
 fn compare_value(
     expected: Decimal,
     actual: Decimal,
