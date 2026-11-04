@@ -32,7 +32,9 @@ Read [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md) for the full fou
 
 ## Governance and policies
 
-OFRL establishes governance from the beginning, including while it is maintained by one person. [GOVERNANCE.md](GOVERNANCE.md) defines roles, decision rights, review controls, Decision Records, and the planned transition from a founder-maintained repository to a GitHub Organization.
+OFRL establishes governance from the beginning, including while it is maintained by one person. [GOVERNANCE.md](GOVERNANCE.md) defines founder-led authority, contributor roles, review controls, and Decision Records. OFRL is designed to remain under the Founder's personal GitHub account; a GitHub Organization is optional, not a required destination.
+
+[PUBLICATION_AND_IP_BOUNDARY.md](PUBLICATION_AND_IP_BOUNDARY.md) explains what belongs in the public research repository and what should remain private or confidential.
 
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security Policy](SECURITY.md)
