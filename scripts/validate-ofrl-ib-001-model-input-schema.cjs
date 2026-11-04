@@ -125,6 +125,14 @@ function main() {
   if (corpus.schema_id !== schema.$id) {
     throw new Error("Shared contract corpus schema_id does not match the input schema $id");
   }
+  assertExpectedKeys(
+    corpus,
+    ["corpus_version", "schema_id", "description", "cases"],
+    "Shared contract corpus"
+  );
+  if (typeof corpus.description !== "string" || corpus.description.trim().length === 0) {
+    throw new Error("Shared contract corpus description must be non-empty");
+  }
 
   const ajv = new Ajv2020({
     allErrors: true,
