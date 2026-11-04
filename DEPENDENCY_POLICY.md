@@ -81,7 +81,7 @@ The repository now maintains an isolated schema-validation package at `scripts/s
 - Review every Action update as a dependency change, including its transitive behavior and permission requirements.
 - Prefer a deterministic toolchain already provided by the runner or a verified versioned installer. Do not silently fetch and execute an unpinned bootstrap script as a fallback.
 
-Current OFRL workflows pin `actions/checkout` to a full-length SHA, use `contents: read`, and disable persisted checkout credentials. They also contain a fallback that downloads the current rustup installation script when `rustup` is absent; that fallback is scheduled for removal.
+Current OFRL workflows pin `actions/checkout` to a full-length SHA, use `contents: read`, and disable persisted checkout credentials. They require the runner-provided `rustup` executable and fail closed if it is absent; no mutable bootstrap script is fetched or executed. Each workflow installs its declared Rust toolchain versions and components explicitly.
 
 ## 6. Vulnerability and maintenance updates
 
