@@ -56,13 +56,13 @@ From the POC directory:
 ```bash
 RUST_BIGDECIMAL_DEFAULT_PRECISION=80 \
 RUST_BIGDECIMAL_DEFAULT_ROUNDING_MODE=HalfEven \
-cargo run --locked --release --bin backend-profile
+cargo run --locked --release --bin backend_profile
 ```
 
 The executable prints CSV to standard output. To retain a local observation:
 
 ```bash
-cargo run --locked --release --bin backend-profile > backend-profile.csv
+cargo run --locked --release --bin backend_profile > backend-profile.csv
 ```
 
 Record the Rust compiler version, CPU/runner identity and environment alongside local results. Do not compare timings from materially different machines as if they were controlled samples.

@@ -85,7 +85,7 @@ jobs:
           set -euo pipefail
           OUTPUT="$RUNNER_TEMP/ofrl-ib-001-backend-profile"
           mkdir -p "$OUTPUT"
-          cargo run --locked --release --bin backend-profile > "$OUTPUT/backend-profile.csv"
+          cargo run --locked --release --bin backend_profile > "$OUTPUT/backend-profile.csv"
           {
             echo "rust_toolchain=$RUST_TOOLCHAIN"
             rustc --version
