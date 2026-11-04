@@ -132,6 +132,14 @@ function main() {
     "public_filing";
   assertInvalid(validate, "non-synthetic source in V1 schema", nonSyntheticSource);
 
+  const missingSourceReference = clone(fixture);
+  delete missingSourceReference.historical_periods[0].source.source_reference;
+  assertInvalid(
+    validate,
+    "missing historical source reference",
+    missingSourceReference
+  );
+
   const invalidCalendarDate = clone(fixture);
   invalidCalendarDate.historical_periods[0].end_date = "2023-02-30";
   assertInvalid(validate, "invalid calendar date", invalidCalendarDate);
