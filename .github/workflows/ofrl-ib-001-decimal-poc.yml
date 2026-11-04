@@ -5,6 +5,8 @@ on:
     paths:
       - ".github/workflows/ofrl-ib-001-decimal-poc.yml"
       - "projects/OFRL-IB-001/poc/decimal-contract/**"
+      - "projects/OFRL-IB-001/ENGINEERING_ARCHITECTURE.md"
+      - "projects/OFRL-IB-001/DECISION_LOG.md"
       - "schemas/ofrl-ib-001-amount-record-0.1.0.schema.json"
   workflow_dispatch:
 
