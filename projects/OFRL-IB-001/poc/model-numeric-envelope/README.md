@@ -166,7 +166,11 @@ Before the production forecast engine is accepted, OFRL still requires:
 
 The POC includes a deterministic high-CapEx case to demonstrate that a negative cash outcome can coexist with a balanced set of equations. It must be reported as **Scenario Feasibility FAIL**, not repaired through hidden funding.
 
-## 11. Verified POC results (2026-11-04)
+## 11. Independent FY2026 benchmark
+
+The first forecast year also has a separately derived, exact-rational benchmark with immutable expected fractions for all 32 output metrics. See [BENCHMARKS.md](BENCHMARKS.md) and the test `case_a_fy2026_matches_independently_derived_exact_benchmark`. This creates an independent first-period check in addition to the three-backend numeric comparison. It does not replace broader formula/accounting review.
+
+## 12. Verified POC results (2026-11-04)
 
 The committed POC lockfile is enforced in CI with `--locked`. The numeric-envelope workflow passed on Rust 1.85.0 and 1.99.1, with formatting checks, Clippy, all 10 tests, and documentation generation:
 
