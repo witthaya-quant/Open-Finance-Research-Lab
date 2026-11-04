@@ -48,7 +48,7 @@ The Decimal/string-interchange POC passed on 2026-11-04 at PR #6 head commit 88e
 - A 29-fractional-digit raw parser case was observed to lose precision; the POC input adapter now rejects the over-scale value and checks exact parse-to-string round-trip.
 - Direct package metadata and the effective MSRV are documented in [DEPENDENCY_REVIEW.md](poc/decimal-contract/DEPENDENCY_REVIEW.md).
 
-The Decimal POC does not close the complete dependency/source/licence review. PR #11 contains a separate numeric POC lockfile, CycloneDX inventories and RustSec workflow, but remains open and unmerged. The Decimal Contract POC still uses an ephemeral lockfile in CI. Its point-in-time scan reported zero findings; licence texts, notices, source provenance and distribution obligations remain open. Neither POC is the production calculation engine.
+The Decimal POC does not close the complete dependency/source/licence review. PR #11 remains open and contains a separate numeric POC lockfile, candidate CycloneDX inventories and RustSec workflow. The isolated Decimal Contract POC lockfile and locked CI commands are now on main through PR #20; the preview-only CLI SBOM/checksum workflow is on main through PR #22. The preview covers the existing Linux CLI input validator only. Point-in-time advisory scans are not a permanent guarantee; licence texts, notices, source provenance and distribution obligations remain open. Neither POC is the production calculation engine.
 
 ## 2.2 Input contract design decisions
 
@@ -85,7 +85,7 @@ The schema and historical semantic-validation gates are implemented on main. The
 
 1. Approve a versioned Numeric Profile: supported monetary/rate/day bounds, formula-chain intermediate headroom, deterministic division context, five-year error budget, separate accounting/schedule/display tolerances and output rounding.
 2. Select the production numeric backend only after the Numeric Profile, controlled performance/resource evidence, serialization semantics and migration impact on the rust_decimal-based validator are reviewed.
-3. Complete dependency governance: commit or retire the Decimal Contract POC lockfile; review package source, duplicate versions, original licence texts, notices, legal alternatives and distribution obligations. PR #11's SBOM/RustSec workflow is evidence of inventory and a point-in-time advisory scan, not final approval.
+3. Complete dependency governance: the Decimal Contract POC lockfile and locked CI are on main through PR #20; continue reviewing package source, duplicate versions, original licence texts, notices, legal alternatives and distribution obligations. PR #11's SBOM/RustSec workflow and PR #22's preview-only CLI SBOM are inventory and point-in-time advisory evidence, not final legal/security approval.
 4. Obtain independent finance/accounting review of V1 conventions and statement formulas. PR #11's BM-002/BM-003 provide 800 exact expected outputs for the declared synthetic mechanics; they do not constitute accounting sign-off.
 5. Replace message-substring deserialization classification with typed error/path mapping and expose stable JSON Pointer diagnostics.
 6. Run one versioned positive/negative contract corpus through both JSON Schema and Rust runtime validation.
