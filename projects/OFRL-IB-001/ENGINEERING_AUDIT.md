@@ -7,7 +7,7 @@
 **Production baseline:** `main` at `323d4da36bd5386d88a64fb67ff8ca77e73c5905`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design and CLI changes:** PR #13, head `8085fe4bfdce7ee4d5cbc7d5a0493693264fbaeb`  
+**System-design and CLI changes:** PR #13, open Draft (this audit revision)  
 **Status:** Evidence-based audit; all open PR evidence is distinguished from merged production capability
 
 ## 1. Executive assessment
@@ -33,7 +33,7 @@ This audit covers only OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`
 | Finance/accounting review | Not evidenced | No independent sign-off is claimed |
 | Production Forecast Engine | Not implemented | Must remain gated |
 
-A CI pass applies to the exact commit and workflow scope that ran. It does not transfer automatically to a later commit, and it does not approve a financial policy. The timing-harness code commit `334a1f835405d9520b24ebe6371f82b399e4be3d` passed all four workflow groups, including the new timing executable and uploads. The subsequent PR #11 head `120ccd3414fb7018011ea3991800728f86736319` adds documentation/evidence only; its follow-on workflow checks were in progress at the time of this audit refresh.
+A CI pass applies to the exact commit and workflow scope that ran. It does not transfer automatically to a later commit, and it does not approve a financial policy. The timing-harness code commit `334a1f835405d9520b24ebe6371f82b399e4be3d` passed all four workflow groups, including the new timing executable and uploads. The subsequent documentation/evidence update at PR #11 head `120ccd3414fb7018011ea3991800728f86736319` also passed all eight check runs across the four workflow groups.
 
 ## 3. Capabilities already implemented on main
 
@@ -82,7 +82,7 @@ Observed stress evidence:
 - The values (10^{18}) and (10^{22}) are two chosen test points, not the exact transition boundary, a supported company-size envelope or approved production limits.
 - The provisional two-decimal comparison is a POC observation, not the approved reporting or reconciliation policy.
 
-A dependency-free release-mode timing executable has been added to PR #11 for Case A and the (10^{18}) stress input. It reports min/median/max per-forecast elapsed time and runner/toolchain metadata. It is explicitly non-gating. The newest branch commit must complete CI before its timing artifact can be cited as verified. Memory, allocations, tail latency, concurrent workloads and workbook costs remain unmeasured.
+A dependency-free release-mode timing executable has completed for Case A and the (10^{18}) stress input. Workflow run [41784590895](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41784590895) passed on Rust 1.85.0 and 1.99.1 and uploaded two artifacts. Median time per five-year forecast was: Rust 1.85.0 — Case A 42.117 µs / stress 43.032 µs for rust_decimal, 87.877 µs / 64.566 µs for BigDecimal, and 316.808 µs / 367.050 µs for Exact Rational; Rust 1.99.1 — Case A 37.235 µs / stress 38.158 µs, 82.277 µs / 63.559 µs, and 324.448 µs / 392.920 µs respectively. BigDecimal was 1.50×–2.21× the fixed Decimal median in this run; Exact Rational was 7.52×–10.30×. This is one 4-vCPU AMD EPYC 7763 runner environment using 5 warm-ups, 9 samples and 40 forecasts per sample. The result is non-gating and does not measure memory, allocations, tail latency, concurrency, file I/O, validation, serialization or workbook costs. CSV and runner metadata checksums are recorded in [BENCHMARKS_PERFORMANCE.md](../poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md) on PR #11.
 
 **Disposition:** no production numeric library is selected by this audit. Production input types and historical validation currently use `rust_decimal::Decimal`; selecting a different backend would require an explicit input/validation boundary migration, not only swapping the calculation implementation.
 
