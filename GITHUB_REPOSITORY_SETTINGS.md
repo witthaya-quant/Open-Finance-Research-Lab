@@ -33,14 +33,14 @@ Configure a branch protection rule or repository ruleset targeting the exact def
 | Require a Pull Request before merging | **Enable** | Prevent routine direct changes to the default branch |
 | Required approving reviews | **0 / disabled** | A sole maintainer cannot obtain an independent approval from another person; do not create a false review control |
 | Require conversation resolution | **Enable** | Keep review discussions resolved before merge |
-| Require status checks | Enable only for stable, named checks that reliably run on every relevant PR | Avoid blocking all merges on checks that are absent, conditional, or unstable |
-| Require branch to be up to date | Enable only after required checks are selected and reliable | Avoid an unusable or misleading gate |
+| Require status checks | **Enable and require the six exact GitHub Actions check names listed in Section 6** | All current workflows now run on every Pull Request, so the required checks are stable for documentation and code changes |
+| Require branch to be up to date | **Enable** after all six required checks are selected | Require testing against the latest `main` commit; all six checks now run for every Pull Request |
 | Allow force pushes | **Disable** | Preserve default-branch history |
 | Allow deletions | **Disable** | Prevent accidental default-branch deletion |
 | Require signed commits | Optional; enable only after the signing workflow is adopted and tested | Avoid an unworkable control that causes accidental lockout |
 | Require linear history | Optional; decide alongside merge-method policy | Do not enable without confirming the chosen merge workflow |
 | Code-owner review | Not applicable until a meaningful `CODEOWNERS` file and eligible owners exist | Avoid a nominal control with no reviewer coverage |
-| Admin bypass | Enable **Do not allow bypassing the above settings / include administrators** where available; otherwise record the owner-bypass limitation as a residual risk | Branch protection does not automatically constrain administrators; verify the rule against the repository owner's account |
+| Bypass list | **Leave empty**; do not grant a bypass role, user, or app | Keep the same merge gate for the repository owner and collaborators; verify the owner is not exempt after saving |
 
 The Founder may merge a Founder-authored PR under Stage 0 because independent review is not available. The PR checklist and validation evidence remain mandatory. This must be described as a single-maintainer decision, not an independent approval.
 
@@ -95,7 +95,18 @@ Do not guess check names.
 5. Select only the exact check names that are stable and applicable.
 6. Test a failing check and confirm it blocks merge; test a passing check and confirm the control behaves as intended.
 
-**Current OFRL caution:** the existing OFRL-IB-001 workflows use path filters. A documentation-only Pull Request may not run the same jobs as a model-code Pull Request. Do not make those path-filtered jobs globally required until a stable always-running gate or suitable required-workflow design exists. A required check that is skipped or never reported can leave a Pull Request blocked.
+**Current OFRL status (2026-11-04):** both OFRL-IB-001 project workflows have been changed to run on every Pull Request (their `paths` filters have been removed). The six exact check-run names were observed on the latest successful PR #18 head and on PR #14, which targets `main`. All six were reported by the GitHub Actions app and completed successfully.
+
+Require these exact names:
+
+- `repository-policy`
+- `Model input JSON Schema`
+- `Decimal contract (Rust 1.85.0)`
+- `Decimal contract (Rust 1.99.1)`
+- `Semantic validator (Rust 1.85.0)`
+- `Semantic validator (Rust 1.99.1)`
+
+When GitHub offers an expected source for each check, select **GitHub Actions**. Do not add a new check to the required list until it is configured to report on every Pull Request or is covered by a stable always-running gate. GitHub documents that checks skipped by path or branch filtering remain pending and can block merges; see [Skipping workflow runs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs) and [Troubleshooting required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
 
 A workflow that runs only on pushes to the default branch is not sufficient evidence that it protects Pull Requests.
 
