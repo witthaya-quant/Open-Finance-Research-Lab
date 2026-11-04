@@ -177,7 +177,7 @@ Interest is then bounded by:
 
 \[
 \overline{Interest}_t
-le
+\le
 \frac{\overline{D}_{t-1}+\overline{D}_t}{2}
 \overline{r}_{INT}
 \]
