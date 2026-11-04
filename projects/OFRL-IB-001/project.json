@@ -34,5 +34,9 @@
     "VALIDATION_ERROR_CONTRACT.md",
     "RUNTIME_VALIDATOR.md"
   ],
-  "release_status": "not_released"
+  "release_status": "not_released",
+  "validation_workflows": [
+    ".github/workflows/ofrl-ib-001-decimal-poc.yml",
+    ".github/workflows/ofrl-ib-001-semantic-validator.yml"
+  ]
 }
