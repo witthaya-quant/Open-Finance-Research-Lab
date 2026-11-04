@@ -62,6 +62,7 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Decimal contract POC](poc/decimal-contract/README.md)
 - [Dependency review](poc/decimal-contract/DEPENDENCY_REVIEW.md)
 - [Full-formula numeric foundation comparison POC](poc/model-numeric-envelope/README.md)
+- [Independent FY2026 calculation benchmark](poc/model-numeric-envelope/BENCHMARKS.md)
 
 
 ## Current stage
