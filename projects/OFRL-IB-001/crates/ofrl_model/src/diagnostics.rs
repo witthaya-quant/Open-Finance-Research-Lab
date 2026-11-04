@@ -42,6 +42,8 @@ pub enum DiagnosticCode {
     InvalidEnumValue,
     InvalidDate,
     InvalidCurrencyFormat,
+    InvalidIdentifierFormat,
+    StringConstraintViolation,
     PeriodCountInvalid,
     PeriodIdDuplicate,
     PeriodOrderInvalid,
