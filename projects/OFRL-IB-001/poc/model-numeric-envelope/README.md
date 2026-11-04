@@ -110,7 +110,7 @@ The model's final technical input bounds remain unapproved until this evidence a
 - Checked addition, subtraction, multiplication, and division boundaries.
 - Scale preservation on parse/serialize.
 - 1/365 and repeating division behaviour.
-- Large amounts combined with high-scale day metrics.
+- Large amounts combined with high-scale day metrics at an intermediate (10^18) stress point and an extreme (10^22) capacity point.
 - Small fractional amounts combined with large balances.
 - Five-year propagation of rounding differences.
 - Exact-rational versus candidate output deltas.
@@ -143,7 +143,7 @@ The POC can be marked **Reproducible** only when:
 - All three engines implement the same V1 formula path.
 - Exact rational invariants pass.
 - Candidate arithmetic errors are measured and reported.
-- The provisional stress case completes or produces explicit typed failure evidence.
+- The intermediate and extreme stress cases complete or produce explicit typed capacity-failure evidence.
 - Regression tests cover all discovered edge conditions.
 - Dependency versions and BigDecimal context are pinned.
 - Both Rust 1.85.0 and 1.99.1 CI jobs pass.
