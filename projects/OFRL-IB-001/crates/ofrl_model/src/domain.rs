@@ -186,7 +186,7 @@ where
     D: Deserializer<'de>,
 {
     let text = String::deserialize(deserializer).map_err(|_| {
-        serde::de::Error::custom("JSON_TYPE_MISMATCH: decimal values must be JSON strings")
+        serde::de::Error::custom("DECIMAL_STRING_REQUIRED: Decimal values must be JSON string tokens")
     })?;
 
     if !is_plain_decimal_text(&text) {
