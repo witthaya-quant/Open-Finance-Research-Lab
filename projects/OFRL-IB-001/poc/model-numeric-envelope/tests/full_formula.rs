@@ -197,7 +197,6 @@ fn negative_cash_is_reported_as_infeasible_without_fabricating_financing() {
     );
 }
 
-
 #[test]
 fn case_a_fy2026_matches_independently_derived_exact_benchmark() {
     // These constants were derived separately from the shared generic forecast
