@@ -88,6 +88,7 @@ Required:
 - Dependency, licence, and security review.
 - Workflow permissions and secret handling.
 - Versioning, changelog, release provenance, SBOM, and checksums for distributable releases.
+- A project-owned CI workflow that runs the checks required by the project's language, build system, and risk profile on relevant Pull Requests.
 - No claim of production suitability without deployment, reliability, and security evidence.
 
 ### 3.5 Data product or dataset
