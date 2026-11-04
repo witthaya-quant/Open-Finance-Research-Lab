@@ -22,19 +22,35 @@ I am deliberately building deeper systems-engineering capability with Rust. The 
 
 **Mission:** To bring together people with different experiences and areas of expertise to investigate financial and business problems, develop and examine alternative methods, and turn useful research into reproducible models, software, and practical resources.
 
-Many of us come into finance and business through shared foundations. We study the same core ideas, equations, frameworks, and concepts—whether through a degree, professional qualification, certificate, or independent study. Black–Scholes is one familiar example: the equation is widely known, but people may build very different ways of applying it.
+### Shared foundations, different ways of applying them
 
-The differences often sit in the practical work around those foundations: the assumptions we choose, the information we trust, the way we structure a model, the constraints we face, and the methods we develop through experience. In practice, each person or team may have its own "สูตรน้ำจิ้ม"—a way of doing things that they have refined for a particular purpose.
+Many of us enter finance and business through a shared body of knowledge. We study familiar concepts, equations, and frameworks through degrees, professional qualifications, certificates, or independent study. Black–Scholes is one well-known example: many people learn the same foundational model, yet develop different ways to apply, extend, parameterise, test, or combine it in practice.
 
-I do not see those differences as a reason to decide who is better, whose credentials carry more weight, or whose method must be the one correct answer. I see an opportunity to put different approaches alongside one another, understand how each was built, and learn what each can contribute.
+The differences often come from the work built around those foundations: the assumptions we choose, the information we rely on, how we structure a model, the constraints we face, and the experience we gain from applying it. Over time, each person or team develops a practical method of its own—a personal recipe of techniques, assumptions, and judgement refined for a particular purpose.
 
-The question we want to work on is practical: **What can this method help us do? Under which assumptions and conditions does it work? Where does it fall short? What should be improved, combined, simplified, or developed further so that someone else can build on it?**
+I do not want OFRL to become a place where people compete over whose recipe is best, whose qualifications carry more weight, or who gets to claim the one correct way. I want people to put methods they are able to share on the table, explain how they work, and help one another understand what each approach can contribute.
 
-That does not mean every method is equally reliable, or that evidence and correctness do not matter. We still examine the mathematics, financial logic, implementation, data, robustness, and results. But the purpose of that examination is to understand the work and improve the outcome—not to rank the people behind it or turn every discussion into a contest over who is right.
+### Focus on what we can build from the work
 
-A method may be useful for one objective and unsuitable for another. Two approaches may solve different parts of the same problem. A third approach may emerge by combining useful ideas. Sometimes the evidence will show that one method is more suitable under clearly stated conditions; sometimes it will not justify choosing a winner. All of these are valid outcomes when they are explained honestly.
+The questions that matter to us are practical:
 
-**OFRL is a place to develop ideas together, not a place to defend personal territory.** We want people to bring what they have learned and built, make the reasoning understandable, test what can be tested, share what can be shared, and help turn useful work into something others can inspect, adapt, and use in practice.
+- What problem is the method intended to solve, and for whom?
+- Under which assumptions, data, market conditions, or business constraints is it useful?
+- What does it do well, and where does it become limited or unsuitable?
+- Which parts can be improved, simplified, extended, combined, or reused?
+- What would another person need to understand, test, reproduce, or build on it?
+
+A contribution does not have to replace an existing method. It may fill a gap, improve one part of a process, make an implementation more reliable, provide a better fit for a particular use case, or combine useful ideas from different approaches. Different methods may complement one another rather than compete for a single place.
+
+### Open to different approaches, serious about the work
+
+OFRL does not assume that every method is equally reliable or suitable for every purpose. We examine mathematical and financial logic, assumptions, data quality, implementation, robustness, and practical results. When a method is incorrect or does not meet its stated objective, we should say so clearly and explain why. That is a judgement about the work under defined conditions—not a judgement about the intelligence, credentials, or worth of the person who developed it.
+
+We are not trying to avoid disagreement. We are trying to make disagreement useful. The goal is to understand what the evidence tells us, identify what remains uncertain, and decide what can be learned or developed next—not to turn every difference into a contest over who is right or better.
+
+**OFRL is a place to develop ideas together, not a place to defend personal territory.** Bring what you have learned and built, share what you are entitled to share, make the reasoning understandable, and help turn useful work into something others can inspect, adapt, and use.
+
+You can contribute by proposing a research question, presenting an alternative method, reproducing an existing result, improving a model, testing an implementation, or building reusable tools. Start with the [Contributing Guide](CONTRIBUTING.md) or submit a [Project / Research Proposal](.github/ISSUE_TEMPLATE/research_proposal.yml).
 
 Read [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md) for the full foundation, vision, mission, principles, and collaboration philosophy.
 
