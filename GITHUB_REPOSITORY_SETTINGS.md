@@ -23,12 +23,12 @@ As checked on 2026-11-04 through the GitHub repository and Rulesets APIs:
 | Deletion / force-push protection | Enabled |
 | Bypass actors | None; API reports current user bypass as `never` |
 | Up-to-date requirement | Enabled (`strict_required_status_checks_policy: true`) |
-| Required status checks | **7 entries returned:** six exact GitHub Actions contexts plus one malformed extra context without an integration ID; see Section 6 |
+| Required status checks | **Exactly six** GitHub Actions contexts; all six are bound to integration ID `15368` and passed on the PR #14 / PR #18 heads checked |
 | Code Quality / Copilot Review | Both disabled; neither appears in the current Ruleset response |
 | Merge methods | Merge commit, rebase, and squash enabled |
 | Repository permissions available to current account | Admin, maintain, push, pull, triage |
 
-The Ruleset is active and most Stage 0 controls are correct. It is **not yet accepted** because GitHub currently stores seven required-check entries: the six intended check contexts and one malformed extra context, `DecDecimal contract (Rust 1.99.1)imal contract (Rust 1.85.0)`, which has no GitHub Actions integration ID. Remove only this malformed entry; retain the six correctly named contexts. Do not merge PR #14 while the invalid extra required context remains.
+The Ruleset is active and its Stage 0 configuration has passed the API read-back: exactly six required check contexts are stored, each bound to GitHub Actions integration ID `15368`; no malformed extra context remains. All six checks passed on the PR #14 head targeting `main` and the PR #18 audit head. The documentation-only smoke test should be repeated after the workflow changes merge to `main`, but the Ruleset configuration itself is complete.
 
 This is a snapshot, not a guarantee that settings remain unchanged. Recheck after configuration changes and after the repository moves to an Organization.
 
@@ -105,7 +105,7 @@ Do not guess check names.
 
 **Current OFRL status (2026-11-04):** both OFRL-IB-001 project workflows have been changed to run on every Pull Request (their `paths` filters have been removed). The six exact check-run names were observed on the latest successful PR #18 head and on PR #14, which targets `main`. All six are reported by the GitHub Actions app and completed successfully.
 
-The Rulesets API currently returns seven required entries. Six valid contexts, each associated with the GitHub Actions integration, are:
+The Rulesets API read-back at 2026-11-04 confirmed **exactly six required entries**, each with integration ID `15368` (GitHub Actions), and no other required context:
 
 - `repository-policy`
 - `Model input JSON Schema`
@@ -114,10 +114,7 @@ The Rulesets API currently returns seven required entries. Six valid contexts, e
 - `Semantic validator (Rust 1.85.0)`
 - `Semantic validator (Rust 1.99.1)`
 
-It also returns one malformed seventh context without an integration ID:
-`DecDecimal contract (Rust 1.99.1)imal contract (Rust 1.85.0)`.
-
-Delete only that malformed extra entry. Do not delete either valid Decimal check. After saving, verify the API reports exactly six required entries and that every entry has integration ID `15368` (GitHub Actions). Do not merge PR #14 while the malformed extra required context remains.
+All six exact check runs were present and successful on the PR #14 head targeting `main` and on the PR #18 audit head. The malformed extra context previously observed has been removed. Revalidate after any workflow-name or Ruleset changes.
 
 GitHub documents that checks skipped by path or branch filtering remain pending and can block merges; see [Skipping workflow runs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs) and [Troubleshooting required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
 
@@ -130,13 +127,13 @@ Maintain a short record when repository settings are changed:
 | Field | Record |
 |---|---|
 | Date | 2026-11-04 |
-| Changed by | Repository owner (user reported the Ruleset update; the Rulesets API response does not expose the actor) |
+| Changed by | Repository owner (user-reported configuration; actor identity is not returned by the Rulesets API) |
 | Branch or tag target | `~DEFAULT_BRANCH` (`main`) |
 | Rule or ruleset name | `OFRL-main-protection` / ID `26516806` |
 | Settings enabled | Active; Pull Request required; 0 approvals; conversation resolution; strict up-to-date; deletion restriction; force-push block; no bypass actors |
-| Required check names | Six valid GitHub Actions contexts plus one malformed extra context pending removal |
-| Verification PR | PR #14 targeting `main`; PR #18 validates all six workflows on the audit branch |
-| Exceptions and expiry / review date | Remove malformed seventh context before accepting this control; recheck after the Ruleset edit |
+| Required check names | Exactly six; all bound to GitHub Actions integration ID `15368` |
+| Verification PR | PR #14 targeting `main`; PR #18 validates all six workflow checks on the audit branch |
+| Exceptions and expiry / review date | No configuration exception. Repeat a documentation-only PR smoke test after the workflow changes are merged to `main`. |
 
 Review the settings after changing the default branch, adding or changing workflows, moving to an Organization, changing repository visibility, or changing Maintainer roles.
 
