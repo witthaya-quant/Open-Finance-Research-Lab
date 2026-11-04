@@ -82,7 +82,10 @@ fn arbitrary_decimal_context_is_visible_and_repeating_division_is_finite() {
         Some("HalfEven"),
         "the POC must compile BigDecimal with the declared HalfEven rounding mode"
     );
-    assert_eq!(fractional_digits, 80, "the compile-time context must be effective");
+    assert_eq!(
+        fractional_digits, 80,
+        "the compile-time context must be effective"
+    );
 }
 
 #[test]
@@ -128,8 +131,7 @@ fn all_candidates_match_case_a_at_the_two_decimal_test_boundary() {
     println!("CASE_A_FIXED={fixed_summary:#?}");
     println!("CASE_A_BIGDECIMAL={arbitrary_summary:#?}");
 
-    let fixed_balance_residual =
-        maximum_absolute_metric(&fixed, "balance_difference").unwrap();
+    let fixed_balance_residual = maximum_absolute_metric(&fixed, "balance_difference").unwrap();
     let arbitrary_balance_residual =
         maximum_absolute_metric(&arbitrary, "balance_difference").unwrap();
     println!("CASE_A_FIXED_MAX_ABS_BS_RESIDUAL={fixed_balance_residual:?}");
@@ -166,7 +168,6 @@ fn stress_case_exact_reference_remains_balanced_and_candidates_report_capacity()
     let maximum = ofrl_model_numeric_envelope::maximum_absolute_value(&reference).unwrap();
     println!("STRESS_EXACT_REFERENCE_MAXIMUM={maximum:#?}");
 }
-
 
 #[test]
 fn negative_cash_is_reported_as_infeasible_without_fabricating_financing() {
