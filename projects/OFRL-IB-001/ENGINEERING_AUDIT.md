@@ -7,7 +7,7 @@
 **Production baseline:** `main` at `abd5d5f439f85805ac732d147f5d42d48cabc2aa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design and CLI changes:** PR #13, open Draft, head `ff34f9aa73fbc04f5341078c020a7d0a78ac1524`  
+**System-design and CLI changes:** PR #13, open Draft; code and documentation baseline `6941b1f1e2d4b6270fd8cf6d62327b4417d0486b` passed all five applicable project check contexts  
 **Status:** Evidence-based audit; all open PR evidence is distinguished from merged production capability
 
 ## 1. Executive assessment
@@ -29,7 +29,7 @@ This audit covers only OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`
 | `main` | Merged baseline at `abd5d5f` | Authoritative production code currently available on the default branch; input and historical validation only |
 | PR #11 — numeric research | Open, Draft; head `120ccd3414` | 800 independent exact-rational expected outputs, candidate arithmetic comparison, SBOM/RustSec research and non-gating timing; not production approval |
 | PR #12 — schema tooling | Open, Draft; head `c38f9ad50` | Reproducible Node/AJV toolchain and package lockfile; schema/Rust parity is supplied separately in PR #13 |
-| PR #13 — audit/design/CLI | Open, Draft; head `ff34f9aa` | Engineering audit, system design, roadmap, Numeric Profile worksheet, bounded CLI reader and shared contract corpus; current CI rerun is not yet confirmed complete |
+| PR #13 — audit/design/CLI | Open, Draft; baseline head `6941b1f` | Engineering audit, system design, roadmap, Numeric Profile worksheet, bounded CLI reader and shared contract corpus; all five applicable project check contexts passed on that head; `repository-policy` is not yet available from current main |
 | PR #14 — repository foundation | Open, non-Draft; base `main` | Introduces governance and the always-running `repository-policy` workflow; all six expected workflow groups passed on its inspected head |
 | PR #18 — portfolio controls | Open, non-Draft; stacked on PR #14 | Hardens registry/data controls, removes path filters from project workflows and removes mutable Rust bootstrap fallback; all six required checks passed on its inspected head |
 | PR #20 — Decimal POC lockfile | Open, non-Draft; stacked on PR #18 | Adds the isolated POC lockfile and locked CI commands; all six required checks passed on its inspected head |
@@ -176,7 +176,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Major
 
-**Evidence:** PR #13 now contains a versioned shared positive/negative corpus consumed by both AJV and the Rust runtime. Cases declare schema validity, runtime status and stable Rust diagnostic codes. The Rust test now validates corpus metadata, unique case IDs/fixture paths, canonical fixture paths under `fixtures/`, and rejects path traversal/symlink escape. AJV validation checks schema identity, corpus shape, expected outcome types and fixture containment. CI on the latest hardening commit is still being re-run; this evidence remains branch-local and is not merged to `main`.
+**Evidence:** PR #13 now contains a versioned shared positive/negative corpus consumed by both AJV and the Rust runtime. Cases declare schema validity, runtime status and stable Rust diagnostic codes. The Rust test now validates corpus metadata, unique case IDs/fixture paths, canonical fixture paths under `fixtures/`, and rejects path traversal/symlink escape. AJV validation checks schema identity, corpus shape, expected outcome types and fixture containment. All five applicable project check contexts passed on PR #13 head `6941b1f`; this evidence remains branch-local and is not merged to `main`. The separate `repository-policy` check is absent because that workflow has not yet been integrated into current `main`.
 
 **Risk:** A shared fixture set can still be incomplete or can drift if one side does not enforce the same metadata and expected outcome contract. Schema-invalid fixtures must never be accepted by the runtime; schema-valid fixtures may still correctly fail cross-field/accounting semantic checks.
 
@@ -256,7 +256,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Major merge-sequencing blocker
 
-**Evidence:** The active main Ruleset (ID `26516806`) is configured with exactly six required GitHub Actions contexts, including `repository-policy`. The `.github/workflows/repository-policy.yml` workflow is present on PR #14's branch and the hardened workflow changes are on stacked PR #18, but the workflow file is not yet present on the current `main` commit. PR #13 consequently reports the five OFRL-specific contexts but no `repository-policy` check on its current branch head.
+**Evidence:** The active main Ruleset (ID `26516806`) is configured with exactly six required GitHub Actions contexts, including `repository-policy`. The `.github/workflows/repository-policy.yml` workflow is present on PR #14's branch and the hardened workflow changes are on stacked PR #18, but the workflow file is not yet present on the current `main` commit. PR #13 consequently reports the five OFRL-specific contexts but no `repository-policy` check on its current branch head; the latest five completed contexts all passed.
 
 **Risk:** A PR targeting `main` cannot demonstrate every required check while the required workflow has not yet been integrated into the protected base branch. Weakening the Ruleset or renaming/removing the required context would conceal a publication-order problem rather than solve it.
 
@@ -283,7 +283,7 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 | Independent finance/accounting review | Written independent review and disposition of equations, conventions and edge cases | OPEN — not evidenced |
 | Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — PR #20/#22 open; official release review open |
 | Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR — research evidence only |
-| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | IMPLEMENTED IN OPEN PR #13 — latest hardening CI pending |
+| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | IMPLEMENTED IN OPEN PR #13 — five applicable project contexts pass on head `6941b1f`; not merged |
 | Typed diagnostics | Stable error variants and JSON Pointer for deserialization failures | OPEN — message-substring mapping remains |
 | Repository required checks | All six Ruleset contexts available on main and reported on fresh PRs | OPEN — repository-policy workflow not yet on main |
 | Production forecast engine | Typed Rust schedules and three statements | NOT STARTED — gated |
