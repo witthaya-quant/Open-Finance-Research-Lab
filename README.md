@@ -80,6 +80,7 @@ The first project is a financial model for a generic non-financial operating com
 - [Synthetic reference case A](projects/OFRL-IB-001/SYNTHETIC_REFERENCE_CASE.md)
 - [Model input JSON Schema](schemas/ofrl-ib-001-model-input-0.1.0.schema.json)
 - [Synthetic Case A input fixture](fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json)
+- [Schema validation script](scripts/validate-ofrl-ib-001-model-input-schema.sh)
 
 
 No calculation engine or workbook is claimed to be complete at this stage.
