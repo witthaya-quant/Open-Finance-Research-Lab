@@ -211,6 +211,53 @@ jobs:
             and ((.dependencies // []) | type == "array")
           ' "$sbom_file" > /dev/null
 
+          # Compare the BOM against Cargo's target-filtered package metadata.
+          # The committed Cargo.lock is a cross-platform superset and can contain
+          # packages that are not part of this Linux binary's resolved dependency graph.
+          metadata_file="$RUNNER_TEMP/ofrl-ib-001-target-metadata.json"
+          cargo metadata --locked --manifest-path "$CLI_MANIFEST" \
+            --format-version 1 --filter-platform "$BUILD_TARGET" > "$metadata_file"
+
+          jq -r --arg package "$CLI_PACKAGE" '
+            .packages[]
+            | select(.name != $package)
+            | "\(.name)@\(.version)"
+          ' "$metadata_file" | sort > "$RUNNER_TEMP/expected-sbom-components.txt"
+
+          jq -r '
+            .components[]
+            | "\(.name)@\(.version)"
+          ' "$sbom_file" | sort > "$RUNNER_TEMP/actual-sbom-components.txt"
+
+          if ! diff -u "$RUNNER_TEMP/expected-sbom-components.txt" "$RUNNER_TEMP/actual-sbom-components.txt"; then
+            echo "::error::CycloneDX component set does not match Cargo's target-filtered package metadata."
+            exit 1
+          fi
+
+          missing_registry_metadata="$(jq -r --slurpfile metadata "$metadata_file" '
+            .components[]
+            | . as $component
+            | select(any(
+                $metadata[0].packages[];
+                .name == $component.name
+                and .version == $component.version
+                and ((.source // "") | startswith("registry+"))
+              ))
+            | select(
+                ((.licenses // []) | length) == 0
+                or ((.hashes // []) | length) == 0
+              )
+            | "\($component.name)@\($component.version)"
+          ' "$sbom_file")"
+
+          if [[ -n "$missing_registry_metadata" ]]; then
+            printf '::error::Registry components missing licence metadata or package hashes:\n%s\n' "$missing_registry_metadata"
+            exit 1
+          fi
+
+          echo "Validated SBOM components against target-filtered Cargo metadata."
+          echo "Registry component licence/hash metadata is complete for this target."
+
           echo "sbom_file=$sbom_file" >> "$GITHUB_OUTPUT"
           echo "lockfile_sha256=$lock_sha_after" >> "$GITHUB_OUTPUT"
           echo "source_date_epoch=$source_epoch" >> "$GITHUB_OUTPUT"

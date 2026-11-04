@@ -133,6 +133,36 @@ An exception must identify:
 
 An exception does not waive third-party licence terms, data rights, or security obligations.
 
+### 8.1 Temporary build-tool exception — CycloneDX preview generator
+
+**Status:** Accepted as a time-bounded build-tool exception for the preview workflow only; review required by **2027-02-04** or earlier if an upstream release removes the yanked dependency.
+
+| Field | Record |
+|---|---|
+| Direct tool | `cargo-cyclonedx 0.5.9` |
+| Transitive package | `xml-rs 0.8.19` |
+| Registry source | crates.io |
+| Package checksum | `0fcb9cbac069e033553e8bb871be2fbdffcab578eb25bd0f7c508cedc6dcd75a` |
+| Publisher-declared licence | MIT |
+| Affected scope | The CycloneDX generator used by the preview CI job; not an OFRL-IB-001 application runtime dependency and not part of the generated `ofrl_cli` SBOM |
+| Upstream evidence | The `cargo-cyclonedx-0.5.9` source tag and its upstream `Cargo.lock` pin this exact version/checksum. The currently inspected upstream lockfile also retains it. |
+| Registry state | The crates.io index marks `xml-rs 0.8.19` as yanked. The reason for yanking was not established from the available upstream changelog or registry metadata. |
+| Advisory check | No matching `xml-rs` entry surfaced in the RustSec advisory database search performed on 2026-11-04. This is not a guarantee that no vulnerability or other risk exists. |
+| Owner | Founder / Principal Maintainer |
+| Review deadline | 2027-02-04, or earlier when an upstream release removes the yanked version |
+
+**Observed behaviour:** `cargo install --locked --version 0.5.9 cargo-cyclonedx` succeeds using the published generator lockfile, but Cargo emits a warning that `xml-rs 0.8.19` is yanked. Cargo's existing-lockfile behaviour permits an already locked yanked version to remain in use; it cannot be selected for a new unconstrained resolution. The preview uses the generator's JSON output mode; the upstream library also contains XML APIs that compile against `xml-rs`.
+
+**Compensating controls:**
+
+- Pin the direct generator version and install with `cargo install --locked`; do not update its lockfile ad hoc or remove `--locked` to silence the warning.
+- Keep the generator confined to the ephemeral, read-only release-preview runner. It receives no secrets or repository write permissions.
+- Preserve the exact generator version, source ref, lockfile checksum, toolchain, target, generated SBOM, and artifact digest in the workflow evidence.
+- Reassess upstream releases and the transitive dependency before extending this generator to official releases.
+- Do not infer that the application itself depends on `xml-rs`; it is part of the SBOM generator's build-tool graph.
+
+The exception records the observed condition; it does not explain or endorse the registry's yank decision. If the reason remains unknown at the review deadline, the maintainer must re-evaluate the generator or replace it rather than silently renewing the exception.
+
 ## 9. Project-wide application
 
 Every project that introduces a runtime, build tool, data-processing package, external Action, service integration, or distributable artifact must identify its dependency boundary in its project specification and manifest. A project may use a technology not listed in the current Dependabot configuration; the project owner must add the corresponding update mechanism before the project relies on that ecosystem for repeatable builds or releases.
