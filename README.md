@@ -18,41 +18,47 @@ I am deliberately building deeper systems-engineering capability with Rust. The 
 
 ## Vision, mission & foundation
 
-**Vision:** To build an open, evolving body of financial knowledge, research methods, and practical tools that people can inspect, test, use, adapt, and improve together.
+**Vision:** Build an open and evolving body of financial knowledge, research methods, and practical tools that people can inspect, test, use, adapt, and improve together.
 
-**Mission:** To bring together people with different experiences and areas of expertise to investigate financial and business problems, develop and examine alternative methods, and turn useful research into reproducible models, software, and practical resources.
+**Mission:** Bring people with different backgrounds and experience together to examine financial and business problems, develop and compare methods, and turn useful work into models, software, and resources that others can build on.
 
-### Shared foundations, different ways of applying them
+### Shared foundations, different applications
 
-Many of us enter finance and business through a shared body of knowledge. We study familiar concepts, equations, and frameworks through degrees, professional qualifications, certificates, or independent study. Black–Scholes is one well-known example: many people learn the same foundational model, yet develop different ways to apply, extend, parameterise, test, or combine it in practice.
+Many of us come into finance and business through a shared body of knowledge. We learn common concepts, equations, and frameworks through degrees, professional qualifications, certificates, or independent study. Black–Scholes is one familiar example: people may learn the same foundational model, then apply, extend, parameterise, test, or combine it in different ways.
 
-The differences often come from the work built around those foundations: the assumptions we choose, the information we rely on, how we structure a model, the constraints we face, and the experience we gain from applying it. Over time, each person or team develops its own “secret sauce”—a combination of methods, assumptions, techniques, processes, and practical judgement refined for a particular purpose.
+What differs is often the practical work built around those foundations: the assumptions we choose, the information we rely on, how we structure a model, the constraints we face, and the experience we gain from applying it. Over time, each person or team develops its own **“secret sauce”**—a combination of methods, assumptions, techniques, processes, and judgement refined for a particular purpose.
 
-I do not want OFRL to become a place where people compete over whose recipe is best, whose qualifications carry more weight, or who gets to claim the one correct way. I want people to put methods they are able and willing to share on the table, explain how they work, and help one another understand what each approach can contribute. No one is expected to disclose confidential know-how, employer or client material, or a method they do not have the right to publish. The point is to contribute what can be shared responsibly and make that contribution useful to others.
+I do not see those differences as a reason to decide who is better, whose qualifications carry more weight, or whose method must be the one correct answer. I see an opportunity to put different approaches alongside one another, understand how each was developed, and learn what each can contribute.
 
-### Focus on what we can build from the work
+### Focus on useful outcomes
 
 The questions that matter to us are practical:
 
-- What problem is the method intended to solve, and for whom?
+- What problem is a method intended to solve, and for whom?
 - Under which assumptions, data, market conditions, or business constraints is it useful?
 - What does it do well, and where does it become limited or unsuitable?
-- Which parts can be improved, simplified, extended, combined, or reused?
+- What can be improved, simplified, extended, combined, or reused?
 - What would another person need to understand, test, reproduce, or build on it?
 
-A contribution does not have to replace an existing method. It may fill a gap, improve one part of a process, make an implementation more reliable, provide a better fit for a particular use case, or combine useful ideas from different approaches. Different methods may complement one another rather than compete for a single place.
+A contribution does not have to replace an existing method. It may fill a gap, improve one part of a process, make an implementation more reliable, fit a particular use case better, or combine useful ideas from different approaches. Different methods may complement one another rather than compete for a single place.
 
-### Open to different approaches, serious about the work
+### Examine the work, not the person
 
-OFRL does not assume that every method is equally reliable or suitable for every purpose. We examine mathematical and financial logic, assumptions, data quality, implementation, robustness, and practical results. When a method is incorrect or does not meet its stated objective, we should say so clearly and explain why. That is a judgement about the work under defined conditions—not a judgement about the intelligence, credentials, or worth of the person who developed it.
+Being open to different approaches does not mean treating every method as equally reliable or suitable for every purpose. We still examine the mathematics, financial logic, assumptions, data, implementation, robustness, and practical results. When a method is incorrect or does not meet its stated objective, we should explain that clearly and show why.
 
-We are not trying to avoid disagreement. We are trying to make disagreement useful. The goal is to understand what the evidence tells us, identify what remains uncertain, and decide what can be learned or developed next—not to turn every difference into a contest over who is right or better.
+The distinction is that we assess the work against its purpose and evidence—not the intelligence, credentials, reputation, or status of the person who developed it. A degree or professional qualification can provide useful context, but it cannot replace a clear explanation or a testable result.
 
-**OFRL is a place to develop ideas together, not a place to defend personal territory.** Bring what you have learned and built, share what you are entitled to share, make the reasoning understandable, and help turn useful work into something others can inspect, adapt, and use.
+We are not trying to avoid disagreement. We are trying to make disagreement useful: understand what the evidence tells us, identify what remains uncertain, and work out what should be improved next.
 
-You can contribute by proposing a research question, presenting an alternative method, reproducing an existing result, improving a model, testing an implementation, or building reusable tools. Start with the [Contributing Guide](CONTRIBUTING.md) or submit a [Project / Research Proposal](.github/ISSUE_TEMPLATE/research_proposal.yml).
+### Build together, share responsibly
 
-Read [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md) for the full foundation, vision, mission, principles, and collaboration philosophy.
+OFRL welcomes research proposals, alternative methods, independent implementations, replication, constructive criticism, and practical tools. People do not need to agree with me or use the same methods I use to contribute.
+
+No one is expected to disclose confidential know-how, employer or client material, or a method they do not have the right to publish. The aim is to share what can be shared responsibly and make that work understandable and useful to others.
+
+**We do not have to think alike to make progress together. We do have to take the work seriously.**
+
+Read [RESEARCH_CHARTER.md](RESEARCH_CHARTER.md), [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md), and [CONTRIBUTING.md](CONTRIBUTING.md) to understand how this philosophy is put into practice.
 
 ## Project portfolio and operating standards
 
@@ -62,9 +68,9 @@ Every current and future project follows the same admission, identity, decision-
 - [Project Lifecycle](PROJECT_LIFECYCLE.md) — proposal, admission, development, validation, release, maintenance, and archival.
 - [Project Standards](PROJECT_STANDARDS.md) — universal requirements, project-type profiles, risk tiers, and validation profiles.
 - [Project Manifest Schema](schemas/ofrl-project-manifest-1.0.0.schema.json) — machine-readable project metadata contract.
-- [Project Templates](templates/README.md) — reusable starting documents for every project type.
+- [Project Templates](templates/README.md) — reusable starting documents for all project types.
 
-OFRL establishes governance from the beginning, including while it is maintained by one person. [GOVERNANCE.md](GOVERNANCE.md) defines founder-led authority, contributor roles, review controls, and Decision Records. OFRL is designed to remain under the Founder's personal GitHub account; a GitHub Organization is optional, not a required destination.
+The full foundation and principles are in [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md). [GOVERNANCE.md](GOVERNANCE.md) defines Founder-led authority, contributor roles, review controls, and Decision Records. OFRL is designed to remain under the Founder's personal GitHub account; a GitHub Organization is optional, not a required destination.
 
 [PUBLICATION_AND_IP_BOUNDARY.md](PUBLICATION_AND_IP_BOUNDARY.md) explains what belongs in the public research repository and what should remain private or confidential.
 
@@ -112,7 +118,7 @@ Job descriptions are used to understand skills and industry needs; their text is
 
 ## Engineering approach
 
-Rust is the main implementation language selected for the current financial-model project. This is not a repository-wide language mandate: each project selects its technology according to numerical, research, interoperability, security, performance, and maintenance requirements, with the choice documented in its project specification.
+Rust is the main implementation language selected for the current financial-model project, where it is used for the calculation model, validation logic, command-line tools, and reusable components. It is not a repository-wide requirement. Each project should choose its tools and architecture according to its research, numerical, interoperability, security, performance, and maintenance needs, and explain that choice.
 
 Inputs and outputs should have documented schemas and stable conventions. Financial calculations should be testable independently of the reporting layer. Spreadsheets may be useful for analyst review and presentation, but the calculation rules need a clearly identified source of truth.
 
@@ -174,15 +180,16 @@ These levels describe evidence maturity. They do not certify profitability, guar
 
 ## Principles
 
-- **Understand before judging.** Explain the problem, objective, assumptions, and context before comparing approaches.
-- **Compare methods, not people.** Technical disagreement is not a contest of credentials, intelligence, or personal worth.
-- **Keep more than one approach possible.** Do not assume that one model, formula, framework, or implementation is universally best.
-- **Be open-minded, but evidence-driven.** Respect different perspectives without treating every claim as equally supported.
+- **Understand before judging.** Establish the problem, objective, assumptions, and context before comparing approaches.
+- **Compare methods, not people.** Credentials, seniority, reputation, and personal preference are not substitutes for examining the work.
+- **Keep alternatives open.** Do not assume that one formula, model, framework, or implementation is universally best.
+- **Be open-minded and evidence-driven.** Respect different approaches while examining their logic, data, implementation, and results.
+- **Focus on what can be built.** Identify what is useful, what is limited, and what can be improved, combined, or developed further.
 - **Show the work.** Make assumptions, calculations, implementation choices, and sources visible.
-- **Test the mechanics.** A model that runs is not necessarily a model that is correct or fit for its intended use.
-- **Explain trade-offs and limitations.** Negative and inconclusive findings are part of research.
-- **Build for practical use.** Turn useful findings into reusable models, software, tools, and documentation where appropriate.
-- **Respect data and contribution rights.** Give accurate credit and do not publish confidential or restricted material.
+- **Test the mechanics.** A model that runs is not necessarily correct or fit for its intended use.
+- **Report limitations honestly.** Negative, inconclusive, and conflicting findings are part of research.
+- **Respect data and contribution rights.** Credit the work accurately and do not publish material without the right to share it.
+- **Separate evidence from advice.** Research outputs are not personalised investment recommendations.
 
 ## Licensing
 
@@ -196,22 +203,22 @@ See [LICENSE](LICENSE), [LICENSE-docs](LICENSE-docs), [LICENSE_POLICY.md](LICENS
 
 ## Collaboration
 
-I welcome people who want to bring a method they have developed, question an established approach, reproduce someone else's work, contribute a different implementation, or help turn a useful finding into a tool others can use. You do not need to agree with the founder, hold a particular qualification, or use the same technique as an existing contributor.
+I welcome people who want to bring a method they have developed, question an established approach, reproduce someone else's work, contribute a different implementation, or help turn a useful finding into something others can use.
 
-A useful contribution does not have to replace what is already there. It may explain a limitation, improve one part of a workflow, provide a more suitable method for a specific situation, make an implementation easier to reproduce, or show that two approaches can complement one another.
+A contribution does not have to prove that an existing approach is wrong or replace it. It can explain a limitation, improve one part of a workflow, provide a better fit for a particular situation, make the work easier to reproduce, or show how two approaches complement one another.
 
-When we review work, we ask what problem it addresses, what assumptions it makes, how it behaves, what evidence supports it, where it is useful, and what remains to be improved. We do not use credentials, seniority, reputation, or personal preference as a substitute for examining the work.
+When reviewing a contribution, we focus on the problem, assumptions, method, evidence, behaviour, practical use, and remaining limitations. Critique the method or claim; do not dismiss the person who proposed it. Contributors should identify their sources, assumptions, limitations, and the work they performed.
 
-Contributors should explain their reasoning and give others enough information to inspect and build on it. Where an approach is not yet supported, we can identify what evidence or improvement is needed rather than dismissing the person who proposed it. Where a method fails, the failure can still teach us something useful.
+No one is expected to disclose confidential or restricted material. Share only work and information that you are entitled to publish.
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md), [RESEARCH_CHARTER.md](RESEARCH_CHARTER.md), and [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md).
+Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md).
 
 ## Founder
 
 **Kenny (Witthaya Maidee)**  
 Founder, Open Finance Research Lab
 
-OFRL reflects the questions I choose to investigate and the standards I expect of the work. My responsibility is to set the direction, understand the assumptions, and stand behind the methods and conclusions published here. I do not expect contributors to think like me or use the same methods I use. I want the work to become more useful, more understandable, and more capable of helping the next person build something better.
+OFRL reflects the questions I choose to investigate and the standards I expect of the work. My responsibility is to set the direction, understand the assumptions, and stand behind the methods and conclusions published here.
 
 ---
 
