@@ -19,12 +19,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: \${{ github.workflow }}-\${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   rust-validator:
-    name: Semantic validator (Rust \${{ matrix.rust }})
+    name: Semantic validator (Rust ${{ matrix.rust }})
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
@@ -48,10 +48,10 @@ jobs:
       - name: Install selected Rust toolchain
         working-directory: .
         env:
-          RUST_TOOLCHAIN: \${{ matrix.rust }}
+          RUST_TOOLCHAIN: ${{ matrix.rust }}
         run: |
           if ! command -v rustup >/dev/null 2>&1; then
-            curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://sh.rustup.rs \\
+            curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://sh.rustup.rs \
               | sh -s -- -y --profile minimal
           fi
           export PATH="$HOME/.cargo/bin:$PATH"
