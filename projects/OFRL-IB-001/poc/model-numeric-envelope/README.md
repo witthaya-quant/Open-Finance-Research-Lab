@@ -164,7 +164,7 @@ Before the production forecast engine is accepted, OFRL still requires:
 - Golden outputs reviewed against a separately derived reference calculation.
 - Explicit negative-cash / funding-feasibility tests, separate from Balance Sheet integrity.
 
-The POC includes a deterministic high-CapEx case to demonstrate that a negative cash outcome can coexist with a balanced set of equations. It must be reported as **Scenario Feasibility FAIL**, not repaired through hidden funding.
+The POC includes a deterministic high-CapEx diagnostic. FY2026 calculated closing cash is -5,246.116462 model units (exactly -1531866007/292000) while the unadjusted algebraic Balance Sheet residual remains zero. First-year debt remains 140; no funding plug is introduced. This result must be reported as **Scenario Feasibility FAIL** and a funding shortfall, not presented as a valid negative cash asset or a feasible Balance Sheet.
 
 ## 11. Independent FY2026 benchmark
 
@@ -172,9 +172,9 @@ The first forecast year also has a separately derived, exact-rational benchmark 
 
 ## 12. Verified POC results (2026-11-04)
 
-The committed POC lockfile is enforced in CI with `--locked`. The numeric-envelope workflow passed on Rust 1.85.0 and 1.99.1, with formatting checks, Clippy, all 10 tests, and documentation generation:
+The committed POC lockfile is enforced in CI with `--locked`. The numeric-envelope workflow passed on Rust 1.85.0 and 1.99.1, with formatting checks, Clippy, all 11 tests, and documentation generation:
 
-- [Numeric Envelope POC — CI run 41775548498](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41775548498)
+- [Numeric Envelope POC — CI run 41776373568](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41776373568)
 
 For the five-year synthetic Case A forecast:
 - 160 metrics per candidate were compared.
