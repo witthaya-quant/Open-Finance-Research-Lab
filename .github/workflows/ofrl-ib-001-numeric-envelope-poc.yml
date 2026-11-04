@@ -60,29 +60,16 @@ jobs:
           rustc --version
           cargo --version
 
-      - name: Generate POC dependency lockfile (bootstrap only)
-        run: cargo generate-lockfile
-
-      - name: Format POC sources and export canonical Rustfmt output
-        run: |
-          cargo fmt --all
-          echo "BEGIN_NUMERIC_LIB"
-          base64 --wrap=0 src/lib.rs
-          echo "END_NUMERIC_LIB"
-          echo "BEGIN_NUMERIC_TESTS"
-          base64 --wrap=0 tests/full_formula.rs
-          echo "END_NUMERIC_TESTS"
+      - name: Check formatting
+        run: cargo fmt --all -- --check
 
       - name: Run Clippy
-        run: cargo clippy --all-targets -- -D warnings
+        run: cargo clippy --locked --all-targets -- -D warnings
 
       - name: Run full-formula comparison tests
-        run: cargo test --all-targets -- --nocapture
+        run: cargo test --locked --all-targets -- --nocapture
 
       - name: Build documentation
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: cargo doc --no-deps
-
-      - name: Export generated Cargo.lock (bootstrap only)
-        run: base64 --wrap=0 Cargo.lock
+        run: cargo doc --locked --no-deps
