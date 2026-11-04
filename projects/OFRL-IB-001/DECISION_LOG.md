@@ -96,3 +96,5 @@ These are implementation gates, not unresolved choices about the overall directi
 Material changes must record the previous decision, the new decision, the reason, the affected model assumptions, and the validation tests that must be rerun. Acceptance criteria must not be weakened after a failed test simply to obtain a pass.
 
 A V1 approval does not waive a failed implementation or validation gate.
+
+| D-012 | Compare fixed-point Decimal, arbitrary-precision Decimal, and exact Rational reference on the complete Case A formula path before selecting the production numeric foundation | In progress | Avoid selecting a numeric library from serialization tests or isolated division examples alone |
