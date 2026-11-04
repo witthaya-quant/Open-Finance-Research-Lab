@@ -30,6 +30,18 @@ This does not mean that every method is equally sound or that every idea should 
 
 Read [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md) for the full foundation, vision, mission, principles, and collaboration philosophy.
 
+## Governance and policies
+
+OFRL establishes governance from the beginning, including while it is maintained by one person. [GOVERNANCE.md](GOVERNANCE.md) defines roles, decision rights, review controls, Decision Records, and the planned transition from a founder-maintained repository to a GitHub Organization.
+
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- [GitHub Repository Settings Baseline](GITHUB_REPOSITORY_SETTINGS.md)
+- [Central Decision Register](decisions/README.md)
+- [Contributing Guide](CONTRIBUTING.md)
+- [Research Standards](RESEARCH_STANDARDS.md)
+
+
 ## Research areas
 
 | Area | Scope |
