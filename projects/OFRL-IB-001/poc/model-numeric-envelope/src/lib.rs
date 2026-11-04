@@ -96,17 +96,21 @@ impl Numeric for FixedDecimal {
     }
 
     fn sub(&self, rhs: &Self) -> Result<Self, String> {
-        self.0
-            .checked_sub(rhs.0)
-            .map(Self)
-            .ok_or_else(|| format!("checked Decimal subtraction overflow: {} - {}", self.0, rhs.0))
+        self.0.checked_sub(rhs.0).map(Self).ok_or_else(|| {
+            format!(
+                "checked Decimal subtraction overflow: {} - {}",
+                self.0, rhs.0
+            )
+        })
     }
 
     fn mul(&self, rhs: &Self) -> Result<Self, String> {
-        self.0
-            .checked_mul(rhs.0)
-            .map(Self)
-            .ok_or_else(|| format!("checked Decimal multiplication overflow: {} * {}", self.0, rhs.0))
+        self.0.checked_mul(rhs.0).map(Self).ok_or_else(|| {
+            format!(
+                "checked Decimal multiplication overflow: {} * {}",
+                self.0, rhs.0
+            )
+        })
     }
 
     fn div(&self, rhs: &Self) -> Result<Self, String> {
@@ -393,14 +397,22 @@ fn shift_decimal_right(value: &str, places: usize) -> String {
     if point >= digits.len() {
         digits.push_str(&"0".repeat(point - digits.len()));
         let integer_part = digits.trim_start_matches('0');
-        let integer_part = if integer_part.is_empty() { "0" } else { integer_part };
+        let integer_part = if integer_part.is_empty() {
+            "0"
+        } else {
+            integer_part
+        };
         return format!("{}{}", if negative { "-" } else { "" }, integer_part);
     }
 
     let raw_integer = &digits[..point];
     let raw_fractional = &digits[point..];
     let integer_part = raw_integer.trim_start_matches('0');
-    let integer_part = if integer_part.is_empty() { "0" } else { integer_part };
+    let integer_part = if integer_part.is_empty() {
+        "0"
+    } else {
+        integer_part
+    };
     format!(
         "{}{}.{}",
         if negative { "-" } else { "" },
@@ -445,8 +457,7 @@ pub fn forecast<N: Numeric>(input: &Value) -> Result<Vec<ForecastResult<N>>, Str
 
         let revenue_growth = parse_field(assumptions, "revenue_growth")?;
         let cogs_ratio = parse_field(assumptions, "cogs_pct_revenue")?;
-        let operating_expenses_ratio =
-            parse_field(assumptions, "operating_expenses_pct_revenue")?;
+        let operating_expenses_ratio = parse_field(assumptions, "operating_expenses_pct_revenue")?;
         let dso = parse_field(assumptions, "dso")?;
         let dio = parse_field(assumptions, "dio")?;
         let dpo = parse_field(assumptions, "dpo")?;
@@ -474,11 +485,7 @@ pub fn forecast<N: Numeric>(input: &Value) -> Result<Vec<ForecastResult<N>>, Str
             &operating_expenses_ratio,
             &format!("{period_id}: operating expenses"),
         )?;
-        let capex = mul(
-            &revenue,
-            &capex_ratio,
-            &format!("{period_id}: CapEx"),
-        )?;
+        let capex = mul(&revenue, &capex_ratio, &format!("{period_id}: CapEx"))?;
 
         let gross_ppe = add(
             &previous.gross_ppe,
@@ -638,7 +645,11 @@ pub fn forecast<N: Numeric>(input: &Value) -> Result<Vec<ForecastResult<N>>, Str
         )?;
         let total_assets = add(
             &add(
-                &add(&closing_cash, &accounts_receivable, &format!("{period_id}: assets 1"))?,
+                &add(
+                    &closing_cash,
+                    &accounts_receivable,
+                    &format!("{period_id}: assets 1"),
+                )?,
                 &inventory,
                 &format!("{period_id}: assets 2"),
             )?,
@@ -647,7 +658,11 @@ pub fn forecast<N: Numeric>(input: &Value) -> Result<Vec<ForecastResult<N>>, Str
         )?;
         let total_liabilities_equity = add(
             &add(
-                &add(&accounts_payable, &closing_debt, &format!("{period_id}: liabilities 1"))?,
+                &add(
+                    &accounts_payable,
+                    &closing_debt,
+                    &format!("{period_id}: liabilities 1"),
+                )?,
                 &previous.share_capital,
                 &format!("{period_id}: liabilities 2"),
             )?,
@@ -683,8 +698,8 @@ pub fn forecast<N: Numeric>(input: &Value) -> Result<Vec<ForecastResult<N>>, Str
         record!("net_working_capital", net_working_capital.clone());
         record!("change_in_nwc", change_in_nwc);
         record!("capex", capex);
-        record!("gross_ppe", gross_ppe);
-        record!("accumulated_depreciation", accumulated_depreciation);
+        record!("gross_ppe", gross_ppe.clone());
+        record!("accumulated_depreciation", accumulated_depreciation.clone());
         record!("net_ppe", net_ppe);
         record!("debt_drawdowns", debt_drawdowns);
         record!("principal_repayments", principal_repayments);
@@ -770,9 +785,7 @@ pub fn round_half_even(value: &BigRational, scale: u32) -> String {
     let (mut quotient, remainder) = scaled_numerator.div_rem(denominator);
     let twice_remainder = &remainder * 2;
 
-    if twice_remainder > *denominator
-        || (twice_remainder == *denominator && quotient.is_odd())
-    {
+    if twice_remainder > *denominator || (twice_remainder == *denominator && quotient.is_odd()) {
         quotient += 1;
     }
 
@@ -866,9 +879,7 @@ pub fn compare_to_reference<N: Numeric>(
     })
 }
 
-pub fn balance_sheet_differences_are_zero(
-    forecast: &[ForecastResult<ExactRational>],
-) -> bool {
+pub fn balance_sheet_differences_are_zero(forecast: &[ForecastResult<ExactRational>]) -> bool {
     forecast.iter().all(|period| {
         period
             .values
@@ -898,10 +909,6 @@ pub fn maximum_absolute_value<N: Numeric>(
     if maximum_metric.is_empty() {
         None
     } else {
-        Some((
-            round_half_even(&maximum, 2),
-            maximum_period,
-            maximum_metric,
-        ))
+        Some((round_half_even(&maximum, 2), maximum_period, maximum_metric))
     }
 }
