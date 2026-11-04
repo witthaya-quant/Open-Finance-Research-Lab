@@ -178,7 +178,7 @@ The Decimal POC passed its own test scope. These model-level acceptance gates re
 
 ## 12. Comparative full-formula POC evidence (2026-11-04)
 
-The isolated comparison in [the model numeric-envelope POC](poc/model-numeric-envelope/README.md) ran the five-year Case A formula sequence using one shared generic forecast implementation with three numeric backends. Both CI jobs passed on Rust 1.85.0 and 1.99.1; the recorded run is [Numeric Envelope POC run 41769881131](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41769881131).
+The isolated comparison in [the model numeric-envelope POC](poc/model-numeric-envelope/README.md) ran the five-year Case A formula sequence using one shared generic forecast implementation with three numeric backends. Both CI jobs passed on Rust 1.85.0 and 1.99.1 in the initial measurement run [Numeric Envelope POC run 41769881131](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41769881131); the strict-formatting, committed-lockfile, and expanded 10-test rerun passed in [run 41775548498](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41775548498).
 
 **Canonical Case A observations**
 - 160 forecast metric values were compared per candidate across five years.
@@ -186,7 +186,9 @@ The isolated comparison in [the model numeric-envelope POC](poc/model-numeric-en
 - The maximum exact rational difference reported for rust_decimal was `39/365000000000000000000000000`, in FY2030 closing cash.
 - The maximum exact rational difference reported for BigDecimal was `1/114062500000000000000000000000000000000000000000000000000000000000000000000000`, in FY2029 cash from operations.
 - These are arithmetic differences in the model's configured unit (illustratively USD thousands), not final materiality conclusions. The two-decimal display comparison is a POC diagnostic, not the approved reporting or reconciliation tolerance.
-- The POC records maximum unrounded candidate Balance Sheet residuals separately; those values must be reviewed before a model-specific reconciliation tolerance is accepted.
+- Maximum unrounded Case A Balance Sheet residual for `rust_decimal`: `1/10000000000000000000000000` in FY2029 (10^-25 model units).
+- Maximum unrounded Case A Balance Sheet residual for `bigdecimal`: `0/1` in the five-year Case A run.
+- Both residual results were identical on Rust 1.85.0 and 1.99.1. They are observed test outputs, not the final model reconciliation tolerance.
 
 **Provisional stress observations**
 - The deliberately extreme stress case scaled starting monetary amounts by (10^{22}) and raised selected assumptions. Its exact-rational reference completed and remained arithmetically balanced.
@@ -194,9 +196,10 @@ The isolated comparison in [the model numeric-envelope POC](poc/model-numeric-en
 - rust_decimal rejected the stressed path at FY2026 accounts-receivable numerator multiplication due to checked Decimal overflow.
 - BigDecimal completed the stress path with zero difference from the exact-rational reference across the 160 compared output values under the POC context.
 - This stress case is a representation-capacity probe, not a realistic company-size requirement or a production V1 input limit.
+- A separate high-CapEx feasibility test produced negative closing cash while the Exact Rational Balance Sheet still balanced; first-year closing debt remained 140 (opening debt 180 less explicit repayment 40), proving no automatic financing was inserted in that POC scenario.
 
 **Interpretation and remaining gates**
 
 The evidence demonstrates that the fixed-width candidate has a finite capacity boundary and that the arbitrary-precision candidate can represent this particular extreme path under an 80-significant-digit HalfEven division context. It does not establish that BigDecimal is the better production choice: performance, operational bounds, memory use, deterministic context control, dependency health, serialization, and the intended real-world model envelope still require review.
 
-The exact-rational backend shares the same generic forecast formula implementation as the candidates. It is an arithmetic oracle, not an independent verification of the financial-model formulas. Independent accounting review, separately derived benchmark cases, candidate Balance Sheet residual assessment, a locked POC dependency graph, and the full dependency/SBOM/security review remain open.
+The exact-rational backend shares the same generic forecast formula implementation as the candidates. It is an arithmetic oracle, not an independent verification of the financial-model formulas. The candidate Balance Sheet residuals are now measured for Case A; a model-specific error budget, independent accounting review, separately derived benchmark cases, the full dependency/SBOM/security review, and production numeric-library decision remain open.
