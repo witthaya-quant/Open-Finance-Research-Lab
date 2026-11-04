@@ -59,7 +59,7 @@ The record is a proof-of-concept contract, not yet the complete production finan
 
 ## Run locally
 
-Use a stable Rust toolchain with rustfmt and Clippy installed.
+The package declares Rust 1.73 as its minimum supported version. The GitHub Actions matrix checks both Rust 1.73.0 (MSRV) and Rust 1.99.1 (the current toolchain used for the initial POC run). Use a matching toolchain with rustfmt and Clippy installed.
 
 ~~~bash
 cargo fmt -- --check
@@ -88,9 +88,10 @@ This is a compensating input guard that must remain covered by tests. It does no
 The Decimal dependency remains a candidate until:
 
 1. The test suite passes on CI.
-2. Actual 1/365 and repeating-division outputs are recorded.
-3. Maximum usable scale/range and failure behaviour are documented.
-4. JSON/CSV string round-trip and invalid-token rejection pass.
-5. Direct/transitive dependencies, versions, licences, and MSRV are reviewed.
+2. The CI matrix passes on both the declared MSRV and the current Rust toolchain.
+3. Actual 1/365 and repeating-division outputs are recorded.
+4. Maximum usable scale/range and failure behaviour are documented.
+5. JSON/CSV string round-trip and invalid-token rejection pass.
+6. Direct/transitive dependencies, versions, licences, and MSRV are reviewed.
 
 If the candidate fails an acceptance requirement, evaluate an alternative Decimal representation before beginning the full model engine. Do not weaken the required input/output contract solely to make a candidate pass.
