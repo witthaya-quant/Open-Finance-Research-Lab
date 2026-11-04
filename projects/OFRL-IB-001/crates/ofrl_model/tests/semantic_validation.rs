@@ -214,3 +214,14 @@ fn malformed_period_identifier_is_rejected() {
     let report = validate(&value);
     assert!(has_code(&report, DiagnosticCode::InvalidIdentifierFormat));
 }
+
+
+#[test]
+fn fifty_two_week_annual_period_is_accepted() {
+    let mut value = payload();
+    value["opening_balance_sheet"]["as_of_date"] = json!("2023-01-01");
+    value["historical_periods"][0]["start_date"] = json!("2023-01-02");
+    value["historical_periods"][0]["end_date"] = json!("2023-12-31");
+    let report = validate(&value);
+    assert_eq!(report.input_status, InputStatus::Accepted, "{:#?}", report.diagnostics);
+}
