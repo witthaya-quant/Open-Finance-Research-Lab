@@ -111,8 +111,14 @@ The release record should identify:
 - SBOM format and generation tool/version.
 - Test and validation results.
 - SHA-256 checksums for published binary artifacts.
+- SBOM component scope and the lockfile from which it was generated.
+- Source commit timestamp used for reproducible SBOM generation, when supported.
 
-An SBOM is an inventory, not proof that every dependency is secure, correctly licensed, or free of vulnerabilities. It must be reviewed alongside the dependency and licence records.
+For OFRL-IB-001, the preview workflow uses `cargo-cyclonedx 0.5.9`, pinned by version and installed with `cargo install --locked`. It generates a CycloneDX 1.5 JSON SBOM for the `ofrl_cli` executable and its resolved application-workspace dependencies on the runner's actual target. The exact `projects/OFRL-IB-001/Cargo.lock` is copied into the preview bundle; the workflow verifies that SBOM generation did not modify that lockfile. The separate Decimal POC lockfile is not combined with the application SBOM.
+
+The workflow creates and verifies `SHA256SUMS` for the executable, SBOM, build metadata, and copied lockfile. The preview bundle is uploaded as a GitHub Actions artifact, not published as a Release. The six required `main` checks remain unchanged; this preview workflow is separate and is not a required status check.
+
+An SBOM is an inventory, not proof that every dependency is secure, correctly licensed, or free of vulnerabilities. It must be reviewed alongside the dependency and licence records. Cargo publisher metadata is not a substitute for inspecting exact source archives, licence texts, notices, copyright statements, exceptions, and feature-specific obligations. The workflow artifact archive digest is not a replacement for the per-file SHA-256 manifest.
 
 ## 8. Dependency exceptions
 
