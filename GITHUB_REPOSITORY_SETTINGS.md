@@ -10,47 +10,59 @@ This document translates OFRL Governance into GitHub repository controls for a r
 
 ## 1. Current observed state
 
-As checked on 2026-11-04 through the GitHub repository and Rulesets APIs:
+As checked on 2026-11-04 through repository metadata and the GitHub Rulesets API:
 
 | Control | Observed state |
 |---|---|
 | Repository owner | Personal account: `witthaya-quant` |
-| Default branch | `main` |
-| Repository visibility | Public |
-| Main branch ruleset | `OFRL-main-protection` — Active; ruleset ID `26516806` |
-| Ruleset target | `~DEFAULT_BRANCH`, currently resolving to `main` |
-| Pull Request requirement | Enabled; 0 required approvals; conversation resolution required |
-| Deletion / force-push protection | Enabled |
-| Bypass actors | None; API reports current user bypass as `never` |
+| Default branch / visibility | `main` / Public |
+| Active ruleset | `OFRL-main-protection`, ID `26516806` |
+| Enforcement / target | Active; `~DEFAULT_BRANCH` (currently `main`) |
+| Pull Request requirement | Enabled |
+| Required approving reviews | 0 (Stage 0 single-maintainer policy) |
+| Conversation resolution | Required |
+| Required status checks | Exactly six GitHub Actions contexts listed below |
 | Up-to-date requirement | Enabled (`strict_required_status_checks_policy: true`) |
-| Required status checks | **Exactly six** GitHub Actions contexts; all six are bound to integration ID `15368` and passed on the PR #14 / PR #18 heads checked |
-| Code Quality / Copilot Review | Both disabled; neither appears in the current Ruleset response |
+| Branch deletion | Blocked |
+| Non-fast-forward / force-push | Blocked |
+| Bypass actors | None; API reports current user bypass as `never` |
+| Code Quality / Copilot Review rules | Not configured in this Ruleset |
 | Merge methods | Merge commit, rebase, and squash enabled |
-| Repository permissions available to current account | Admin, maintain, push, pull, triage |
+| Repository permissions available to connected account | Admin, maintain, push, pull, triage |
 
-The Ruleset is active and its Stage 0 configuration has passed the API read-back: exactly six required check contexts are stored, each bound to GitHub Actions integration ID `15368`; no malformed extra context remains. All six checks passed on the PR #14 head targeting `main` and the PR #18 audit head. The documentation-only smoke test should be repeated after the workflow changes merge to `main`, but the Ruleset configuration itself is complete.
+Required contexts (exact spelling and case; each is bound to GitHub Actions integration ID `15368`):
 
-This is a snapshot, not a guarantee that settings remain unchanged. Recheck after configuration changes and after the repository moves to an Organization.
+1. `repository-policy`
+2. `Model input JSON Schema`
+3. `Decimal contract (Rust 1.85.0)`
+4. `Decimal contract (Rust 1.99.1)`
+5. `Semantic validator (Rust 1.85.0)`
+6. `Semantic validator (Rust 1.99.1)`
+
+The Ruleset is active and contains exactly these six required entries. PR #14 introduces the always-running `repository-policy` workflow. PR #18 removes path filters from both OFRL-IB-001 validation workflows so their required job contexts are reported on documentation-only as well as model-code Pull Requests.
+
+**Base-branch integration status:** the current `main` snapshot still contains the older path-filtered project workflows and does not yet contain `repository-policy.yml`. The PR #14 / PR #18 branch stack includes the corrected workflows. After the stack is integrated into `main`, verify the workflow files on `main` and create fresh documentation-only and model-code PRs to confirm all six contexts report and complete. Do not weaken or remove a required check to bypass this sequencing dependency.
+
+This is a dated snapshot, not a guarantee that settings remain unchanged. Re-read the Rulesets API after any configuration change and after the repository moves to an Organization.
 
 ## 2. Stage 0 baseline — one active maintainer
 
 Configure a branch protection rule or repository ruleset targeting the exact default branch, currently `main`.
 
-| Setting | Stage 0 baseline | Reason |
+| Setting | Stage 0 observed baseline | Reason |
 |---|---|---|
-| Require a Pull Request before merging | **Enable** | Prevent routine direct changes to the default branch |
-| Required approving reviews | **0 / disabled** | A sole maintainer cannot obtain an independent approval from another person; do not create a false review control |
-| Require conversation resolution | **Enable** | Keep review discussions resolved before merge |
-| Require status checks | **Enable and require the six exact GitHub Actions check names listed in Section 6** | All current workflows now run on every Pull Request, so the required checks are stable for documentation and code changes |
-| Require branch to be up to date | **Enable** after all six required checks are selected | Require testing against the latest `main` commit; all six checks now run for every Pull Request |
-| Allow force pushes | **Disable** | Preserve default-branch history |
-| Allow deletions | **Disable** | Prevent accidental default-branch deletion |
-| Require signed commits | Optional; enable only after the signing workflow is adopted and tested | Avoid an unworkable control that causes accidental lockout |
-| Require linear history | Optional; decide alongside merge-method policy | Do not enable without confirming the chosen merge workflow |
-| Code-owner review | Not applicable until a meaningful `CODEOWNERS` file and eligible owners exist | Avoid a nominal control with no reviewer coverage |
-| Bypass list | **Leave empty**; do not grant a bypass role, user, or app | Keep the same merge gate for the repository owner and collaborators; verify the owner is not exempt after saving |
+| Require a Pull Request before merging | **Enabled** | Prevent routine direct changes to the default branch |
+| Required approving reviews | **0 / disabled** | A sole maintainer cannot obtain an independent approval; do not simulate one |
+| Require conversation resolution | **Enabled** | Keep review discussions resolved before merge |
+| Required status checks | **Exactly six named contexts; enabled** | Validate repository policy, schema, Decimal contract, and Rust semantic validation |
+| Require branch to be up to date | **Enabled** | Require testing against the latest base branch |
+| Allow force pushes | **Disabled** | Preserve default-branch history |
+| Allow deletions | **Disabled** | Prevent accidental default-branch deletion |
+| Bypass actors | **None** | Keep the same merge gate for the owner and collaborators |
+| Code Quality / Copilot Review rules | Not configured in this Ruleset | No extra automated review rule is currently active |
+| Signed commits / linear history | Not configured as Ruleset requirements | Do not impose controls without a tested signing or linear-history workflow |
 
-The Founder may merge a Founder-authored PR under Stage 0 because independent review is not available. The PR checklist and validation evidence remain mandatory. This must be described as a single-maintainer decision, not an independent approval.
+The Founder may merge a Founder-authored PR under Stage 0 because independent review is not available. The PR checklist and validation evidence remain mandatory. This must be described as a single-maintainer decision, not an independent approval. The Rulesets API read-back reports an empty bypass list and confirms that the connected current user cannot bypass this Ruleset.
 
 ## 3. Stage 1 baseline — invited contributors under the personal account
 
@@ -103,41 +115,26 @@ Do not guess check names.
 5. Select only the exact check names that are stable and applicable.
 6. Test a failing check and confirm it blocks merge; test a passing check and confirm the control behaves as intended.
 
-**Current OFRL status (2026-11-04):** both OFRL-IB-001 project workflows have been changed to run on every Pull Request (their `paths` filters have been removed). The six exact check-run names were observed on the latest successful PR #18 head and on PR #14, which targets `main`. All six are reported by the GitHub Actions app and completed successfully.
-
-The Rulesets API read-back at 2026-11-04 confirmed **exactly six required entries**, each with integration ID `15368` (GitHub Actions), and no other required context:
-
-- `repository-policy`
-- `Model input JSON Schema`
-- `Decimal contract (Rust 1.85.0)`
-- `Decimal contract (Rust 1.99.1)`
-- `Semantic validator (Rust 1.85.0)`
-- `Semantic validator (Rust 1.99.1)`
-
-All six exact check runs were present and successful on the PR #14 head targeting `main` and on the PR #18 audit head. The malformed extra context previously observed has been removed. Revalidate after any workflow-name or Ruleset changes.
-
-**Post-merge smoke test:** after PR #18 and the resulting PR #14 changes are merged to `main`, create or use a documentation-only PR to verify that all six required checks still report and complete. This has not yet been performed on `main`.
-
-GitHub documents that checks skipped by path or branch filtering remain pending and can block merges; see [Skipping workflow runs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs) and [Troubleshooting required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
+**Current OFRL integration note:** PR #14 introduces the always-running `repository-policy` workflow, and PR #18 removes path filters from both OFRL-IB-001 validation workflows. These changes make the six required contexts available on the combined PR #14 / PR #18 branch stack. They must reach `main` before the six-context configuration is considered fully exercised on the protected base branch. The active Ruleset itself has already been verified through the API.
 
 A workflow that runs only on pushes to the default branch is not sufficient evidence that it protects Pull Requests.
 
 ## 7. Configuration and verification record
 
-Maintain a short record when repository settings are changed:
+Latest observed record — 2026-11-04:
 
 | Field | Record |
 |---|---|
 | Date | 2026-11-04 |
-| Changed by | Repository owner (user-reported configuration; actor identity is not returned by the Rulesets API) |
+| Changed by | Not returned by the Rulesets API; repository owner has Admin permission |
 | Branch or tag target | `~DEFAULT_BRANCH` (`main`) |
-| Rule or ruleset name | `OFRL-main-protection` / ID `26516806` |
-| Settings enabled | Active; Pull Request required; 0 approvals; conversation resolution; strict up-to-date; deletion restriction; force-push block; no bypass actors |
-| Required check names | Exactly six; all bound to GitHub Actions integration ID `15368` |
-| Verification PR | PR #14 targeting `main`; PR #18 validates all six workflow checks on the audit branch |
-| Exceptions and expiry / review date | No configuration exception. Repeat a documentation-only PR smoke test after the workflow changes are merged to `main`. |
+| Rule or ruleset name | `OFRL-main-protection`, ID `26516806` |
+| Settings enabled | Active; PR required; 0 approvals; conversation resolution; strict up-to-date; deletion and non-fast-forward restrictions; no bypass actors |
+| Required check names | Exactly six listed in Section 1; all bound to GitHub Actions integration ID `15368` |
+| Verification PRs | PR #14 targeting `main`; PR #18 validates the same six contexts on the audit branch |
+| Exceptions / follow-up | No Ruleset exception. Documentation-only and model-code smoke tests remain required after workflow integration into `main`. |
 
-Review the settings after changing the default branch, adding or changing workflows, moving to an Organization, changing repository visibility, or changing Maintainer roles.
+Re-read the Rulesets API after changing the default branch, adding or changing workflows, moving to an Organization, changing repository visibility, or changing Maintainer roles. Keep the read-back and the corresponding verification PR references together.
 
 ## 8. How to configure
 
