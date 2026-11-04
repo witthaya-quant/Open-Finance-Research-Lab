@@ -165,3 +165,22 @@ Before the production forecast engine is accepted, OFRL still requires:
 - Explicit negative-cash / funding-feasibility tests, separate from Balance Sheet integrity.
 
 The POC includes a deterministic high-CapEx case to demonstrate that a negative cash outcome can coexist with a balanced set of equations. It must be reported as **Scenario Feasibility FAIL**, not repaired through hidden funding.
+
+## 11. Verified POC results (2026-11-04)
+
+The committed POC lockfile is enforced in CI with `--locked`. The numeric-envelope workflow passed on Rust 1.85.0 and 1.99.1, with formatting checks, Clippy, all 10 tests, and documentation generation:
+
+- [Numeric Envelope POC — CI run 41775548498](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41775548498)
+
+For the five-year synthetic Case A forecast:
+- 160 metrics per candidate were compared.
+- Both candidates had zero mismatches after the POC's provisional two-decimal reporting quantization.
+- Maximum unrounded Balance Sheet residual: rust_decimal `1/10000000000000000000000000` in FY2029; BigDecimal `0/1`.
+- BigDecimal's test build was verified to use an 80-significant-digit HalfEven default context.
+- The high-CapEx scenario produced negative cash while the Exact Rational Balance Sheet remained balanced; explicit debt mechanics were unchanged.
+
+For the provisional stress case:
+- rust_decimal returned a checked multiplication overflow on the FY2026 accounts-receivable numerator.
+- BigDecimal completed the tested five-year path and matched the Exact Rational reference across the compared output metrics.
+
+These results support further numeric-envelope analysis. They do **not** select the production numeric library, establish a production input range, prove the forecast formulas independently, or set the final reconciliation/materiality tolerance.
