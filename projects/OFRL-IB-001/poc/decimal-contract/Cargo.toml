@@ -2,6 +2,7 @@
 name = "ofrl-decimal-contract-poc"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.73"
 publish = false
 license = "Apache-2.0"
 description = "Isolated numeric and interchange proof of concept for OFRL-IB-001"
