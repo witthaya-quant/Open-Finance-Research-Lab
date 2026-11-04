@@ -146,6 +146,7 @@ fn deserialize_failure(message: String) -> ValidationReport {
 }
 
 #[allow(clippy::too_many_arguments)]
+#[allow(clippy::too_many_arguments)]
 fn push(
     diagnostics: &mut Vec<Diagnostic>,
     code: DiagnosticCode,
