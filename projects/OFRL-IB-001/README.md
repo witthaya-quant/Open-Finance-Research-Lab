@@ -4,7 +4,7 @@
 
 > **Division:** Financial Modelling & Valuation  
 > **Project ID:** OFRL-IB-001  
-> **Status:** Rust runtime semantic-validator implementation; forecast calculation engine not started  
+> **Status:** Rust runtime semantic validator implemented and CI-verified; forecast calculation engine not started  
 > **Evidence maturity:** 0 / Proposed  
 > **Specification version:** 0.1.0  
 > **Project owner:** Kenny
@@ -65,9 +65,9 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 
 ## Current stage
 
-**No production financial calculation engine, CLI, or workbook has been released.** An isolated Decimal/JSON/CSV contract POC has passed its defined tests on Rust 1.85.0 and 1.99.1. The current work is defining and validating the full model-input contract and synthetic fixture before implementing the production Rust domain validator and calculation core.
+**No production financial calculation engine or analyst-facing workbook has been released.** The Rust input-validation library and CLI are implemented and pass the required CI matrix on Rust 1.85.0 and 1.99.1. This is an input-acceptance and historical-accounting validation milestone, not a completed forecast model.
 
-The Draft 2020-12 schema and deterministic synthetic input fixture are merged to main. The Rust runtime semantic validator and CLI are now being implemented on a separate branch. They remain unaccepted until the full Rust CI matrix passes. The forecast calculation engine and workbook have not started.
+The Draft 2020-12 schema, deterministic synthetic input fixture, Rust runtime validator, and CLI are implemented. The calculation engine, forecast statement generation, Scenario Feasibility evaluation, and workbook remain future milestones.
 
 ## Out of scope for the first release
 
