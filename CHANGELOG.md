@@ -12,9 +12,11 @@ This changelog follows the structure of Keep a Changelog. Software components ma
 - Founder-led governance, decision rights, contributor roles, and staged delegation policy.
 - Code of Conduct, Security Policy, and personal-account continuity guidance.
 - Public/private publication and intellectual-property boundary.
-- Repository audit, dependency policy, and release policy.
+- Repository-wide audit, dependency policy, release policy, and account continuity policy.
 - Central Decision Register and reusable Decision Record template.
-- Research Proposal and Pull Request templates.
+- Research Proposal, Project Charter, Project Manifest, Project Decision Log, and Pull Request templates.
+- Project Lifecycle, Project Standards, Project Catalog, and versioned Project Manifest Schema.
+- Automated validation of every project directory, manifest, required document, project type, risk tier, and catalog entry.
 - Always-running repository-policy validation workflow.
 - Dependabot configuration for Cargo and GitHub Actions.
 
