@@ -3,7 +3,7 @@ use std::str::FromStr;
 use num_rational::BigRational;
 use num_traits::{One, Signed};
 use ofrl_model_numeric_envelope::{
-    balance_sheet_differences_are_zero, cash_deficit_case_a, compare_to_reference, forecast,
+    balance_sheet_differences_are_zero, cash_deficit_case_a, compare_to_reference, forecast, intermediate_stress_case_a,
     load_case_a, maximum_absolute_metric, parse_decimal_rational, round_half_even, stress_case_a,
     ArbitraryDecimal, ExactRational, FixedDecimal, Numeric,
 };
@@ -266,4 +266,42 @@ fn case_a_fy2026_matches_independently_derived_exact_benchmark() {
             "independent FY2026 benchmark mismatch for {metric}"
         );
     }
+}
+
+
+#[test]
+fn intermediate_stress_case_completes_on_all_numeric_candidates() {
+    let fixture = intermediate_stress_case_a();
+    let reference = forecast::<ExactRational>(&fixture).unwrap();
+    let fixed = forecast::<FixedDecimal>(&fixture)
+        .expect("10^18 stress point must either be supported or explicitly rejected by the test");
+    let arbitrary = forecast::<ArbitraryDecimal>(&fixture).unwrap();
+
+    assert_eq!(reference.len(), 5);
+    assert!(balance_sheet_differences_are_zero(&reference));
+
+    let fixed_summary =
+        compare_to_reference("rust_decimal", &fixed, &reference, 2).unwrap();
+    let arbitrary_summary =
+        compare_to_reference("bigdecimal", &arbitrary, &reference, 2).unwrap();
+
+    println!("INTERMEDIATE_STRESS_FIXED={fixed_summary:#?}");
+    println!("INTERMEDIATE_STRESS_BIGDECIMAL={arbitrary_summary:#?}");
+    println!(
+        "INTERMEDIATE_STRESS_FIXED_MAX_BS_RESIDUAL={:?}",
+        maximum_absolute_metric(&fixed, "balance_difference").unwrap()
+    );
+    println!(
+        "INTERMEDIATE_STRESS_BIGDECIMAL_MAX_BS_RESIDUAL={:?}",
+        maximum_absolute_metric(&arbitrary, "balance_difference").unwrap()
+    );
+    println!(
+        "INTERMEDIATE_STRESS_EXACT_MAXIMUM={:?}",
+        ofrl_model_numeric_envelope::maximum_absolute_value(&reference).unwrap()
+    );
+
+    assert_eq!(fixed_summary.compared_values, 160);
+    assert_eq!(arbitrary_summary.compared_values, 160);
+    assert_eq!(fixed_summary.display_mismatches, 0);
+    assert_eq!(arbitrary_summary.display_mismatches, 0);
 }
