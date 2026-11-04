@@ -10,17 +10,24 @@ This document translates OFRL Governance into GitHub repository controls for a r
 
 ## 1. Current observed state
 
-As checked on 2026-11-04 through the connected GitHub repository metadata:
+As checked on 2026-11-04 through the GitHub repository and Rulesets APIs:
 
 | Control | Observed state |
 |---|---|
 | Repository owner | Personal account: `witthaya-quant` |
 | Default branch | `main` |
 | Repository visibility | Public |
-| Main branch protection | Not enabled |
-| Required status checks on main | None configured |
+| Main branch ruleset | `OFRL-main-protection` — Active; ruleset ID `26516806` |
+| Ruleset target | `~DEFAULT_BRANCH`, currently resolving to `main` |
+| Pull Request requirement | Enabled; 0 required approvals; conversation resolution required |
+| Deletion / force-push protection | Enabled |
+| Bypass actors | None; API reports current user bypass as `never` |
+| Required status checks | **Incomplete:** required-status-check rule exists, but its selected check list is empty |
+| Additional enabled rules | Code quality (all severities) and automatic Copilot code review on pushes and draft PRs; these were not part of the intended Stage 0 baseline and should be disabled unless explicitly adopted |
 | Merge methods | Merge commit, rebase, and squash enabled |
 | Repository permissions available to current account | Admin, maintain, push, pull, triage |
+
+The ruleset was created at `2026-11-04 15:14:25 +07:00`. It is active, but this snapshot is **not a completed branch-protection acceptance**: six required status checks still need to be selected, and the two additional rules need to be reviewed. Do not close Issue #15 until the ruleset API read-back confirms the exact required checks and intended rules only.
 
 This is a snapshot, not a guarantee that settings remain unchanged. Recheck after configuration changes and after the repository moves to an Organization.
 
