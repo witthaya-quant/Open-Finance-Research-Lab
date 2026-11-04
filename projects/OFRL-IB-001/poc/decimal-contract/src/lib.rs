@@ -253,12 +253,7 @@ mod tests {
 
     #[test]
     fn zero_and_max_scale_values_round_trip_without_precision_loss() {
-        for amount in [
-            "0",
-            "0.000",
-            "0.1234567890123456789012345678",
-            "-0.005000",
-        ] {
+        for amount in ["0", "0.000", "0.1234567890123456789012345678", "-0.005000"] {
             let record = sample_record(amount);
             let json = serde_json::to_string(&record).expect("amount should serialize");
             let decoded: AmountRecord =
