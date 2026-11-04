@@ -290,6 +290,33 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     }
   }
 
+  const workflowRequiredTypes = ["software", "data", "benchmark", "infrastructure"];
+  const needsWorkflow = Array.isArray(manifest.project_types) &&
+    manifest.project_types.some((type) => workflowRequiredTypes.includes(type));
+
+  if (needsWorkflow && (!Array.isArray(manifest.validation_workflows) || manifest.validation_workflows.length === 0)) {
+    fail(`${relativeDir}/project.json: software, data, benchmark, and infrastructure projects must declare validation_workflows`);
+  }
+
+  if (manifest.validation_workflows !== undefined) {
+    if (!Array.isArray(manifest.validation_workflows)) {
+      fail(`${relativeDir}/project.json: validation_workflows must be an array`);
+    } else {
+      for (const workflowPath of manifest.validation_workflows) {
+        if (typeof workflowPath !== "string" || workflowPath.startsWith("/") || workflowPath.includes(String.fromCharCode(92))) {
+          fail(`${relativeDir}/project.json: invalid validation workflow path`);
+          continue;
+        }
+        const resolved = path.resolve(ROOT, workflowPath);
+        const relative = path.relative(ROOT, resolved);
+        if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative) ||
+            !fs.existsSync(resolved) || !fs.statSync(resolved).isFile()) {
+          fail(`${relativeDir}/project.json: validation workflow does not exist or escapes repository root: ${workflowPath}`);
+        }
+      }
+    }
+  }
+
   if (manifest.risk_tier === "R3") {
     if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes("security")) {
       fail(`${relativeDir}: R3 projects must include the security validation profile`);
