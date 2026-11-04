@@ -164,6 +164,19 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     if (!(field in manifest)) fail(`${relativeDir}/project.json: missing required field '${field}'`);
   }
 
+  const allowedFields = new Set([
+    "$schema", "schema_version", "project_id", "title", "lifecycle_status",
+    "project_types", "risk_tier", "owner", "created_at", "updated_at",
+    "summary", "evidence_maturity", "license_profile", "data_classification",
+    "validation_profiles", "required_documents", "validation_workflows",
+    "release_status", "repository_url", "version", "supersedes",
+  ]);
+  for (const field of Object.keys(manifest)) {
+    if (!allowedFields.has(field)) {
+      fail(`${relativeDir}/project.json: unsupported field '${field}'`);
+    }
+  }
+
   if (manifest.schema_version !== "1.0.0") {
     fail(`${relativeDir}/project.json: unsupported schema_version; expected 1.0.0`);
   }
@@ -244,6 +257,10 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
   if (!Array.isArray(manifest.validation_profiles) || manifest.validation_profiles.length === 0) {
     fail(`${relativeDir}/project.json: validation_profiles must be a non-empty array`);
   } else {
+    const uniqueProfiles = new Set(manifest.validation_profiles);
+    if (uniqueProfiles.size !== manifest.validation_profiles.length) {
+      fail(`${relativeDir}/project.json: validation_profiles contains duplicates`);
+    }
     for (const profile of manifest.validation_profiles) {
       if (!validationProfiles.has(profile)) {
         fail(`${relativeDir}/project.json: unsupported validation profile '${profile}'`);
@@ -302,6 +319,10 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     if (!Array.isArray(manifest.validation_workflows)) {
       fail(`${relativeDir}/project.json: validation_workflows must be an array`);
     } else {
+      const uniqueWorkflows = new Set(manifest.validation_workflows);
+      if (uniqueWorkflows.size !== manifest.validation_workflows.length) {
+        fail(`${relativeDir}/project.json: validation_workflows contains duplicates`);
+      }
       for (const workflowPath of manifest.validation_workflows) {
         if (typeof workflowPath !== "string" || workflowPath.startsWith("/") || workflowPath.includes(String.fromCharCode(92))) {
           fail(`${relativeDir}/project.json: invalid validation workflow path`);
@@ -327,6 +348,10 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes("data")) {
       fail(`${relativeDir}: licensed/restricted/mixed data requires the data validation profile`);
     }
+  }
+
+  if (!ALLOWED_RELEASE_STATES.has(manifest.release_status)) {
+    fail(`${relativeDir}/project.json: invalid release_status '${manifest.release_status}'`);
   }
 
   if (["released", "maintenance"].includes(manifest.lifecycle_status)) {
