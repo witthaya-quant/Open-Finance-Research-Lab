@@ -72,6 +72,31 @@
       "diagnostic_codes": [
         "DECIMAL_SCALE_EXCEEDED"
       ]
+    },
+    {
+      "id": "maximum-decimal-scale",
+      "input": "fixtures/contracts/ofrl-ib-001-maximum-decimal-scale.v0.1.0.json",
+      "schema_valid": true,
+      "runtime_status": "accepted",
+      "diagnostic_codes": []
+    },
+    {
+      "id": "negative-zero",
+      "input": "fixtures/contracts/ofrl-ib-001-negative-zero.v0.1.0.json",
+      "schema_valid": false,
+      "runtime_status": "rejected",
+      "diagnostic_codes": [
+        "DECIMAL_TEXT_NON_CANONICAL"
+      ]
+    },
+    {
+      "id": "noncanonical-decimal",
+      "input": "fixtures/contracts/ofrl-ib-001-noncanonical-decimal.v0.1.0.json",
+      "schema_valid": false,
+      "runtime_status": "rejected",
+      "diagnostic_codes": [
+        "DECIMAL_TEXT_NON_CANONICAL"
+      ]
     }
   ]
 }
