@@ -4,10 +4,12 @@
 
 > **Division:** Financial Modelling & Valuation  
 > **Project ID:** OFRL-IB-001  
-> **Status:** Input and historical validation implemented on main; forecast calculation engine not started  
-> **Evidence maturity:** Research evidence in progress; production calculation not implemented  
+> **Status:** Rust runtime semantic validator implemented and CI-verified; forecast calculation engine not started  
+> **Evidence maturity:** 0 / Proposed  
 > **Specification version:** 0.1.0  
-> **Project owner:** Kenny
+> **Project owner:** Kenny  
+> **Project manifest:** [project.json](project.json)  
+> **Project standards:** [Portfolio-wide requirements](../../PROJECT_STANDARDS.md)
 
 ## Purpose
 
@@ -46,9 +48,14 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 
 ## Project documents
 
+- [Project manifest](project.json)
+- [Project lifecycle](../../PROJECT_LIFECYCLE.md)
+- [Project standards](../../PROJECT_STANDARDS.md)
+
 - [Research specification](RESEARCH_SPECIFICATION.md)
 - [Model conventions](MODEL_CONVENTIONS.md)
 - [Validation matrix](VALIDATION_MATRIX.md)
+- [Data manifest](DATA_MANIFEST.md)
 - [Decision log](DECISION_LOG.md)
 - [Engineering architecture](ENGINEERING_ARCHITECTURE.md)
 - [Model input contract](MODEL_INPUT_CONTRACT.md)
@@ -56,21 +63,19 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Validation and error contract](VALIDATION_ERROR_CONTRACT.md)
 - [Rust runtime semantic validator](RUNTIME_VALIDATOR.md)
 - [Synthetic reference case A](SYNTHETIC_REFERENCE_CASE.md)
-- [Engineering audit](ENGINEERING_AUDIT.md)
-- [System Design and Control Architecture](SYSTEM_DESIGN.md)
-- [Implementation roadmap](IMPLEMENTATION_ROADMAP.md)
 - [Model input JSON Schema](../../schemas/ofrl-ib-001-model-input-0.1.0.schema.json)
 - [Synthetic Case A input fixture](../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json)
 - [Schema validation script](../../scripts/validate-ofrl-ib-001-model-input-schema.sh)
 - [Decimal contract POC](poc/decimal-contract/README.md)
 - [Dependency review](poc/decimal-contract/DEPENDENCY_REVIEW.md)
+- [Release candidate preview workflow](../../.github/workflows/ofrl-ib-001-release-candidate.yml) (preview artifacts only; not a public release)
 
 
 ## Current stage
 
 **No production financial calculation engine or analyst-facing workbook has been released.** The Rust input-validation library and CLI are implemented and pass the required CI matrix on Rust 1.85.0 and 1.99.1. This is an input-acceptance and historical-accounting validation milestone, not a completed forecast model.
 
-The Draft 2020-12 schema, deterministic synthetic input fixture, Rust runtime validator, and CLI are implemented. The calculation engine, forecast statement generation, Scenario Feasibility evaluation, and workbook remain future milestones.
+The Draft 2020-12 schema, deterministic synthetic input fixture, Rust runtime validator, and CLI are implemented. A preview workflow can build the input validator and produce an SBOM/checksum bundle; this does not change the project's `not_released` state. The calculation engine, forecast statement generation, Scenario Feasibility evaluation, and workbook remain future milestones.
 
 ## Out of scope for the first release
 
@@ -80,6 +85,7 @@ Banks, insurers, REITs, consolidated groups, multi-currency operations, leases, 
 
 The first reproducible case will use synthetic data created specifically for this project. No company financial statements or licensed market-data feeds will be redistributed. Code is licensed under Apache-2.0; project documentation is licensed under CC BY 4.0. See the repository licensing and data policies.
 
+
 ## Engineering and evidence documents
 
 - [Engineering Audit](ENGINEERING_AUDIT.md)
@@ -87,13 +93,14 @@ The first reproducible case will use synthetic data created specifically for thi
 - [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md)
 - [Numeric Profile Decision Worksheet](NUMERIC_PROFILE_WORKSHEET.md)
 - [Numeric Profile Derivation and Backend Decision Basis](NUMERIC_PROFILE_DERIVATION.md)
+- [Shared Schema/Rust contract corpus](../../fixtures/contracts/ofrl-ib-001-shared-corpus.v0.1.0.json)
 
-## Current stage and branch boundaries
+## Current branch and approval boundaries
 
-The production Rust library on `main` validates model input and historical accounting relationships. It does not calculate the forecast periods and does not generate a workbook.
+The current `main` branch contains the input contract, historical semantic validator, repository governance controls, project registry/data controls, unfiltered Rust validation workflows, the isolated Decimal Contract POC lockfile, and a preview-only SBOM/checksum workflow for the existing Linux CLI input validator. The preview workflow does not represent a released forecast model.
 
-PR #11 contains the independent five-year and edge-case arithmetic research, dependency inventory automation and a non-gating timing harness. Its initial CI observations measured BigDecimal at 1.50×–2.21× the fixed Decimal median on the tested synthetic cases; memory and production workload performance remain unmeasured. PR #12 contains the pinned schema-tooling lockfile. PR #13 contains the engineering audit, system design, roadmap, Numeric Profile worksheet, bounded CLI reader and shared JSON Schema/Rust contract corpus. These remain open Draft PRs and are not merged production capabilities.
+PR #13 remains an open Draft. It contains the bounded CLI input reader, shared Schema/Rust contract corpus, engineering audit, system design, roadmap, Numeric Profile worksheet and symbolic numeric-envelope derivation. Those changes are not merged production capability. The branch must be synchronized with current `main`, resolve any content conflicts and pass all six required checks before review or merge.
 
-The separate governance and supply-chain sequence is also under review: PR #14 introduces the founder-led repository foundation and repository-policy workflow; PR #18 hardens registry/data controls and workflow execution; PR #20 adds the isolated Decimal POC lockfile and locked CI; PR #22 adds a preview-only CycloneDX/checksum artifact for the current CLI validator. These PRs are stacked and open. The preview artifact does not represent the unfinished forecast model or an official software release.
+The Ruleset on `main` is active with six exact required contexts. Documentation-only and project-code smoke PRs (#24 and #27) each passed all six contexts and were closed without merging.
 
-No production numeric backend is selected. The Numeric Profile remains unapproved, independent finance/accounting review is not evidenced, and source-level licence/security acceptance remains open. The Production Forecast Engine remains gated. The active main Ruleset requires six exact checks; the repository-policy workflow must first be integrated into main before PRs based on the current main can report that sixth context.
+No production arithmetic backend or Numeric Profile has been approved. Independent Finance/Accounting review and source-level dependency licence/security acceptance remain open. The Production Forecast Engine, forecast Structural Integrity / Scenario Feasibility, canonical ModelRun provenance and XLSX reporting remain unimplemented.
