@@ -255,11 +255,7 @@ fn validate_metadata(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
 
     // Reading the enum here makes the allowed unit set explicit in the
     // runtime boundary. No conversion occurs in this validator.
-    match model.model.unit_scale {
-        crate::domain::UnitScale::Units
-        | crate::domain::UnitScale::Thousands
-        | crate::domain::UnitScale::Millions => {}
-    }
+    let _unit_scale = model.model.unit_scale;
 }
 
 fn validate_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
@@ -454,7 +450,7 @@ fn inspect_period(
 
     let id_bytes = period_id.as_bytes();
     let id_format_valid = id_bytes.len() == 6
-        && id_bytes[..2] == *b"FY"
+        && &id_bytes[..2] == b"FY"
         && id_bytes[2..].iter().all(u8::is_ascii_digit);
 
     if !id_format_valid {
@@ -580,9 +576,7 @@ fn validate_historical_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnos
             );
         }
 
-        match period.source.classification {
-            crate::domain::SourceClassification::Synthetic => {}
-        }
+        let _source_classification = period.source.classification;
 
         validate_income_statement_domains(
             &period.income_statement,
