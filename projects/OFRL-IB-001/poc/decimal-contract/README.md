@@ -53,7 +53,7 @@ The record contains:
 - unit_scale
 - amount (canonical decimal string)
 
-The JSON Schema is published at the repository path schemas/ofrl-ib-001-amount-record-0.1.0.schema.json. The Rust POC tests the Decimal field adapter; it does not yet implement the full production metadata validator or a JSON Schema validation engine.
+The [JSON Schema](../../../../schemas/ofrl-ib-001-amount-record-0.1.0.schema.json) documents the record shape and canonical amount-string grammar. The Rust POC tests the Decimal field adapter; it does not yet implement the full production metadata validator or a JSON Schema validation engine.
 
 The record is a proof-of-concept contract, not yet the complete production financial-model schema. Full schema evolution, metadata validation, CSV row semantics, and error taxonomy will be designed in the model workspace.
 
