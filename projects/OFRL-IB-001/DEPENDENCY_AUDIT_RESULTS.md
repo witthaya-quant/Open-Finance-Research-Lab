@@ -3,12 +3,12 @@
 # OFRL-IB-001 — Dependency Audit Results
 
 **Evidence date:** 2026-11-04  
-**Workflow:** [Dependency SBOM run #41780735167](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41780735167)  
+**Workflow:** [Dependency SBOM run #41782299563](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41782299563)  
 **Pull request:** [PR #11](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/11)  
-**PR head:** `c422684c972d3ed49f0561f6e4675d73cdeb47ac`  
-**Artifact source commit:** `959fa2d588c89822b5099d14ad7ad88d02a671f8` (GitHub pull-request merge ref used by the workflow)  
-**Artifact ID:** `13298723624`  
-**Artifact SHA-256:** `c33e64ad376ac959f55139df6084768c9f2bc5917b11b1355a40fd0c2d24c81e`  
+**PR head:** `db2eb319bd54283c2b81809d83278082d1e6887b`  
+**Artifact source commit:** `309f83c1071061180c5db5579ef01056ad5b871d` (GitHub pull-request merge ref used by the workflow)  
+**Artifact ID:** `13299731926`  
+**Artifact SHA-256:** `2036b6740fccdc03e18993399bcf22caa07bac846ffb9e965eec9bf326604af6`  
 **Result:** Inventory and advisory scan PASS; licence/source/legal review remains OPEN
 
 ## 1. Executive result
@@ -59,7 +59,7 @@ The artifact contains:
 - `SHA256SUMS`.
 - `decimal-contract.Cargo.lock.ephemeral`.
 
-The downloaded artifact SHA-256 matched the GitHub artifact digest. All 10 entries in `SHA256SUMS` were re-computed locally and matched.
+The latest downloaded artifact (`ofrl-ib-001-sbom-309f83c1071061180c5db5579ef01056ad5b871d`, 39,786 bytes) had SHA-256 `2036b6740fccdc03e18993399bcf22caa07bac846ffb9e965eec9bf326604af6`, matching the GitHub artifact digest. All 10 entries in `SHA256SUMS` were re-computed locally and matched. The archive contains 11 files total including `SHA256SUMS` itself.
 
 ## 4. Lockfile reproducibility
 
