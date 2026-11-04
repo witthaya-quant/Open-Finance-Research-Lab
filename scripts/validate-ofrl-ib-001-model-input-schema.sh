@@ -14,18 +14,20 @@ done
 echo "Node: $(node --version)"
 echo "npm:  $(npm --version)"
 
-TMP_DIR="$(mktemp -d)"
-trap 'rm -rf "$TMP_DIR"' EXIT
+VALIDATOR_DIR="$ROOT_DIR/scripts/schema-validator"
 
-# Pinned direct validator packages, isolated from the Rust application runtime.
-npm install \
-  --prefix "$TMP_DIR" \
-  --no-save \
-  --package-lock=false \
+if [[ ! -f "$VALIDATOR_DIR/package.json" || ! -f "$VALIDATOR_DIR/package-lock.json" ]]; then
+  echo "ERROR: the schema-validator package manifest or lockfile is missing" >&2
+  exit 2
+fi
+
+# npm ci removes any existing node_modules and installs the exact dependency
+# graph recorded by package-lock.json. Lifecycle scripts are disabled because
+# this validator is a pure JavaScript tooling dependency set.
+npm ci \
+  --prefix "$VALIDATOR_DIR" \
   --ignore-scripts \
   --no-audit \
-  --no-fund \
-  ajv@8.20.0 \
-  ajv-formats@3.0.1
+  --no-fund
 
-NODE_PATH="$TMP_DIR/node_modules" node scripts/validate-ofrl-ib-001-model-input-schema.cjs "$ROOT_DIR"
+NODE_PATH="$VALIDATOR_DIR/node_modules" node scripts/validate-ofrl-ib-001-model-input-schema.cjs "$ROOT_DIR"

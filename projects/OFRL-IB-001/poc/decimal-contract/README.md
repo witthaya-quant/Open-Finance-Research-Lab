@@ -66,12 +66,14 @@ The package declares Rust 1.85 as its effective minimum supported toolchain. Alt
 
 ~~~bash
 cargo fmt -- --check
-cargo clippy --all-targets -- -D warnings
-cargo test --all-targets -- --nocapture
-cargo doc --no-deps
+cargo metadata --locked --format-version 1
+cargo tree --locked --edges normal,build,dev
+cargo clippy --locked --all-targets -- -D warnings
+cargo test --locked --all-targets -- --nocapture
+cargo doc --locked --no-deps
 ~~~
 
-The repository workflow runs the same checks on GitHub Actions. A green POC workflow establishes only that these numeric and interchange tests pass on the recorded runner/toolchain. It does not establish financial-model correctness.
+The repository commits a POC-local `Cargo.lock`. CI runs `cargo metadata --locked`, records the resolved dependency tree, and uses `--locked` for Clippy, tests, and documentation on both supported toolchains. `cargo fmt` does not resolve dependencies, so it is checked separately. A green POC workflow establishes only that these numeric and interchange tests pass against the committed graph on the recorded runner/toolchain. It does not establish financial-model correctness.
 
 ## Observed candidate behaviour
 
@@ -116,6 +118,6 @@ The Decimal dependency remains a candidate until:
 3. Actual 1/365 and repeating-division outputs are recorded.
 4. Maximum usable scale/range and failure behaviour are documented.
 5. JSON/CSV string round-trip and invalid-token rejection pass.
-6. Direct dependency versions, licences, and MSRV are reviewed in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). The complete transitive inventory, SBOM, lockfile, and security review remain open.
+6. Direct dependency versions, licences, and MSRV are reviewed in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). The POC lockfile and resolved metadata inventory are now committed; release SBOM generation, source-level licence review, and security review remain open.
 
 If the candidate fails an acceptance requirement, evaluate an alternative Decimal representation before beginning the full model engine. Do not weaken the required input/output contract solely to make a candidate pass.
