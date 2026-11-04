@@ -171,13 +171,7 @@
             ],
             "properties": {
               "classification": {
-                "type": "string",
-                "enum": [
-                  "synthetic",
-                  "public_filing",
-                  "user_supplied_normalized",
-                  "licensed_vendor"
-                ]
+                "const": "synthetic"
               },
               "source_reference": {
                 "type": "string",
