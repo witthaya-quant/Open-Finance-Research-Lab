@@ -186,28 +186,36 @@ fn push_semantic(
 }
 
 fn validate_metadata(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
-    if model.model.model_id.trim().is_empty() {
+    let model_id_bytes = model.model.model_id.as_bytes();
+    let model_id_valid = !model_id_bytes.is_empty()
+        && model_id_bytes.len() <= 64
+        && model_id_bytes[0].is_ascii_alphanumeric()
+        && model_id_bytes
+            .iter()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(*byte, b'.' | b'_' | b'-'));
+
+    if !model_id_valid {
         push_semantic(
             diagnostics,
-            DiagnosticCode::RequiredFieldMissing,
-            "model_id must not be empty.",
+            DiagnosticCode::NumericDomainInvalid,
+            "model_id must match [A-Za-z0-9][A-Za-z0-9._-]{0,63}.",
             "/model/model_id",
             None,
             Some("model_id"),
-            Some("non-empty identifier".to_owned()),
+            Some("1 to 64 ASCII characters; first alphanumeric, remaining alphanumeric, dot, underscore, or hyphen".to_owned()),
             Some(model.model.model_id.clone()),
         );
     }
 
-    if model.model.model_name.trim().is_empty() {
+    if model.model.model_name.trim().is_empty() || model.model.model_name.chars().count() > 160 {
         push_semantic(
             diagnostics,
             DiagnosticCode::RequiredFieldMissing,
-            "model_name must not be empty.",
+            "model_name must contain 1 to 160 characters and must not be whitespace-only.",
             "/model/model_name",
             None,
             Some("model_name"),
-            Some("non-empty name".to_owned()),
+            Some("1 to 160 non-whitespace-only characters".to_owned()),
             Some(model.model.model_name.clone()),
         );
     }
@@ -347,16 +355,6 @@ fn validate_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
         }
     }
 
-    if !model.historical_periods.is_empty() && !model.forecast_periods.is_empty() {
-        let last_historical_index = model.historical_periods.len() - 1;
-        let first_forecast_index = model.historical_periods.len();
-        if let (Some(last_historical), Some(first_forecast)) = (
-            windows.get(last_historical_index).and_then(Option::as_ref),
-            windows.get(first_forecast_index).and_then(Option::as_ref),
-        ) {
-            validate_adjacent_periods(last_historical, first_forecast, diagnostics);
-        }
-    }
 }
 
 fn register_period_id(
@@ -435,11 +433,11 @@ fn inspect_period(
     }
 
     let inclusive_days = end.ordinal() - start.ordinal() + 1;
-    if inclusive_days != 365 && inclusive_days != 366 {
+    if ![364, 365, 366, 371].contains(&inclusive_days) {
         push_semantic(
             diagnostics,
             DiagnosticCode::PeriodDurationInvalid,
-            "V1 accepts calendar-based annual periods of 365 or 366 days; 52/53-week calendars are outside this contract.",
+            "V1 accepts annual reporting periods of 364, 365, 366, or 371 inclusive calendar days (52-week, standard calendar, leap-year, or 53-week year).",
             pointer,
             Some(period_id),
             Some("period_duration"),
@@ -534,15 +532,17 @@ fn validate_historical_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnos
         let pointer = format!("/historical_periods/{index}");
         let period_id = period.period_id.as_str();
 
-        if period.source.source_reference.trim().is_empty() {
+        if period.source.source_reference.trim().is_empty()
+            || period.source.source_reference.chars().count() > 1024
+        {
             push_semantic(
                 diagnostics,
                 DiagnosticCode::RequiredFieldMissing,
-                "Every synthetic historical period must include a non-empty source_reference.",
+                "Every synthetic historical period must include a non-empty source_reference of at most 1024 characters.",
                 format!("{pointer}/source/source_reference"),
                 Some(period_id),
                 Some("source_reference"),
-                Some("non-empty provenance reference".to_owned()),
+                Some("1 to 1024 non-whitespace-only characters".to_owned()),
                 Some(period.source.source_reference.clone()),
             );
         }
