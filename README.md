@@ -72,6 +72,8 @@ The first project is a financial model for a generic non-financial operating com
 - [Engineering architecture](projects/OFRL-IB-001/ENGINEERING_ARCHITECTURE.md)
 - [Validation matrix](projects/OFRL-IB-001/VALIDATION_MATRIX.md)
 - [Decision log](projects/OFRL-IB-001/DECISION_LOG.md)
+- [Decimal contract POC](projects/OFRL-IB-001/poc/decimal-contract/README.md)
+- [Dependency review](projects/OFRL-IB-001/poc/decimal-contract/DEPENDENCY_REVIEW.md)
 
 No calculation engine or workbook is claimed to be complete at this stage.
 

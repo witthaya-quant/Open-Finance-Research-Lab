@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Engineering Architecture
 
-**Architecture version:** 0.2.0  
+**Architecture version:** 0.3.0  
 **Status:** Approved for V1 engineering baseline; dependency adoption remains gated by proof-of-concept  
 **Implementation language:** Rust  
 **Baseline date:** 2026-11-04
@@ -95,9 +95,27 @@ Required arithmetic policy:
 
 For canonical JSON fields, test an explicit Serde string representation such as rust_decimal::serde::str. Do not depend on a global serializer default that may emit JSON numeric tokens.
 
+### Numeric proof-of-concept evidence (2026-11-04)
+
+The isolated Decimal/JSON/CSV POC is recorded at:
+
+- [POC source and test scope](poc/decimal-contract/README.md)
+- [Dependency and MSRV review](poc/decimal-contract/DEPENDENCY_REVIEW.md)
+- [JSON Schema](../../schemas/ofrl-ib-001-amount-record-0.1.0.schema.json)
+
+The PR #6 head commit passed formatting, Clippy, 9 unit tests, and documentation generation on Rust 1.85.0 and Rust 1.99.1. The tested division outputs at Decimal scale 28 were:
+
+- 1 / 365 = 0.0027397260273972602739726027
+- 1 / 3 = 0.3333333333333333333333333333
+- (1 / 3) × 3 = 0.9999999999999999999999999999
+
+The tests also exposed a raw-parser input hazard for a 29-fractional-digit string. The POC's Serde boundary now rejects scale above 28 and requires exact parse-to-string round-trip before accepting input. This is a required boundary control for the selected candidate.
+
+**POC conclusion:** the current Decimal-string interchange approach passes its defined test scope. rust_decimal 1.43.0 remains a candidate, not an approved final engine dependency. The full transitive dependency inventory/SBOM, lockfile policy, security review, model-specific numeric envelope, calculation error analysis, and XLSX reconciliation remain open. POC success does not establish three-statement model correctness.
+
 ## 5. Candidate Rust ecosystem components
 
-Dependencies remain candidates until the proof-of-concept and dependency review are complete.
+Dependencies remain candidates until their proof-of-concept, complete dependency review, and model-specific acceptance tests are complete. See [the POC dependency review](poc/decimal-contract/DEPENDENCY_REVIEW.md) for the current evidence and open gates.
 
 | Component | Candidate | Intended role | Adoption condition |
 |---|---|---|---|

@@ -31,11 +31,24 @@ This log records the baseline decisions and changes that govern the first releas
 
 | ID | Candidate / policy | Status | Acceptance requirement |
 |---|---|---|---|
-| N-001 | Evaluate rust_decimal 1.43.0 as the initial fixed-point candidate | Candidate for POC | Test value range, scale, checked operations, division behaviour, and edge cases against OFRL's intended model inputs |
-| N-002 | Use field-level Serde string encoding for Decimal values (serde-with-str) | Candidate for POC | JSON and CSV contract tests must prove decimal strings round-trip and numeric JSON tokens are rejected |
-| N-003 | Use checked Decimal arithmetic and typed domain errors | Required design policy | Overflow, underflow, and division-by-zero must produce explicit errors; no silent zero or saturation |
-| N-004 | Preserve canonical Decimal strings separately from XLSX numeric cells | Required design policy | Workbook output must disclose display precision and reconcile to canonical results within a stated tolerance |
-| N-005 | Treat Decimal as fixed precision, not arbitrary precision or exact rational arithmetic | Required design policy | Repeating-division behaviour and effective scale must be documented; no claim of exact representation for non-terminating decimals |
+| N-001 | Evaluate rust_decimal 1.43.0 as the initial fixed-point candidate | POC passed; candidate only | Two-toolchain CI and defined numeric/serialization tests passed; final adoption remains subject to model-specific numeric analysis and full dependency review |
+| N-002 | Use field-level Serde string encoding for Decimal values (serde-with-str) | POC passed | JSON/CSV string round-trip passed; numeric JSON tokens and non-canonical strings rejected |
+| N-003 | Use checked Decimal arithmetic and typed domain errors | Policy; tested boundary subset passed | Checked overflow, subtraction, multiplication, and division-by-zero cases passed; the production model error taxonomy remains to be implemented |
+| N-004 | Preserve canonical Decimal strings separately from XLSX numeric cells | Design policy; workbook gate open | Canonical string boundary tested; XLSX output and reconciliation have not yet been implemented |
+| N-005 | Treat Decimal as fixed precision, not arbitrary precision or exact rational arithmetic | POC passed; policy confirmed | Scale-28 division outputs recorded; repeating division does not reconstruct exact rational values |
+| N-006 | Use Rust 1.85.0 as the effective minimum toolchain for the current POC dependency graph | CI passed | Rust 1.85.0 and 1.99.1 passed formatting, Clippy, 9 tests, and docs; re-evaluate if the dependency graph changes |
+
+## 2.1 Numeric POC results and remaining gates
+
+The Decimal/string-interchange POC passed on 2026-11-04 at PR #6 head commit 88e34261b6299e7bc1aadc9c567348264e037872.
+
+- Rust 1.85.0: formatting, Clippy, 9 tests, documentation build — PASS.
+- Rust 1.99.1: formatting, Clippy, 9 tests, documentation build — PASS.
+- Division observations: 1/365 = 0.0027397260273972602739726027; 1/3 = 0.3333333333333333333333333333; (1/3)×3 = 0.9999999999999999999999999999.
+- A 29-fractional-digit raw parser case was observed to lose precision; the POC input adapter now rejects the over-scale value and checks exact parse-to-string round-trip.
+- Direct package metadata and the effective MSRV are documented in [DEPENDENCY_REVIEW.md](poc/decimal-contract/DEPENDENCY_REVIEW.md).
+
+The POC does not close the complete dependency/security review. No Cargo.lock or complete SBOM is committed at this stage. It also does not validate the full financial model, XLSX export, or three-statement invariants. Those remain explicit implementation gates.
 
 ## 3. Deferred scope
 
