@@ -4,6 +4,7 @@ members = [
     "crates/ofrl_model",
     "crates/ofrl_cli",
 ]
+exclude = ["poc/decimal-contract"]
 
 [workspace.package]
 edition = "2021"
