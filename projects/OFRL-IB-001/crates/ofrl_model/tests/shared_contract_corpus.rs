@@ -12,6 +12,7 @@ const CORPUS: &str =
 struct ContractCorpus {
     corpus_version: String,
     schema_id: String,
+    description: String,
     cases: Vec<ContractCase>,
 }
 
@@ -35,6 +36,7 @@ fn shared_contract_corpus_matches_rust_runtime_expectations() {
         corpus.schema_id,
         "urn:ofrl:schema:ofrl-ib-001-model-input:0.1.0"
     );
+    assert!(!corpus.description.trim().is_empty());
     assert!(!corpus.cases.is_empty());
 
     let repository_root = Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -127,8 +129,15 @@ fn shared_contract_corpus_matches_rust_runtime_expectations() {
         actual_codes.sort();
 
         let mut expected_codes = case.diagnostic_codes;
+        let expected_code_count = expected_codes.len();
         expected_codes.sort();
         expected_codes.dedup();
+        assert_eq!(
+            expected_codes.len(),
+            expected_code_count,
+            "{}: expected diagnostic codes must not contain duplicates",
+            case.id
+        );
 
         assert_eq!(
             actual_codes, expected_codes,
