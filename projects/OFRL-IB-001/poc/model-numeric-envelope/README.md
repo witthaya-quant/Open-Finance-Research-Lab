@@ -172,7 +172,7 @@ The first forecast year also has a separately derived, exact-rational benchmark 
 
 ## 12. Verified POC results (2026-11-04)
 
-The committed POC lockfile is enforced in CI with `--locked`. The numeric-envelope workflow passed on Rust 1.85.0 and 1.99.1, with formatting checks, Clippy, all 11 tests, and documentation generation:
+The committed POC lockfile is enforced in CI with `--locked`. The numeric-envelope workflow passed on Rust 1.85.0 and 1.99.1, with formatting checks, Clippy, all 12 tests, and documentation generation:
 
 - [Numeric Envelope POC — CI run 41776373568](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41776373568)
 
@@ -188,3 +188,25 @@ For the provisional stress case:
 - BigDecimal completed the tested five-year path and matched the Exact Rational reference across the compared output metrics.
 
 These results support further numeric-envelope analysis. They do **not** select the production numeric library, establish a production input range, prove the forecast formulas independently, or set the final reconciliation/materiality tolerance.
+
+
+## 13. Intermediate capacity stress result
+
+The intermediate stress function scales all historical monetary fields by (10^{18}), while retaining the same aggressive assumptions used by the (10^{22}) extreme capacity probe.
+
+The test `intermediate_stress_case_completes_on_all_numeric_candidates` passed on Rust 1.85.0 and 1.99.1:
+
+| Measurement | rust_decimal 1.43.0 | bigdecimal 0.4.11 |
+|---|---:|---:|
+| Forecast periods | 5 | 5 |
+| Metrics compared to Exact Rational | 160 | 160 |
+| Maximum exact absolute error | 0/1 | 0/1 |
+| Provisional 2dp display mismatches | 0 | 0 |
+| Maximum unrounded Balance Sheet residual | 0/1 | 0/1 |
+| Arithmetic completion | PASS | PASS |
+
+The largest Exact Rational forecast metric was `2,160,000,000,000,000,000,000,000.00` in FY2030 accounts payable.
+
+The intermediate point passed in [Numeric Envelope POC run 41777136666](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41777136666). The extreme (10^{22}) test remains separate: rust_decimal fails there with an explicit checked multiplication overflow, while BigDecimal completes that tested path.
+
+These two stress points show candidate behaviour at two chosen scales. They do not identify the exact transition boundary, establish production input limits, or resolve the operational cost of arbitrary precision. The production numeric decision remains open.
