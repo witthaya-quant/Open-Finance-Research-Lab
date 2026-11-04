@@ -1,0 +1,12 @@
+[package]
+name = "ofrl_cli"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Command-line validation interface for OFRL-IB-001"
+
+[dependencies]
+ofrl_model = { path = "../ofrl_model" }
+serde_json.workspace = true
