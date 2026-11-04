@@ -86,6 +86,7 @@ pub struct Diagnostic {
 }
 
 impl Diagnostic {
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn error(
         code: DiagnosticCode,
         category: DiagnosticCategory,
