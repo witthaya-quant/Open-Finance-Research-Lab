@@ -184,7 +184,9 @@ where
     D: Deserializer<'de>,
 {
     let text = String::deserialize(deserializer).map_err(|_| {
-        serde::de::Error::custom("DECIMAL_STRING_REQUIRED: Decimal values must be JSON string tokens")
+        serde::de::Error::custom(
+            "DECIMAL_STRING_REQUIRED: Decimal values must be JSON string tokens",
+        )
     })?;
 
     if !is_plain_decimal_text(&text) {
@@ -318,7 +320,10 @@ impl CalendarDate {
     pub fn next_day(self) -> Option<Self> {
         let month_length = days_in_month(self.year, self.month);
         if self.day < month_length {
-            return Some(Self { day: self.day + 1, ..self });
+            return Some(Self {
+                day: self.day + 1,
+                ..self
+            });
         }
 
         if self.month < 12 {
@@ -355,9 +360,12 @@ fn days_in_month(year: u16, month: u8) -> u8 {
     }
 }
 
-
 impl core::fmt::Display for CalendarDate {
     fn fmt(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(formatter, "{:04}-{:02}-{:02}", self.year, self.month, self.day)
+        write!(
+            formatter,
+            "{:04}-{:02}-{:02}",
+            self.year, self.month, self.day
+        )
     }
 }
