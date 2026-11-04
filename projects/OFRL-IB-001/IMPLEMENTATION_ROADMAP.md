@@ -27,7 +27,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Rust SBOM/RustSec research | Open PR #11, Draft | Candidate/POC inventories and point-in-time advisory evidence |
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
 | Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile |
-| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; latest hardened run pending |
+| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; five applicable check contexts pass on head `6941b1f`; unmerged |
 | Repository policy / portfolio controls | Open PRs #14 and #18 | Always-running repository-policy workflow and hardened project/data controls; not yet on main |
 | Decimal POC lockfile | Open PR #20 | Separate Cargo lockfile and locked validation commands; source/legal review remains open |
 | CLI SBOM/checksum preview | Open PR #22 | Preview-only CycloneDX 1.5 for Linux CLI validator; not an official model release |
@@ -53,13 +53,13 @@ Exit condition: malformed and historically inconsistent input is rejected before
 
 ### Phase 1 — Audit, architecture and input-bound hardening
 
-**Status:** Implemented in open PR #13; review, latest hardened CI completion and merge remain pending.
+**Status:** Implemented in open PR #13; all five applicable project check contexts passed on head `6941b1f`; review and merge remain pending. The sixth `repository-policy` context awaits integration of the workflow into `main`.
 
 Deliverables:
 - Engineering Audit with severity-ranked findings.
 - System Design and result/status contracts.
 - This gated roadmap.
-- Corrected project status and reference-case documentation.\n- Added a versioned shared Schema/Rust contract corpus with expected acceptance states and diagnostic codes; path containment and metadata checks are being hardened.
+- Corrected project status and reference-case documentation.\n- Added a versioned shared Schema/Rust contract corpus with expected acceptance states and diagnostic codes; metadata, fixture containment, path traversal and symlink checks are implemented and covered by CI.
 - CLI input bound and UTF-8 rejection tests.
 
 Exit conditions:
@@ -222,7 +222,7 @@ Release statuses:
 |---|---|---|
 | Numeric candidate and independent arithmetic research | PR #11, Draft, targets main | POC checks pass; findings reviewed; production adoption remains separate |
 | Schema tooling lockfile | PR #12, Draft, targets main | Review and CI pass; shared corpus is a separate contract gate |
-| Audit, system design, bounded CLI and shared corpus | PR #13, Draft, targets main | All relevant tests pass on the latest head; audit reviewed; governance required-check dependency resolved |
+| Audit, system design, bounded CLI and shared corpus | PR #13, Draft, targets main | Five applicable project contexts pass on head `6941b1f`; complete founder/governance required-check context after workflow integration; audit reviewed |
 | Repository foundation and policy workflow | PR #14, targets main | Review governance baseline and integrate PR #18's compatible hardening before final base-branch smoke verification |
 | Portfolio/data/workflow controls | PR #18, stacked on PR #14 | Integrate into PR #14 branch; verify six required checks and project registry behaviour |
 | Isolated Decimal POC lockfile | PR #20, stacked on PR #18 | Keep independent lockfile boundary; review inventory evidence |
