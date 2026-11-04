@@ -24,7 +24,7 @@ Every approved project must maintain:
 | Purpose and scope | README, intended use, included/excluded scope, and limitations |
 | Specification | A versioned research, product, model, or technical specification appropriate to the project |
 | Decision history | Project Decision Log with material assumptions, scope, and design decisions |
-| Validation | A validation matrix or test plan with explicit PASS / FAIL / NOT RUN / N/A states |
+| Validation | A validation matrix or test plan with explicit PASS / FAIL / NOT RUN / BLOCKED / N/A states |
 | Reproducibility | Environment, dependencies, configuration, source versions, commands, and data-acquisition steps where applicable |
 | Data rights | Provenance, classification, permitted use, and redistribution status for non-trivial data |
 | Intellectual property | Applicable licence, attribution, contributor rights, and public/private disclosure boundary |
@@ -146,7 +146,7 @@ Use the templates as starting points, not as substitutes for project-specific re
 
 | Project type | Required project-local documents | Starting templates |
 |---|---|---|
-| All projects | `README.md`, `project.json`, `DECISION_LOG.md`, `VALIDATION_MATRIX.md`, project charter/specification | [Project README](templates/PROJECT_README_TEMPLATE.md), [Project Charter](templates/PROJECT_CHARTER_TEMPLATE.md), [Project Manifest](templates/PROJECT_MANIFEST_TEMPLATE.json), [Decision Log](templates/PROJECT_DECISION_LOG_TEMPLATE.md), [Validation Matrix](templates/VALIDATION_MATRIX_TEMPLATE.md) |
+| All projects | `README.md`, `project.json`, `DECISION_LOG.md`, `VALIDATION_MATRIX.md` or `VALIDATION_PLAN.md`, and a project specification appropriate to the type. A Project Charter may be separate or integrated into that specification. | [Project README](templates/PROJECT_README_TEMPLATE.md), [Project Charter](templates/PROJECT_CHARTER_TEMPLATE.md), [Project Manifest](templates/PROJECT_MANIFEST_TEMPLATE.json), [Decision Log](templates/PROJECT_DECISION_LOG_TEMPLATE.md), [Validation Matrix](templates/VALIDATION_MATRIX_TEMPLATE.md) |
 | Research | `RESEARCH_SPECIFICATION.md` or `PROJECT_SPECIFICATION.md` | [Research Specification](templates/RESEARCH_SPECIFICATION_TEMPLATE.md) |
 | Quantitative research | Research Specification plus quantitative sample, bias, benchmark, and robustness evidence | [Research Specification](templates/RESEARCH_SPECIFICATION_TEMPLATE.md), [Data Manifest](templates/DATA_MANIFEST_TEMPLATE.md), [Benchmark Specification](templates/BENCHMARK_SPECIFICATION_TEMPLATE.md) |
 | Financial model | `MODEL_CONVENTIONS.md`, `NUMERIC_ENVELOPE.md` | [Model Conventions](templates/MODEL_CONVENTIONS_TEMPLATE.md), [Numeric Envelope](templates/NUMERIC_ENVELOPE_TEMPLATE.md) |
@@ -158,6 +158,8 @@ Use the templates as starting points, not as substitutes for project-specific re
 | R3 — Operational / sensitive | `THREAT_MODEL.md` plus security validation profile | [Threat Model](templates/THREAT_MODEL_TEMPLATE.md) |
 
 For every type-specific document, add the actual project-local filename to `required_documents` in `project.json`. The registry validator checks both existence and manifest declaration. A template may be adapted or combined where that improves clarity, but the required control and evidence must remain present.
+
+**Data-classification rule:** Any project whose manifest declares a data classification other than `none`—including `synthetic`—must include `DATA_MANIFEST.md` in `required_documents` and select the `data` validation profile. This applies even when data is not the project's primary type.
 
 ## 4. Risk tiers
 
@@ -188,6 +190,7 @@ A project may select one or more validation profiles in its manifest:
 - `privacy`
 - `performance`
 - `integration`
+- `prototype`
 
 Profiles identify the relevant checks. They do not replace the project validation matrix. A project must state which checks are PASS, FAIL, NOT RUN, or N/A and why.
 

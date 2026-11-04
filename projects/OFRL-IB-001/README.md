@@ -55,6 +55,7 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Research specification](RESEARCH_SPECIFICATION.md)
 - [Model conventions](MODEL_CONVENTIONS.md)
 - [Validation matrix](VALIDATION_MATRIX.md)
+- [Data manifest](DATA_MANIFEST.md)
 - [Decision log](DECISION_LOG.md)
 - [Engineering architecture](ENGINEERING_ARCHITECTURE.md)
 - [Model input contract](MODEL_INPUT_CONTRACT.md)
@@ -67,13 +68,14 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Schema validation script](../../scripts/validate-ofrl-ib-001-model-input-schema.sh)
 - [Decimal contract POC](poc/decimal-contract/README.md)
 - [Dependency review](poc/decimal-contract/DEPENDENCY_REVIEW.md)
+- [Release candidate preview workflow](../../.github/workflows/ofrl-ib-001-release-candidate.yml) (preview artifacts only; not a public release)
 
 
 ## Current stage
 
 **No production financial calculation engine or analyst-facing workbook has been released.** The Rust input-validation library and CLI are implemented and pass the required CI matrix on Rust 1.85.0 and 1.99.1. This is an input-acceptance and historical-accounting validation milestone, not a completed forecast model.
 
-The Draft 2020-12 schema, deterministic synthetic input fixture, Rust runtime validator, and CLI are implemented. The calculation engine, forecast statement generation, Scenario Feasibility evaluation, and workbook remain future milestones.
+The Draft 2020-12 schema, deterministic synthetic input fixture, Rust runtime validator, and CLI are implemented. A preview workflow can build the input validator and produce an SBOM/checksum bundle; this does not change the project's `not_released` state. The calculation engine, forecast statement generation, Scenario Feasibility evaluation, and workbook remain future milestones.
 
 ## Out of scope for the first release
 

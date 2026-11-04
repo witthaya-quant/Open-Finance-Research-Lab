@@ -44,3 +44,6 @@ jobs:
 
       - name: Validate every registered project and manifest
         run: node scripts/validate_project_registry.cjs
+
+      - name: Test project registry policy contracts
+        run: node --test scripts/tests/validate-project-registry.test.cjs

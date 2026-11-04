@@ -9,11 +9,10 @@ Use these templates to create a project baseline. Every project must follow [PRO
 | Template | Use |
 |---|---|
 | [Project README](PROJECT_README_TEMPLATE.md) | Project landing page, scope, status, limitations, and navigation |
-| [Project Charter](PROJECT_CHARTER_TEMPLATE.md) | Problem, objectives, scope, risks, data, and intended deliverables |
+| [Project Charter](PROJECT_CHARTER_TEMPLATE.md) | Project-level problem, objectives, scope, risks, and deliverables; use separately or integrate into the main specification |
 | [Project Manifest](PROJECT_MANIFEST_TEMPLATE.json) | Machine-readable identity, lifecycle, type, risk, licence, and validation metadata |
 | [Project Decision Log](PROJECT_DECISION_LOG_TEMPLATE.md) | Project-level decisions, open questions, deferred scope, and accepted limitations |
 | [Validation Matrix](VALIDATION_MATRIX_TEMPLATE.md) | Acceptance criteria, test evidence, PASS / FAIL / NOT RUN / BLOCKED / N/A state |
-| [Release Record](RELEASE_RECORD_TEMPLATE.md) | Release provenance, validation, SBOM, checksums, licence, and authorization |
 
 ## Research and quantitative work
 
@@ -38,6 +37,12 @@ Use these templates to create a project baseline. Every project must follow [PRO
 | [Engineering Architecture](ENGINEERING_ARCHITECTURE_TEMPLATE.md) | Components, contracts, data flows, interfaces, failure behavior, deployment, and trade-offs |
 | [Threat Model](THREAT_MODEL_TEMPLATE.md) | Assets, actors, trust boundaries, abuse cases, controls, and residual risk |
 | [Prototype Plan](PROTOTYPE_PLAN_TEMPLATE.md) | Bounded feasibility question, hypothesis, tests, timebox, and promotion/stop criteria |
+
+## Release and publication
+
+| Template | Use |
+|---|---|
+| [Release Record](RELEASE_RECORD_TEMPLATE.md) | Release provenance, validation, SBOM, checksums, licence, and authorization; complete when an artifact is actually released |
 
 ## Governance and research proposals
 

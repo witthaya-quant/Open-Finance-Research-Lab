@@ -20,7 +20,8 @@
   "validation_profiles": [
     "research",
     "financial_model",
-    "software"
+    "software",
+    "data"
   ],
   "required_documents": [
     "README.md",
@@ -29,6 +30,7 @@
     "MODEL_CONVENTIONS.md",
     "ENGINEERING_ARCHITECTURE.md",
     "VALIDATION_MATRIX.md",
+    "DATA_MANIFEST.md",
     "NUMERIC_ENVELOPE.md",
     "MODEL_INPUT_CONTRACT.md",
     "VALIDATION_ERROR_CONTRACT.md",
