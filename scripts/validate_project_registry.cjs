@@ -472,8 +472,20 @@ function validateManifest(projectDir, folderName, catalogRows, seenIds, validate
           continue;
         }
 
-        if (!resolveFileWithin(ROOT, workflowPath)) {
+        const workflowFile = resolveFileWithin(ROOT, workflowPath);
+        if (!workflowFile) {
           fail(relativeDir + "/project.json: validation workflow does not exist or is unsafe: " + workflowPath);
+          continue;
+        }
+
+        const workflowSource = fs.readFileSync(workflowFile, "utf8");
+        if (!/^\\s*pull_request\\s*:/m.test(workflowSource)) {
+          fail(relativeDir + ": declared validation workflow must run on pull_request: " + workflowPath);
+        }
+
+        const hasPathFilter = /^\\s*paths\\s*:/m.test(workflowSource);
+        if (hasPathFilter && !workflowSource.includes("projects/" + folderName + "/")) {
+          fail(relativeDir + ": path-filtered validation workflow must include projects/" + folderName + "/: " + workflowPath);
         }
       }
     }
