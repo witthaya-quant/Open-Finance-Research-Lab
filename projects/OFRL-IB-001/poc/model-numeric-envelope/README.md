@@ -217,3 +217,24 @@ These two stress points show candidate behaviour at two chosen scales. They do n
 ## 14. Five-year independent golden benchmark
 
 BM-002 extends the first-period independent benchmark to every forecast period (FY2026–FY2030) and all 32 model outputs per period. Exact expected values are checked by `case_a_five_year_forecast_matches_independent_exact_golden`; no reporting tolerance is applied. The benchmark covers the synthetic Case A baseline and does not replace edge-case testing or an independent accounting review.
+
+## 15. Independent edge-scenario golden benchmarks
+
+BM-003 supplements the profitable Case A baseline with four boundary scenarios, each tested over FY2026–FY2030 and all 32 model outputs:
+
+| Scenario | Main invariant |
+|---|---|
+| High-CapEx funding deficit | Negative cash remains an explicit funding shortfall; no automatic debt or cash plug |
+| Loss-making operations | Negative EBITDA / Net Income are preserved; tax and dividends floor at zero |
+| Full debt repayment and later redraw | Debt reaches exactly zero, then the explicit FY2027 drawdown is reflected in average-debt interest |
+| Zero revenue and zero CapEx | Operating lines, working capital and CapEx remain exact zero while aggregate PP&E depreciation continues |
+
+The [BM-003 specification](BENCHMARKS_EDGE.md) defines all four cases. The [edge golden dataset](golden/case-a-edge-scenarios.v0.1.0.json) contains 640 exact rational expected values. The Rust integration test checks every output without tolerance and requires zero Balance Sheet difference for each case/year.
+
+An independent standard-library-only Python reference is available at [reference/independent_reference.py](reference/independent_reference.py). Run it from the repository root:
+
+`python3 projects/OFRL-IB-001/poc/model-numeric-envelope/reference/independent_reference.py --check`
+
+It independently recomputes BM-002 and BM-003, checks the canonical fixture Git blob identity, and verifies 800 exact expected outputs against the committed golden datasets. Python is verification-only; it is not a production runtime dependency. CI runs the reference check on both supported Rust toolchain matrix jobs before formatting, Clippy, tests and documentation checks.
+
+BM-003 remains a synthetic mechanics benchmark, not independent accounting sign-off or a substitute for Numeric Profile approval. High-CapEx and negative-cash results are deliberately infeasible stress diagnostics, not reportable feasible company forecasts.
