@@ -166,15 +166,17 @@ Days are decimal strings. Fractional day values are permitted. The model uses th
 The JSON Schema checks array lengths, field formats, and basic lexical properties. Runtime semantic validation must additionally enforce:
 
 1. Exactly three historical and five forecast periods.
-2. Every period_id is unique.
+2. Every period_id is unique and uses the lexical form FY followed by four ASCII digits.
 3. Periods are ordered chronologically and do not overlap.
-4. Each period is an annual reporting period under the declared fiscal calendar.
-5. Period dates are valid, start_date is not after end_date, and adjacent periods are contiguous.
+4. V1 accepts calendar-based annual periods of 365 or 366 inclusive days and 52/53-week annual periods of 364 or 371 inclusive days.
+5. Period dates are valid Gregorian dates, start_date is not after end_date, and adjacent periods are contiguous.
 6. The first historical period begins immediately after opening_balance_sheet.as_of_date.
 7. The first forecast period begins immediately after the last historical period ends.
-8. Period identifiers agree with the declared fiscal-year convention.
-9. All monetary amounts use the model-level reporting currency and unit_scale.
-10. All decimal strings are exactly representable by the selected Decimal candidate.
+8. The four-digit year in period_id agrees with the calendar year in which end_date falls.
+9. All monetary amounts use the model-level reporting_currency and unit_scale.
+10. All decimal strings are exactly representable by the selected Decimal type without scale, sign, or digit changes.
+
+V1 does not infer a fiscal calendar from a company name or country. The explicit start_date and end_date values define the annual periods; period_id labels the year in which each period ends. The allowed inclusive lengths are 364, 365, 366, and 371 calendar days. Other lengths, including unsupported 52/53-week variants, are rejected until a separately versioned calendar policy is approved.
 
 The day_count_basis is a model convention for DSO/DIO/DPO calculations; it is not a requirement that every annual fiscal period contain exactly 365 calendar days.
 
@@ -263,4 +265,4 @@ Additive optional fields may be considered compatible only if unknown-field beha
 
 ## 13. Current status
 
-The machine-readable input schema and synthetic payload are design-stage artifacts. They must be validated by a Draft 2020-12 validator and exercised by automated valid/invalid fixture tests before they are treated as implementation-ready. The POC Decimal parser validates only the amount field boundary; it is not the full model input validator.
+The machine-readable Draft 2020-12 schema and synthetic payload have passed the Ajv CI gate. A Rust typed input and historical semantic validator is being implemented separately; its scope and supported checks are documented in RUNTIME_VALIDATOR.md. Forecast calculations remain out of scope until the numeric envelope and model engine gates are accepted.
