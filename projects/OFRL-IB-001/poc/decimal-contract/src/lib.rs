@@ -112,7 +112,7 @@ fn is_plain_decimal_text(text: &str) -> bool {
         return false;
     }
 
-    let mut index = usize::from(bytes[0] == b'-');
+    let mut index = if bytes[0] == b'-' { 1 } else { 0 };
     if index >= bytes.len() {
         return false;
     }
@@ -235,6 +235,18 @@ mod tests {
     }
 
     #[test]
+    fn negative_amounts_round_trip_without_sign_or_scale_loss() {
+        let record = sample_record("-9876.5432100");
+        let json = serde_json::to_string(&record).expect("negative amount should serialize");
+        assert!(json.contains(r#""amount":"-9876.5432100""#));
+
+        let decoded: AmountRecord =
+            serde_json::from_str(&json).expect("negative decimal string should deserialize");
+        assert_eq!(decoded.amount.to_string(), "-9876.5432100");
+        assert_eq!(decoded.amount.scale(), 7);
+    }
+
+    #[test]
     fn csv_round_trip_preserves_decimal_text_and_metadata() {
         let record = sample_record("9876543210.120000");
 
@@ -288,8 +300,8 @@ mod tests {
             .checked_div(Decimal::from(3u32))
             .expect("1 divided by 3 should be within Decimal range");
 
-        assert!(one_over_365.scale() <= 28);
-        assert!(one_over_three.scale() <= 28);
+        assert!(one_over_365.scale() <= Decimal::MAX_SCALE);
+        assert!(one_over_three.scale() <= Decimal::MAX_SCALE);
 
         let reconstructed = one_over_three
             .checked_mul(Decimal::from(3u32))
@@ -307,16 +319,12 @@ mod tests {
     #[test]
     fn values_beyond_supported_scale_or_range_never_silently_change() {
         let beyond_scale = "0.00000000000000000000000000001";
-        match Decimal::from_str(beyond_scale) {
-            Ok(parsed) => assert_eq!(
+        if let Ok(parsed) = Decimal::from_str(beyond_scale) {
+            assert_eq!(
                 parsed.to_string(),
                 beyond_scale,
                 "a parsed value must not silently round or truncate the source text"
-            ),
-            Err(_) => {
-                // Explicit rejection is acceptable when the input exceeds the
-                // selected Decimal representation.
-            }
+            );
         }
 
         let beyond_range = r#"{
