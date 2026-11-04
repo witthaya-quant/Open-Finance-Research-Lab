@@ -85,6 +85,17 @@ const TYPE_REQUIREMENTS = {
   ],
 };
 
+const TYPE_VALIDATION_PROFILES = {
+  research: ["research"],
+  quantitative_research: ["quantitative"],
+  financial_model: ["financial_model"],
+  software: ["software"],
+  data: ["data"],
+  benchmark: ["benchmark"],
+  prototype: [],
+  infrastructure: ["integration", "security"],
+};
+
 const errors = [];
 
 function fail(message) {
@@ -157,6 +168,10 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     fail(`${relativeDir}/project.json: unsupported schema_version; expected 1.0.0`);
   }
 
+  if (manifest.$schema !== "../../schemas/ofrl-project-manifest-1.0.0.schema.json") {
+    fail(`${relativeDir}/project.json: $schema must reference the repository project-manifest schema`);
+  }
+
   const id = manifest.project_id;
   if (typeof id !== "string" || !/^OFRL-[A-Z0-9]{2,8}-[0-9]{3}$/.test(id)) {
     fail(`${relativeDir}/project.json: invalid project_id format`);
@@ -202,8 +217,6 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     const parsedDate = typeof value === "string" ? new Date(`${value}T00:00:00Z`) : null;
     if (typeof value !== "string" || value.length !== 10 || value[4] !== "-" || value[7] !== "-" || !parsedDate || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== value) {
       fail(`${relativeDir}/project.json: ${field} must use YYYY-MM-DD`);
-    } else if (Number.isNaN(Date.parse(`${manifest[field]}T00:00:00Z`))) {
-      fail(`${relativeDir}/project.json: ${field} is not a valid calendar date`);
     }
   }
 
@@ -269,6 +282,12 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
         fail(`${relativeDir}/project.json: required_documents must list type-specific document '${selected}'`);
       }
     }
+
+    for (const profile of TYPE_VALIDATION_PROFILES[type] || []) {
+      if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes(profile)) {
+        fail(`${relativeDir}/project.json: project type '${type}' requires validation profile '${profile}'`);
+      }
+    }
   }
 
   if (manifest.risk_tier === "R3") {
@@ -277,7 +296,7 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     }
   }
 
-  if (["licensed", "restricted", "mixed"].includes(manifest.data_classification)) {
+  if (["public_source", "licensed", "restricted", "mixed"].includes(manifest.data_classification)) {
     if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes("data")) {
       fail(`${relativeDir}: licensed/restricted/mixed data requires the data validation profile`);
     }
