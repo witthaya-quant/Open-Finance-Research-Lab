@@ -179,6 +179,14 @@ fn negative_cash_is_reported_as_infeasible_without_fabricating_financing() {
         balance_sheet_differences_are_zero(&forecast),
         "negative cash must not be hidden by a balancing plug"
     );
+    let fy2026 = forecast
+        .iter()
+        .find(|period| period.period_id == "FY2026")
+        .expect("FY2026 diagnostic period must exist");
+    assert_eq!(
+        fy2026.values.get("closing_cash").unwrap().raw_text(),
+        "-1531866007/292000"
+    );
     assert!(
         forecast.iter().any(|period| {
             period
