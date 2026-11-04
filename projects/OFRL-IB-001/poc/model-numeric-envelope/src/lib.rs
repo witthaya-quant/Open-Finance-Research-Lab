@@ -336,9 +336,21 @@ pub fn load_case_a() -> Value {
     serde_json::from_str(CASE_A).expect("canonical Case A fixture must remain valid JSON")
 }
 
+/// Deliberately large but less extreme capacity point (10^18 monetary scaling).
+/// This is a numeric stress input, not a production company-size limit.
+pub fn intermediate_stress_case_a() -> Value {
+    build_stress_case_a(18)
+}
+
+/// Extreme representation-capacity probe (10^22 monetary scaling).
+/// This is not a realistic company-size requirement or a production input limit.
 pub fn stress_case_a() -> Value {
+    build_stress_case_a(22)
+}
+
+fn build_stress_case_a(monetary_scale: usize) -> Value {
     let mut value = load_case_a();
-    scale_money_fields(&mut value, 22);
+    scale_money_fields(&mut value, monetary_scale);
 
     for period in value["forecast_periods"]
         .as_array_mut()
