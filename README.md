@@ -26,9 +26,9 @@ I am deliberately building deeper systems-engineering capability with Rust. The 
 
 Many of us enter finance and business through a shared body of knowledge. We study familiar concepts, equations, and frameworks through degrees, professional qualifications, certificates, or independent study. Black–Scholes is one well-known example: many people learn the same foundational model, yet develop different ways to apply, extend, parameterise, test, or combine it in practice.
 
-The differences often come from the work built around those foundations: the assumptions we choose, the information we rely on, how we structure a model, the constraints we face, and the experience we gain from applying it. Over time, each person or team develops a practical method of its own—a personal recipe of techniques, assumptions, and judgement refined for a particular purpose.
+The differences often come from the work built around those foundations: the assumptions we choose, the information we rely on, how we structure a model, the constraints we face, and the experience we gain from applying it. Over time, each person or team develops its own “secret sauce”—a combination of methods, assumptions, techniques, processes, and practical judgement refined for a particular purpose.
 
-I do not want OFRL to become a place where people compete over whose recipe is best, whose qualifications carry more weight, or who gets to claim the one correct way. I want people to put methods they are able to share on the table, explain how they work, and help one another understand what each approach can contribute.
+I do not want OFRL to become a place where people compete over whose recipe is best, whose qualifications carry more weight, or who gets to claim the one correct way. I want people to put methods they are able and willing to share on the table, explain how they work, and help one another understand what each approach can contribute. No one is expected to disclose confidential know-how, employer or client material, or a method they do not have the right to publish. The point is to contribute what can be shared responsibly and make that contribution useful to others.
 
 ### Focus on what we can build from the work
 
