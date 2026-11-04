@@ -13,6 +13,17 @@ It is deliberately separate from the Rust financial calculation workspace. Node.
 
 The package manifest declares exact direct dependency versions. The committed \`package-lock.json\` pins the complete resolved dependency graph and integrity hashes.
 
+| Package | Version | Declared licence | Role |
+|---|---:|---|---|
+| ajv | 8.20.0 | MIT | Draft 2020-12 JSON Schema engine |
+| ajv-formats | 3.0.1 | MIT | Standard format validators |
+| fast-deep-equal | 3.1.3 | MIT | Ajv transitive dependency |
+| fast-uri | 3.1.9 | BSD-3-Clause | Ajv transitive dependency |
+| json-schema-traverse | 1.0.0 | MIT | Ajv transitive dependency |
+| require-from-string | 2.0.2 | MIT | Ajv transitive dependency |
+
+This is the resolved inventory in the committed lockfile, not a blanket statement that every future version has the same licence. The CI advisory check uses `npm audit --audit-level=high`; intentional upgrades must review both licence metadata and advisory output.
+
 ## Reproduction
 
 From the repository root:
