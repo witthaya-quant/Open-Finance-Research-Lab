@@ -89,11 +89,7 @@ fn shared_contract_corpus_matches_rust_runtime_expectations() {
         );
 
         let input = fs::read_to_string(&input_path).unwrap_or_else(|error| {
-            panic!(
-                "{}: cannot read {}: {error}",
-                case.id,
-                input_path.display()
-            )
+            panic!("{}: cannot read {}: {error}", case.id, input_path.display())
         });
         let report = validate_input_json(&input);
 
