@@ -156,22 +156,27 @@ These are OFRL-IB-001-specific gates, not requirements imposed on unrelated futu
 
 ## 8. Remediation state on the proposed branch
 
-| Finding | Proposed remediation in PR #14 | Remaining action |
-|---|---|---|
-| AUD-001 / AUD-012 | Documented branch-control baseline and opened Issue #15 | Account owner must configure and verify GitHub branch protection manually |
-| AUD-002 | Governance and policy package consolidated in this PR | Merge only after full review and CI pass |
-| AUD-003 | Always-running repository policy workflow added | Confirm workflow passes; later select its stable job as a required status check after branch protection is configured |
-| AUD-004 | Dependabot configuration added for current Cargo and Actions ecosystems | Add new ecosystems and project package paths as future projects introduce them |
-| AUD-005 | Dependency policy defines separate workspace/POC lockfiles | Commit the isolated Decimal POC lockfile and use locked CI commands |
-| AUD-006 | Dependency policy identifies npm transitive drift | Commit a package manifest/lockfile and move validator to `npm ci` |
-| AUD-007 | Release Policy and Changelog added | Implement release workflows only when a distributable project artifact is ready |
-| AUD-008 | Release Policy requires SBOM and checksums; Dependency Policy defines the process | Add and test SBOM generation before the first distributable software release |
-| AUD-009 | Account Continuity policy added | Founder must configure MFA/recovery/successor and verify backups personally |
-| AUD-010 | Dependency Policy records the unpinned rustup fallback | Remove or replace the fallback in both Rust workflows, then test both toolchains |
-| AUD-011 | OFRL-IB-001 Decision Log status corrected against implementation | Keep the log synchronized as forecast-engine work proceeds |
-| AUD-016 / AUD-017 / AUD-018 | Project Lifecycle, Project Standards, Project Catalog, Manifest Schema, current manifest, and automated registry validation added | Confirm CI passes and require the same manifest/profile contract for every future project |
+The following status distinguishes a documented control, an implemented control on this PR branch, and a manual or release-time action. A file being present is not sufficient evidence that a GitHub setting is active.
 
-The proposed branch does not itself activate repository settings, establish independent review, create an SBOM, or close every dependency finding. A policy is closed only when its corresponding evidence is present.
+| Finding | PR #14 status | Evidence / remaining action |
+|---|---|---|
+| AUD-001 / AUD-012 — default branch protection | **Open — manual configuration** | Issue [#15](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/15) tracks the `main` Pull Request requirement, conversation resolution, force-push/deletion restrictions, and verification of administrator bypass behavior. |
+| AUD-002 — governance not active on main | **Open — merge pending** | The Foundation, Governance, policies, templates, and audit controls are in PR #14. They do not become the default-branch baseline until the PR is reviewed and merged. |
+| AUD-003 — repository-wide policy gate | **Implemented and CI passed on this PR branch** | The always-running `OFRL Repository Policy` workflow checks local Markdown links, JSON/YAML syntax, Ajv project-manifest schema compilation/validation, project-directory registration, type/risk requirements, workflow coverage, and catalog consistency. After merge, configure its stable `repository-policy` job as a required status check in Issue #15. |
+| AUD-004 — dependency update automation | **Implemented on this PR branch** | Dependabot proposals cover Cargo application workspace, isolated Decimal POC, GitHub Actions, and npm schema-validation tooling. Add another package ecosystem and path when a future project introduces it. Updates remain human-reviewed. |
+| AUD-005 — Rust lockfile coverage | **Open — POC-specific** | The OFRL-IB-001 application workspace has a committed `Cargo.lock` and locked CI commands. The isolated Decimal POC still needs its own committed `Cargo.lock` and `--locked` workflow commands. |
+| AUD-006 — Node transitive dependency freeze | **Remediated on this PR branch** | `scripts/schema-validator/package.json` and `package-lock.json` are committed; repository and model-input schema CI use `npm ci` with lifecycle scripts disabled. |
+| AUD-007 — release lifecycle and changelog | **Policy and changelog implemented; publishing workflow deferred** | `RELEASE_POLICY.md` and `CHANGELOG.md` define release evidence, versioning, provenance, corrections, and deprecation. A publishing workflow should be added only when a real distributable artifact is ready to release. |
+| AUD-008 — release-time SBOM | **Defined, not yet generated** | Release and dependency policies require an SPDX or CycloneDX SBOM and checksums for distributable software. Generate and inspect one before the first such release; do not claim an SBOM exists now. |
+| AUD-009 — Founder account continuity | **Policy documented; personal settings remain manual** | `ACCOUNT_CONTINUITY.md` defines MFA, recovery, successor, credential review, and backup controls. The Founder must configure the account settings and test the backup/recovery procedures personally. |
+| AUD-010 — unpinned Rust bootstrap fallback | **Open — workflow hardening** | Both Rust workflows still contain a fallback that downloads the current rustup installer. Replace it with a verified, versioned bootstrap or a deterministic runner-provided toolchain; rerun both toolchain matrices. |
+| AUD-011 — OFRL-IB-001 Decision Log drift | **Corrected on this PR branch** | The input schema, Rust runtime semantic validator, typed diagnostics, and historical checks are marked implemented; forecast calculation, scenario feasibility, numeric error budget, and workbook reconciliation remain open. |
+| AUD-013 — GitHub Advanced Security settings | **Not verified** | Inspect repository Security and analysis settings. Record each item as enabled, unavailable under the current plan, or not applicable; do not infer state from documentation. |
+| AUD-014 — CODEOWNERS | **Deliberately deferred** | There is one active Maintainer. Add CODEOWNERS only when real domain owners with the necessary repository permissions are appointed. |
+| AUD-015 — support/SLA commitment | **Deliberately not adopted** | OFRL is a Founder-maintained research project. Do not promise response times or support obligations without a defined operating capacity and scope. |
+| AUD-016 / AUD-017 / AUD-018 — portfolio identity, type profiles, and catalog drift | **Implemented and CI passed on this PR branch** | Project Lifecycle, Project Standards, Project Catalog, versioned manifest schema, OFRL-IB-001 manifest, type/risk-specific templates, and Ajv cross-file registry validation are present. Every future project folder must pass the same registry gate plus its declared project-specific validation workflows. |
+
+The PR branch has passing repository-policy, Rust semantic-validator, Decimal-contract, and OFRL-IB-001 model-input schema checks at its validated head. These results do not activate GitHub branch protection, create an SBOM, complete the isolated POC lockfile, remove the rustup bootstrap fallback, or configure the Founder's personal account. Those remain explicitly open.
 
 ## 9. Audit interpretation
 
