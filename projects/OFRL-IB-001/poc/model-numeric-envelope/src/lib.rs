@@ -363,6 +363,23 @@ pub fn stress_case_a() -> Value {
     value
 }
 
+/// Returns a deterministic high-CapEx variant for testing funding feasibility.
+/// This case uses explicit financing assumptions and never invents debt or equity.
+pub fn cash_deficit_case_a() -> Value {
+    let mut value = load_case_a();
+    for period in value
+        .get_mut("forecast_periods")
+        .and_then(Value::as_array_mut)
+        .expect("forecast_periods must be an array")
+    {
+        let assumptions = period
+            .get_mut("assumptions")
+            .expect("forecast assumptions must exist");
+        assumptions["capex_pct_revenue"] = Value::String("5".to_owned());
+    }
+    value
+}
+
 fn scale_money_fields(value: &mut Value, decimal_places: usize) {
     match value {
         Value::Object(object) => {
@@ -845,6 +862,15 @@ pub fn compare_to_reference<N: Numeric>(
             ));
         }
 
+        if candidate_period.values.len() != reference_period.values.len() {
+            return Err(format!(
+                "metric count differs for {}: {} vs {}",
+                candidate_period.period_id,
+                candidate_period.values.len(),
+                reference_period.values.len()
+            ));
+        }
+
         for (metric, candidate_value) in &candidate_period.values {
             let reference_value = reference_period
                 .values
@@ -886,6 +912,38 @@ pub fn balance_sheet_differences_are_zero(forecast: &[ForecastResult<ExactRation
             .get("balance_difference")
             .is_some_and(|value| value.0.is_zero())
     })
+}
+
+/// Returns the maximum unrounded absolute value for a metric and the period
+/// where it occurs. The numerator/denominator output is exact, so display
+/// quantization cannot conceal a small Balance Sheet residual.
+pub fn maximum_absolute_metric<N: Numeric>(
+    forecast: &[ForecastResult<N>],
+    metric: &str,
+) -> Result<(String, String), String> {
+    if forecast.is_empty() {
+        return Err("forecast result is empty".to_owned());
+    }
+
+    let mut maximum: Option<(BigRational, String)> = None;
+    for period in forecast {
+        let value = period
+            .values
+            .get(metric)
+            .ok_or_else(|| format!("forecast period {} is missing metric {metric}", period.period_id))?;
+        let absolute = value.as_rational().abs();
+        let replace = maximum
+            .as_ref()
+            .map(|(current, _)| absolute > *current)
+            .unwrap_or(true);
+        if replace {
+            maximum = Some((absolute, period.period_id.clone()));
+        }
+    }
+
+    let (absolute, period_id) =
+        maximum.ok_or_else(|| format!("metric {metric} was not measured"))?;
+    Ok((format!("{}/{}", absolute.numer(), absolute.denom()), period_id))
 }
 
 pub fn maximum_absolute_value<N: Numeric>(
