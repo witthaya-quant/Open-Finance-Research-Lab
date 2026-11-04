@@ -210,7 +210,6 @@ fn currency_must_have_three_uppercase_ascii_letters() {
     assert!(has_code(&report, DiagnosticCode::InvalidCurrencyFormat));
 }
 
-
 #[test]
 fn malformed_period_identifier_is_rejected() {
     let mut value = payload();
@@ -219,7 +218,6 @@ fn malformed_period_identifier_is_rejected() {
     assert!(has_code(&report, DiagnosticCode::InvalidIdentifierFormat));
 }
 
-
 #[test]
 fn fifty_two_week_annual_period_is_accepted() {
     let mut value = payload();
@@ -227,9 +225,13 @@ fn fifty_two_week_annual_period_is_accepted() {
     value["historical_periods"][0]["start_date"] = json!("2023-01-02");
     value["historical_periods"][0]["end_date"] = json!("2023-12-31");
     let report = validate(&value);
-    assert_eq!(report.input_status, InputStatus::Accepted, "{:#?}", report.diagnostics);
+    assert_eq!(
+        report.input_status,
+        InputStatus::Accepted,
+        "{:#?}",
+        report.diagnostics
+    );
 }
-
 
 #[test]
 fn historical_cash_flow_closing_cash_must_tie_to_balance_sheet() {
