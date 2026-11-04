@@ -14,7 +14,7 @@ This policy defines who is accountable for OFRL, how decisions are made, how wor
 
 OFRL adopts governance from its first day of operation. The requirements apply now, even while the founder is the only active maintainer. The process is deliberately proportionate: it creates traceability and safeguards without pretending that independent review exists when only one person is available.
 
-The lab's purpose and values are defined in [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md) and [RESEARCH_CHARTER.md](RESEARCH_CHARTER.md). This document defines the operating authority and controls that put those commitments into practice.
+The lab's purpose and values are defined in [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md) and [RESEARCH_CHARTER.md](RESEARCH_CHARTER.md). Every current and future project is admitted and managed under [PROJECT_LIFECYCLE.md](PROJECT_LIFECYCLE.md) and [PROJECT_STANDARDS.md](PROJECT_STANDARDS.md). This document defines the operating authority and controls that put those commitments into practice.
 
 ## 2. Governance model
 
@@ -308,6 +308,9 @@ Review this policy at least annually and whenever OFRL changes governance stage,
 - [Foundation, Vision, Mission & Principles](FOUNDATION_AND_DIRECTION.md)
 - [Research Charter](RESEARCH_CHARTER.md)
 - [Research Standards](RESEARCH_STANDARDS.md)
+- [Project Lifecycle](PROJECT_LIFECYCLE.md)
+- [Project Standards](PROJECT_STANDARDS.md)
+- [Project Catalog](PROJECT_CATALOG.md)
 - [Contributing Guide](CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security Policy](SECURITY.md)
