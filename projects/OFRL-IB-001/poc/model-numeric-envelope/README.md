@@ -19,7 +19,7 @@ This POC therefore evaluates candidate numeric representations against the same 
 
 | Candidate | Role | Known representation characteristics | Current decision |
 |---|---|---|---|
-| \`rust_decimal 1.43.0\` | Current fixed-point candidate | 96-bit mantissa; scale 0–28; checked operations; finite precision | Not approved for production yet |
+| \`rust_decimal 1.43.0\` | Current fixed-point candidate | 96-bit mantissa; scale 0–28; checked operations; finite precision and bounded intermediate products | Not approved for production yet |
 | \`bigdecimal 0.4.11\` | Arbitrary-precision decimal candidate | BigInt-based; multiplication preserves digits; division uses a configurable precision context | Research comparator only; not approved |
 | \`num_rational 0.4.2\` with \`num_bigint 0.4.8\` | Exact reference arithmetic | Rational numerator/denominator; exact addition, subtraction, multiplication, and division | Test oracle only; not a production recommendation |
 
@@ -82,7 +82,7 @@ The POC will derive a deliberately broad stress case from Case A by scaling hist
 
 The initial stress settings are intended to exercise representation headroom:
 
-- Starting financial statement monetary amounts scaled by \(10^{11}\).
+- Starting financial statement monetary amounts scaled by \(10^{22}\).
 - Revenue growth stress of 100% per forecast year.
 - COGS and operating expense ratios up to 500%.
 - CapEx ratio up to 500%.
