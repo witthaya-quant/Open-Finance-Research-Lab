@@ -171,11 +171,13 @@ Severity definitions:
 ### EA-13 — CLI input handling is intentionally minimal
 
 **Severity:** Moderate  
-**Evidence:** `ofrl_cli` currently implements `validate <path>` and reads the complete file into memory before deserialization.
+**Evidence at audited main baseline:** `ofrl_cli` implemented `validate <path>` and used `fs::read_to_string` without an explicit byte limit.
 
-**Risk:** There is no explicit input byte limit or production run/export interface yet. This is acceptable for the current synthetic validation tool but should not silently become the operational interface.
+**Risk:** The initial CLI could allocate memory proportional to an untrusted file before JSON parsing. It also has no production run/export interface yet.
 
-**Required disposition:** Before broader input distribution, define a documented input-size limit, clear file errors, output-path behaviour, overwrite protection, deterministic exit codes and commands for validate/run/export. Do not add a large CLI dependency solely for cosmetic features.
+**Remediation on this enterprise-foundation branch:** the CLI now reads at most 1 MiB + 1 byte, rejects documents over 1 MiB before full allocation, rejects invalid UTF-8 and includes four focused reader regression tests. This change is not part of main until its PR is reviewed and merged.
+
+**Remaining disposition:** Before broader input distribution, define output-path behaviour, overwrite protection, deterministic exit codes and commands for validate/run/export. Do not add a large CLI dependency solely for cosmetic features.
 
 ### EA-14 — Some main-branch documentation is stale
 
