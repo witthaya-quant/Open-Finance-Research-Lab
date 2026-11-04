@@ -196,3 +196,67 @@ fn negative_cash_is_reported_as_infeasible_without_fabricating_financing() {
         "140/1"
     );
 }
+
+
+#[test]
+fn case_a_fy2026_matches_independently_derived_exact_benchmark() {
+    // These constants were derived separately from the shared generic forecast
+    // function using the published Case A opening balances and FY2026 assumptions.
+    // They are exact rational values, not rounded display outputs.
+    let result = forecast::<ExactRational>(&load_case_a()).unwrap();
+    assert_eq!(result.len(), 5);
+
+    let fy2026 = result
+        .iter()
+        .find(|period| period.period_id == "FY2026")
+        .expect("FY2026 benchmark period must exist");
+
+    let expected = [
+        ("revenue", "2835/2"),
+        ("cogs", "567/1"),
+        ("gross_profit", "1701/2"),
+        ("operating_expenses", "2835/8"),
+        ("ebitda", "3969/8"),
+        ("depreciation", "1797081/40000"),
+        ("ebit", "18047919/40000"),
+        ("interest_expense", "8/1"),
+        ("ebt", "17727919/40000"),
+        ("income_tax_expense", "17727919/200000"),
+        ("net_income", "17727919/50000"),
+        ("accounts_receivable", "12474/73"),
+        ("inventory", "567/5"),
+        ("accounts_payable", "1701/20"),
+        ("net_working_capital", "290871/1460"),
+        ("change_in_nwc", "14931/1460"),
+        ("capex", "7371/100"),
+        ("gross_ppe", "85371/100"),
+        ("accumulated_depreciation", "13997081/40000"),
+        ("net_ppe", "20151319/40000"),
+        ("debt_drawdowns", "0/1"),
+        ("principal_repayments", "40/1"),
+        ("closing_debt", "140/1"),
+        ("dividends", "17727919/250000"),
+        ("cash_from_operations", "5683176913/14600000"),
+        ("cash_from_investing", "-7371/100"),
+        ("cash_from_financing", "-27727919/250000"),
+        ("net_change_in_cash", "14938502217/73000000"),
+        ("closing_cash", "123971302217/73000000"),
+        ("total_assets", "38848386/15625"),
+        ("total_liabilities_equity", "38848386/15625"),
+        ("balance_difference", "0/1"),
+    ];
+
+    assert_eq!(fy2026.values.len(), expected.len());
+
+    for (metric, expected_fraction) in expected {
+        let actual = fy2026
+            .values
+            .get(metric)
+            .unwrap_or_else(|| panic!("FY2026 output is missing metric {metric}"));
+        assert_eq!(
+            actual.raw_text(),
+            expected_fraction,
+            "independent FY2026 benchmark mismatch for {metric}"
+        );
+    }
+}
