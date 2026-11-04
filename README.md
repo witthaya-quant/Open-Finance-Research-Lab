@@ -24,17 +24,15 @@ I am deliberately building deeper systems-engineering capability with Rust. The 
 
 ### Shared foundations, different methods
 
-Many of us come into finance and business through a shared body of knowledge. We learn common concepts, equations, and frameworks through degrees, professional qualifications, certificates, or independent study. Black–Scholes is one familiar example: people may learn the same foundational model, then apply, extend, parameterise, test, or combine it in different ways.
+Many of us come into finance and business through a shared body of knowledge. We learn common concepts, equations, and frameworks through degrees, professional qualifications, certificates, or independent study. Black–Scholes is one familiar example: people can learn the same model and still find different ways to apply, extend, parameterise, test, or combine it.
 
-What differs is often the practical work built around those foundations: the assumptions we choose, the information we rely on, how we structure a model, the constraints we face, and the experience we gain from applying it. Over time, each person or team develops its own practical approach—its own **“secret sauce”**: a combination of methods, assumptions, techniques, processes, and judgement refined through experience for a particular purpose.
+What differs is often the practical work built around those foundations: the assumptions we choose, the information we rely on, how we structure a model, the constraints we face, and the experience we gain from applying it. Over time, each person or team develops its own practical approach—its own **“secret sauce”**—refined for a particular purpose.
 
-I do not see those differences as a reason to decide who is better, whose qualifications carry more weight, or whose method must be the one correct answer. I see an opportunity to put different approaches alongside one another, understand how each was developed, and learn what each can contribute.
-
-A common formula or qualification is a starting point, not a complete answer to every problem. The way people apply a shared foundation can differ for good reasons: they may be solving different problems, working with different information, or facing different constraints. Those differences are worth examining before we decide what is useful.
+I do not see those differences as a reason to decide who is better, whose qualifications carry more weight, or whose method must become the standard for everyone. I want us to understand how different approaches were developed and what each can contribute. A shared formula is a starting point; it does not dictate one way of solving every problem.
 
 ### Focus on useful outcomes
 
-I do not want OFRL to become a place that declares one approach universally right and another universally wrong. A method can be shown to be mathematically incorrect, inconsistent with its own assumptions, or unsuitable for the objective it claims to serve; when that happens, we should explain it and show the evidence. But that should not become a judgement about the person, nor a reason to dismiss methods that address a different problem or operate under different constraints.
+OFRL is not a place to declare one approach universally right and another universally wrong. We look at what a method is intended to achieve, the conditions under which it is used, what its results show, and what can be improved or developed further.
 
 The questions that matter to us are practical:
 
@@ -44,11 +42,11 @@ The questions that matter to us are practical:
 - What can be improved, simplified, extended, combined, or reused?
 - What would another person need to understand, test, reproduce, or build on it?
 
-A contribution does not have to replace an existing method. It may fill a gap, improve one part of a process, make an implementation more reliable, fit a particular use case better, or combine useful ideas from different approaches. Different methods may complement one another rather than compete for a single place.
+A contribution does not have to replace an existing method. It may fill a gap, improve one part of a process, make an implementation more reliable, fit a particular use case better, or combine useful ideas from different approaches. Sometimes two methods complement one another; they do not always need to compete for a single winner.
 
 ### Examine the work, not the person
 
-Being open to different approaches does not mean treating every method as equally reliable or suitable for every purpose. We still examine the mathematics, financial logic, assumptions, data, implementation, robustness, and practical results. When a method is incorrect or does not meet its stated objective, we should explain that clearly and show why.
+Being open to different approaches does not mean treating every method as equally reliable or accepting every claim. We examine the mathematics, financial logic, assumptions, data, implementation, robustness, and practical results. If a method is mathematically incorrect, inconsistent with its assumptions, or unsuitable for the objective it claims to serve, we should explain that clearly and show the evidence.
 
 The distinction is that we assess the work against its purpose and evidence—not the intelligence, credentials, reputation, or status of the person who developed it. A degree or professional qualification can provide useful context, but it cannot replace a clear explanation or a testable result.
 
