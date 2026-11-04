@@ -7,7 +7,9 @@
 > **Status:** Rust runtime semantic validator implemented and CI-verified; forecast calculation engine not started  
 > **Evidence maturity:** 0 / Proposed  
 > **Specification version:** 0.1.0  
-> **Project owner:** Kenny
+> **Project owner:** Kenny  
+> **Project manifest:** [project.json](project.json)  
+> **Project standards:** [Portfolio-wide requirements](../../PROJECT_STANDARDS.md)
 
 ## Purpose
 
@@ -45,6 +47,10 @@ The Rust implementation is the reference for financial calculations. Excel is a 
 The model is not a statutory reporting engine, audit opinion, tax calculation system, or representation of compliance with a particular accounting framework.
 
 ## Project documents
+
+- [Project manifest](project.json)
+- [Project lifecycle](../../PROJECT_LIFECYCLE.md)
+- [Project standards](../../PROJECT_STANDARDS.md)
 
 - [Research specification](RESEARCH_SPECIFICATION.md)
 - [Model conventions](MODEL_CONVENTIONS.md)
