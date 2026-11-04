@@ -78,3 +78,36 @@ test("prototype projects have a dedicated validation profile", () => {
   assert.deepEqual(registry.TYPE_VALIDATION_PROFILES.prototype, ["prototype"]);
   assert.ok(registry.ALLOWED_VALIDATION_PROFILES.has("prototype"));
 });
+
+test("risk-tier enum is aligned with the manifest schema", () => {
+  const schemaPath = path.join(ROOT, "schemas", "ofrl-project-manifest-1.0.0.schema.json");
+  const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+  assert.deepEqual([...registry.ALLOWED_RISK_TIERS].sort(), [...schema.properties.risk_tier.enum].sort());
+  assert.deepEqual([...registry.ALLOWED_RISK_TIERS].sort(), ["R0", "R1", "R2", "R3"]);
+});
+
+test("R3 registration requires security profile and a declared threat model", () => {
+  const complete = {
+    risk_tier: "R3",
+    validation_profiles: ["security"],
+    required_documents: ["THREAT_MODEL.md"],
+  };
+  assert.deepEqual(registry.riskTierPolicyViolations(complete, true), []);
+
+  const missingSecurity = { ...complete, validation_profiles: ["research"] };
+  assert.ok(registry.riskTierPolicyViolations(missingSecurity, true).includes(
+    "R3 projects must include the security validation profile"
+  ));
+
+  const missingFile = registry.riskTierPolicyViolations(complete, false);
+  assert.ok(missingFile.includes("R3 projects require THREAT_MODEL.md"));
+
+  const missingManifestEntry = { ...complete, required_documents: [] };
+  assert.ok(registry.riskTierPolicyViolations(missingManifestEntry, true).includes(
+    "R3 projects must list THREAT_MODEL.md in required_documents"
+  ));
+
+  assert.deepEqual(registry.riskTierPolicyViolations(
+    { ...complete, risk_tier: "R2" }, false
+  ), []);
+});

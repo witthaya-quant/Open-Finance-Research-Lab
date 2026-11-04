@@ -210,6 +210,24 @@ function releaseStateViolations(manifest) {
   return violations;
 }
 
+function riskTierPolicyViolations(manifest, threatModelExists) {
+  if (!manifest || manifest.risk_tier !== "R3") return [];
+
+  const violations = [];
+  const profiles = Array.isArray(manifest.validation_profiles) ? manifest.validation_profiles : [];
+  const documents = Array.isArray(manifest.required_documents) ? manifest.required_documents : [];
+
+  if (!profiles.includes("security")) {
+    violations.push("R3 projects must include the security validation profile");
+  }
+  if (!threatModelExists) {
+    violations.push("R3 projects require THREAT_MODEL.md");
+  } else if (!documents.includes("THREAT_MODEL.md")) {
+    violations.push("R3 projects must list THREAT_MODEL.md in required_documents");
+  }
+  return violations;
+}
+
 function relativeName(filePath) {
   return path.relative(ROOT, filePath).split(path.sep).join("/");
 }
@@ -468,19 +486,12 @@ function validateManifest(projectDir, folderName, catalogRows, seenIds, validate
     }
   }
 
-  if (manifest.risk_tier === "R3") {
-    if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes("security")) {
-      fail(relativeDir + ": R3 projects must include the security validation profile");
-    }
-
-    if (!resolveFileWithin(projectDir, "THREAT_MODEL.md")) {
-      fail(relativeDir + ": R3 projects require THREAT_MODEL.md");
-    } else if (
-      Array.isArray(manifest.required_documents) &&
-      !manifest.required_documents.includes("THREAT_MODEL.md")
-    ) {
-      fail(relativeDir + "/project.json: R3 projects must list THREAT_MODEL.md in required_documents");
-    }
+  const riskViolations = riskTierPolicyViolations(
+    manifest,
+    Boolean(resolveFileWithin(projectDir, "THREAT_MODEL.md"))
+  );
+  for (const violation of riskViolations) {
+    fail(relativeDir + ": " + violation);
   }
 
   for (const violation of dataPolicyViolations(manifest)) {
@@ -635,6 +646,7 @@ if (require.main === module) {
 
 module.exports = {
   ALLOWED_TYPES,
+  ALLOWED_RISK_TIERS,
   ALLOWED_VALIDATION_PROFILES,
   BASE_REQUIRED_GROUPS,
   TYPE_REQUIREMENTS,
@@ -643,4 +655,5 @@ module.exports = {
   missingBaseDocumentGroups,
   missingTypeValidationProfiles,
   releaseStateViolations,
+  riskTierPolicyViolations,
 };
