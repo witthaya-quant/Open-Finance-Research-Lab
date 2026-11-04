@@ -228,3 +228,21 @@ The exact-rational backend shares the same generic forecast formula implementati
 The independent FY2026 expected values in BM-001 have been extended to FY2026–FY2030. [BM-002](poc/model-numeric-envelope/BENCHMARKS_FIVE_YEAR.md) documents the independent derivation and assumptions; [the golden JSON](poc/model-numeric-envelope/golden/case-a-five-year.v0.1.0.json) stores 160 reduced rational values. The integration test checks every metric against the exact fraction and asserts zero Balance Sheet difference in each year. The test makes no use of display tolerance.
 
 This closes the multi-period golden-output gap for synthetic Case A only. It does not provide accounting sign-off, edge-case coverage, or Numeric Profile approval.
+
+
+## 15. Runtime-cost evidence — initial observation
+
+The non-gating backend timing harness has now completed on both supported Rust toolchains. Run [41784590895](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41784590895) records the following median forecast times:
+
+| Rust toolchain | Scenario | rust_decimal | BigDecimal | Exact Rational |
+|---|---|---:|---:|---:|
+| 1.85.0 | Case A | 42.117 µs | 87.877 µs | 316.808 µs |
+| 1.85.0 | Stress (10^{18}) | 43.032 µs | 64.566 µs | 367.050 µs |
+| 1.99.1 | Case A | 37.235 µs | 82.277 µs | 324.448 µs |
+| 1.99.1 | Stress (10^{18}) | 38.158 µs | 63.559 µs | 392.920 µs |
+
+BigDecimal's median time was 1.50×–2.21× the fixed Decimal candidate in this one observed CI environment. Exact Rational was 7.52×–10.30×. The runner reported 4 vCPUs on an AMD EPYC 7763 virtualized environment, and the BigDecimal context was 80 significant digits / HalfEven.
+
+This is a limited measurement of the five-year forecast function over small synthetic inputs. It does not measure peak memory, allocations, tail latency, concurrency, file I/O, input validation, serialization or workbook generation. Timing results vary by runner and are not production service-level estimates.
+
+The data therefore informs the performance dimension only. It does not override the checked-overflow finding at the selected (10^{22}) rust_decimal stress point, prove an approved operating envelope, or determine the production backend. Backend selection remains OPEN pending Numeric Profile, resource limits, deterministic context and dependency/licence review. See [BENCHMARKS_PERFORMANCE.md](poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md) for sample counts, artifact checksums and limitations.

@@ -245,3 +245,10 @@ BM-003 remains a synthetic mechanics benchmark, not independent accounting sign-
 The POC now includes a dependency-free timing executable, `src/bin/backend_profile.rs`, and a separate measurement protocol in [BENCHMARKS_PERFORMANCE.md](BENCHMARKS_PERFORMANCE.md). It compares the three candidate arithmetic types on Case A and the (10^{18}) stress case and uploads per-toolchain CSV plus runner metadata from CI.
 
 These timings are deliberately non-gating. They are shared-runner observations, not controlled performance claims; memory, allocation counts, production concurrency and XLSX export are not measured. The observations must not be used to select a production backend without an approved Numeric Profile and the remaining review gates.
+
+
+### First timing observations
+
+The initial timing run completed on 2026-11-04 in [workflow run 41784590895](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41784590895). On the observed 4-vCPU AMD EPYC 7763 runner, median BigDecimal time was 1.50×–2.21× the fixed-Decimal candidate across the two synthetic inputs and two Rust toolchains. Exact Rational was 7.52×–10.30×. CSV and runner metadata are preserved in the two per-toolchain artifacts linked from [BENCHMARKS_PERFORMANCE.md](BENCHMARKS_PERFORMANCE.md).
+
+These are non-gating single-run observations. They do not measure memory, allocations, concurrency, I/O, validation or XLSX costs and do not close the Numeric Profile or select the production backend.
