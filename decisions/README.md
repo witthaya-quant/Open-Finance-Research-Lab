@@ -48,7 +48,8 @@ A proposal may be discussed in an Issue or Pull Request before its record is cre
 
 | ID | Decision | Status | Scope | Date |
 |---|---|---|---|---|
-| [OFRL-ADR-2026-001](OFRL-ADR-2026-001-founder-led-single-maintainer-governance.md) | Founder-led governance and staged transition to an Organization | Accepted | Lab-wide | 2026-11-04 |
+| [OFRL-ADR-2026-002](OFRL-ADR-2026-002-founder-controlled-open-source-no-mandatory-organization.md) | Founder-controlled open-source model; GitHub Organization not required | Accepted | Lab-wide | 2026-11-04 |
+| [OFRL-ADR-2026-001](OFRL-ADR-2026-001-founder-led-single-maintainer-governance.md) | Initial founder-led governance with Organization transition assumption | Superseded | Lab-wide | 2026-11-04 |
 
 ## 5. Lifecycle rules
 
