@@ -26,19 +26,24 @@ Describe the released deliverable, intended use, supported scope, and material c
 | Reproducibility | PASS / FAIL / BLOCKED | |
 | Publication authorization | PASS / FAIL / BLOCKED | |
 
-Link the Validation Matrix and CI runs. Do not describe a check as passed unless it was actually executed.
+Link the Validation Matrix and CI runs. Do not describe a check as passed unless it was actually executed. A candidate bundle is not a release; do not mark authorization as Approved or Lifecycle state as Released until the release gates and independent-review requirements applicable to the risk tier have passed.
 
 ## 3. Build and artifact provenance
 
 | Item | Value |
 |---|---|
-| Source commit | |
-| Toolchain / runtime | |
+| Source commit / reviewed PR head | |
+| Component version | |
+| Target platform / triple | |
+| Build toolchain | |
+| SBOM generator and pinned source revision | |
+| SBOM specification / schema revision | |
 | Build command | |
-| Dependency lockfile | |
-| SBOM format and path | |
-| Artifact names | |
-| SHA-256 checksums | |
+| Dependency lockfile and SHA-256 | |
+| SBOM file and SHA-256 | |
+| Build provenance record | |
+| Artifact bundle and SHA-256 | |
+| SHA256SUMS verification result | |
 
 ## 4. Data, licence, and disclosure
 
