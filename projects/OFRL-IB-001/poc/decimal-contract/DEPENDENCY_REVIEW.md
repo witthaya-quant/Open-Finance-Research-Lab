@@ -86,7 +86,7 @@ The successful CI build logs show the following additional packages being compil
 
 This is an observed subset of the build log, not a complete Software Bill of Materials (SBOM) or exhaustive licence inventory.
 
-**No Cargo.lock is committed in this isolated POC at this stage.** The direct dependency ranges for csv, serde, and serde_json are not yet exact pins, and transitive versions may therefore change on a future resolution. The versions above describe the tested CI resolution on 2026-11-04, not a permanently frozen graph.
+**No Cargo.lock is committed in this isolated POC at this stage.** Direct dependency versions are now pinned in Cargo.toml to the tested releases, including rust_decimal 1.43.0, csv 1.4.0, serde 1.0.229, and serde_json 1.0.154. Transitive dependencies still resolve from compatible version ranges and may change on a future resolution. The versions above describe the tested CI resolution on 2026-11-04, not a permanently frozen graph.
 
 Before the full model workspace is promoted beyond research use:
 
