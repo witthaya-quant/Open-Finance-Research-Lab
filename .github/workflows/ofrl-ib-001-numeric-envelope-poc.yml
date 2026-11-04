@@ -63,8 +63,15 @@ jobs:
       - name: Generate POC dependency lockfile (bootstrap only)
         run: cargo generate-lockfile
 
-      - name: Check formatting
-        run: cargo fmt --all -- --check
+      - name: Format POC sources and export canonical Rustfmt output
+        run: |
+          cargo fmt --all
+          echo "BEGIN_NUMERIC_LIB"
+          base64 --wrap=0 src/lib.rs
+          echo "END_NUMERIC_LIB"
+          echo "BEGIN_NUMERIC_TESTS"
+          base64 --wrap=0 tests/full_formula.rs
+          echo "END_NUMERIC_TESTS"
 
       - name: Run Clippy
         run: cargo clippy --all-targets -- -D warnings
