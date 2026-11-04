@@ -166,6 +166,8 @@ Before the production forecast engine is accepted, OFRL still requires:
 
 The POC includes a deterministic high-CapEx diagnostic. FY2026 calculated closing cash is -5,246.116462 model units (exactly -1531866007/292000) while the unadjusted algebraic Balance Sheet residual remains zero. First-year debt remains 140; no funding plug is introduced. This result must be reported as **Scenario Feasibility FAIL** and a funding shortfall, not presented as a valid negative cash asset or a feasible Balance Sheet.
 
+The independent Case A benchmark has now been extended through FY2030: [BM-002](BENCHMARKS_FIVE_YEAR.md) documents the separately derived formula sequence and [the golden dataset](golden/case-a-five-year.v0.1.0.json) contains exact expected values for all 160 outputs. The test compares the complete five-year Exact Rational result with those immutable values.
+
 ## 11. Independent FY2026 benchmark
 
 The first forecast year also has a separately derived, exact-rational benchmark with immutable expected fractions for all 32 output metrics. See [BENCHMARKS.md](BENCHMARKS.md) and the test `case_a_fy2026_matches_independently_derived_exact_benchmark`. This creates an independent first-period check in addition to the three-backend numeric comparison. It does not replace broader formula/accounting review.
@@ -210,3 +212,8 @@ The largest Exact Rational forecast metric was `2,160,000,000,000,000,000,000,00
 The intermediate point passed in [Numeric Envelope POC run 41777136666](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41777136666). The extreme (10^{22}) test remains separate: rust_decimal fails there with an explicit checked multiplication overflow, while BigDecimal completes that tested path.
 
 These two stress points show candidate behaviour at two chosen scales. They do not identify the exact transition boundary, establish production input limits, or resolve the operational cost of arbitrary precision. The production numeric decision remains open.
+
+
+## 14. Five-year independent golden benchmark
+
+BM-002 extends the first-period independent benchmark to every forecast period (FY2026–FY2030) and all 32 model outputs per period. Exact expected values are checked by `case_a_five_year_forecast_matches_independent_exact_golden`; no reporting tolerance is applied. The benchmark covers the synthetic Case A baseline and does not replace edge-case testing or an independent accounting review.

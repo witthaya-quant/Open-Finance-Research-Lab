@@ -184,7 +184,7 @@ The isolated comparison in [the model numeric-envelope POC](poc/model-numeric-en
 
 - [Independent FY2026 calculation benchmark](poc/model-numeric-envelope/BENCHMARKS.md) records the opening balances, model assumptions, separate calculation sequence, and exact expected fractions for all 32 first-year forecast metrics.
 - Rust test `case_a_fy2026_matches_independently_derived_exact_benchmark` asserts the exact fractions without using the generic forecast routine to generate its expected values. It passed in both toolchains as part of the 11-test run above.
-- This is an independent first-period benchmark, not a full independent model review; additional edge-case and multi-period benchmarks remain required.
+- BM-001 has been extended by BM-002 to an independent five-year Case A golden benchmark covering all 160 outputs; edge-case benchmarks and independent finance/accounting review remain required.
 
 **Canonical Case A observations**
 - 160 forecast metric values were compared per candidate across five years.
@@ -220,4 +220,11 @@ The (10^{18}) and (10^{22}) cases are two deliberately selected numerical stress
 
 The evidence demonstrates that the fixed-width candidate has a finite capacity boundary and that the arbitrary-precision candidate can represent this particular extreme path under an 80-significant-digit HalfEven division context. It does not establish that BigDecimal is the better production choice: performance, operational bounds, memory use, deterministic context control, dependency health, serialization, and the intended real-world model envelope still require review.
 
-The exact-rational backend shares the same generic forecast formula implementation as the candidates. It is an arithmetic oracle, not an independent verification of the financial-model formulas. One independent first-period benchmark now exists; broader edge-case and multi-period benchmarks plus independent accounting review remain open. A model-specific error budget, the full dependency/SBOM/security review, and production numeric-library decision also remain open.
+The exact-rational backend shares the same generic forecast formula implementation as the candidates. It is an arithmetic oracle, not an independent verification of the financial-model formulas. BM-002 now provides independent exact expected values for all 160 Case A outputs across five years; edge-case benchmarks and independent finance/accounting review remain open. A model-specific error budget, the full dependency/SBOM/security review, and production numeric-library decision also remain open.
+
+
+## 13. Five-year independent Case A benchmark (BM-002)
+
+The independent FY2026 expected values in BM-001 have been extended to FY2026–FY2030. [BM-002](poc/model-numeric-envelope/BENCHMARKS_FIVE_YEAR.md) documents the independent derivation and assumptions; [the golden JSON](poc/model-numeric-envelope/golden/case-a-five-year.v0.1.0.json) stores 160 reduced rational values. The integration test checks every metric against the exact fraction and asserts zero Balance Sheet difference in each year. The test makes no use of display tolerance.
+
+This closes the multi-period golden-output gap for synthetic Case A only. It does not provide accounting sign-off, edge-case coverage, or Numeric Profile approval.
