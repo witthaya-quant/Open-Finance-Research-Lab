@@ -3,12 +3,8 @@ use std::collections::BTreeSet;
 use rust_decimal::Decimal;
 use serde_json::Value;
 
-use crate::diagnostics::{
-    Diagnostic, DiagnosticCategory, DiagnosticCode, ValidationReport,
-};
-use crate::domain::{
-    BalanceSheet, CalendarDate, CashFlowStatement, IncomeStatement, ModelInput,
-};
+use crate::diagnostics::{Diagnostic, DiagnosticCategory, DiagnosticCode, ValidationReport};
+use crate::domain::{BalanceSheet, CalendarDate, CashFlowStatement, IncomeStatement, ModelInput};
 
 const V1_SCHEMA_VERSION: &str = "0.1.0";
 const V1_DAY_COUNT_BASIS: u16 = 365;
@@ -70,68 +66,67 @@ pub fn validate_input_json(input: &str) -> ValidationReport {
 }
 
 fn deserialize_failure(message: String) -> ValidationReport {
-    let (code, category, human_message) =
-        if message.contains("DECIMAL_STRING_REQUIRED") {
-            (
-                DiagnosticCode::DecimalStringRequired,
-                DiagnosticCategory::InputSyntax,
-                "A Decimal field was supplied as a JSON number or another non-string token.".to_owned(),
-            )
-        } else if message.contains("JSON_TYPE_MISMATCH") {
-            (
-                DiagnosticCode::JsonTypeMismatch,
-                DiagnosticCategory::InputSyntax,
-                "A field has the wrong JSON type.".to_owned(),
-            )
-        } else if message.contains("DECIMAL_TEXT_NON_CANONICAL") {
-            (
-                DiagnosticCode::DecimalTextNonCanonical,
-                DiagnosticCategory::InputSyntax,
-                "A Decimal string does not use the canonical base-10 grammar.".to_owned(),
-            )
-        } else if message.contains("DECIMAL_SCALE_EXCEEDED") {
-            (
-                DiagnosticCode::DecimalScaleExceeded,
-                DiagnosticCategory::InputSyntax,
-                "A Decimal string exceeds the maximum supported fractional scale.".to_owned(),
-            )
-        } else if message.contains("DECIMAL_OUT_OF_RANGE") {
-            (
-                DiagnosticCode::DecimalOutOfRange,
-                DiagnosticCategory::InputSyntax,
-                "A Decimal string is outside the supported representation or loses information when parsed.".to_owned(),
-            )
-        } else if message.contains("unknown field") {
-            (
-                DiagnosticCode::UnknownField,
-                DiagnosticCategory::Schema,
-                "The input contains a field that is not declared in this schema version.".to_owned(),
-            )
-        } else if message.contains("missing field") {
-            (
-                DiagnosticCode::RequiredFieldMissing,
-                DiagnosticCategory::Schema,
-                "The input is missing a required field.".to_owned(),
-            )
-        } else if message.contains("invalid value") || message.contains("unknown variant") {
-            (
-                DiagnosticCode::InvalidEnumValue,
-                DiagnosticCategory::Schema,
-                "The input contains a value outside the declared enumeration.".to_owned(),
-            )
-        } else if message.contains("invalid type") {
-            (
-                DiagnosticCode::JsonTypeMismatch,
-                DiagnosticCategory::InputSyntax,
-                "A field has the wrong JSON type.".to_owned(),
-            )
-        } else {
-            (
-                DiagnosticCode::InvalidEnumValue,
-                DiagnosticCategory::Schema,
-                "The input could not be deserialized into the closed V1 model contract.".to_owned(),
-            )
-        };
+    let (code, category, human_message) = if message.contains("DECIMAL_STRING_REQUIRED") {
+        (
+            DiagnosticCode::DecimalStringRequired,
+            DiagnosticCategory::InputSyntax,
+            "A Decimal field was supplied as a JSON number or another non-string token.".to_owned(),
+        )
+    } else if message.contains("JSON_TYPE_MISMATCH") {
+        (
+            DiagnosticCode::JsonTypeMismatch,
+            DiagnosticCategory::InputSyntax,
+            "A field has the wrong JSON type.".to_owned(),
+        )
+    } else if message.contains("DECIMAL_TEXT_NON_CANONICAL") {
+        (
+            DiagnosticCode::DecimalTextNonCanonical,
+            DiagnosticCategory::InputSyntax,
+            "A Decimal string does not use the canonical base-10 grammar.".to_owned(),
+        )
+    } else if message.contains("DECIMAL_SCALE_EXCEEDED") {
+        (
+            DiagnosticCode::DecimalScaleExceeded,
+            DiagnosticCategory::InputSyntax,
+            "A Decimal string exceeds the maximum supported fractional scale.".to_owned(),
+        )
+    } else if message.contains("DECIMAL_OUT_OF_RANGE") {
+        (
+            DiagnosticCode::DecimalOutOfRange,
+            DiagnosticCategory::InputSyntax,
+            "A Decimal string is outside the supported representation or loses information when parsed.".to_owned(),
+        )
+    } else if message.contains("unknown field") {
+        (
+            DiagnosticCode::UnknownField,
+            DiagnosticCategory::Schema,
+            "The input contains a field that is not declared in this schema version.".to_owned(),
+        )
+    } else if message.contains("missing field") {
+        (
+            DiagnosticCode::RequiredFieldMissing,
+            DiagnosticCategory::Schema,
+            "The input is missing a required field.".to_owned(),
+        )
+    } else if message.contains("invalid value") || message.contains("unknown variant") {
+        (
+            DiagnosticCode::InvalidEnumValue,
+            DiagnosticCategory::Schema,
+            "The input contains a value outside the declared enumeration.".to_owned(),
+        )
+    } else if message.contains("invalid type") {
+        (
+            DiagnosticCode::JsonTypeMismatch,
+            DiagnosticCategory::InputSyntax,
+            "A field has the wrong JSON type.".to_owned(),
+        )
+    } else {
+        (
+            DiagnosticCode::InvalidEnumValue,
+            DiagnosticCategory::Schema,
+            "The input could not be deserialized into the closed V1 model contract.".to_owned(),
+        )
+    };
 
     ValidationReport::rejected(Diagnostic::error(
         code,
@@ -145,7 +140,6 @@ fn deserialize_failure(message: String) -> ValidationReport {
     ))
 }
 
-#[allow(clippy::too_many_arguments)]
 #[allow(clippy::too_many_arguments)]
 fn push(
     diagnostics: &mut Vec<Diagnostic>,
@@ -332,10 +326,7 @@ fn collect_period_windows(
     windows
 }
 
-fn validate_period_sequence(
-    windows: &[Option<PeriodWindow>],
-    diagnostics: &mut Vec<Diagnostic>,
-) {
+fn validate_period_sequence(windows: &[Option<PeriodWindow>], diagnostics: &mut Vec<Diagnostic>) {
     for pair in windows.windows(2) {
         if let (Some(previous), Some(current)) = (&pair[0], &pair[1]) {
             validate_adjacent_periods(previous, current, diagnostics);
@@ -413,13 +404,7 @@ fn inspect_period(
     pointer: &str,
     diagnostics: &mut Vec<Diagnostic>,
 ) -> Option<PeriodWindow> {
-    let (start, end) = parse_period_dates(
-        period_id,
-        start_text,
-        end_text,
-        pointer,
-        diagnostics,
-    )?;
+    let (start, end) = parse_period_dates(period_id, start_text, end_text, pointer, diagnostics)?;
 
     validate_annual_period_duration(start, end, period_id, pointer, diagnostics);
     validate_period_identifier(period_id, end, pointer, diagnostics);
@@ -762,7 +747,10 @@ fn validate_balance_domains(
         ("accounts_receivable", balances.accounts_receivable),
         ("inventory", balances.inventory),
         ("gross_ppe", balances.gross_ppe),
-        ("accumulated_depreciation", balances.accumulated_depreciation),
+        (
+            "accumulated_depreciation",
+            balances.accumulated_depreciation,
+        ),
         ("accounts_payable", balances.accounts_payable),
         ("interest_bearing_debt", balances.interest_bearing_debt),
         ("share_capital", balances.share_capital),
@@ -882,10 +870,42 @@ fn validate_historical_income_statement(
         pointer,
         Some(period_id),
     )
-    .and_then(|value| checked_sub(value, statement.operating_expenses, diagnostics, pointer, Some(period_id)))
-    .and_then(|value| checked_sub(value, statement.depreciation, diagnostics, pointer, Some(period_id)))
-    .and_then(|value| checked_sub(value, statement.interest_expense, diagnostics, pointer, Some(period_id)))
-    .and_then(|value| checked_sub(value, statement.income_tax_expense, diagnostics, pointer, Some(period_id)));
+    .and_then(|value| {
+        checked_sub(
+            value,
+            statement.operating_expenses,
+            diagnostics,
+            pointer,
+            Some(period_id),
+        )
+    })
+    .and_then(|value| {
+        checked_sub(
+            value,
+            statement.depreciation,
+            diagnostics,
+            pointer,
+            Some(period_id),
+        )
+    })
+    .and_then(|value| {
+        checked_sub(
+            value,
+            statement.interest_expense,
+            diagnostics,
+            pointer,
+            Some(period_id),
+        )
+    })
+    .and_then(|value| {
+        checked_sub(
+            value,
+            statement.income_tax_expense,
+            diagnostics,
+            pointer,
+            Some(period_id),
+        )
+    });
 
     if let Some(computed) = computed {
         compare_value(
@@ -914,7 +934,13 @@ fn validate_historical_cash_flow(
     diagnostics: &mut Vec<Diagnostic>,
 ) {
     validate_cash_flow_income_link(income_statement, cash_flow, pointer, period_id, diagnostics);
-    validate_cash_flow_depreciation_link(income_statement, cash_flow, pointer, period_id, diagnostics);
+    validate_cash_flow_depreciation_link(
+        income_statement,
+        cash_flow,
+        pointer,
+        period_id,
+        diagnostics,
+    );
     validate_historical_nwc_rollforward(
         balance_sheet,
         previous_balance_sheet,
@@ -925,7 +951,13 @@ fn validate_historical_cash_flow(
         period_id,
         diagnostics,
     );
-    validate_cash_flow_opening_cash(previous_balance_sheet, cash_flow, pointer, period_id, diagnostics);
+    validate_cash_flow_opening_cash(
+        previous_balance_sheet,
+        cash_flow,
+        pointer,
+        period_id,
+        diagnostics,
+    );
     validate_cash_from_operations(cash_flow, pointer, period_id, diagnostics);
     validate_cash_from_investing(cash_flow, pointer, period_id, diagnostics);
     validate_cash_from_financing(cash_flow, pointer, period_id, diagnostics);
@@ -1242,7 +1274,13 @@ fn validate_historical_rollforwards(
         period_id,
         diagnostics,
     );
-    validate_historical_share_capital(previous, balance_sheet, &balance_sheet_pointer, period_id, diagnostics);
+    validate_historical_share_capital(
+        previous,
+        balance_sheet,
+        &balance_sheet_pointer,
+        period_id,
+        diagnostics,
+    );
 }
 
 fn validate_historical_ppe_rollforward(
