@@ -2,13 +2,15 @@
 "use strict";
 
 /**
- * Enforce the common project-registration contract for every immediate
- * directory under /projects. No third-party runtime dependencies are needed.
+ * Portfolio registry gate.
  *
- * JSON Schema remains the published external contract. This validator adds
- * cross-file and repository rules that are not expressible in the schema:
- * directory/ID consistency, required project artifacts, type-specific
- * documents, catalog registration, and lifecycle/release consistency.
+ * Checks the published JSON Schema, every project manifest, cross-file
+ * requirements, project-specific document profiles, declared CI workflows,
+ * lifecycle/release consistency, and the human-readable catalog.
+ *
+ * The gate does not replace each project's domain-specific tests or research
+ * validation. It ensures that projects enter the portfolio with a verifiable
+ * identity and declared operating controls.
  */
 
 const fs = require("node:fs");
@@ -17,6 +19,13 @@ const path = require("node:path");
 const ROOT = path.resolve(__dirname, "..");
 const PROJECTS_ROOT = path.join(ROOT, "projects");
 const CATALOG_PATH = path.join(ROOT, "PROJECT_CATALOG.md");
+const SCHEMA_PATH = path.join(ROOT, "schemas", "ofrl-project-manifest-1.0.0.schema.json");
+
+const TOOLING_NODE_MODULES = path.join(__dirname, "schema-validator", "node_modules");
+const AjvModule = require(path.join(TOOLING_NODE_MODULES, "ajv", "dist", "2020"));
+const Ajv2020 = AjvModule.default || AjvModule;
+const FormatsModule = require(path.join(TOOLING_NODE_MODULES, "ajv-formats"));
+const addFormats = FormatsModule.default || FormatsModule;
 
 const ALLOWED_TYPES = new Set([
   "research",
@@ -41,7 +50,6 @@ const ALLOWED_STATUSES = new Set([
 ]);
 
 const ALLOWED_RISK_TIERS = new Set(["R0", "R1", "R2", "R3"]);
-const ALLOWED_MATURITY = new Set([0, 1, 2, 3, 4]);
 const ALLOWED_RELEASE_STATES = new Set([
   "not_released",
   "pre_release",
@@ -57,28 +65,15 @@ const BASE_REQUIRED = [
 
 const TYPE_REQUIREMENTS = {
   research: [["RESEARCH_SPECIFICATION.md", "PROJECT_SPECIFICATION.md"]],
-  quantitative_research: [
-    ["RESEARCH_SPECIFICATION.md", "PROJECT_SPECIFICATION.md"],
-    ["VALIDATION_MATRIX.md"],
-  ],
+  quantitative_research: [["RESEARCH_SPECIFICATION.md", "PROJECT_SPECIFICATION.md"]],
   financial_model: [
     ["MODEL_CONVENTIONS.md"],
-    ["VALIDATION_MATRIX.md"],
     ["NUMERIC_ENVELOPE.md"],
   ],
-  software: [
-    ["ENGINEERING_ARCHITECTURE.md"],
-    ["VALIDATION_MATRIX.md"],
-  ],
-  data: [
-    ["DATA_MANIFEST.md"],
-    ["VALIDATION_MATRIX.md"],
-  ],
-  benchmark: [
-    ["BENCHMARK_SPECIFICATION.md", "RESEARCH_SPECIFICATION.md"],
-    ["VALIDATION_MATRIX.md"],
-  ],
-  prototype: [["README.md"]],
+  software: [["ENGINEERING_ARCHITECTURE.md"]],
+  data: [["DATA_MANIFEST.md"]],
+  benchmark: [["BENCHMARK_SPECIFICATION.md"]],
+  prototype: [["PROTOTYPE_PLAN.md"]],
   infrastructure: [
     ["ENGINEERING_ARCHITECTURE.md"],
     ["THREAT_MODEL.md"],
@@ -87,13 +82,43 @@ const TYPE_REQUIREMENTS = {
 
 const TYPE_VALIDATION_PROFILES = {
   research: ["research"],
-  quantitative_research: ["quantitative"],
+  quantitative_research: ["research", "quantitative"],
   financial_model: ["financial_model"],
   software: ["software"],
   data: ["data"],
   benchmark: ["benchmark"],
   prototype: [],
   infrastructure: ["integration", "security"],
+};
+
+const TYPE_LABELS = {
+  research: "Research",
+  quantitative_research: "Quantitative Research",
+  financial_model: "Financial Model",
+  software: "Software",
+  data: "Data",
+  benchmark: "Benchmark",
+  prototype: "Prototype",
+  infrastructure: "Infrastructure",
+};
+
+const STATUS_LABELS = {
+  proposed: "Proposed",
+  approved: "Approved",
+  in_development: "In Development",
+  validation: "Validation",
+  released: "Released",
+  maintenance: "Maintenance",
+  deprecated: "Deprecated",
+  archived: "Archived",
+};
+
+const MATURITY_LABELS = {
+  0: "Proposed",
+  1: "Exploratory",
+  2: "Reproducible",
+  3: "Robustness Validated",
+  4: "Independently Replicated",
 };
 
 const errors = [];
@@ -106,22 +131,127 @@ function isObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
-function existsWithin(projectDir, relativePath) {
-  if (typeof relativePath !== "string" || relativePath.length === 0) return false;
-  if (relativePath.startsWith("/") || relativePath.includes(String.fromCharCode(92))) return false;
-
-  const resolved = path.resolve(projectDir, relativePath);
-  const relative = path.relative(projectDir, resolved);
-  if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
-    return false;
-  }
-
-  return fs.existsSync(resolved) && fs.statSync(resolved).isFile();
+function relativeName(filePath) {
+  return path.relative(ROOT, filePath).split(path.sep).join("/");
 }
 
-function validateManifest(projectDir, folderName, catalogText, seenIds) {
+function resolveFileWithin(baseDirectory, relativePath) {
+  if (typeof relativePath !== "string" || relativePath.length === 0) return null;
+  if (relativePath.startsWith("/") || relativePath.includes(String.fromCharCode(92))) return null;
+
+  const base = path.resolve(baseDirectory);
+  const resolved = path.resolve(base, relativePath);
+  const relative = path.relative(base, resolved);
+  if (relative === "" || relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+    return null;
+  }
+
+  if (!fs.existsSync(resolved)) return null;
+
+  let stat;
+  try {
+    stat = fs.lstatSync(resolved);
+  } catch {
+    return null;
+  }
+  if (!stat.isFile() || stat.isSymbolicLink()) return null;
+
+  try {
+    const realBase = fs.realpathSync(base);
+    const realFile = fs.realpathSync(resolved);
+    const realRelative = path.relative(realBase, realFile);
+    if (realRelative === ".." || realRelative.startsWith(`..${path.sep}`) || path.isAbsolute(realRelative)) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+
+  return resolved;
+}
+
+function validateStrictDate(value) {
+  if (typeof value !== "string" || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
+
+function parseCatalog(catalogText) {
+  const rows = new Map();
+  const lines = catalogText.split(/\\r?\\n/);
+
+  for (const line of lines) {
+    if (!/^\\|\\s*\\[OFRL-/.test(line)) continue;
+
+    const match = line.match(/^\\|\\s*\\[(OFRL-[A-Z0-9]{2,8}-[0-9]{3})\\]\\(projects\\/(OFRL-[A-Z0-9]{2,8}-[0-9]{3})\\/README\\.md\\)\\s*\\|/);
+    if (!match) {
+      fail(`PROJECT_CATALOG.md: malformed project row: ${line}`);
+      continue;
+    }
+
+    const id = match[1];
+    const linkedId = match[2];
+    if (id !== linkedId) {
+      fail(`PROJECT_CATALOG.md: row ID and README link disagree for ${id}`);
+      continue;
+    }
+    if (rows.has(id)) {
+      fail(`PROJECT_CATALOG.md: duplicate row for ${id}`);
+      continue;
+    }
+
+    const cells = line.split("|").slice(1, -1).map((cell) => cell.trim());
+    if (cells.length < 6) {
+      fail(`PROJECT_CATALOG.md: project row for ${id} must contain six columns`);
+      continue;
+    }
+
+    rows.set(id, {
+      id,
+      title: cells[1],
+      types: cells[2].split(",").map((item) => item.trim()).filter(Boolean).sort(),
+      status: cells[3],
+      risk: cells[4],
+      evidence: cells[5],
+    });
+  }
+
+  return rows;
+}
+
+function validateCatalogRow(manifest, catalogRows, relativeDir) {
+  const row = catalogRows.get(manifest.project_id);
+  if (!row) {
+    fail(`${relativeDir}: project is missing from PROJECT_CATALOG.md`);
+    return;
+  }
+
+  if (row.title !== manifest.title) {
+    fail(`PROJECT_CATALOG.md: title drift for ${manifest.project_id}`);
+  }
+
+  const expectedTypes = manifest.project_types.map((type) => TYPE_LABELS[type]).sort();
+  if (JSON.stringify(row.types) !== JSON.stringify(expectedTypes)) {
+    fail(`PROJECT_CATALOG.md: project type drift for ${manifest.project_id}`);
+  }
+
+  if (row.status !== STATUS_LABELS[manifest.lifecycle_status]) {
+    fail(`PROJECT_CATALOG.md: lifecycle status drift for ${manifest.project_id}`);
+  }
+
+  if (row.risk !== manifest.risk_tier) {
+    fail(`PROJECT_CATALOG.md: risk tier drift for ${manifest.project_id}`);
+  }
+
+  const expectedEvidence = `${manifest.evidence_maturity} — ${MATURITY_LABELS[manifest.evidence_maturity]}`;
+  if (row.evidence !== expectedEvidence) {
+    fail(`PROJECT_CATALOG.md: evidence maturity drift for ${manifest.project_id}`);
+  }
+}
+
+function validateManifest(projectDir, folderName, catalogRows, seenIds, validateSchema) {
   const manifestPath = path.join(projectDir, "project.json");
-  const relativeDir = path.relative(ROOT, projectDir).split(path.sep).join("/");
+  const relativeDir = relativeName(projectDir);
 
   if (!fs.existsSync(manifestPath)) {
     fail(`${relativeDir}: missing project.json manifest`);
@@ -141,39 +271,12 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     return;
   }
 
-  const requiredFields = [
-    "schema_version",
-    "project_id",
-    "title",
-    "lifecycle_status",
-    "project_types",
-    "risk_tier",
-    "owner",
-    "created_at",
-    "updated_at",
-    "summary",
-    "evidence_maturity",
-    "license_profile",
-    "data_classification",
-    "validation_profiles",
-    "required_documents",
-    "release_status",
-  ];
-
-  for (const field of requiredFields) {
-    if (!(field in manifest)) fail(`${relativeDir}/project.json: missing required field '${field}'`);
-  }
-
-  const allowedFields = new Set([
-    "$schema", "schema_version", "project_id", "title", "lifecycle_status",
-    "project_types", "risk_tier", "owner", "created_at", "updated_at",
-    "summary", "evidence_maturity", "license_profile", "data_classification",
-    "validation_profiles", "required_documents", "validation_workflows",
-    "release_status", "repository_url", "version", "supersedes",
-  ]);
-  for (const field of Object.keys(manifest)) {
-    if (!allowedFields.has(field)) {
-      fail(`${relativeDir}/project.json: unsupported field '${field}'`);
+  if (!validateSchema(manifest)) {
+    for (const issue of validateSchema.errors || []) {
+      fail(
+        `${relativeDir}/project.json: schema violation at ${issue.instancePath || "/"} ` +
+        `(${issue.keyword}): ${issue.message}`
+      );
     }
   }
 
@@ -192,13 +295,7 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     if (id !== folderName) fail(`${relativeDir}: folder name must exactly match project_id '${id}'`);
     if (seenIds.has(id)) fail(`${relativeDir}: duplicate project_id '${id}'`);
     seenIds.add(id);
-    if (!catalogText.includes(`projects/${id}/README.md`)) {
-      fail(`${relativeDir}: project is missing from PROJECT_CATALOG.md`);
-    }
-  }
-
-  if (typeof manifest.title !== "string" || manifest.title.trim().length < 5) {
-    fail(`${relativeDir}/project.json: title must contain at least 5 characters`);
+    validateCatalogRow(manifest, catalogRows, relativeDir);
   }
 
   if (!ALLOWED_STATUSES.has(manifest.lifecycle_status)) {
@@ -208,10 +305,6 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
   if (!Array.isArray(manifest.project_types) || manifest.project_types.length === 0) {
     fail(`${relativeDir}/project.json: project_types must be a non-empty array`);
   } else {
-    const unique = new Set(manifest.project_types);
-    if (unique.size !== manifest.project_types.length) {
-      fail(`${relativeDir}/project.json: project_types contains duplicates`);
-    }
     for (const type of manifest.project_types) {
       if (!ALLOWED_TYPES.has(type)) fail(`${relativeDir}/project.json: unsupported project type '${type}'`);
     }
@@ -221,49 +314,25 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     fail(`${relativeDir}/project.json: invalid risk_tier '${manifest.risk_tier}'`);
   }
 
-  if (typeof manifest.owner !== "string" || manifest.owner.trim().length < 2) {
-    fail(`${relativeDir}/project.json: owner is required`);
+  if (!validateStrictDate(manifest.created_at)) {
+    fail(`${relativeDir}/project.json: created_at must be a valid YYYY-MM-DD date`);
+  }
+  if (!validateStrictDate(manifest.updated_at)) {
+    fail(`${relativeDir}/project.json: updated_at must be a valid YYYY-MM-DD date`);
+  }
+  if (validateStrictDate(manifest.created_at) && validateStrictDate(manifest.updated_at) &&
+      manifest.updated_at < manifest.created_at) {
+    fail(`${relativeDir}/project.json: updated_at cannot precede created_at`);
   }
 
-  for (const field of ["created_at", "updated_at"]) {
-    const value = manifest[field];
-    const parsedDate = typeof value === "string" ? new Date(`${value}T00:00:00Z`) : null;
-    if (typeof value !== "string" || value.length !== 10 || value[4] !== "-" || value[7] !== "-" || !parsedDate || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== value) {
-      fail(`${relativeDir}/project.json: ${field} must use YYYY-MM-DD`);
-    }
-  }
-
-  if (typeof manifest.summary !== "string" || manifest.summary.trim().length < 40) {
-    fail(`${relativeDir}/project.json: summary must contain at least 40 characters`);
-  }
-
-  if (!ALLOWED_MATURITY.has(manifest.evidence_maturity)) {
-    fail(`${relativeDir}/project.json: evidence_maturity must be an integer from 0 to 4`);
-  }
-
-  if (typeof manifest.license_profile !== "string" || manifest.license_profile.trim().length < 3) {
-    fail(`${relativeDir}/project.json: license_profile is required`);
-  }
-
-  const dataClasses = new Set(["none", "synthetic", "public_source", "licensed", "restricted", "mixed"]);
-  if (!dataClasses.has(manifest.data_classification)) {
-    fail(`${relativeDir}/project.json: invalid data_classification`);
-  }
-
-  const validationProfiles = new Set([
-    "research", "quantitative", "financial_model", "software",
-    "data", "benchmark", "security", "privacy", "performance", "integration",
-  ]);
   if (!Array.isArray(manifest.validation_profiles) || manifest.validation_profiles.length === 0) {
     fail(`${relativeDir}/project.json: validation_profiles must be a non-empty array`);
   } else {
-    const uniqueProfiles = new Set(manifest.validation_profiles);
-    if (uniqueProfiles.size !== manifest.validation_profiles.length) {
-      fail(`${relativeDir}/project.json: validation_profiles contains duplicates`);
-    }
-    for (const profile of manifest.validation_profiles) {
-      if (!validationProfiles.has(profile)) {
-        fail(`${relativeDir}/project.json: unsupported validation profile '${profile}'`);
+    for (const type of Array.isArray(manifest.project_types) ? manifest.project_types : []) {
+      for (const profile of TYPE_VALIDATION_PROFILES[type] || []) {
+        if (!manifest.validation_profiles.includes(profile)) {
+          fail(`${relativeDir}/project.json: project type '${type}' requires validation profile '${profile}'`);
+        }
       }
     }
   }
@@ -283,35 +352,72 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
     }
 
     for (const required of manifest.required_documents) {
-      if (!existsWithin(projectDir, required)) {
-        fail(`${relativeDir}/project.json: required document does not exist or escapes the project: ${required}`);
+      if (!resolveFileWithin(projectDir, required)) {
+        fail(`${relativeDir}/project.json: required document missing, unsafe, or outside project: ${required}`);
       }
     }
   }
 
   for (const type of Array.isArray(manifest.project_types) ? manifest.project_types : []) {
-    const requirements = TYPE_REQUIREMENTS[type] || [];
-    for (const alternatives of requirements) {
-      const selected = alternatives.find((file) => existsWithin(projectDir, file));
+    for (const alternatives of TYPE_REQUIREMENTS[type] || []) {
+      const selected = alternatives.find((file) => resolveFileWithin(projectDir, file));
       if (!selected) {
         fail(`${relativeDir}: project type '${type}' requires one of: ${alternatives.join(", ")}`);
       } else if (Array.isArray(manifest.required_documents) && !manifest.required_documents.includes(selected)) {
         fail(`${relativeDir}/project.json: required_documents must list type-specific document '${selected}'`);
       }
     }
+  }
 
-    for (const profile of TYPE_VALIDATION_PROFILES[type] || []) {
-      if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes(profile)) {
-        fail(`${relativeDir}/project.json: project type '${type}' requires validation profile '${profile}'`);
-      }
+  if (manifest.risk_tier === "R3") {
+    if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes("security")) {
+      fail(`${relativeDir}: R3 projects must include the security validation profile`);
+    }
+    const threatModelExists = resolveFileWithin(projectDir, "THREAT_MODEL.md");
+    if (!threatModelExists) {
+      fail(`${relativeDir}: R3 projects require THREAT_MODEL.md`);
+    } else if (Array.isArray(manifest.required_documents) && !manifest.required_documents.includes("THREAT_MODEL.md")) {
+      fail(`${relativeDir}/project.json: R3 projects must list THREAT_MODEL.md in required_documents`);
     }
   }
 
-  const workflowRequiredTypes = ["software", "data", "benchmark", "infrastructure"];
-  const needsWorkflow = Array.isArray(manifest.project_types) &&
-    manifest.project_types.some((type) => workflowRequiredTypes.includes(type));
+  if (["public_source", "licensed", "restricted", "mixed"].includes(manifest.data_classification)) {
+    if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes("data")) {
+      fail(`${relativeDir}: non-synthetic data requires the data validation profile`);
+    }
+  }
 
-  if (needsWorkflow && (!Array.isArray(manifest.validation_workflows) || manifest.validation_workflows.length === 0)) {
+  if (!ALLOWED_RELEASE_STATES.has(manifest.release_status)) {
+    fail(`${relativeDir}/project.json: invalid release_status '${manifest.release_status}'`);
+  }
+
+  if (manifest.release_status === "pre_release" && manifest.lifecycle_status !== "validation") {
+    fail(`${relativeDir}: pre_release artifacts require lifecycle_status 'validation'`);
+  }
+
+  if (["released", "maintenance"].includes(manifest.lifecycle_status)) {
+    if (manifest.release_status !== "released") {
+      fail(`${relativeDir}: released/maintenance lifecycle requires release_status 'released'`);
+    }
+    if (typeof manifest.version !== "string" || manifest.version.trim().length === 0) {
+      fail(`${relativeDir}: released/maintenance lifecycle requires a version`);
+    }
+  }
+
+  if (manifest.release_status === "released" && typeof manifest.version !== "string") {
+    fail(`${relativeDir}: release_status 'released' requires a version`);
+  }
+
+  if (manifest.release_status === "withdrawn" &&
+      !["deprecated", "archived"].includes(manifest.lifecycle_status)) {
+    fail(`${relativeDir}: withdrawn releases must be deprecated or archived`);
+  }
+
+  const workflowTypes = ["software", "data", "benchmark", "infrastructure"];
+  const requiresWorkflow = Array.isArray(manifest.project_types) &&
+    manifest.project_types.some((type) => workflowTypes.includes(type));
+
+  if (requiresWorkflow && (!Array.isArray(manifest.validation_workflows) || manifest.validation_workflows.length === 0)) {
     fail(`${relativeDir}/project.json: software, data, benchmark, and infrastructure projects must declare validation_workflows`);
   }
 
@@ -323,43 +429,18 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
       if (uniqueWorkflows.size !== manifest.validation_workflows.length) {
         fail(`${relativeDir}/project.json: validation_workflows contains duplicates`);
       }
+
       for (const workflowPath of manifest.validation_workflows) {
-        if (typeof workflowPath !== "string" || workflowPath.startsWith("/") || workflowPath.includes(String.fromCharCode(92))) {
-          fail(`${relativeDir}/project.json: invalid validation workflow path`);
+        if (typeof workflowPath !== "string" ||
+            !workflowPath.startsWith(".github/workflows/") ||
+            !workflowPath.endsWith((".yml", ".yaml"))) {
+          fail(`${relativeDir}/project.json: workflow must be a .yml/.yaml file under .github/workflows: ${workflowPath}`);
           continue;
         }
-        const resolved = path.resolve(ROOT, workflowPath);
-        const relative = path.relative(ROOT, resolved);
-        if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative) ||
-            !fs.existsSync(resolved) || !fs.statSync(resolved).isFile()) {
-          fail(`${relativeDir}/project.json: validation workflow does not exist or escapes repository root: ${workflowPath}`);
+        if (!resolveFileWithin(ROOT, workflowPath)) {
+          fail(`${relativeDir}/project.json: validation workflow does not exist or is unsafe: ${workflowPath}`);
         }
       }
-    }
-  }
-
-  if (manifest.risk_tier === "R3") {
-    if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes("security")) {
-      fail(`${relativeDir}: R3 projects must include the security validation profile`);
-    }
-  }
-
-  if (["public_source", "licensed", "restricted", "mixed"].includes(manifest.data_classification)) {
-    if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes("data")) {
-      fail(`${relativeDir}: licensed/restricted/mixed data requires the data validation profile`);
-    }
-  }
-
-  if (!ALLOWED_RELEASE_STATES.has(manifest.release_status)) {
-    fail(`${relativeDir}/project.json: invalid release_status '${manifest.release_status}'`);
-  }
-
-  if (["released", "maintenance"].includes(manifest.lifecycle_status)) {
-    if (manifest.release_status !== "released") {
-      fail(`${relativeDir}: released/maintenance lifecycle requires release_status 'released'`);
-    }
-    if (typeof manifest.version !== "string" || manifest.version.trim().length === 0) {
-      fail(`${relativeDir}: released/maintenance lifecycle requires a version`);
     }
   }
 }
@@ -371,23 +452,56 @@ function main() {
     return;
   }
 
-  if (!fs.existsSync(CATALOG_PATH)) {
-    console.error("Project registry validation FAILED: PROJECT_CATALOG.md not found");
+  if (!fs.existsSync(CATALOG_PATH) || !fs.existsSync(SCHEMA_PATH)) {
+    console.error("Project registry validation FAILED: project catalog or manifest schema missing");
+    process.exitCode = 1;
+    return;
+  }
+
+  let schema;
+  try {
+    schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, "utf8"));
+  } catch (error) {
+    console.error(`Project manifest schema is invalid JSON: ${error.message}`);
     process.exitCode = 1;
     return;
   }
 
   const catalogText = fs.readFileSync(CATALOG_PATH, "utf8");
+  const catalogRows = parseCatalog(catalogText);
+  const ajv = new Ajv2020({
+    allErrors: true,
+    strict: true,
+    validateFormats: true,
+  });
+  addFormats(ajv);
+
+  let validateSchema;
+  try {
+    validateSchema = ajv.compile(schema);
+  } catch (error) {
+    console.error(`Project manifest JSON Schema failed to compile: ${error.message}`);
+    process.exitCode = 1;
+    return;
+  }
+
   const projectEntries = fs.readdirSync(PROJECTS_ROOT, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const seenIds = new Set();
+  const folderNames = new Set(projectEntries.map((entry) => entry.name));
 
   if (projectEntries.length === 0) fail("/projects must contain at least one registered project");
 
   for (const entry of projectEntries) {
-    validateManifest(path.join(PROJECTS_ROOT, entry.name), entry.name, catalogText, seenIds);
+    validateManifest(path.join(PROJECTS_ROOT, entry.name), entry.name, catalogRows, seenIds, validateSchema);
+  }
+
+  for (const id of catalogRows.keys()) {
+    if (!folderNames.has(id)) {
+      fail(`PROJECT_CATALOG.md: stale project entry '${id}' has no projects/${id}/ directory`);
+    }
   }
 
   if (errors.length > 0) {
@@ -399,6 +513,8 @@ function main() {
 
   console.log("Project registry validation PASS");
   console.log(`Registered project directories: ${projectEntries.length}`);
+  console.log("Project manifests: JSON Schema validated");
+  console.log("Type, risk, lifecycle, document, workflow, and catalog consistency: PASS");
   for (const entry of projectEntries) console.log(`- ${entry.name}`);
 }
 
