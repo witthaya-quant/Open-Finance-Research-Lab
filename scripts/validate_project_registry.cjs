@@ -198,7 +198,9 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
   }
 
   for (const field of ["created_at", "updated_at"]) {
-    if (typeof manifest[field] !== "string" || !/^\\d{4}-\\d{2}-\\d{2}$/.test(manifest[field])) {
+    const value = manifest[field];
+    const parsedDate = typeof value === "string" ? new Date(`${value}T00:00:00Z`) : null;
+    if (typeof value !== "string" || value.length !== 10 || value[4] !== "-" || value[7] !== "-" || !parsedDate || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== value) {
       fail(`${relativeDir}/project.json: ${field} must use YYYY-MM-DD`);
     } else if (Number.isNaN(Date.parse(`${manifest[field]}T00:00:00Z`))) {
       fail(`${relativeDir}/project.json: ${field} is not a valid calendar date`);
