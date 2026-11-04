@@ -512,7 +512,7 @@ PR #13 remains Draft and unmerged. Its branch contains:
 - Numeric Profile Decision Worksheet.
 - Symbolic Numeric Profile Derivation and backend decision basis.
 
-The implementation baseline passed the five applicable project checks before the governance workflow was merged into main. The branch is now behind/diverged from current main and must be synchronized, conflicts reconciled, and all six required contexts rerun on the refreshed head. PR-only code and documentation must not be presented as merged production capability.
+The original implementation baseline passed the five project-specific checks before the governance workflow was merged into main. PR #13 was then synchronized with current main through a merge commit preserving both histories. The refreshed code branch passed all six required contexts, including `repository-policy`, on Rust 1.85.0 and 1.99.1. PR-only code and documentation must not be presented as merged production capability.
 
 ### Open research and approval gates
 

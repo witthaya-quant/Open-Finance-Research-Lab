@@ -7,7 +7,7 @@
 **Production baseline:** `main` at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design, CLI hardening and Numeric Profile derivation:** PR #13, open Draft; implementation baseline `6941b1f1e2d4b6270fd8cf6d62327b4417d0486b` passed all five applicable project contexts; later changes are documentation-only  
+**System-design, CLI hardening and Numeric Profile derivation:** PR #13, open Draft; code baseline `6941b1f1e2d4b6270fd8cf6d62327b4417d0486b` passed five project contexts; after synchronization with current main, all six required contexts passed on the integrated branch  
 **Status:** Evidence-based audit at main `cc2d01b`; merged governance and supply-chain controls are distinguished from branch-local OFRL-IB-001 implementation evidence
 
 ## 1. Executive assessment
@@ -34,7 +34,7 @@ This audit covers only OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`
 | PR #27 project-code smoke test | Closed without merge | All six required contexts passed on a project-code PR targeting current main |
 | PR #11 — numeric research | Open, Draft; head `120ccd3414` | 800 independent exact-rational expected outputs, candidate arithmetic comparison, point-in-time SBOM/RustSec and non-gating timing; no production backend approval |
 | PR #12 — schema tooling | Open, Draft; head `c38f9ad50` | Pinned Node/AJV toolchain and package lockfile; tooling change remains branch-local |
-| PR #13 — audit/design/CLI/numeric derivation | Open, Draft; head `8479193` | Engineering audit, system design, roadmap, bounded CLI reader, shared corpus and symbolic Numeric Profile derivation; branch is behind/diverged from current main and needs synchronization |
+| PR #13 — audit/design/CLI/numeric derivation | Open, Draft; synchronized with current main | Engineering audit, system design, roadmap, bounded CLI reader, shared corpus and symbolic Numeric Profile derivation; all six required contexts passed on the synchronized code branch; changes remain unmerged |
 | Finance/accounting review | Not evidenced | No independent sign-off is claimed |
 | Production Forecast Engine | Not implemented | Must remain gated |
 
@@ -183,7 +183,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Major
 
-**Evidence:** PR #13 now contains a versioned shared positive/negative corpus consumed by both AJV and the Rust runtime. Cases declare schema validity, runtime status and stable Rust diagnostic codes. The Rust test now validates corpus metadata, unique case IDs/fixture paths, canonical fixture paths under `fixtures/`, and rejects path traversal/symlink escape. AJV validation checks schema identity, corpus shape, expected outcome types and fixture containment. All five applicable project check contexts passed on PR #13 head `6941b1f`; this evidence remains branch-local and is not merged to `main`. The separate `repository-policy` check is absent because that workflow has not yet been integrated into current `main`.
+**Evidence:** PR #13 now contains a versioned shared positive/negative corpus consumed by both AJV and the Rust runtime. Cases declare schema validity, runtime status and stable Rust diagnostic codes. The Rust test now validates corpus metadata, unique case IDs/fixture paths, canonical fixture paths under `fixtures/`, and rejects path traversal/symlink escape. AJV validation checks schema identity, corpus shape, expected outcome types and fixture containment. The shared corpus implementation first passed the five project-specific contexts on head `6941b1f`. After governance integration, PR #13 was synchronized with current `main`; the refreshed branch then passed all six required contexts, including `repository-policy`, on Rust 1.85.0 and 1.99.1. The corpus remains branch-local and is not merged to `main`.
 
 **Risk:** A shared fixture set can still be incomplete or can drift if one side does not enforce the same metadata and expected outcome contract. Schema-invalid fixtures must never be accepted by the runtime; schema-valid fixtures may still correctly fail cross-field/accounting semantic checks.
 
@@ -267,7 +267,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Original risk:** A required context that is absent from the protected base workflow set can leave PRs blocked. Weakening the Ruleset would have concealed the publication-order problem.
 
-**Disposition:** RESOLVED. Keep all six contexts unchanged. Repeat the API read-back and representative documentation/project-code smoke tests after material workflow or Ruleset changes. PR #13 still needs to synchronize with current main and pass its own six-context checks; that is a branch freshness/merge-base task, not a remaining governance dependency.
+**Disposition:** RESOLVED. Keep all six contexts unchanged. Repeat the API read-back and representative documentation/project-code smoke tests after material workflow or Ruleset changes. PR #13 has now synchronized with current main and its refreshed branch passed all six required contexts. It remains Draft pending review; that review is separate from the governance dependency.
 
 ## 6. Numeric tolerance interpretation
 
@@ -290,7 +290,7 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 | Independent finance/accounting review | Written independent review and disposition of equations, conventions and edge cases | OPEN — not evidenced |
 | Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — lockfile and preview SBOM workflow are on main; source-level licence/security and official release review remain open |
 | Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR — research evidence only |
-| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | IMPLEMENTED ON PR #13 BRANCH — test baseline passed both Rust toolchains; branch is unmerged and needs six-context CI after synchronization |
+| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | PASS ON PR #13 BRANCH — shared corpus and path-safety tests passed both Rust toolchains; refreshed branch passed all six required contexts; unmerged |
 | Typed diagnostics | Stable error variants and JSON Pointer for deserialization failures | OPEN — message-substring mapping remains |
 | Repository required checks | All six Ruleset contexts available on main and reported on fresh PRs | PASS — post-merge read-back plus documentation-only PR #24 and project-code PR #27 both passed 6/6 |
 | Production forecast engine | Typed Rust schedules and three statements | NOT STARTED — gated |

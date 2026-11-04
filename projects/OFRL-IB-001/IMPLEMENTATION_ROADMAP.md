@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Implementation Roadmap
 
-**Roadmap version:** 0.3.0  
+**Roadmap version:** 0.4.0  
 **Status:** Proposed execution plan with evidence-linked gates  
 **Date:** 2026-11-04
 
@@ -31,7 +31,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Rust SBOM/RustSec research | Open PR #11, Draft | Candidate/POC inventories and point-in-time advisory evidence |
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
 | Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
-| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; code baseline passed both Rust toolchains; PR head must be synced with current main |
+| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; synchronized branch passed both Rust toolchains and all six required contexts; unmerged |
 | Numeric Profile worksheet and symbolic derivation | Open PR #13 branch | Formula-chain envelope documented symbolically; unbounded Model Owner inputs remain TBD |
 | Model-specific Numeric Profile | Not approved | Finite input bounds, headroom, error budgets, tolerance and rounding remain open |
 | Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
@@ -55,7 +55,7 @@ Exit condition: malformed and historically inconsistent input is rejected before
 
 ### Phase 1 — Audit, architecture and input-bound hardening
 
-**Status:** Implemented on the PR #13 branch; its code baseline passed all five project checks before governance integration. PR #13 remains Draft and behind current `main`; merge-base synchronization and six-context CI on its refreshed head remain pending.
+**Status:** Implemented on the PR #13 branch and synchronized with current `main`. The refreshed code branch passed all six required contexts, including repository policy and both Rust toolchains. PR #13 remains Draft pending review and merge.
 
 Deliverables:
 - Engineering Audit with severity-ranked findings.
@@ -70,7 +70,7 @@ Exit conditions:
 - One Rust calculation authority is preserved.
 - No numeric backend is selected by assumption.
 - Input size and encoding boundary is explicit.
-- No files outside OFRL-IB-001 are changed.
+- No unrelated project or portfolio scope is changed. Shared contract fixtures and the schema-validation script are included only as integration surfaces required to test the OFRL-IB-001 contract across AJV and Rust.
 
 ### Phase 2 — Numeric, dependency and model-policy acceptance
 
@@ -230,7 +230,7 @@ Release statuses:
 | Project-code Ruleset smoke test | PR #27 | Closed without merge after all six required contexts passed |
 | Numeric candidate and independent arithmetic research | PR #11, Draft, targets main | POC checks pass; findings reviewed; production adoption remains separate |
 | Schema tooling lockfile | PR #12, Draft, targets main | Review and CI pass; shared corpus remains a separate contract gate |
-| Audit, system design, bounded CLI, shared corpus and Numeric Profile derivation | PR #13, Draft, targets main | Sync with current main; run all six required contexts on refreshed head; complete review |
+| Audit, system design, bounded CLI, shared corpus and Numeric Profile derivation | PR #13, Draft, targets main | Synchronized with current main; refreshed branch passed all six required contexts; complete review before any ready-for-review transition |
 | Numeric Profile/backend decision | New OFRL-only PR | Finite input domain, error budgets, resource and Finance/Accounting gates accepted |
 | Production forecast engine | New OFRL-only PR | Phase 2 exit accepted |
 | ModelRun/provenance/CLI run | New OFRL-only PR | Production calculations and invariants accepted |
@@ -238,7 +238,7 @@ Release statuses:
 
 **Governance status:** the active Ruleset still requires the six exact contexts. After PR #14 reached main, both a documentation-only PR (#24) and a project-code PR (#27) reported and passed all six contexts. Both smoke PRs were closed without merging. Do not remove or relax any required check.
 
-PR #13 remains Draft and its branch has not yet incorporated the governance merge commit. Refresh that branch and rerun its code and contract suite against the actual current base before any ready-for-review transition.
+PR #13 remains Draft, but its branch now incorporates the governance merge commit and is up to date with `main`. The refreshed code branch passed all six required contexts. Keep it Draft until the audit, Numeric Profile boundaries and remaining review findings are accepted.
 
 Keep research, production formula and reporting changes in separately reviewable PRs. A Draft PR remains Draft when project-level gates are unresolved, even if its CI is green. No PR is merged by this roadmap without the required review.
 

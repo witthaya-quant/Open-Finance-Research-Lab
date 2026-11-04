@@ -99,7 +99,7 @@ The first reproducible case will use synthetic data created specifically for thi
 
 The current `main` branch contains the input contract, historical semantic validator, repository governance controls, project registry/data controls, unfiltered Rust validation workflows, the isolated Decimal Contract POC lockfile, and a preview-only SBOM/checksum workflow for the existing Linux CLI input validator. The preview workflow does not represent a released forecast model.
 
-PR #13 remains an open Draft. It contains the bounded CLI input reader, shared Schema/Rust contract corpus, engineering audit, system design, roadmap, Numeric Profile worksheet and symbolic numeric-envelope derivation. Those changes are not merged production capability. The branch must be synchronized with current `main`, resolve any content conflicts and pass all six required checks before review or merge.
+PR #13 remains an open Draft. It contains the bounded CLI input reader, shared Schema/Rust contract corpus, engineering audit, system design, roadmap, Numeric Profile worksheet and symbolic numeric-envelope derivation. Those changes are not merged production capability. The branch has now been synchronized with current `main`, content conflicts were reconciled, and the refreshed code branch passed all six required checks. PR #13 remains Draft and unmerged pending review.
 
 The Ruleset on `main` is active with six exact required contexts. Documentation-only and project-code smoke PRs (#24 and #27) each passed all six contexts and were closed without merging.
 
