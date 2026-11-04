@@ -131,10 +131,13 @@ fn is_plain_decimal_text(text: &str) -> bool {
         return false;
     }
 
-    let mut index = if bytes[0] == b'-' { 1 } else { 0 };
+    let is_negative = bytes[0] == b'-';
+    let mut index = if is_negative { 1 } else { 0 };
     if index >= bytes.len() {
         return false;
     }
+
+    let integer_is_zero = bytes[index] == b'0';
 
     match bytes[index] {
         b'0' => {
@@ -153,7 +156,7 @@ fn is_plain_decimal_text(text: &str) -> bool {
     }
 
     if index == bytes.len() {
-        return true;
+        return !(is_negative && integer_is_zero);
     }
 
     if bytes[index] != b'.' {
@@ -167,7 +170,13 @@ fn is_plain_decimal_text(text: &str) -> bool {
         index += 1;
     }
 
-    index > fractional_start && index == bytes.len()
+    let has_fractional_nonzero = bytes[fractional_start..index]
+        .iter()
+        .any(|digit| *digit != b'0');
+
+    index > fractional_start
+        && index == bytes.len()
+        && !(is_negative && integer_is_zero && !has_fractional_nonzero)
 }
 
 #[cfg(test)]
@@ -229,7 +238,7 @@ mod tests {
     fn non_canonical_decimal_strings_are_rejected() {
         for invalid in [
             "", "+1", "01", "-01", ".5", "1.", "1e3", "1E3", "1,000", " 1.0", "1.0 ", "NaN",
-            "Infinity", "--1",
+            "Infinity", "--1", "-0", "-0.000",
         ] {
             let json = format!(
                 r#"{{"schema_version":"0.1.0","model_id":"OFRL-IB-001","period":"FY2026","line_item":"revenue","currency":"USD","unit_scale":"thousands","amount":"{invalid}"}}"#
@@ -239,6 +248,23 @@ mod tests {
                 serde_json::from_str::<AmountRecord>(&json).is_err(),
                 "non-canonical amount {invalid:?} should be rejected"
             );
+        }
+    }
+
+    #[test]
+    fn zero_and_max_scale_values_round_trip_without_precision_loss() {
+        for amount in [
+            "0",
+            "0.000",
+            "0.1234567890123456789012345678",
+            "-0.005000",
+        ] {
+            let record = sample_record(amount);
+            let json = serde_json::to_string(&record).expect("amount should serialize");
+            let decoded: AmountRecord =
+                serde_json::from_str(&json).expect("canonical amount should deserialize");
+
+            assert_eq!(decoded.amount.to_string(), amount);
         }
     }
 
