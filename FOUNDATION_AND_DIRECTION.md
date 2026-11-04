@@ -4,7 +4,7 @@
 
 This document sets out why Open Finance Research Lab (OFRL) exists, what it is working towards, and how people with different backgrounds and methods can develop useful work together.
 
-It is the guiding philosophy for the lab. The Research Charter, Research Standards, and project-specific specifications turn this philosophy into working requirements.
+It is the guiding philosophy for the lab. The Research Charter, Research Standards, and project-specific specifications turn this philosophy into working requirements. [GOVERNANCE.md](GOVERNANCE.md) defines how authority, accountability, decisions, and contributor responsibilities operate from the founder-maintained stage through a future Organization structure.
 
 ## 1. Why OFRL exists
 
