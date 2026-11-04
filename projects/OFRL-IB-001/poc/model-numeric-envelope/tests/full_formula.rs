@@ -3,9 +3,9 @@ use std::str::FromStr;
 use num_rational::BigRational;
 use num_traits::{One, Signed};
 use ofrl_model_numeric_envelope::{
-    balance_sheet_differences_are_zero, cash_deficit_case_a, compare_to_reference, forecast, intermediate_stress_case_a,
-    load_case_a, maximum_absolute_metric, parse_decimal_rational, round_half_even, stress_case_a,
-    ArbitraryDecimal, ExactRational, FixedDecimal, Numeric,
+    balance_sheet_differences_are_zero, cash_deficit_case_a, compare_to_reference, forecast,
+    intermediate_stress_case_a, load_case_a, maximum_absolute_metric, parse_decimal_rational,
+    round_half_even, stress_case_a, ArbitraryDecimal, ExactRational, FixedDecimal, Numeric,
 };
 use rust_decimal::Decimal;
 
@@ -268,7 +268,6 @@ fn case_a_fy2026_matches_independently_derived_exact_benchmark() {
     }
 }
 
-
 #[test]
 fn intermediate_stress_case_completes_on_all_numeric_candidates() {
     let fixture = intermediate_stress_case_a();
@@ -280,10 +279,8 @@ fn intermediate_stress_case_completes_on_all_numeric_candidates() {
     assert_eq!(reference.len(), 5);
     assert!(balance_sheet_differences_are_zero(&reference));
 
-    let fixed_summary =
-        compare_to_reference("rust_decimal", &fixed, &reference, 2).unwrap();
-    let arbitrary_summary =
-        compare_to_reference("bigdecimal", &arbitrary, &reference, 2).unwrap();
+    let fixed_summary = compare_to_reference("rust_decimal", &fixed, &reference, 2).unwrap();
+    let arbitrary_summary = compare_to_reference("bigdecimal", &arbitrary, &reference, 2).unwrap();
 
     println!("INTERMEDIATE_STRESS_FIXED={fixed_summary:#?}");
     println!("INTERMEDIATE_STRESS_BIGDECIMAL={arbitrary_summary:#?}");
