@@ -86,8 +86,8 @@ These are implementation gates, not unresolved choices about the overall directi
 1. Complete the Draft 2020-12 schema compilation and positive/negative fixture checks in CI.
 2. Implement the Rust semantic input validator and typed diagnostic mapping; schema validation alone is insufficient.
 3. Finalize the model-specific numeric envelope, maximum intermediate values, error budget, and reporting-rounding policy.
-4. Complete the transitive dependency inventory, SBOM, licence/security review, and Cargo.lock policy for the application workspace.
-5. Implement the Rust calculation core and synthetic reference case with unit, integration, property, golden, and boundary tests.
+4. Complete transitive dependency inventories, SBOMs, licence/security review, and committed lockfile enforcement for each application and research-POC workspace.
+5. Complete the comparative numeric POC review, including unrounded Balance Sheet residuals and a locked POC dependency graph; then implement the Rust calculation core and synthetic reference case with unit, integration, property, golden, and boundary tests.
 6. Verify workbook export precision and canonical-output reconciliation.
 7. Establish full CI, reproducibility instructions, and independent review.
 
@@ -97,4 +97,4 @@ Material changes must record the previous decision, the new decision, the reason
 
 A V1 approval does not waive a failed implementation or validation gate.
 
-| D-012 | Compare fixed-point Decimal, arbitrary-precision Decimal, and exact Rational reference on the complete Case A formula path before selecting the production numeric foundation | In progress | Avoid selecting a numeric library from serialization tests or isolated division examples alone |
+| D-012 | Compare fixed-point Decimal, arbitrary-precision Decimal, and exact Rational reference on the complete Case A formula path before selecting the production numeric foundation | POC implemented; review remains open | CI confirms candidate paths execute; unrounded Balance Sheet residuals, independent formula review, lockfile enforcement, model-specific envelope, and dependency/SBOM review are still required |
