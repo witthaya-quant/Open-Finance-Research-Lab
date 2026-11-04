@@ -1,5 +1,3 @@
-#![allow(clippy::struct_field_names)]
-
 use core::str::FromStr;
 
 use rust_decimal::Decimal;
