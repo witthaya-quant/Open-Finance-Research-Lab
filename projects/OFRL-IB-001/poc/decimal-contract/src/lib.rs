@@ -153,8 +153,9 @@ fn is_plain_decimal_text(text: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{AmountRecord, UnitScale};
     use core::str::FromStr;
+    use rust_decimal::Decimal;
 
     fn sample_record(amount: &str) -> AmountRecord {
         AmountRecord::new(
