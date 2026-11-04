@@ -65,18 +65,29 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Run Clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --locked --workspace --all-targets -- -D warnings
 
       - name: Run tests
-        run: cargo test --workspace --all-targets -- --nocapture
+        run: cargo test --locked --workspace --all-targets -- --nocapture
 
       - name: Build documentation
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: cargo doc --workspace --no-deps
+        run: cargo doc --locked --workspace --no-deps
 
       - name: Validate canonical synthetic Case A through CLI
-        run: cargo run --quiet -p ofrl_cli -- validate ../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json
+        run: cargo run --locked --quiet -p ofrl_cli -- validate ../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json
 
-      - name: Export generated Cargo.lock for bootstrap
-        run: base64 --wrap=0 Cargo.lock
+      - name: Reject unsupported schema version through CLI
+        run: |
+          input="$(mktemp)"
+          sed 's/"schema_version": "0.1.0"/"schema_version": "9.9.9"/' ../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json > "$input"
+          set +e
+          cargo run --locked --quiet -p ofrl_cli -- validate "$input"
+          status=$?
+          set -e
+          rm -f "$input"
+          if [[ "$status" -ne 2 ]]; then
+            echo "Expected CLI exit code 2 for rejected input; received $status"
+            exit 1
+          fi
