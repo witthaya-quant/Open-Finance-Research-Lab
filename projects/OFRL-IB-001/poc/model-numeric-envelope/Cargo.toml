@@ -10,6 +10,7 @@ description = "Comparative full-formula numeric proof of concept for OFRL-IB-001
 [dependencies]
 bigdecimal = "=0.4.11"
 num-bigint = "=0.4.8"
+num-integer = "=0.1.47"
 num-rational = { version = "=0.4.2", features = ["num-bigint"] }
 num-traits = "=0.2.19"
 rust_decimal = "=1.43.0"
