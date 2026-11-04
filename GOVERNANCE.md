@@ -10,7 +10,7 @@
 
 ## 1. Purpose
 
-This policy defines who is accountable for OFRL, how decisions are made, how work is reviewed and released, how disagreements are handled, and how the lab can move from a founder-maintained personal repository to an organization-owned research community without losing its principles or decision history.
+This policy defines who is accountable for OFRL, how decisions are made, how work is reviewed and released, how disagreements are handled, and how the project can accept contributors while remaining under the Founder's personal GitHub account. A GitHub Organization is an optional administrative choice, not a required destination or a measure of maturity.
 
 OFRL adopts governance from its first day of operation. The requirements apply now, even while the founder is the only active maintainer. The process is deliberately proportionate: it creates traceability and safeguards without pretending that independent review exists when only one person is available.
 
@@ -32,7 +32,7 @@ The Founder is accountable for:
 - Accepting, declining, or suspending projects published under the OFRL name.
 - Maintaining the integrity of the Research Charter, Research Standards, governance, and disclosure policies.
 - Final repository-level approval of material changes and releases during the single-maintainer stage.
-- Decisions concerning official project status, publication, licensing policy, repository transfer, and the use of the OFRL name.
+- Decisions concerning official project status, publication, licensing policy, repository ownership or account structure, and the use of the OFRL name.
 - Ensuring that contributors receive accurate attribution and that material corrections are not concealed.
 
 The Founder is not exempt from the lab's research, evidence, conduct, security, or disclosure standards. The Founder's work and decisions may be questioned and corrected through the same documented process as other work.
@@ -95,42 +95,58 @@ Activated when the Founder begins accepting contributions from other people.
 - Contributors submit work through Issues, Discussions where enabled, and Pull Requests.
 - Contributors do not approve their own Pull Requests.
 - A person who authors or materially pushes a change must not provide the independent approval required for that change.
-- At least one eligible independent Maintainer approval is required for material changes before merge, once an independent Maintainer is appointed and available.
-- High-impact changes may require two independent reviews or a domain-specific review, as defined by the project risk classification.
-- The Founder retains final authority over lab-wide policies, project admission, official publications, licensing policy, repository transfer, and release decisions unless explicitly delegated.
+- When an independent Maintainer with sufficient GitHub permission is available, material changes should receive at least one independent approval before merge.
+- On a personal-account repository, GitHub collaborator permissions are comparatively coarse. A person who only needs to contribute should normally use a fork and Pull Request; direct collaborator access should be reserved for trusted people who genuinely need write access.
+- If no eligible independent reviewer is available, the Founder records the available review evidence and remains accountable for the merge. The process must not claim independent approval where none exists.
+- High-impact changes should receive an additional domain-specific review where qualified review capacity is available.
+- The Founder retains final authority over lab-wide policies, project admission, official publications, licensing policy, repository ownership or account structure, and release decisions unless explicitly delegated.
 - A project may retain multiple methods when they are useful for different contexts or the evidence does not justify a single choice.
 
 The Founder may accept useful contributions before appointing additional Maintainers. In that case, the Founder remains responsible for review and merge decisions; contributor participation alone does not create Maintainer authority.
 
-### Stage 2 — Organization-owned research lab
+### Stage 2 — Delegated Maintainers under the Founder's personal account
 
-Activated when OFRL is transferred to a GitHub Organization and the Founder records the transition.
+This stage can continue indefinitely. It does not require a GitHub Organization.
 
-- The Organization owns the repository as a GitHub account resource; the Founder remains the research and governance lead unless the governance policy is formally amended.
-- Organization Owners manage organization-level administration. Organization ownership does not automatically confer authority to approve research conclusions or change research methodology.
-- Repository and project access are granted through teams and least-privilege repository roles wherever practical.
-- At least two trusted Organization Owners should be established to maintain ownership continuity. Organization Owner access is reserved for people who genuinely need organization-wide administrative authority.
-- The organization maintains a named Founder / Research Director, repository Maintainers, project Leads, and review responsibilities.
-- Organization-level rulesets and repository controls should enforce the applicable baseline in [GITHUB_REPOSITORY_SETTINGS.md](GITHUB_REPOSITORY_SETTINGS.md).
-- The lab periodically reviews membership, access, maintainership, security, conflicts of interest, and governance effectiveness.
+- The Founder remains the sole repository owner and retains the reserved decision rights in this policy.
+- Trusted Maintainers may be appointed for defined projects or technical domains, with their responsibilities, scope, and effective dates recorded.
+- Contributors who do not need write access continue to contribute through forks and Pull Requests.
+- Direct collaborator access is granted only where the person needs repository write capability and is trusted with that level of access. On a personal-account repository, GitHub provides the owner and collaborators as the repository permission levels; it does not provide the same granular repository-role model available to Organizations.
+- Branch protection and Pull Request controls remain in force. A Maintainer's review authority and technical scope must be documented separately from their GitHub permission.
+- The Founder reviews access and delegated responsibilities periodically and when a role changes.
 
-A GitHub Organization is an account and access-management structure. Creating or using one does not by itself incorporate a legal entity, transfer copyright ownership, create a partnership, or change the licence terms already granted to users.
+The project does not need to transfer its repository or intellectual-property rights merely because it has more contributors or Maintainers.
+
+### Optional Stage 3 — GitHub Organization
+
+An Organization may be considered only when a concrete administrative, access-control, stewardship, or legal-entity requirement cannot be handled proportionately under the personal-account model. It is not an automatic next stage.
+
+Potential triggers include:
+
+- Several Maintainers require different repository permissions that cannot be safely represented by the personal-account collaborator model.
+- Multiple repositories need centralized team permissions, security administration, policy enforcement, or billing.
+- A legal entity, institutional sponsor, grant, or contractual arrangement must become the repository owner.
+- Continuity and stewardship need to be shared formally across multiple trusted Organization Owners.
+
+Do not create an Organization simply to look more professional or because the contributor count has increased. If no material operational need exists, keep the repository under the Founder's account.
+
+A GitHub Organization is an account and access-management structure. Creating or using one does not by itself incorporate a legal entity, transfer copyright ownership, create a partnership, or change licence terms already granted to users.
 
 ## 4. Decision rights and reserved matters
 
 The following table defines the default decision authority.
 
-| Decision | Stage 0: Founder-maintained | Stage 1: Contributors | Stage 2: Organization |
-|---|---|---|---|
-| Research proposal triage | Founder | Maintainer; Founder for strategic scope | Project Maintainer; Founder for strategic scope |
-| Technical implementation within approved scope | Founder | Project Lead / Maintainer | Project Lead / Maintainer |
-| Research conclusion and evidence maturity | Founder, with limitations disclosed | Responsible research authors; Maintainer checks standards | Research authors and designated reviewers; publication authority remains defined |
-| Merge routine contribution | Founder | Eligible Maintainer after required review | Eligible Maintainer under branch rules |
-| Change lab-wide Research Standards | Founder, via documented change | Founder, after consultation and recorded decision | Governance process and reserved Founder authority until formally amended |
-| Change licence, data policy, disclosure boundary | Founder, with rights review | Founder approval required | Founder / authorized governance role; legal review where appropriate |
-| Official publication or release under OFRL name | Founder | Founder or explicitly delegated release authority | Designated release authority under documented delegation |
-| Repository transfer or Organization settings | Founder / account owner | Founder / account owner | Organization Owners under governance |
-| Change mission, vision, or governance constitution | Founder, through versioned amendment | Founder, after documented consultation | Formal governance amendment; not a routine Maintainer action |
+| Decision | Stage 0: Founder-maintained | Stage 1: Contributors | Stage 2: Delegated Maintainers | Optional Stage 3: Organization |
+|---|---|---|---|---|
+| Research proposal triage | Founder | Founder | Delegated Maintainer; Founder for strategic scope | Project Maintainer; Founder for strategic scope |
+| Technical implementation within approved scope | Founder | Founder | Project Lead / Maintainer within delegated scope | Project Lead / Maintainer within delegated scope |
+| Research conclusion and evidence maturity | Founder, with limitations disclosed | Founder, with external review where available | Responsible research authors; Maintainer checks standards | Research authors and designated reviewers; publication authority remains defined |
+| Merge routine contribution | Founder | Founder | Founder or delegated Maintainer under branch rules | Eligible Maintainer under branch rules |
+| Change lab-wide Research Standards | Founder, via documented change | Founder, after consultation and recorded decision | Founder, after consultation and recorded decision | Formal governance amendment; reserved Founder authority until amended |
+| Change licence, data policy, disclosure boundary | Founder, with rights review | Founder approval required | Founder approval required | Authorized role under formal policy; rights review required |
+| Official publication or release under OFRL name | Founder | Founder | Founder or explicitly delegated release authority | Designated release authority under documented delegation |
+| Repository transfer or account-structure change | Founder / account owner | Founder / account owner | Founder / account owner | Organization Owners, if adopted |
+| Change mission, vision, or governance constitution | Founder, through versioned amendment | Founder, after documented consultation | Founder, after documented consultation | Formal governance amendment; not a routine Maintainer action |
 
 A person with GitHub write or admin permission does not gain every decision right listed in this table. Platform permissions must be limited to what the person's assigned role requires.
 
@@ -147,7 +163,7 @@ A Decision Record is required for decisions that materially affect one or more o
 - System architecture, public interfaces, core dependencies, security boundaries, or compatibility commitments.
 - Data provenance, licence interpretation, redistribution, privacy, or disclosure.
 - Public release criteria, evidence maturity, material corrections, or deprecation.
-- Governance roles, decision rights, review requirements, repository ownership, or organization transition.
+- Governance roles, decision rights, review requirements, repository ownership, or account-structure changes.
 - A material departure from an earlier accepted decision.
 
 A Decision Record is normally not required for routine refactoring, typo fixes, formatting, or implementation details that remain within an accepted decision and do not alter the relevant risk or contract.
@@ -176,7 +192,7 @@ Project records should reference a central Decision Record when they implement, 
 2. A Pull Request must state the problem, proposed change, scope, evidence, tests, risks, data/IP implications, and relevant decision references.
 3. The author must not approve their own Pull Request once another eligible reviewer is available.
 4. During Stage 0, the Founder may merge their own Pull Request after completing the applicable checklist. The record must not imply independent review.
-5. During Stage 1 and Stage 2, branch rules and this policy determine the minimum independent approvals.
+5. During Stage 1 and Stage 2, the Founder remains accountable for merge decisions; documented independent review is required when an eligible independent Maintainer is appointed and has the necessary GitHub permissions. Optional Stage 3 uses the branch rules and approvals defined in this policy.
 6. Changes to licences, data-release permissions, security controls, governance, or material public claims require explicit review by the Founder or an authorized role.
 7. Failing tests or research gates must be recorded and resolved, or the publication must clearly state the limitation. Acceptance criteria must not be weakened after observing a failed result merely to obtain a pass.
 8. Emergency changes should be limited to restoring service, containing a security issue, or preventing material harm. Record the reason, scope, and follow-up review in a Pull Request or Decision Record as soon as practicable.
@@ -233,29 +249,40 @@ A project may be published at an exploratory maturity level when it is clearly l
 - Do not place credentials or restricted data in commits, Issues, Pull Requests, CI logs, or public artifacts.
 - Record material changes to repository ownership, visibility, rulesets, or security settings.
 
-## 11. Transition from personal repository to GitHub Organization
+## 11. Optional GitHub Organization and repository transfer
 
-The repository should remain under the founder's personal account while it is being developed independently and the Organization structure adds no operational benefit. It should not be recreated merely to look institutional.
+OFRL has no target date or obligation to become a GitHub Organization. The personal-account repository is the default operating model unless a concrete need justifies a change.
 
-Consider transfer when at least one of these conditions is met:
+### 11.1 Decision test
 
-- Two or more people have ongoing responsibilities that require coordinated team permissions.
-- Multiple active projects have distinct Maintainers or project Leads.
-- The lab needs centralized membership, repository, security, or policy administration.
-- An institutional partnership, grant, sponsorship, or operating model requires the Organization to be the repository owner.
+Before creating an Organization or transferring the repository, confirm that at least one requirement cannot be handled adequately under the current account:
 
-Before transfer:
+- Need for granular repository permissions across several Maintainers.
+- Centralized management of multiple repositories, teams, security policies, or billing.
+- A legal entity or institutional arrangement must become the repository owner.
+- A documented continuity or stewardship requirement that justifies shared organization-level administration.
 
-1. Decide the Organization's name, purpose, visibility, billing owner, and membership policy.
-2. Identify at least two trusted people for Organization Owner continuity where feasible; do not grant Owner access solely for convenience.
-3. Define teams, base repository permissions, outside-collaborator policy, and least-privilege roles.
-4. Review licensing, contributor attribution, data restrictions, repository secrets, Actions, webhooks, deploy keys, Pages, packages, and external links.
-5. Confirm that the target Organization can receive the repository and that the repository name is available there.
-6. Record the transfer as a Decision Record and announce the canonical repository location.
+More contributors, greater popularity, or a desire for an institutional appearance are not sufficient reasons by themselves.
 
-Use GitHub's repository transfer process rather than recreating the repository. After transfer, verify issues, Pull Requests, releases, branches, workflows, permissions, protections, integrations, links, and local Git remotes. GitHub documents that repository transfers preserve core Git history and several repository assets, while organization defaults apply to the transferred repository; individual details must still be checked.
+### 11.2 Transfer controls
 
-The transition must preserve existing licences, contributor attribution, research history, Decision Records, and the founder's stated accountability unless they are explicitly changed through a separate governance amendment.
+If transfer is justified:
+
+1. Record the decision and reasons in a new Decision Record; do not rewrite the historical record.
+2. Decide the Organization's purpose, visibility, billing owner, membership policy, and access model.
+3. Confirm that the Founder can create repositories in the target Organization and that its policies permit the transfer.
+4. Identify trusted Organization Owners only where they genuinely need organization-wide control. If appropriate ownership continuity cannot be established, defer the transfer.
+5. Review repository permissions, default organization permissions, Actions, secrets, environments, webhooks, deploy keys, Pages, packages, releases, links, and integrations.
+6. Review contributor attribution, licences, data restrictions, and whether repository transfer could affect a sponsorship or external dependency.
+7. Transfer the existing repository rather than creating a replacement; then verify issues, Pull Requests, releases, branches, workflows, permissions, protections, integrations, links, and local Git remotes.
+
+GitHub supports repository transfer to an Organization. The receiving Organization's default repository permissions and membership privileges apply after transfer, so they must be reviewed deliberately. GitHub's current workflow is to move selected work into an Organization while retaining the personal account; do not plan around converting the personal account itself into an Organization.
+
+The transition must preserve Git history, existing licences, contributor attribution, research history, Decision Records, and the Founder's stated governance responsibilities unless a separate, explicit amendment changes them.
+
+### 11.3 No-transfer alternative
+
+If the need is simply to receive ideas, review proposals, or accept code and documentation contributions, continue using public Issues and fork-based Pull Requests. The Founder can remain the repository owner and merge authority. No Organization is required.
 
 ## 12. Policy hierarchy and interpretation
 
@@ -274,7 +301,7 @@ A project-specific rule may be stricter than a lab-wide minimum. It may not sile
 
 This policy is effective from the date shown above. Material amendments require a Pull Request and a Decision Record. The Founder approves amendments during Stage 0 and retains the reserved authority stated in this policy until a formal governance amendment changes it.
 
-Review this policy at least annually and whenever OFRL changes governance stage, repository ownership, licensing model, or material risk profile. A review may conclude that no change is required; record material conclusions in the decision register.
+Review this policy at least annually and whenever OFRL changes governance stage, repository ownership or account structure, licensing model, or material risk profile. A review may conclude that no change is required; record material conclusions in the decision register.
 
 ## 14. Related policies and references
 
