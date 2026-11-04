@@ -118,13 +118,6 @@ pub struct ValidationReport {
 }
 
 impl ValidationReport {
-    pub(crate) fn accepted() -> Self {
-        Self {
-            input_status: InputStatus::Accepted,
-            diagnostics: Vec::new(),
-        }
-    }
-
     pub(crate) fn rejected(diagnostic: Diagnostic) -> Self {
         Self {
             input_status: InputStatus::Rejected,
