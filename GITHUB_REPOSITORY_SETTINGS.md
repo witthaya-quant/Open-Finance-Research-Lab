@@ -116,6 +116,8 @@ The Rulesets API read-back at 2026-11-04 confirmed **exactly six required entrie
 
 All six exact check runs were present and successful on the PR #14 head targeting `main` and on the PR #18 audit head. The malformed extra context previously observed has been removed. Revalidate after any workflow-name or Ruleset changes.
 
+**Post-merge smoke test:** after PR #18 and the resulting PR #14 changes are merged to `main`, create or use a documentation-only PR to verify that all six required checks still report and complete. This has not yet been performed on `main`.
+
 GitHub documents that checks skipped by path or branch filtering remain pending and can block merges; see [Skipping workflow runs](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs) and [Troubleshooting required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
 
 A workflow that runs only on pushes to the default branch is not sufficient evidence that it protects Pull Requests.
