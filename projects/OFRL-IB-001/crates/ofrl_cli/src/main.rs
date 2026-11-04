@@ -27,7 +27,7 @@ fn run() -> Result<ExitCode, String> {
         );
     }
 
-    let path = path.expect("path presence checked above");
+    let path = path.ok_or_else(|| "Usage: ofrl validate <model-input.json>".to_owned())?;
     let content = fs::read_to_string(&path)
         .map_err(|error| format!("Unable to read input file {path:?}: {error}"))?;
 
