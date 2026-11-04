@@ -479,7 +479,7 @@ function validateManifest(projectDir, folderName, catalogRows, seenIds, validate
         }
 
         const workflowSource = fs.readFileSync(workflowFile, "utf8");
-        if (!/^\\s*pull_request\\s*:/m.test(workflowSource)) {
+        if (!/^\s*pull_request\s*:/m.test(workflowSource)) {
           fail(relativeDir + ": declared validation workflow must run on pull_request: " + workflowPath);
         }
 
