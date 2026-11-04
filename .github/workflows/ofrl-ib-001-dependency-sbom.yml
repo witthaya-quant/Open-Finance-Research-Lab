@@ -40,9 +40,31 @@ jobs:
           rustup default 1.99.1
           rustc --version
           cargo --version
-          cargo install --locked cargo-cyclonedx --version 0.5.9
+
+          TOOL_DIR="$RUNNER_TEMP/ofrl-tools"
+          mkdir -p "$TOOL_DIR/cyclonedx" "$TOOL_DIR/audit" "$HOME/.cargo/bin"
+
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+            "https://github.com/CycloneDX/cyclonedx-rust-cargo/releases/download/cargo-cyclonedx-0.5.9/cargo-cyclonedx-x86_64-unknown-linux-gnu.tar.xz" \
+            -o "$TOOL_DIR/cargo-cyclonedx.tar.xz"
+          echo "fb8dbee9f182173e062a64a387b21a0badc6fab8b2abf9294973f012972bf6d8  $TOOL_DIR/cargo-cyclonedx.tar.xz" \
+            | sha256sum --check -
+          tar -xJf "$TOOL_DIR/cargo-cyclonedx.tar.xz" -C "$TOOL_DIR/cyclonedx"
+          CYCLEDX_BIN="$(find "$TOOL_DIR/cyclonedx" -type f -name cargo-cyclonedx -print -quit)"
+          test -n "$CYCLEDX_BIN"
+          install -m 0755 "$CYCLEDX_BIN" "$HOME/.cargo/bin/cargo-cyclonedx"
+
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+            "https://github.com/rustsec/rustsec/releases/download/cargo-audit/v0.22.2/cargo-audit-x86_64-unknown-linux-gnu-v0.22.2.tgz" \
+            -o "$TOOL_DIR/cargo-audit.tgz"
+          echo "ab28a1bdb54db4d5d8ad5981cf1f959410370b3d28250dbd35f6a44248620e39  $TOOL_DIR/cargo-audit.tgz" \
+            | sha256sum --check -
+          tar -xzf "$TOOL_DIR/cargo-audit.tgz" -C "$TOOL_DIR/audit"
+          AUDIT_BIN="$(find "$TOOL_DIR/audit" -type f -name cargo-audit -print -quit)"
+          test -n "$AUDIT_BIN"
+          install -m 0755 "$AUDIT_BIN" "$HOME/.cargo/bin/cargo-audit"
+
           cargo-cyclonedx --version
-          cargo install --locked cargo-audit --version 0.22.2
           cargo audit --version
 
       - name: Generate separate production and POC SBOMs
