@@ -27,6 +27,7 @@ The POC accepts:
 - -12
 - 123.4500
 - -0.005
+- 0.1234567890123456789012345678 (28 fractional digits)
 
 It rejects:
 
@@ -36,6 +37,8 @@ It rejects:
 - 1.
 - 1e3
 - 1,000
+- -0 and -0.000 (negative zero is not canonical)
+- values with more than 28 fractional digits
 - leading or trailing whitespace
 - NaN and Infinity strings
 
