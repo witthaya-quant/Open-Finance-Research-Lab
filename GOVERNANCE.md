@@ -311,6 +311,7 @@ Review this policy at least annually and whenever OFRL changes governance stage,
 - [Contributing Guide](CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security Policy](SECURITY.md)
+- [Publication and IP Boundary](PUBLICATION_AND_IP_BOUNDARY.md)
 - [GitHub Repository Settings](GITHUB_REPOSITORY_SETTINGS.md)
 - [Decision Register](decisions/README.md)
 - [Decision Record Template](templates/DECISION_RECORD_TEMPLATE.md)
