@@ -154,7 +154,26 @@ These are OFRL-IB-001-specific gates, not requirements imposed on unrelated futu
 5. Verify canonical Decimal outputs against analyst-facing exports.
 6. Obtain independent review or replication before claiming the highest evidence-maturity levels.
 
-## 8. Audit interpretation
+## 8. Remediation state on the proposed branch
+
+| Finding | Proposed remediation in PR #14 | Remaining action |
+|---|---|---|
+| AUD-001 / AUD-012 | Documented branch-control baseline and opened Issue #15 | Account owner must configure and verify GitHub branch protection manually |
+| AUD-002 | Governance and policy package consolidated in this PR | Merge only after full review and CI pass |
+| AUD-003 | Always-running repository policy workflow added | Confirm workflow passes; later select its stable job as a required status check after branch protection is configured |
+| AUD-004 | Dependabot configuration added for current Cargo and Actions ecosystems | Add new ecosystems and project package paths as future projects introduce them |
+| AUD-005 | Dependency policy defines separate workspace/POC lockfiles | Commit the isolated Decimal POC lockfile and use locked CI commands |
+| AUD-006 | Dependency policy identifies npm transitive drift | Commit a package manifest/lockfile and move validator to `npm ci` |
+| AUD-007 | Release Policy and Changelog added | Implement release workflows only when a distributable project artifact is ready |
+| AUD-008 | Release Policy requires SBOM and checksums; Dependency Policy defines the process | Add and test SBOM generation before the first distributable software release |
+| AUD-009 | Account Continuity policy added | Founder must configure MFA/recovery/successor and verify backups personally |
+| AUD-010 | Dependency Policy records the unpinned rustup fallback | Remove or replace the fallback in both Rust workflows, then test both toolchains |
+| AUD-011 | OFRL-IB-001 Decision Log status corrected against implementation | Keep the log synchronized as forecast-engine work proceeds |
+| AUD-016 / AUD-017 / AUD-018 | Project Lifecycle, Project Standards, Project Catalog, Manifest Schema, current manifest, and automated registry validation added | Confirm CI passes and require the same manifest/profile contract for every future project |
+
+The proposed branch does not itself activate repository settings, establish independent review, create an SBOM, or close every dependency finding. A policy is closed only when its corresponding evidence is present.
+
+## 9. Audit interpretation
 
 The audit does not recommend adding a GitHub Organization, changing the public repository to a restrictive source-available licence, adopting a CLA/CAA without a licensing need, or creating Maintainer/Code Owner roles before people are appointed.
 
