@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Model Conventions
 
-**Version:** 0.1.0  
+**Version:** 0.1.1  
 **Status:** Proposed  
 **Purpose:** Fix the initial model mechanics so the same assumptions produce the same statement linkages and validation expectations.
 
@@ -127,7 +127,15 @@ The baseline indirect Cash Flow Statement is:
 
 Net change in cash is the sum of operating, investing, and financing cash flows. Closing cash equals opening cash plus net change in cash.
 
-The model does not automatically fund a cash deficit. Negative cash is an explicit funding-feasibility failure unless a later approved scope extension introduces a defined funding source.
+The model does not automatically fund a cash deficit. Negative forecast cash is a **funding-shortfall diagnostic**, not a valid reportable negative asset balance. If calculated closing cash is below zero:
+
+- Mark Scenario Feasibility as FAIL.
+- Expose the funding shortfall separately as `max(0, -calculated_closing_cash)`.
+- Do not classify the deficit as an overdraft or other liability unless a later approved scope extension explicitly models that facility.
+- Do not present the negative diagnostic cash value as a viable Balance Sheet cash asset in the analyst-facing workbook.
+- Do not force cash to zero or insert debt/equity to make the report appear feasible.
+
+The unadjusted calculated value may be retained in the diagnostic output for traceability, but it must not be mistaken for a funded or reportable forecast.
 
 ## 10. Balance Sheet presentation
 
