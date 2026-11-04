@@ -91,7 +91,7 @@ Founder-led governance does not make the founder's opinions or methods immune fr
 
 Review comments and independent replication should be recorded where practical. A project may document multiple approaches when they serve different contexts or when evidence does not support choosing one over another.
 
-As the lab grows, governance processes may be expanded through documented contributor roles, review procedures, and project maintainers. Any such change should be explicit rather than implied.
+OFRL's governance applies from the founder-maintained stage. [GOVERNANCE.md](GOVERNANCE.md) defines the current single-maintainer controls, future contributor and Maintainer roles, decision rights, review requirements, and the conditions for transferring the repository to a GitHub Organization. Any change of stage or authority must be explicit and documented.
 
 ## 10. What OFRL is not
 
