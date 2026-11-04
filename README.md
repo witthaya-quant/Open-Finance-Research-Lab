@@ -137,7 +137,7 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md) and [RESEARCH_STANDARDS.md](RESEAR
 
 ## Founder
 
-**Kenny**  
+**Kenny (Witthaya Maidee)**  
 Founder, Open Finance Research Lab
 
 OFRL reflects the questions I choose to investigate and the standards I expect of the work. My responsibility is to set the direction, understand the assumptions, and stand behind the methods and conclusions published here.
