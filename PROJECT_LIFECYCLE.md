@@ -26,7 +26,9 @@ Every project admitted under the OFRL name must have:
 - A project README describing purpose, scope, status, and limitations.
 - A project Decision Log.
 - A validation matrix or explicit validation plan proportionate to the project.
-- A project README and type-specific documents created from the templates under [templates/](templates/).
+- A project specification appropriate to its type. A separate Project Charter is useful when it adds clarity, but it may be integrated into the specification rather than duplicated.
+- Type-specific documents created from the templates under [templates/](templates/).
+- A Data Manifest and the `data` validation profile whenever `data_classification` is not `none`, including synthetic datasets.
 - An identified project owner and lifecycle status.
 - Declared project types, risk tier, evidence maturity, licence profile, and data classification.
 - Links to the applicable specification, standards, and supporting artifacts.

@@ -56,11 +56,25 @@ const ALLOWED_RELEASE_STATES = new Set([
   "withdrawn",
 ]);
 
-const BASE_REQUIRED = [
-  "README.md",
-  "DECISION_LOG.md",
-  "VALIDATION_MATRIX.md",
+const BASE_REQUIRED_GROUPS = [
+  { alternatives: ["README.md"] },
+  { alternatives: ["DECISION_LOG.md"] },
+  { alternatives: ["VALIDATION_MATRIX.md", "VALIDATION_PLAN.md"] },
 ];
+
+const ALLOWED_VALIDATION_PROFILES = new Set([
+  "research",
+  "quantitative",
+  "financial_model",
+  "software",
+  "data",
+  "benchmark",
+  "prototype",
+  "security",
+  "privacy",
+  "performance",
+  "integration",
+]);
 
 const TYPE_REQUIREMENTS = {
   research: [["RESEARCH_SPECIFICATION.md", "PROJECT_SPECIFICATION.md"]],
@@ -86,7 +100,7 @@ const TYPE_VALIDATION_PROFILES = {
   software: ["software"],
   data: ["data"],
   benchmark: ["benchmark"],
-  prototype: [],
+  prototype: ["prototype"],
   infrastructure: ["integration", "security"],
 };
 
@@ -128,6 +142,72 @@ function fail(message) {
 
 function isObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function missingBaseDocumentGroups(requiredDocuments) {
+  const documents = Array.isArray(requiredDocuments) ? requiredDocuments : [];
+  return BASE_REQUIRED_GROUPS.filter(
+    (group) => !group.alternatives.some((document) => documents.includes(document))
+  );
+}
+
+function missingTypeValidationProfiles(projectTypes, validationProfiles) {
+  const profiles = Array.isArray(validationProfiles) ? validationProfiles : [];
+  const types = Array.isArray(projectTypes) ? projectTypes : [];
+  const missing = [];
+
+  for (const type of types) {
+    for (const profile of TYPE_VALIDATION_PROFILES[type] || []) {
+      if (!profiles.includes(profile)) missing.push({ type, profile });
+    }
+  }
+  return missing;
+}
+
+function dataPolicyViolations(manifest) {
+  if (!manifest || manifest.data_classification === "none") return [];
+
+  const violations = [];
+  const profiles = Array.isArray(manifest.validation_profiles) ? manifest.validation_profiles : [];
+  const documents = Array.isArray(manifest.required_documents) ? manifest.required_documents : [];
+
+  if (!profiles.includes("data")) {
+    violations.push("non-none data classification requires the 'data' validation profile");
+  }
+  if (!documents.includes("DATA_MANIFEST.md")) {
+    violations.push("non-none data classification requires DATA_MANIFEST.md in required_documents");
+  }
+  return violations;
+}
+
+function releaseStateViolations(manifest) {
+  const violations = [];
+  const lifecycle = manifest?.lifecycle_status;
+  const release = manifest?.release_status;
+  const versionIsPresent = typeof manifest?.version === "string" && manifest.version.trim().length > 0;
+
+  if (release === "pre_release" && lifecycle !== "validation") {
+    violations.push("pre_release artifacts require lifecycle_status 'validation'");
+  }
+
+  if (release === "released") {
+    if (!["released", "maintenance", "deprecated", "archived"].includes(lifecycle)) {
+      violations.push("release_status 'released' requires lifecycle_status released, maintenance, deprecated, or archived");
+    }
+    if (!versionIsPresent) {
+      violations.push("release_status 'released' requires a non-empty version");
+    }
+  }
+
+  if (["released", "maintenance"].includes(lifecycle) && release !== "released") {
+    violations.push("released/maintenance lifecycle requires release_status 'released'");
+  }
+
+  if (release === "withdrawn" && !["deprecated", "archived"].includes(lifecycle)) {
+    violations.push("withdrawn releases must be deprecated or archived");
+  }
+
+  return violations;
 }
 
 function relativeName(filePath) {
@@ -343,11 +423,13 @@ function validateManifest(projectDir, folderName, catalogRows, seenIds, validate
   if (!Array.isArray(manifest.validation_profiles) || manifest.validation_profiles.length === 0) {
     fail(relativeDir + "/project.json: validation_profiles must be a non-empty array");
   } else {
-    for (const type of Array.isArray(manifest.project_types) ? manifest.project_types : []) {
-      for (const profile of TYPE_VALIDATION_PROFILES[type] || []) {
-        if (!manifest.validation_profiles.includes(profile)) {
-          fail(relativeDir + "/project.json: project type '" + type + "' requires validation profile '" + profile + "'");
-        }
+    for (const missing of missingTypeValidationProfiles(manifest.project_types, manifest.validation_profiles)) {
+      fail(relativeDir + "/project.json: project type '" + missing.type + "' requires validation profile '" + missing.profile + "'");
+    }
+
+    for (const profile of manifest.validation_profiles) {
+      if (!ALLOWED_VALIDATION_PROFILES.has(profile)) {
+        fail(relativeDir + "/project.json: unsupported validation profile '" + profile + "'");
       }
     }
   }
@@ -360,10 +442,8 @@ function validateManifest(projectDir, folderName, catalogRows, seenIds, validate
       fail(relativeDir + "/project.json: required_documents contains duplicates");
     }
 
-    for (const required of BASE_REQUIRED) {
-      if (!manifest.required_documents.includes(required)) {
-        fail(relativeDir + "/project.json: required_documents must include " + required);
-      }
+    for (const group of missingBaseDocumentGroups(manifest.required_documents)) {
+      fail(relativeDir + "/project.json: required_documents must include one of: " + group.alternatives.join(", "));
     }
 
     for (const required of manifest.required_documents) {
@@ -403,38 +483,16 @@ function validateManifest(projectDir, folderName, catalogRows, seenIds, validate
     }
   }
 
-  if (["public_source", "licensed", "restricted", "mixed"].includes(manifest.data_classification)) {
-    if (!Array.isArray(manifest.validation_profiles) || !manifest.validation_profiles.includes("data")) {
-      fail(relativeDir + ": non-synthetic data requires the data validation profile");
-    }
+  for (const violation of dataPolicyViolations(manifest)) {
+    fail(relativeDir + ": " + violation);
   }
 
   if (!ALLOWED_RELEASE_STATES.has(manifest.release_status)) {
     fail(relativeDir + "/project.json: invalid release_status '" + manifest.release_status + "'");
   }
 
-  if (manifest.release_status === "pre_release" && manifest.lifecycle_status !== "validation") {
-    fail(relativeDir + ": pre_release artifacts require lifecycle_status 'validation'");
-  }
-
-  if (["released", "maintenance"].includes(manifest.lifecycle_status)) {
-    if (manifest.release_status !== "released") {
-      fail(relativeDir + ": released/maintenance lifecycle requires release_status 'released'");
-    }
-    if (typeof manifest.version !== "string" || manifest.version.trim().length === 0) {
-      fail(relativeDir + ": released/maintenance lifecycle requires a version");
-    }
-  }
-
-  if (manifest.release_status === "released" && typeof manifest.version !== "string") {
-    fail(relativeDir + ": release_status 'released' requires a version");
-  }
-
-  if (
-    manifest.release_status === "withdrawn" &&
-    !["deprecated", "archived"].includes(manifest.lifecycle_status)
-  ) {
-    fail(relativeDir + ": withdrawn releases must be deprecated or archived");
+  for (const violation of releaseStateViolations(manifest)) {
+    fail(relativeDir + ": " + violation);
   }
 
   const workflowTypes = ["software", "data", "benchmark", "infrastructure"];
@@ -571,4 +629,18 @@ function main() {
   for (const entry of projectEntries) console.log("- " + entry.name);
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  ALLOWED_TYPES,
+  ALLOWED_VALIDATION_PROFILES,
+  BASE_REQUIRED_GROUPS,
+  TYPE_REQUIREMENTS,
+  TYPE_VALIDATION_PROFILES,
+  dataPolicyViolations,
+  missingBaseDocumentGroups,
+  missingTypeValidationProfiles,
+  releaseStateViolations,
+};

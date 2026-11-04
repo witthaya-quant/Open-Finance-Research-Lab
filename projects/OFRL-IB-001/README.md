@@ -55,6 +55,7 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Research specification](RESEARCH_SPECIFICATION.md)
 - [Model conventions](MODEL_CONVENTIONS.md)
 - [Validation matrix](VALIDATION_MATRIX.md)
+- [Data manifest](DATA_MANIFEST.md)
 - [Decision log](DECISION_LOG.md)
 - [Engineering architecture](ENGINEERING_ARCHITECTURE.md)
 - [Model input contract](MODEL_INPUT_CONTRACT.md)
