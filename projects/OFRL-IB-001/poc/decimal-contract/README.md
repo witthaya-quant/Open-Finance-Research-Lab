@@ -70,6 +70,19 @@ cargo doc --no-deps
 
 The repository workflow runs the same checks on GitHub Actions. A green POC workflow establishes only that these numeric and interchange tests pass on the recorded runner/toolchain. It does not establish financial-model correctness.
 
+## Observed candidate behaviour
+
+The first GitHub Actions execution on 2026-11-04 exposed an input-boundary hazard in the pinned rust_decimal 1.43.0 candidate: its raw FromStr parser accepted a value with 29 fractional digits and returned a value rounded to the supported 28-digit scale (the tested value became zero).
+
+The POC therefore does not expose raw Decimal parsing as the application input boundary. The Serde adapter now:
+
+1. Rejects fractional text longer than Decimal::MAX_SCALE before parsing.
+2. Parses the value using the pinned Decimal implementation.
+3. Requires Decimal-to-string output to match the original input string exactly.
+4. Rejects the value if scale, sign, or any decimal digit changes.
+
+This is a compensating input guard that must remain covered by tests. It does not turn Decimal into arbitrary-precision arithmetic, and every calculation still requires explicit range and rounding policy.
+
 ## Adoption gate
 
 The Decimal dependency remains a candidate until:
