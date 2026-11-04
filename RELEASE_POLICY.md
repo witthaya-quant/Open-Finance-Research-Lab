@@ -63,7 +63,7 @@ Before a release is approved, confirm:
 4. Known limitations, failed tests, unresolved findings, and unsupported conditions are visible.
 5. Reproduction instructions and dependency/toolchain versions are recorded.
 6. The release artifact corresponds to the reviewed source commit.
-7. Any required SBOM and checksums are attached or linked.
+7. Any required SBOM is generated from the exact reviewed source commit and lockfile, validated against its pinned official schema, and attached or linked together with checksums for the binary, SBOM, lockfile, provenance record, and final bundle.
 8. The release notes do not overstate correctness, statutory compliance, performance, or independent replication.
 
 A failed gate must be fixed or published as an explicit limitation only when the remaining release claim is still accurate and safe. A release cannot claim a validation level whose criteria have not passed.
@@ -77,14 +77,15 @@ A software release should include, where applicable:
 - Supported platform and runtime/toolchain.
 - Build and test commands.
 - Lockfile and dependency graph.
-- SBOM (SPDX or CycloneDX).
-- SHA-256 checksums for distributable artifacts.
+- A complete, target-specific SBOM (SPDX or CycloneDX) generated from the exact release dependency graph. For Cargo binaries, the OFRL baseline is CycloneDX JSON 1.7 with the official schema revision recorded and schema validation passed.
+- SHA-256 checksums for every distributable binary, SBOM, dependency lockfile, provenance record, and packaged release bundle.
+- A build provenance record naming the source commit, target triple, toolchains, build command, SBOM generator revision, and schema revision.
 - Licence and third-party notices.
 - API/schema compatibility notes.
 - Security advisories and known defects.
 - Upgrade, migration, or rollback instructions.
 
-Do not publish binaries that cannot be traced to a reviewed source commit and documented build environment.
+Do not publish binaries that cannot be traced to a reviewed source commit and documented build environment. A CI-generated candidate artifact is validation evidence only; it must not be represented as an approved software release or as evidence that a larger financial model is complete.
 
 ## 6. Research publication record
 

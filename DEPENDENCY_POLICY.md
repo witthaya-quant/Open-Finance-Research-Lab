@@ -105,14 +105,17 @@ For each distributable software release, provide a machine-readable Software Bil
 The release record should identify:
 
 - Source commit and version/tag.
-- Direct and transitive dependencies.
+- Direct and transitive dependencies for the exact target and enabled feature set.
 - Toolchain/runtime version and target platform.
 - Build command and relevant feature flags.
-- SBOM format and generation tool/version.
+- SBOM format, generator version, pinned generator source revision where a published release is not used, and official schema revision.
+- Whether the SBOM was validated against the pinned official schema.
 - Test and validation results.
-- SHA-256 checksums for published binary artifacts.
+- SHA-256 checksums for the binary, SBOM, lockfile, provenance record, and final release bundle.
 
-An SBOM is an inventory, not proof that every dependency is secure, correctly licensed, or free of vulnerabilities. It must be reviewed alongside the dependency and licence records.
+For the OFRL-IB-001 Cargo release-candidate pipeline, the generator is built from the verified upstream `CycloneDX/cyclonedx-rust-cargo` source commit `0da17533c7bbe1f53b24d190d1439de236646a4f` because the published `cargo-cyclonedx` 0.5.9 release predates its merged CycloneDX 1.6/1.7 support. The generator is therefore identified by both its reported package version and its full pinned Git source commit. The pipeline emits CycloneDX JSON 1.7 and validates it against the vendored official 1.7.2 schema set. `SOURCE_DATE_EPOCH` is used to set a reproducible SBOM timestamp and omit the random BOM serial number. This source pin is a tooling choice for the current workflow, not a claim that a new crates.io release has been published.
+
+An SBOM is an inventory, not proof that every dependency is secure, correctly licensed, or free of vulnerabilities. It must be reviewed alongside the dependency and licence records. Schema validity confirms conformance to the selected SBOM format; it does not establish source-level licence correctness, vulnerability absence, or completeness beyond the generator's target/feature configuration.
 
 ## 8. Dependency exceptions
 

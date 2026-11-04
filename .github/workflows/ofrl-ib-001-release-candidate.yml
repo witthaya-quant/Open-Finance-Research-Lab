@@ -1,0 +1,347 @@
+name: OFRL-IB-001 Release Candidate Integrity
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ofrl-ib-001-release-candidate.yml"
+      - "projects/OFRL-IB-001/**"
+      - "fixtures/synthetic/**"
+      - "schemas/vendor/cyclonedx/1.7/**"
+      - "scripts/validate-cyclonedx-sbom.cjs"
+      - "scripts/schema-validator/**"
+      - "templates/RELEASE_RECORD_TEMPLATE.md"
+      - "RELEASE_POLICY.md"
+      - "DEPENDENCY_POLICY.md"
+      - "REPOSITORY_AUDIT.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-candidate:
+    name: Build, validate, and attest candidate bundle
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      TARGET_TRIPLE: x86_64-unknown-linux-gnu
+      APP_TOOLCHAIN: "1.85.0"
+      SBOM_TOOLCHAIN: "1.99.1"
+      SBOM_GENERATOR_REV: "0da17533c7bbe1f53b24d190d1439de236646a4f"
+      SBOM_SCHEMA_RELEASE: "1.7.2"
+      SBOM_SCHEMA_COMMIT: "349314a9d7671d7d2ca5b711a725f49a73979da6"
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || '' }}
+
+    steps:
+      # actions/checkout v7.0.1, pinned to its verified full-length commit SHA.
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      # actions/setup-node v7.0.0, pinned to its verified full-length commit SHA.
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: "22.23.4"
+          package-manager-cache: false
+
+      - name: Pin npm toolchain
+        run: |
+          npm install --global npm@10.9.9 --ignore-scripts --no-audit --no-fund
+          test "$(node --version)" = "v22.23.4"
+          test "$(npm --version)" = "10.9.9"
+
+      - name: Require runner-provided rustup and install declared toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.cargo/bin:$PATH"
+          if ! command -v rustup >/dev/null 2>&1; then
+            echo "::error::rustup is not present on the ubuntu-24.04 runner; refusing to execute a remote bootstrap script." >&2
+            exit 1
+          fi
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          rustup toolchain install "$APP_TOOLCHAIN" --profile minimal --component rustfmt --component clippy
+          rustup toolchain install "$SBOM_TOOLCHAIN" --profile minimal
+          rustc +"$APP_TOOLCHAIN" --version
+          cargo +"$APP_TOOLCHAIN" --version
+          rustc +"$SBOM_TOOLCHAIN" --version
+          cargo +"$SBOM_TOOLCHAIN" --version
+
+      - name: Establish reproducible build inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_COMMIT="$(git rev-parse HEAD)"
+          SOURCE_DATE_EPOCH="$(git show -s --format=%ct "$SOURCE_COMMIT")"
+          VERSION="$(sed -nE 's/^version = "([^"]+)"$/\1/p' projects/OFRL-IB-001/crates/ofrl_cli/Cargo.toml | head -n 1)"
+          test -n "$SOURCE_COMMIT"
+          test -n "$SOURCE_DATE_EPOCH"
+          test -n "$VERSION"
+          echo "SOURCE_COMMIT=$SOURCE_COMMIT" >> "$GITHUB_ENV"
+          echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> "$GITHUB_ENV"
+          echo "CARGO_BUILD_TARGET=$TARGET_TRIPLE" >> "$GITHUB_ENV"
+          echo "CANDIDATE_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "SBOM_GENERATOR_REPOSITORY=https://github.com/CycloneDX/cyclonedx-rust-cargo" >> "$GITHUB_ENV"
+          echo "SBOM_SCHEMA_SOURCE=https://github.com/CycloneDX/specification/tree/$SBOM_SCHEMA_RELEASE/schema" >> "$GITHUB_ENV"
+          echo "Build source: $SOURCE_COMMIT"
+          echo "SOURCE_DATE_EPOCH: $SOURCE_DATE_EPOCH"
+          echo "Candidate component version: $VERSION"
+          echo "Target: $TARGET_TRIPLE"
+
+      - name: Validate the existing model-input schema and fixture
+        run: bash scripts/validate-ofrl-ib-001-model-input-schema.sh
+
+      - name: Verify the locked application dependency graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +"$APP_TOOLCHAIN" metadata \
+            --locked \
+            --format-version 1 \
+            --manifest-path projects/OFRL-IB-001/Cargo.toml > "$RUNNER_TEMP/ofrl-cargo-metadata.json"
+          cargo +"$APP_TOOLCHAIN" tree \
+            --locked \
+            --manifest-path projects/OFRL-IB-001/Cargo.toml \
+            -p ofrl_cli \
+            --edges normal,build > "$RUNNER_TEMP/ofrl-dependency-tree.txt"
+          sha256sum projects/OFRL-IB-001/Cargo.lock
+
+      - name: Build the documented input-validation CLI on the declared MSRV
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +"$APP_TOOLCHAIN" build \
+            --locked \
+            --release \
+            --manifest-path projects/OFRL-IB-001/Cargo.toml \
+            --package ofrl_cli \
+            --target "$TARGET_TRIPLE"
+          CLI="./projects/OFRL-IB-001/target/$TARGET_TRIPLE/release/ofrl_cli"
+          test -x "$CLI"
+          "$CLI" validate fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json
+          echo "CLI_PATH=$CLI" >> "$GITHUB_ENV"
+
+      - name: Install pinned CycloneDX generator source revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +"$SBOM_TOOLCHAIN" install \
+            --git https://github.com/CycloneDX/cyclonedx-rust-cargo.git \
+            --rev "$SBOM_GENERATOR_REV" \
+            --locked \
+            --package cargo-cyclonedx \
+            --root "$RUNNER_TEMP/cyclonedx-generator"
+          echo "$RUNNER_TEMP/cyclonedx-generator/bin" >> "$GITHUB_PATH"
+          export PATH="$RUNNER_TEMP/cyclonedx-generator/bin:$PATH"
+          cargo +"$SBOM_TOOLCHAIN" cyclonedx --version
+          cargo +"$SBOM_TOOLCHAIN" cyclonedx --help | grep -q -- "--spec-version"
+
+      - name: Generate target-specific CycloneDX 1.7 SBOM from the locked graph
+        shell: bash
+        env:
+          CARGO_NET_OFFLINE: "true"
+        run: |
+          set -euo pipefail
+          cargo +"$SBOM_TOOLCHAIN" cyclonedx \
+            --manifest-path projects/OFRL-IB-001/Cargo.toml \
+            --format json \
+            --describe binaries \
+            --all \
+            --target "$TARGET_TRIPLE" \
+            --target-in-filename \
+            --spec-version 1.7 \
+            --license-strict
+          mapfile -t SBOMS < <(find projects/OFRL-IB-001 -maxdepth 1 -type f -name "ofrl_cli_*_$TARGET_TRIPLE.cdx.json" -print)
+          if [[ "${#SBOMS[@]}" -ne 1 ]]; then
+            echo "::error::Expected exactly one binary-specific SBOM; found ${#SBOMS[@]}." >&2
+            printf '%s\n' "${SBOMS[@]}" >&2
+            exit 1
+          fi
+          echo "SBOM_SOURCE_PATH=${SBOMS[0]}" >> "$GITHUB_ENV"
+          echo "Generated SBOM: ${SBOMS[0]}"
+
+      - name: Confirm SBOM generation did not modify the application lockfile
+        run: git diff --exit-code HEAD -- projects/OFRL-IB-001/Cargo.lock
+
+      - name: Validate CycloneDX 1.7 schema and dependency semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          NODE_PATH="$GITHUB_WORKSPACE/scripts/schema-validator/node_modules" \
+            node scripts/validate-cyclonedx-sbom.cjs "$SBOM_SOURCE_PATH" "$TARGET_TRIPLE"
+          cp "$SBOM_SOURCE_PATH" "$RUNNER_TEMP/ofrl-invalid-sbom.cdx.json"
+          node - "$RUNNER_TEMP/ofrl-invalid-sbom.cdx.json" <<'NODE'
+          const fs = require("node:fs");
+          const file = process.argv[2];
+          const bom = JSON.parse(fs.readFileSync(file, "utf8"));
+          bom.specVersion = "1.6";
+          fs.writeFileSync(file, JSON.stringify(bom));
+          NODE
+          set +e
+          NODE_PATH="$GITHUB_WORKSPACE/scripts/schema-validator/node_modules" \
+            node scripts/validate-cyclonedx-sbom.cjs "$RUNNER_TEMP/ofrl-invalid-sbom.cdx.json" "$TARGET_TRIPLE"
+          status=$?
+          set -e
+          if [[ "$status" -eq 0 ]]; then
+            echo "::error::SBOM validator accepted an intentionally invalid CycloneDX version." >&2
+            exit 1
+          fi
+
+      - name: Assemble checksummed candidate bundle and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST="$RUNNER_TEMP/ofrl-ib-001-release-candidate"
+          mkdir -p "$DIST"
+          cp "$CLI_PATH" "$DIST/ofrl_cli"
+          cp "$SBOM_SOURCE_PATH" "$DIST/ofrl_cli.cdx.json"
+          cp projects/OFRL-IB-001/Cargo.lock "$DIST/Cargo.lock"
+          cp "$RUNNER_TEMP/ofrl-dependency-tree.txt" "$DIST/DEPENDENCY_TREE.txt"
+
+          python3 - "$DIST/release-provenance.json" "$DIST" <<'PY'
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import subprocess
+          import sys
+
+          output = pathlib.Path(sys.argv[1])
+          bundle = pathlib.Path(sys.argv[2])
+
+          def sha256(path):
+              digest = hashlib.sha256()
+              with path.open("rb") as stream:
+                  for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                      digest.update(chunk)
+              return digest.hexdigest()
+
+          commit = os.environ["SOURCE_COMMIT"]
+          tree = subprocess.check_output(
+              ["git", "rev-parse", f"{commit}^{{tree}}"], text=True
+          ).strip()
+          result = {
+              "record_type": "release_candidate_build_provenance",
+              "release_status": "candidate_only_not_published",
+              "source": {
+                  "repository": os.environ["GITHUB_REPOSITORY"],
+                  "checked_out_commit": commit,
+                  "source_tree": tree,
+                  "pull_request_head": os.environ.get("PR_HEAD_SHA") or None,
+                  "ref": os.environ.get("GITHUB_REF"),
+              },
+              "component": {
+                  "name": "ofrl_cli",
+                  "version": os.environ["CANDIDATE_VERSION"],
+                  "purpose": "OFRL-IB-001 input-contract and historical-semantic validation CLI",
+                  "target_triple": os.environ["TARGET_TRIPLE"],
+                  "scope_warning": (
+                      "This is not the integrated three-statement forecast model. "
+                      "Forecast calculation, Scenario Feasibility, and analyst-facing XLSX "
+                      "export remain unimplemented."
+                  ),
+              },
+              "build": {
+                  "toolchain": os.environ["APP_TOOLCHAIN"],
+                  "command": (
+                      "cargo +1.85.0 build --locked --release --manifest-path "
+                      "projects/OFRL-IB-001/Cargo.toml --package ofrl_cli "
+                      "--target x86_64-unknown-linux-gnu"
+                  ),
+                  "source_date_epoch": int(os.environ["SOURCE_DATE_EPOCH"]),
+                  "reproducibility_note": (
+                      "SOURCE_DATE_EPOCH is also passed to the SBOM generator. "
+                      "The generator omits its random serialNumber and fixes the SBOM timestamp."
+                  ),
+              },
+              "sbom": {
+                  "format": "CycloneDX JSON",
+                  "specification_version": "1.7",
+                  "official_schema_release": os.environ["SBOM_SCHEMA_RELEASE"],
+                  "official_schema_source_commit": os.environ["SBOM_SCHEMA_COMMIT"],
+                  "generator": {
+                      "name": "cargo-cyclonedx",
+                      "reported_package_version": "0.5.9",
+                      "source_repository": os.environ["SBOM_GENERATOR_REPOSITORY"],
+                      "source_commit": os.environ["SBOM_GENERATOR_REV"],
+                      "toolchain": os.environ["SBOM_TOOLCHAIN"],
+                  },
+                  "generation_command": (
+                      "CARGO_NET_OFFLINE=true cargo +1.99.1 cyclonedx "
+                      "--manifest-path projects/OFRL-IB-001/Cargo.toml "
+                      "--format json --describe binaries --all "
+                      "--target x86_64-unknown-linux-gnu --target-in-filename "
+                      "--spec-version 1.7 --license-strict"
+                  ),
+                  "schema_validation": "PASS",
+                  "negative_schema_gate": "PASS",
+              },
+              "dependencies": {
+                  "lockfile": "Cargo.lock",
+                  "lockfile_sha256": sha256(bundle / "Cargo.lock"),
+                  "tree_file": "DEPENDENCY_TREE.txt",
+              },
+              "artifacts": {
+                  "binary": {
+                      "path": "ofrl_cli",
+                      "sha256": sha256(bundle / "ofrl_cli"),
+                  },
+                  "sbom": {
+                      "path": "ofrl_cli.cdx.json",
+                      "sha256": sha256(bundle / "ofrl_cli.cdx.json"),
+                  },
+              },
+              "security_and_licensing": {
+                  "vulnerability_scan_performed": False,
+                  "source_level_licence_notice_review_complete": False,
+                  "statement": (
+                      "SBOM schema validation is not a vulnerability scan or legal opinion. "
+                      "Source-level licence/notice and security review remain release gates."
+                  ),
+              },
+              "publication": {
+                  "github_release_created": False,
+                  "approval_granted": False,
+                  "independent_review_claimed": False,
+              },
+          }
+          output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+          PY
+
+          (
+            cd "$DIST"
+            sha256sum ofrl_cli Cargo.lock DEPENDENCY_TREE.txt ofrl_cli.cdx.json release-provenance.json > SHA256SUMS
+            sha256sum -c SHA256SUMS
+          )
+
+          BUNDLE_NAME="ofrl-ib-001-${CANDIDATE_VERSION}-candidate-${SOURCE_COMMIT:0:12}-${TARGET_TRIPLE}.tar.gz"
+          tar --sort=name \
+            --mtime="@${SOURCE_DATE_EPOCH}" \
+            --owner=0 --group=0 --numeric-owner \
+            -cf - -C "$DIST" . | gzip -n > "$RUNNER_TEMP/$BUNDLE_NAME"
+          (
+            cd "$RUNNER_TEMP"
+            sha256sum "$BUNDLE_NAME" > "$BUNDLE_NAME.sha256"
+            sha256sum -c "$BUNDLE_NAME.sha256"
+          )
+          echo "BUNDLE_PATH=$RUNNER_TEMP/$BUNDLE_NAME" >> "$GITHUB_ENV"
+          echo "BUNDLE_CHECKSUM_PATH=$RUNNER_TEMP/$BUNDLE_NAME.sha256" >> "$GITHUB_ENV"
+          echo "Candidate archive: $BUNDLE_NAME"
+
+      # actions/upload-artifact v7.0.2, pinned to the verified full-length release commit.
+      - name: Upload inspectable candidate bundle (not a GitHub Release)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ofrl-ib-001-release-candidate
+          path: |
+            ${{ env.BUNDLE_PATH }}
+            ${{ env.BUNDLE_CHECKSUM_PATH }}
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
