@@ -66,8 +66,7 @@ fn read_bounded_utf8<R: Read>(reader: R) -> Result<String, String> {
         ));
     }
 
-    String::from_utf8(bytes)
-        .map_err(|error| format!("Input document is not valid UTF-8: {error}"))
+    String::from_utf8(bytes).map_err(|error| format!("Input document is not valid UTF-8: {error}"))
 }
 
 #[cfg(test)]
