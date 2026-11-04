@@ -490,10 +490,36 @@ A non-goal can be added only through a versioned scope change and new validation
 
 This design describes the target system, not a claim that all target components exist.
 
-- The production input/schema/historical validator is on `main`.
-- The numeric comparison, 800 independent expected outputs and SBOM/RustSec workflow are in open Draft PR #11.
-- The schema validator lockfile is in open Draft PR #12; a shared Schema/Rust corpus is still required.
-- The bounded CLI input reader and this system design are in open Draft PR #13.
-- Production forecast calculations, Structural Integrity/Scenario Feasibility evaluation, ModelRun provenance and XLSX generation are not implemented on `main`.
+### Implemented on main
 
-PR-only evidence must not be presented as merged release capability. The Numeric Profile and independent finance/accounting review are mandatory before production forecast calculations begin.
+- Versioned model input schema, canonical synthetic fixture, Rust typed input and historical semantic validator.
+- Active repository Ruleset with exactly six required GitHub Actions contexts.
+- Always-running repository policy workflow and project/portfolio registry validation.
+- OFRL validation workflows that run without path filters on Rust 1.85.0 and 1.99.1.
+- Isolated Decimal Contract POC Cargo.lock and locked validation commands.
+- Preview-only CycloneDX 1.5 SBOM and checksum workflow for the existing Linux CLI input validator. This is not a forecast-model release.
+
+The governance/supply-chain sequence was integrated through PR #14 (including PRs #18, #20 and #22) as main commit `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`. Post-merge documentation-only and project-code smoke PRs both reported and passed all six required contexts; both were closed without merging.
+
+### Branch-local implementation evidence
+
+PR #13 remains Draft and unmerged. Its branch contains:
+
+- Engineering Audit and this System Design.
+- Bounded CLI input reader (1 MiB limit, max-plus-one read, invalid UTF-8 rejection).
+- Versioned positive/negative Schema/Rust shared contract corpus.
+- Implementation Roadmap.
+- Numeric Profile Decision Worksheet.
+- Symbolic Numeric Profile Derivation and backend decision basis.
+
+The implementation baseline passed the five applicable project checks before the governance workflow was merged into main. The branch is now behind/diverged from current main and must be synchronized, conflicts reconciled, and all six required contexts rerun on the refreshed head. PR-only code and documentation must not be presented as merged production capability.
+
+### Open research and approval gates
+
+- PR #11 remains Draft and contains independent exact-rational arithmetic research, candidate comparison, 800 expected outputs, point-in-time SBOM/RustSec research and non-gating timing observations.
+- PR #12 remains Draft and contains schema validator tooling/lockfile work.
+- No Numeric Profile or production arithmetic backend has been approved.
+- Independent Finance/Accounting approval and source-level dependency licence/security acceptance are not evidenced.
+- Production forecast calculations, Structural Integrity / Scenario Feasibility evaluation, canonical ModelRun provenance and XLSX generation are not implemented on main.
+
+The Numeric Profile and independent Finance/Accounting review are mandatory before production forecast calculations begin. A green CI run or preview SBOM is not model-policy approval or an official software release.
