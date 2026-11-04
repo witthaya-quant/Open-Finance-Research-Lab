@@ -4,7 +4,7 @@
 
 **Audit ID:** OFRL-AUDIT-2026-001  
 **Audit date:** 2026-11-04  
-**Scope:** Repository governance, research operations, software engineering controls, dependencies, CI/CD, publication, and project maturity  
+**Scope:** Repository-wide governance and operating controls for every current and future project, including project registration, research operations, software engineering, dependencies, CI/CD, data, publication, release, and project maturity  
 **Audit owner:** Founder / Principal Maintainer  
 **Status:** Baseline assessment; remediation tracked through Pull Requests and Issues
 
@@ -22,7 +22,7 @@ This audit separates three states:
 
 ## 2. Scope and evidence boundary
 
-The audit inspected the default branch, repository metadata, existing workflows, current OFRL-IB-001 specifications, source files, tests, and the proposed documentation branch for PR #14.
+The audit inspected the default branch, repository metadata, current project inventory, existing workflows, OFRL-IB-001 specifications/source/tests, and the proposed governance and portfolio-control branch for PR #14. At the snapshot, OFRL-IB-001 was the only project directory under `projects/`; the audit therefore assessed the universal controls required for future projects separately from the detailed maturity of the current project.
 
 At the audit snapshot:
 
@@ -77,6 +77,9 @@ Priority definitions:
 | AUD-013 | P2 | Advanced Security settings are not verified | Connector access did not establish Dependabot alert, secret scanning, push protection, or code-scanning configuration state | Review the repository's Security and analysis settings; record each control as enabled, unavailable, or not applicable |
 | AUD-014 | P2 | No CODEOWNERS file | There is currently one active Maintainer; a nominal code owner would not create independent review | Add CODEOWNERS only when real domain owners are appointed |
 | AUD-015 | P2 | No separate support or service-level commitment | OFRL is a Founder-maintained research project, not an operated support service | Do not promise response times or support obligations until resources and scope are defined |
+| AUD-016 | P1 | No portfolio-wide project identity and admission contract on `main` | The only existing project has rich project documents, but no common manifest schema, lifecycle state contract, or automated registration rule existed at the audit baseline | Add a universal project lifecycle, manifest schema, catalog, type/risk profiles, and automated consistency check for every folder under `projects/` |
+| AUD-017 | P1 | Project standards were not generalized by project type | Existing documentation is strongest for financial modelling and research; future data, software, benchmark, infrastructure, and prototype projects could be admitted without a common type-specific gate | Define technology-neutral universal requirements and project-type validation profiles; do not copy OFRL-IB-001 requirements mechanically |
+| AUD-018 | P1 | Project metadata and catalog could drift | No machine-readable project manifest or CI catalog reconciliation existed at the audit baseline | Require `project.json` per project and validate IDs, directory names, required documents, risk tier, release state, and catalog entry in CI |
 
 ## 5. OFRL-IB-001 maturity assessment
 
@@ -99,7 +102,23 @@ The current project status must be described precisely:
 
 The project's overall Evidence Maturity Level 0 is a project-level status, not a denial that the input validator has been implemented. The validator has its own implementation evidence; the financial model itself remains proposed/exploratory until the forecast engine and release gates are completed.
 
-## 6. Recommended remediation sequence
+## 6. Portfolio-wide project-control assessment
+
+At the audit baseline, `projects/OFRL-IB-001` was the only registered project directory. Its specification is unusually detailed, but the repository had not yet formalized a contract that a second project—such as a quantitative research study, software library, dataset, benchmark, prototype, or infrastructure tool—must follow.
+
+The new portfolio-control design proposed in this PR adds:
+
+- A universal project lifecycle from proposal through archival.
+- A project manifest schema and a manifest for OFRL-IB-001.
+- A human-readable catalog linked to machine-readable manifests.
+- Technology-neutral project types and risk tiers R0–R3.
+- Universal requirements plus additive profiles for research, quantitative research, financial models, software, data, benchmarks, prototypes, and infrastructure.
+- An automated registry validator that checks every immediate project directory and requires project ID, manifest, baseline documents, type-specific documents, and catalog registration.
+- A repository workflow that runs these checks on every Pull Request, not only when OFRL-IB-001 files change.
+
+These controls are proposed on the PR branch and do not apply to `main` until the PR is merged and its CI passes. The automated registry check validates project metadata and document structure; it does not claim to run every project's domain-specific tests. Each project remains responsible for its own test/build/security workflows according to its manifest and risk tier.
+
+## 7. Recommended remediation sequence
 
 ### Gate A — Protect the source of truth
 
@@ -126,6 +145,8 @@ The project's overall Evidence Maturity Level 0 is a project-level status, not a
 
 ### Gate D — Continue financial-model research
 
+These are OFRL-IB-001-specific gates, not requirements imposed on unrelated future projects:
+
 1. Close the model-specific Numeric Envelope and error budget.
 2. Build an independent financial model benchmark for all forecast years.
 3. Implement typed forecast schedules and the integrated three statements.
@@ -133,7 +154,7 @@ The project's overall Evidence Maturity Level 0 is a project-level status, not a
 5. Verify canonical Decimal outputs against analyst-facing exports.
 6. Obtain independent review or replication before claiming the highest evidence-maturity levels.
 
-## 7. Audit interpretation
+## 8. Audit interpretation
 
 The audit does not recommend adding a GitHub Organization, changing the public repository to a restrictive source-available licence, adopting a CLA/CAA without a licensing need, or creating Maintainer/Code Owner roles before people are appointed.
 
