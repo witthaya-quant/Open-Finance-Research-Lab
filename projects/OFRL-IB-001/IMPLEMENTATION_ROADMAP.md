@@ -54,11 +54,13 @@ Deliverables:
 - Delivery roadmap and PR sequence.
 - Corrected implementation-status documents.
 - Explicit statement of the existing validator's numeric coupling and diagnostic limitations.
+- CLI input-read bound (1 MiB), UTF-8 validation and regression tests, implemented on the enterprise-foundation branch.
 
 Exit criteria:
 - Main-branch documentation matches delivered code.
 - Architecture preserves a single Rust calculation authority.
 - No production numeric backend is selected by assumption.
+- CLI transport boundary rejects oversized and invalid UTF-8 documents deterministically.
 - Blockers and owners/evidence are visible.
 
 ### Phase 2 — Numeric, dependency and independent-model gates
