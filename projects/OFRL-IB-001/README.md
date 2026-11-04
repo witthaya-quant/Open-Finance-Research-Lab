@@ -4,7 +4,7 @@
 
 > **Division:** Financial Modelling & Valuation  
 > **Project ID:** OFRL-IB-001  
-> **Status:** Input-contract and schema-validation stage; calculation engine not started  
+> **Status:** Rust runtime semantic-validator implementation; forecast calculation engine not started  
 > **Evidence maturity:** 0 / Proposed  
 > **Specification version:** 0.1.0  
 > **Project owner:** Kenny
@@ -54,6 +54,7 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Model input contract](MODEL_INPUT_CONTRACT.md)
 - [Numeric envelope](NUMERIC_ENVELOPE.md)
 - [Validation and error contract](VALIDATION_ERROR_CONTRACT.md)
+- [Rust runtime semantic validator](RUNTIME_VALIDATOR.md)
 - [Synthetic reference case A](SYNTHETIC_REFERENCE_CASE.md)
 - [Model input JSON Schema](../../schemas/ofrl-ib-001-model-input-0.1.0.schema.json)
 - [Synthetic Case A input fixture](../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json)
@@ -66,7 +67,7 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 
 **No production financial calculation engine, CLI, or workbook has been released.** An isolated Decimal/JSON/CSV contract POC has passed its defined tests on Rust 1.85.0 and 1.99.1. The current work is defining and validating the full model-input contract and synthetic fixture before implementing the production Rust domain validator and calculation core.
 
-The Draft 2020-12 schema, positive synthetic input fixture, and negative-fixture validation script are now present on the input-contract branch. Their GitHub Actions run is the acceptance gate for this design stage.
+The Draft 2020-12 schema and deterministic synthetic input fixture are merged to main. The Rust runtime semantic validator and CLI are now being implemented on a separate branch. They remain unaccepted until the full Rust CI matrix passes. The forecast calculation engine and workbook have not started.
 
 ## Out of scope for the first release
 
