@@ -21,6 +21,7 @@ on:
       - "fixtures/synthetic/**"
       - "scripts/validate-ofrl-ib-001-model-input-schema.sh"
       - "scripts/validate-ofrl-ib-001-model-input-schema.cjs"
+      - "scripts/schema-validator/**"
   workflow_dispatch:
 
 permissions:
@@ -93,6 +94,28 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+
+      # actions/setup-node v7.1.0, pinned to its verified release commit.
+      - name: Set up pinned Node.js and npm
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: "22.23.4"
+          check-latest: false
+
+      - name: Verify Node.js and npm toolchain
+        run: |
+          test "$(node --version)" = "v22.23.4"
+          test "$(npm --version)" = "10.9.9"
+          node --version
+          npm --version
+
+      # Temporary bootstrap step. Remove after the generated lockfile has
+      # been committed; the normal verification script already uses npm ci.
+      - name: Bootstrap package-lock for initial commit
+        working-directory: scripts/schema-validator
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          base64 --wrap=0 package-lock.json
 
       - name: Validate Draft 2020-12 schema and fixtures
         run: bash scripts/validate-ofrl-ib-001-model-input-schema.sh
