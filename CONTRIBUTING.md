@@ -35,6 +35,12 @@ For a code contribution, explain the problem being solved, the approach taken, t
 
 Substantial research contributions should follow [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md). A proposal does not need to be fully developed before discussion, but it should make the intended question and evidence requirements clear.
 
+OFRL welcomes established methods, alternative methods, independent implementations, replications, and well-reasoned challenges to existing work. A contributor does not need to agree with the founder or the current project approach to participate.
+
+When proposing an alternative, explain the problem it is intended to solve, the conditions under which it may be useful, the assumptions it makes, and how its results could be examined. Do not present novelty or personal confidence as evidence of superiority.
+
+Where approaches serve different objectives or perform differently under different constraints, it may be more useful to document those trade-offs than to force a single winner. A conclusion that the evidence is insufficient to choose between methods is acceptable when that is what the work supports.
+
 ## Code contributions
 
 Where relevant, include:
@@ -68,6 +74,10 @@ OFRL does not require a separate CLA for ordinary contributions at this stage.
 ## Review approach
 
 Reviews should focus on correctness, evidence, clarity, reproducibility, and scope. Disagreement is welcome when it is reasoned and supported. A review comment should identify the issue, explain its impact, and, where possible, suggest a test or correction.
+
+Review the contribution, not the contributor's credentials, seniority, reputation, or personal background. The founder's work and assumptions are open to the same scrutiny as anyone else's. Reviewers should be specific about whether a concern is a correctness issue, an evidence gap, a difference in modelling assumptions, a trade-off, or a matter of project scope.
+
+A contribution is not accepted simply because it is different or novel; nor should a sound alternative be rejected merely because it differs from the current implementation. Acceptance depends on the contribution's relevance, quality, rights, and maintainability. When a project needs to retain more than one approach, document the scope and trade-offs rather than treating disagreement itself as a defect.
 
 ## Conduct
 
