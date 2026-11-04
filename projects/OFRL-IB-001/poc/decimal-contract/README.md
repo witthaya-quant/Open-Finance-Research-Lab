@@ -86,6 +86,27 @@ The POC therefore does not expose raw Decimal parsing as the application input b
 
 This is a compensating input guard that must remain covered by tests. It does not turn Decimal into arbitrary-precision arithmetic, and every calculation still requires explicit range and rounding policy.
 
+## CI result recorded on 2026-11-04
+
+The successful GitHub Actions run checked the exact PR head commit on two toolchains:
+
+- Rust 1.85.0: formatting PASS, Clippy PASS, 9 tests PASS, documentation build PASS.
+- Rust 1.99.1: formatting PASS, Clippy PASS, 9 tests PASS, documentation build PASS.
+
+Both toolchains reported the same Decimal division outputs:
+
+| Expression | Output | Scale |
+|---|---|---:|
+| 1 / 365 | 0.0027397260273972602739726027 | 28 |
+| 1 / 3 | 0.3333333333333333333333333333 | 28 |
+| (1 / 3) × 3 | 0.9999999999999999999999999999 | 28 |
+
+These values confirm finite-scale division behaviour. The POC does not claim exact rational arithmetic.
+
+Run: [GitHub Actions — Decimal Contract POC](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41763010734)
+
+Dependency metadata, licence identifiers, MSRV interpretation, lockfile status, and remaining review gates are recorded in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md).
+
 ## Adoption gate
 
 The Decimal dependency remains a candidate until:
@@ -95,6 +116,6 @@ The Decimal dependency remains a candidate until:
 3. Actual 1/365 and repeating-division outputs are recorded.
 4. Maximum usable scale/range and failure behaviour are documented.
 5. JSON/CSV string round-trip and invalid-token rejection pass.
-6. Direct/transitive dependencies, versions, licences, and MSRV are reviewed.
+6. Direct dependency versions, licences, and MSRV are reviewed in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md). The complete transitive inventory, SBOM, lockfile, and security review remain open.
 
 If the candidate fails an acceptance requirement, evaluate an alternative Decimal representation before beginning the full model engine. Do not weaken the required input/output contract solely to make a candidate pass.
