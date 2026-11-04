@@ -483,7 +483,7 @@ function validateManifest(projectDir, folderName, catalogRows, seenIds, validate
           fail(relativeDir + ": declared validation workflow must run on pull_request: " + workflowPath);
         }
 
-        const hasPathFilter = /^\\s*paths\\s*:/m.test(workflowSource);
+        const hasPathFilter = /^\s*paths\s*:/m.test(workflowSource);
         if (hasPathFilter && !workflowSource.includes("projects/" + folderName + "/")) {
           fail(relativeDir + ": path-filtered validation workflow must include projects/" + folderName + "/: " + workflowPath);
         }
