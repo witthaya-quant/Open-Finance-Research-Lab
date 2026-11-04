@@ -225,3 +225,48 @@ fn fifty_two_week_annual_period_is_accepted() {
     let report = validate(&value);
     assert_eq!(report.input_status, InputStatus::Accepted, "{:#?}", report.diagnostics);
 }
+
+
+#[test]
+fn historical_cash_flow_closing_cash_must_tie_to_balance_sheet() {
+    let mut value = payload();
+    value["historical_periods"][1]["cash_flow_statement"]["closing_cash"] = json!("999.0");
+    let report = validate(&value);
+    assert!(has_code(&report, DiagnosticCode::HistoricalCashTieoutFailed));
+}
+
+#[test]
+fn historical_retained_earnings_must_roll_forward() {
+    let mut value = payload();
+    value["historical_periods"][1]["balance_sheet"]["retained_earnings"] = json!("999.0");
+    let report = validate(&value);
+    assert!(has_code(&report, DiagnosticCode::HistoricalRetainedEarningsFailed));
+}
+
+#[test]
+fn historical_share_capital_movement_is_rejected() {
+    let mut value = payload();
+    value["historical_periods"][1]["balance_sheet"]["share_capital"] = json!("1001.0");
+    let report = validate(&value);
+    assert!(has_code(&report, DiagnosticCode::ShareCapitalMovementUnsupported));
+}
+
+#[test]
+fn duplicate_period_identifiers_are_rejected() {
+    let mut value = payload();
+    value["forecast_periods"][0]["period_id"] = value["historical_periods"][2]["period_id"].clone();
+    let report = validate(&value);
+    assert!(has_code(&report, DiagnosticCode::PeriodIdDuplicate));
+}
+
+#[test]
+fn cash_flow_component_reconciliation_is_rejected() {
+    let mut value = payload();
+    value["historical_periods"][1]["cash_flow_statement"]["cash_from_operations"] =
+        json!("123.0");
+    let report = validate(&value);
+    assert!(has_code(
+        &report,
+        DiagnosticCode::HistoricalCashFlowReconciliationFailed
+    ));
+}
