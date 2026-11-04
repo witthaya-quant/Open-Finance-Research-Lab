@@ -1,0 +1,78 @@
+name: Technical or Model Issue
+description: Report a reproducible defect in OFRL code, models, schemas, validation, or documentation.
+title: "[Issue]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve OFRL. Please report observable behaviour and include a minimal reproduction where possible. Do not upload credentials, confidential employer or client information, restricted datasets, or private strategy details. Use the Security Policy for suspected vulnerabilities.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Rust application / library
+        - Financial calculations / model logic
+        - Input schema / data contract
+        - Decimal / numerical behaviour
+        - Validation / diagnostics
+        - CI / build / dependencies
+        - Documentation / research specification
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version, release, or commit
+      description: Provide a release tag or full commit SHA where possible.
+      placeholder: "e.g. commit SHA"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What should happen under the documented specification?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: What happened? Include diagnostic code, exit status, or relevant output.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include sanitized input, commands, steps, and environment details sufficient to reproduce the issue.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact and scope
+      description: State which result, calculation, interface, or workflow may be affected. Identify whether a workaround exists.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Additional evidence
+      description: Add relevant test names, expected invariants, references, or sanitized logs.
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmations
+      options:
+        - label: I have not included secrets, personal data, confidential employer/client information, or restricted source data.
+          required: true
+        - label: This is not a security vulnerability report. I will use the private route in SECURITY.md for suspected vulnerabilities.
+          required: true
