@@ -57,7 +57,7 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Rust runtime semantic validator](RUNTIME_VALIDATOR.md)
 - [Synthetic reference case A](SYNTHETIC_REFERENCE_CASE.md)
 - [Engineering audit](ENGINEERING_AUDIT.md)
-- [Enterprise target design](ENTERPRISE_DESIGN.md)
+- [System Design and Control Architecture](SYSTEM_DESIGN.md)
 - [Implementation roadmap](IMPLEMENTATION_ROADMAP.md)
 - [Model input JSON Schema](../../schemas/ofrl-ib-001-model-input-0.1.0.schema.json)
 - [Synthetic Case A input fixture](../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json)
