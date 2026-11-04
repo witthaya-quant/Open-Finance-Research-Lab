@@ -16,6 +16,7 @@ on:
       - "projects/OFRL-IB-001/RUNTIME_VALIDATOR.md"
       - "schemas/ofrl-ib-001-model-input-0.1.0.schema.json"
       - "fixtures/synthetic/**"
+      - "fixtures/contracts/**"
   workflow_dispatch:
 
 permissions:
