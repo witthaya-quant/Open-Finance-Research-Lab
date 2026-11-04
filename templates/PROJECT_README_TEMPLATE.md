@@ -7,7 +7,7 @@
 > **Risk tier:** R0 | R1 | R2 | R3  
 > **Evidence maturity:** 0–4  
 > **Owner:**  
-> **Manifest:** [project.json](project.json)  
+> **Manifest:** `project.json`  
 > **Last updated:** YYYY-MM-DD
 
 ## Purpose
@@ -46,14 +46,11 @@ Provide the minimum commands, environment, data-access steps, and configuration 
 
 ## Validation and known limitations
 
-Link the [Validation Matrix](VALIDATION_MATRIX.md). Summarize important passing gates, failed or unrun tests, known limitations, and unsupported conditions.
+Link the project-local `VALIDATION_MATRIX.md`. Summarize important passing gates, failed or unrun tests, known limitations, and unsupported conditions.
 
 ## Project documents
 
-- [Project Manifest](project.json)
-- [Project Decision Log](DECISION_LOG.md)
-- [Project Specification](PROJECT_SPECIFICATION.md)
-- [Validation Matrix](VALIDATION_MATRIX.md)
+List the actual project-local files, for example `project.json`, `DECISION_LOG.md`, `RESEARCH_SPECIFICATION.md`, `MODEL_CONVENTIONS.md`, `DATA_MANIFEST.md`, `ENGINEERING_ARCHITECTURE.md`, `THREAT_MODEL.md`, and `VALIDATION_MATRIX.md` as applicable.
 
 Add links to type-specific documents that actually exist. Do not include placeholder links to files that have not been created.
 
