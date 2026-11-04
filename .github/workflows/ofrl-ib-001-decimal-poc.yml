@@ -1,4 +1,4 @@
-name: OFRL-IB-001 Decimal Contract POC
+name: OFRL-IB-001 Numeric and Input Contract Checks
 
 on:
   pull_request:
@@ -7,19 +7,26 @@ on:
       - "projects/OFRL-IB-001/poc/decimal-contract/**"
       - "projects/OFRL-IB-001/ENGINEERING_ARCHITECTURE.md"
       - "projects/OFRL-IB-001/DECISION_LOG.md"
+      - "projects/OFRL-IB-001/MODEL_INPUT_CONTRACT.md"
+      - "projects/OFRL-IB-001/NUMERIC_ENVELOPE.md"
+      - "projects/OFRL-IB-001/VALIDATION_ERROR_CONTRACT.md"
+      - "projects/OFRL-IB-001/SYNTHETIC_REFERENCE_CASE.md"
       - "schemas/ofrl-ib-001-amount-record-0.1.0.schema.json"
+      - "schemas/ofrl-ib-001-model-input-0.1.0.schema.json"
+      - "fixtures/synthetic/**"
+      - "scripts/validate-ofrl-ib-001-model-input-schema.sh"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: \${{ github.workflow }}-\${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   decimal-contract:
-    name: Decimal contract (Rust ${{ matrix.rust }})
+    name: Decimal contract (Rust \${{ matrix.rust }})
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
@@ -43,7 +50,7 @@ jobs:
       - name: Install selected Rust toolchain
         working-directory: .
         env:
-          RUST_TOOLCHAIN: ${{ matrix.rust }}
+          RUST_TOOLCHAIN: \${{ matrix.rust }}
         run: |
           if ! command -v rustup >/dev/null 2>&1; then
             curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://sh.rustup.rs \
@@ -69,3 +76,17 @@ jobs:
         env:
           RUSTDOCFLAGS: "-D warnings"
         run: cargo doc --no-deps
+
+  model-input-schema:
+    name: Model input JSON Schema
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Validate Draft 2020-12 schema and fixtures
+        run: bash scripts/validate-ofrl-ib-001-model-input-schema.sh
