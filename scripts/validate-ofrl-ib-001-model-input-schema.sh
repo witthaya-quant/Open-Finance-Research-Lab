@@ -17,13 +17,13 @@ done
 echo "Node: $(node --version)"
 echo "npm: $(npm --version)"
 
-AJV="npx --yes --package=ajv-cli@5.0.0 --package=ajv-formats@3.0.1 -- ajv"
+ajv() { npx --yes --package=ajv-cli@5.0.0 --package=ajv-formats@3.0.1 -- ajv "$@"; }
 
 echo "1/6 Compile Draft 2020-12 schema"
-$AJV compile --spec=draft2020 -c ajv-formats -s "$SCHEMA"
+ajv compile --spec=draft2020 -c ajv-formats -s "$SCHEMA"
 
 echo "2/6 Validate canonical synthetic fixture"
-$AJV validate --spec=draft2020 -c ajv-formats -s "$SCHEMA" -d "$FIXTURE"
+ajv validate --spec=draft2020 -c ajv-formats -s "$SCHEMA" -d "$FIXTURE"
 
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
@@ -36,7 +36,7 @@ jq '.forecast_periods[0].assumptions.dso = "1.00000000000000000000000000000"' "$
 expect_invalid() {
   local label="$1"
   local file="$2"
-  if $AJV validate --spec=draft2020 -c ajv-formats -s "$SCHEMA" -d "$file"; then
+  if ajv validate --spec=draft2020 -c ajv-formats -s "$SCHEMA" -d "$file"; then
     echo "FAIL: invalid payload unexpectedly passed: $label" >&2
     exit 1
   fi
