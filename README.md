@@ -30,7 +30,14 @@ This does not mean that every method is equally sound or that every idea should 
 
 Read [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md) for the full foundation, vision, mission, principles, and collaboration philosophy.
 
-## Governance and policies
+## Project portfolio and operating standards
+
+Every current and future project follows the same admission, identity, decision-history, evidence, data-rights, publication, and release baseline. Project-specific controls are selected by project type and risk; OFRL does not mandate one programming language, framework, or validation tool for unrelated disciplines.
+
+- [Project Catalog](PROJECT_CATALOG.md) — registered projects and their current status.
+- [Project Lifecycle](PROJECT_LIFECYCLE.md) — proposal, admission, development, validation, release, maintenance, and archival.
+- [Project Standards](PROJECT_STANDARDS.md) — universal requirements, project-type profiles, risk tiers, and validation profiles.
+- [Project Manifest Schema](schemas/ofrl-project-manifest-1.0.0.schema.json) — machine-readable project metadata contract.
 
 OFRL establishes governance from the beginning, including while it is maintained by one person. [GOVERNANCE.md](GOVERNANCE.md) defines founder-led authority, contributor roles, review controls, and Decision Records. OFRL is designed to remain under the Founder's personal GitHub account; a GitHub Organization is optional, not a required destination.
 
@@ -78,7 +85,7 @@ Job descriptions are used to understand skills and industry needs; their text is
 
 ## Engineering approach
 
-Rust is the main implementation language for OFRL's financial software. In the current project, it is intended for the calculation model, validation logic, command-line tools, and reusable components.
+Rust is the main implementation language selected for the current financial-model project. This is not a repository-wide language mandate: each project selects its technology according to numerical, research, interoperability, security, performance, and maintenance requirements, with the choice documented in its project specification.
 
 Inputs and outputs should have documented schemas and stable conventions. Financial calculations should be testable independently of the reporting layer. Spreadsheets may be useful for analyst review and presentation, but the calculation rules need a clearly identified source of truth.
 
