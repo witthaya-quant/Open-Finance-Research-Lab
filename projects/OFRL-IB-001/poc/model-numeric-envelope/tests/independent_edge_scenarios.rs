@@ -1,7 +1,7 @@
+use num_traits::Signed;
 use ofrl_model_numeric_envelope::{
     cash_deficit_case_a, forecast, load_case_a, ExactRational, Numeric,
 };
-use num_traits::Signed;
 use serde_json::Value;
 
 const EDGE_GOLDEN: &str = include_str!("../golden/case-a-edge-scenarios.v0.1.0.json");
