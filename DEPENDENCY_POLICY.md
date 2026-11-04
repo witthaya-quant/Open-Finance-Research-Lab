@@ -85,11 +85,13 @@ Current OFRL workflows pin `actions/checkout` to a full-length SHA, use `content
 
 ## 6. Vulnerability and maintenance updates
 
-Dependabot should be configured for:
+Dependabot should be configured for every package ecosystem actually introduced into the repository. At the current audit baseline, the configuration covers:
 
 - Cargo dependencies in the OFRL-IB-001 application workspace.
 - Cargo dependencies in the isolated Decimal POC.
 - GitHub Actions references under `.github/workflows`.
+
+When a future project introduces another ecosystem (for example npm, Python, or container images), its package path and update policy must be added to `.github/dependabot.yml` in the same Pull Request that establishes the dependency boundary. Do not add unused ecosystem entries merely for appearance.
 
 Dependabot Pull Requests are proposals, not automatic approvals. A maintainer must review the version change, release notes, licence, transitive graph, compatibility, and test evidence. Do not automatically merge dependency updates.
 
@@ -124,7 +126,13 @@ An exception must identify:
 
 An exception does not waive third-party licence terms, data rights, or security obligations.
 
-## 9. Related documents
+## 9. Project-wide application
+
+Every project that introduces a runtime, build tool, data-processing package, external Action, service integration, or distributable artifact must identify its dependency boundary in its project specification and manifest. A project may use a technology not listed in the current Dependabot configuration; the project owner must add the corresponding update mechanism before the project relies on that ecosystem for repeatable builds or releases.
+
+The common repository workflow validates repository metadata and project registration. It does not replace project-specific build, test, security, or release workflows. Each software-bearing project must own the checks appropriate to its stack and risk tier.
+
+## 10. Related documents
 
 - [OFRL Governance](GOVERNANCE.md)
 - [Research Standards](RESEARCH_STANDARDS.md)
