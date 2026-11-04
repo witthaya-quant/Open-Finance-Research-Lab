@@ -163,6 +163,14 @@ An exception does not waive third-party licence terms, data rights, or security 
 
 The exception records the observed condition; it does not explain or endorse the registry's yank decision. If the reason remains unknown at the review deadline, the maintainer must re-evaluate the generator or replace it rather than silently renewing the exception.
 
+**Preview evidence recorded on 2026-11-04:** PR #22 generated a CycloneDX 1.5 SBOM for `ofrl_cli` on `x86_64-unknown-linux-gnu`. The SBOM contains 41 components: 40 crates.io registry components plus the local `ofrl_model` package; the root `ofrl_cli` appears as the BOM metadata component. CI compared the 41-component set exactly against target-filtered Cargo metadata, required non-empty publisher-declared licence metadata and hashes for registry components, and passed per-file `SHA256SUMS` verification. This validates the target-specific preview graph; it does not mean all 52 registry entries in the cross-platform Cargo.lock are Linux binary dependencies. The preview artifact is time-limited and is not a public release.
+
+Workflow run: [OFRL-IB-001 Release Candidate Preview](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41838318926)  
+Artifact: `ofrl-ib-001-release-preview-3ca98dd26de9` (ID `13327837959`)  
+Archive SHA-256: `e71b337c0727b780d290c57e4cdcf5bab726e15f0db23b7855642adebe5786df`
+
+Per-file checksums independently inspected from the downloaded archive all matched `SHA256SUMS`.
+
 ## 9. Project-wide application
 
 Every project that introduces a runtime, build tool, data-processing package, external Action, service integration, or distributable artifact must identify its dependency boundary in its project specification and manifest. A project may use a technology not listed in the current Dependabot configuration; the project owner must add the corresponding update mechanism before the project relies on that ecosystem for repeatable builds or releases.
