@@ -27,3 +27,6 @@ jobs:
 
       - name: Validate local Markdown links, JSON, and YAML
         run: node scripts/validate_repository_files.cjs
+
+      - name: Validate every registered project and manifest
+        run: node scripts/validate_project_registry.cjs
