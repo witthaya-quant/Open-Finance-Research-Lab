@@ -62,7 +62,7 @@ The record is a proof-of-concept contract, not yet the complete production finan
 
 ## Run locally
 
-The package declares Rust 1.73 as its minimum supported version. The GitHub Actions matrix checks both Rust 1.73.0 (MSRV) and Rust 1.99.1 (the current toolchain used for the initial POC run). Use a matching toolchain with rustfmt and Clippy installed.
+The package declares Rust 1.85 as its effective minimum supported toolchain. Although some direct crates have lower individual MSRVs, Cargo dependency resolution currently includes an optional package manifest using the Rust 2024 edition, which requires Cargo 1.85 or later to parse. The GitHub Actions matrix checks Rust 1.85.0 and Rust 1.99.1. Use a matching toolchain with rustfmt and Clippy installed.
 
 ~~~bash
 cargo fmt -- --check
