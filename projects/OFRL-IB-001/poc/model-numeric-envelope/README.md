@@ -238,3 +238,10 @@ An independent standard-library-only Python reference is available at [reference
 It independently recomputes BM-002 and BM-003, checks the canonical fixture Git blob identity, and verifies 800 exact expected outputs against the committed golden datasets. Python is verification-only; it is not a production runtime dependency. CI runs the reference check on both supported Rust toolchain matrix jobs before formatting, Clippy, tests and documentation checks.
 
 BM-003 remains a synthetic mechanics benchmark, not independent accounting sign-off or a substitute for Numeric Profile approval. High-CapEx and negative-cash results are deliberately infeasible stress diagnostics, not reportable feasible company forecasts.
+
+
+## 16. Backend runtime observations
+
+The POC now includes a dependency-free timing executable, `src/bin/backend_profile.rs`, and a separate measurement protocol in [BENCHMARKS_PERFORMANCE.md](BENCHMARKS_PERFORMANCE.md). It compares the three candidate arithmetic types on Case A and the (10^{18}) stress case and uploads per-toolchain CSV plus runner metadata from CI.
+
+These timings are deliberately non-gating. They are shared-runner observations, not controlled performance claims; memory, allocation counts, production concurrency and XLSX export are not measured. The observations must not be used to select a production backend without an approved Numeric Profile and the remaining review gates.

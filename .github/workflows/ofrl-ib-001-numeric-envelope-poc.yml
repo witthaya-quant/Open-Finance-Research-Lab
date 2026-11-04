@@ -77,3 +77,31 @@ jobs:
         env:
           RUSTDOCFLAGS: "-D warnings"
         run: cargo doc --locked --no-deps
+
+      - name: Record backend timing observations (non-gating)
+        env:
+          RUST_TOOLCHAIN: ${{ matrix.rust }}
+        run: |
+          set -euo pipefail
+          OUTPUT="$RUNNER_TEMP/ofrl-ib-001-backend-profile"
+          mkdir -p "$OUTPUT"
+          cargo run --locked --release --bin backend-profile > "$OUTPUT/backend-profile.csv"
+          {
+            echo "rust_toolchain=$RUST_TOOLCHAIN"
+            rustc --version
+            cargo --version
+            uname -a
+            lscpu | grep -E '^(Architecture|CPU\(s\)|Model name|Thread|Core|Socket|CPU MHz):' || true
+            echo "bigdecimal_default_precision=$RUST_BIGDECIMAL_DEFAULT_PRECISION"
+            echo "bigdecimal_default_rounding_mode=$RUST_BIGDECIMAL_DEFAULT_ROUNDING_MODE"
+          } > "$OUTPUT/runner-metadata.txt"
+          cat "$OUTPUT/backend-profile.csv"
+          cat "$OUTPUT/runner-metadata.txt"
+
+      - name: Upload backend timing observations
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ofrl-ib-001-backend-profile-rust-${{ matrix.rust }}
+          path: ${{ runner.temp }}/ofrl-ib-001-backend-profile/
+          if-no-files-found: error
+          retention-days: 30
