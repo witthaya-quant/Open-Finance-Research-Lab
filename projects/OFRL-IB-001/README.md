@@ -86,6 +86,7 @@ The first reproducible case will use synthetic data created specifically for thi
 - [System Design and Control Architecture](SYSTEM_DESIGN.md)
 - [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md)
 - [Numeric Profile Decision Worksheet](NUMERIC_PROFILE_WORKSHEET.md)
+- [Numeric Profile Derivation and Backend Decision Basis](NUMERIC_PROFILE_DERIVATION.md)
 
 ## Current stage and branch boundaries
 
