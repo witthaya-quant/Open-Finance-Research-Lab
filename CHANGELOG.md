@@ -14,11 +14,12 @@ This changelog follows the structure of Keep a Changelog. Software components ma
 - Public/private publication and intellectual-property boundary.
 - Repository-wide audit, dependency policy, release policy, and account continuity policy.
 - Central Decision Register and reusable Decision Record template.
-- Research Proposal, Project Charter, Project Manifest, Project Decision Log, and Pull Request templates.
-- Project Lifecycle, Project Standards, Project Catalog, and versioned Project Manifest Schema.
-- Automated validation of every project directory, manifest, required document, project type, risk tier, and catalog entry.
-- Always-running repository-policy validation workflow.
-- Dependabot configuration for Cargo and GitHub Actions.
+- Research Proposal, Project README, Project Charter, Project Manifest, Project Decision Log, Validation Matrix, Research Specification, Model Conventions, Numeric Envelope, Data Manifest, Benchmark Specification, Engineering Architecture, Threat Model, Prototype Plan, Release Record, and Pull Request templates.
+- A template catalog for new projects and a versioned Project Manifest Schema.
+- Project Lifecycle, Project Standards, Project Catalog, and type/risk-specific document profiles.
+- Automated Ajv validation of every project manifest plus directory, required-document, type, risk, lifecycle, workflow-coverage, and catalog consistency checks.
+- Always-running repository-policy validation workflow with locked schema tooling.
+- Dependabot configuration for Cargo, GitHub Actions, and the locked npm schema-validation tooling.
 
 ### Changed
 - Clarified that a GitHub Organization is optional and not a required destination.
