@@ -25,6 +25,10 @@ The full terms are in the repository-root LICENSE file. SPDX identifier: Apache-
 
 Apache-2.0 permits commercial use, modification, distribution, and sublicensing subject to its conditions. It includes a contributor patent licence with the specific termination provision stated in the licence. It does not grant rights to OFRL trademarks or logos.
 
+Apache-2.0 is a permissive licence, not a copyleft licence. A downstream company may combine OFRL code with separately developed proprietary components and distribute a commercial product without automatically being required by Apache-2.0 to publish the source code of those separate proprietary components or all downstream modifications. The upstream OFRL material remains subject to the Apache-2.0 conditions, including preservation of required licence, attribution, and modification notices. See Section 4 of the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+This is an intentional adoption trade-off: Apache-2.0 reduces friction for commercial and enterprise reuse, but it does not guarantee that improvements made by every downstream user will be contributed back to OFRL. Do not promise reciprocal source sharing under this licence.
+
 ## 2. Documentation and research works — CC BY 4.0
 
 Original OFRL written and explanatory works are licensed under the Creative Commons Attribution 4.0 International License.
