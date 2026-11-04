@@ -42,6 +42,8 @@ jobs:
           cargo --version
           cargo install --locked cargo-cyclonedx --version 0.5.9
           cargo-cyclonedx --version
+          cargo install --locked cargo-audit --version 0.22.2
+          cargo audit --version
 
       - name: Generate separate production and POC SBOMs
         shell: bash
@@ -66,6 +68,7 @@ jobs:
 
           PROD_LOCK_BEFORE="$(sha256sum "$PROD_LOCK" | awk '{print $1}')"
           NUMERIC_LOCK_BEFORE="$(sha256sum "$NUMERIC_LOCK" | awk '{print $1}')"
+          DECIMAL_LOCK_BEFORE=""
 
           # A stable commit timestamp removes nondeterministic SBOM serial/timestamp fields.
           export SOURCE_DATE_EPOCH
@@ -97,10 +100,13 @@ jobs:
           # Resolve it only to create an explicitly ephemeral discovery snapshot.
           DECIMAL_LOCK_STATUS="ephemeral-generated-for-this-run"
           if [[ -e "$DECIMAL_LOCK" ]]; then
-            DECIMAL_LOCK_STATUS="present-before-run"
+            DECIMAL_LOCK_STATUS="committed-or-preexisting"
+            DECIMAL_LOCK_BEFORE="$(sha256sum "$DECIMAL_LOCK" | awk '{print $1}')"
           else
+            DECIMAL_LOCK_STATUS="ephemeral-generated-for-this-run"
             cargo generate-lockfile --manifest-path "$DECIMAL_MANIFEST"
             test -f "$DECIMAL_LOCK"
+            DECIMAL_LOCK_BEFORE="$(sha256sum "$DECIMAL_LOCK" | awk '{print $1}')"
             cp "$DECIMAL_LOCK" "$OUTPUT/decimal-contract.Cargo.lock.ephemeral"
           fi
 
@@ -115,9 +121,38 @@ jobs:
           cp "$DECIMAL_DIR/ofrl-decimal-contract-poc.cdx.json" \
             "$OUTPUT/poc-decimal-contract.cdx.json"
 
-          # A committed lockfile must never be mutated by inventory generation.
+          # Capture security findings for every dependency graph without silently accepting warnings.
+          # A failing audit is recorded so the SBOM/report artifact is still uploaded before the job fails.
+          AUDIT_FAILURE=0
+          run_audit() {
+            local label="$1"
+            local lockfile="$2"
+            local report="$OUTPUT/$label.cargo-audit.json"
+            local exit_code=0
+
+            set +e
+            cargo audit --file "$lockfile" --deny warnings --json > "$report"
+            exit_code=$?
+            set -e
+
+            printf '%s=%s\n' "$label" "$exit_code" >> "$OUTPUT/audit-exit-codes.txt"
+            if [[ "$exit_code" -ne 0 ]]; then
+              AUDIT_FAILURE=1
+            fi
+          }
+
+          run_audit "production" "$PROD_LOCK"
+          run_audit "numeric-envelope-poc" "$NUMERIC_LOCK"
+          run_audit "decimal-contract-poc" "$DECIMAL_LOCK"
+
+          if [[ "$AUDIT_FAILURE" -ne 0 ]]; then
+            touch "$OUTPUT/AUDIT_FINDINGS_OR_AUDIT_ERROR"
+          fi
+
+          # Lockfiles present before generation must never be mutated.
           test "$PROD_LOCK_BEFORE" = "$(sha256sum "$PROD_LOCK" | awk '{print $1}')"
           test "$NUMERIC_LOCK_BEFORE" = "$(sha256sum "$NUMERIC_LOCK" | awk '{print $1}')"
+          test "$DECIMAL_LOCK_BEFORE" = "$(sha256sum "$DECIMAL_LOCK" | awk '{print $1}')"
 
           # Do not leave a generated, non-reproducible lockfile in the checkout.
           if [[ "$DECIMAL_LOCK_STATUS" == "ephemeral-generated-for-this-run" ]]; then
@@ -135,6 +170,7 @@ jobs:
               "source_commit": sys.argv[2],
               "source_date_epoch": int(sys.argv[3]),
               "sbom_generator": "cargo-cyclonedx 0.5.9",
+              "advisory_scanner": "cargo-audit 0.22.2 (--deny warnings)",
               "rust_toolchain": "1.99.1",
               "cyclonedx_specification": "1.5",
               "feature_selection": "all-features",
@@ -145,9 +181,10 @@ jobs:
                   "numeric_envelope_poc": "committed Cargo.lock; verified unchanged",
                   "decimal_contract_poc": sys.argv[4],
               },
+              "advisory_audit": "See per-workspace cargo-audit JSON reports and audit-exit-codes.txt; any non-zero exit is a blocking finding or audit error.",
               "interpretation": (
-                  "Inventory evidence only. An SBOM does not itself constitute a vulnerability, "
-                  "licence, maintenance, or legal approval."
+                  "Inventory and advisory-scan evidence only. An SBOM does not itself constitute a "
+                  "licence, source-trust, maintenance, or legal approval."
               ),
           }
           (output / "sbom-metadata.json").write_text(
@@ -175,7 +212,9 @@ jobs:
 
           (
             cd "$OUTPUT"
-            sha256sum *.cdx.json *.json *.ephemeral > SHA256SUMS
+            find . -maxdepth 1 -type f ! -name SHA256SUMS -printf '%f\0' \
+              | sort -z \
+              | xargs -0 sha256sum > SHA256SUMS
           )
 
           echo "SBOM output files:"
@@ -183,10 +222,29 @@ jobs:
           echo "Git status after generation:"
           git status --short
 
-      - name: Upload dependency inventory
+      - name: Upload dependency inventory and audit reports
+        if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: ofrl-ib-001-sbom-${{ github.sha }}
           path: ${{ runner.temp }}/ofrl-ib-001-sbom/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30
+
+      - name: Enforce advisory audit results
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPORT="${{ runner.temp }}/ofrl-ib-001-sbom/audit-exit-codes.txt"
+          if [[ ! -f "$REPORT" ]]; then
+            echo "Advisory audit report is missing; dependency audit cannot be considered passed."
+            exit 1
+          fi
+          if grep -Eq '=[1-9][0-9]*
+ "$REPORT"; then
+            echo "One or more cargo-audit checks failed or found warnings. Review the uploaded JSON reports."
+            cat "$REPORT"
+            exit 1
+          fi
+          echo "All cargo-audit checks passed with --deny warnings."
