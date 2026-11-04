@@ -167,7 +167,8 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-              "classification"
+              "classification",
+              "source_reference"
             ],
             "properties": {
               "classification": {
