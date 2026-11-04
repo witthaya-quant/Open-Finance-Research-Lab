@@ -4,7 +4,7 @@
 
 > **Division:** Financial Modelling & Valuation  
 > **Project ID:** OFRL-IB-001  
-> **Status:** Proposed — specification stage  
+> **Status:** Input-contract and schema-validation stage; calculation engine not started  
 > **Evidence maturity:** 0 / Proposed  
 > **Specification version:** 0.1.0  
 > **Project owner:** Kenny
@@ -58,17 +58,12 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Decimal contract POC](poc/decimal-contract/README.md)
 - [Dependency review](poc/decimal-contract/DEPENDENCY_REVIEW.md)
 
-1. [Research specification](RESEARCH_SPECIFICATION.md)
-2. [Model conventions](MODEL_CONVENTIONS.md)
-3. [Engineering architecture](ENGINEERING_ARCHITECTURE.md)
-4. [Validation matrix](VALIDATION_MATRIX.md)
-5. [Decision log](DECISION_LOG.md)
 
 ## Current stage
 
-**Specification only. No Rust implementation, calculation engine, or workbook has been released.**
+**No production financial calculation engine, CLI, or workbook has been released.** An isolated Decimal/JSON/CSV contract POC has passed its defined tests on Rust 1.85.0 and 1.99.1. The current work is defining and validating the full model-input contract and synthetic fixture before implementing the production Rust domain validator and calculation core.
 
-The next engineering task is a small decimal-arithmetic and serialization proof of concept. It will be used to confirm numeric behaviour and data interchange before the financial calculations are implemented.
+The Draft 2020-12 schema, positive synthetic input fixture, and negative-fixture validation script are now present on the input-contract branch. Their GitHub Actions run is the acceptance gate for this design stage.
 
 ## Out of scope for the first release
 
