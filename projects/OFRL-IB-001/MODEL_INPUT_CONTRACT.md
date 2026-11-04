@@ -75,10 +75,10 @@ Opening balance values use the model's reporting currency and unit_scale. Retain
 
 ## 6. Historical periods
 
-The historical_periods array contains exactly three ordered annual periods. Each period includes:
+The historical_periods array contains exactly three ordered annual periods. V1 schema 0.1.0 accepts synthetic historical inputs only; real issuer filings, vendor data, and externally normalized statements require a future schema version with expanded provenance, accounting-basis, restatement, and normalization metadata. Each period includes:
 
 - period_id, start_date, and end_date.
-- source classification and optional source reference.
+- source classification (V1: synthetic only) and a source reference.
 - income_statement.
 - balance_sheet.
 - cash_flow_statement.
