@@ -66,7 +66,7 @@ The package declares Rust 1.73 as its minimum supported version. The GitHub Acti
 
 ~~~bash
 cargo fmt -- --check
-cargo clippy --all-targets --all-features -- -D warnings
+cargo clippy --all-targets -- -D warnings
 cargo test --all-targets -- --nocapture
 cargo doc --no-deps
 ~~~
