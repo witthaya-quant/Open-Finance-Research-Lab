@@ -25,7 +25,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Independent multi-period expected values | Implemented in open PR #11 | BM-002 160 values + BM-003 640 values = 800 exact outputs |
 | Independent Python reference | Implemented in open PR #11 | Standard-library Decimal/Fraction; verifies fixture identity and goldens |
 | Rust SBOM/RustSec automation | Implemented in open PR #11 | CycloneDX + advisory scan; one point-in-time scan reports zero findings |
-| Runtime-cost observation harness | Implemented in latest open PR #11 commit | Non-gating release-mode timing; latest CI/artifact result pending |
+| Runtime-cost observation harness | Implemented in open PR #11; code commit 334a1f8 passed timing CI | First non-gating release-mode observations recorded; memory and production workload evidence remain open |
 | Schema validator dependency lock | Implemented in open PR #12 | AJV / Node toolchain lock; shared Rust/schema corpus still open |
 | Model-specific Numeric Profile | Not approved | Bounds, headroom, error budget, tolerance, rounding remain open |
 | Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
@@ -89,7 +89,8 @@ The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. It intentionally contains unres
 - Evaluate candidates only against the accepted Numeric Profile.
 - Review checked arithmetic semantics, serialization and parse/format fidelity.
 - Make BigDecimal context explicit and deterministic if it remains a candidate.
-- Measure wall time, memory, allocation behaviour and operational resource limits in a controlled environment.
+- Initial CI timing observations now exist: BigDecimal was 1.50×–2.21× the fixed Decimal candidate in the measured synthetic cases; Exact Rational was 7.52×–10.30×. See the artifacts and limitations in `poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md` on PR #11.
+- Measure wall time, memory, allocation behaviour and operational resource limits in a controlled environment beyond the single shared-runner observation.
 - Consider production validator migration cost because its current domain types use rust_decimal.
 - Review error types, determinism, support/MSRV and dependency graph.
 - Record the selected backend and rejected alternatives in the Decision Log.

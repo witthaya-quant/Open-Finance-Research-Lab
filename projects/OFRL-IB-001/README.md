@@ -91,6 +91,6 @@ The first reproducible case will use synthetic data created specifically for thi
 
 The production Rust library on `main` validates model input and historical accounting relationships. It does not calculate the forecast periods and does not generate a workbook.
 
-PR #11 contains the independent five-year and edge-case arithmetic research, dependency inventory automation and a non-gating timing harness. PR #12 contains schema-tooling lockfile work. PR #13 contains this audit/design package and a bounded CLI input reader. These pull requests are open Draft changes; their contents are not merged release capabilities.
+PR #11 contains the independent five-year and edge-case arithmetic research, dependency inventory automation and a non-gating timing harness. Its initial CI observations measured BigDecimal at 1.50×–2.21× the fixed Decimal median on the tested synthetic cases; memory and production workload performance remain unmeasured. PR #12 contains schema-tooling lockfile work. PR #13 contains this audit/design package and a bounded CLI input reader. These pull requests are open Draft changes; their contents are not merged release capabilities.
 
 No production numeric backend is selected. No Numeric Profile or independent finance/accounting approval is claimed. The Production Forecast Engine remains gated.

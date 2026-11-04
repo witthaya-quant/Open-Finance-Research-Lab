@@ -127,13 +127,15 @@ Convert each value using the model's unit scale before deciding whether it is im
 | Division semantics | Finite Decimal scale | Context-dependent significant precision | TBD | OPEN |
 | Five-year exact error | POC evidence | POC evidence | TBD | OPEN |
 | Boundary/overflow behaviour | POC evidence | Must bound resource use | TBD | OPEN |
-| Runtime latency | New timing artifact pending | New timing artifact pending | TBD | OPEN |
+| Runtime latency | 42.117/43.032 µs on Rust 1.85; 37.235/38.158 µs on Rust 1.99 | 87.877/64.566 µs on Rust 1.85; 82.277/63.559 µs on Rust 1.99 | 316.808/367.050 µs on Rust 1.85; 324.448/392.920 µs on Rust 1.99 | Observational only; one 4-vCPU CI runner; memory/resource review OPEN |
 | Peak memory / allocations | Not measured | Not measured | TBD | OPEN |
 | Serialization stability | Production input parser exists | Production adapter not implemented | TBD | OPEN |
 | Error typing | Checked arithmetic available | Must map context/scale failures | TBD | OPEN |
 | MSRV / target support | Reviewed in POC | Reviewed in POC | TBD | OPEN |
 | Dependency source / licence | Review required | Review required | TBD | OPEN |
 | Migration cost from current validator | Existing type | Requires boundary migration | TBD | OPEN |
+
+Performance observations are from one CI runner and are not a controlled workload benchmark. They compare only the measured synthetic five-year forecast routine; they do not measure memory, allocations or concurrency. See `BENCHMARKS_PERFORMANCE.md` on PR #11 for artifact hashes and exact sample protocol.
 
 No candidate wins by having the largest representable number alone. The selected representation must fit the approved operating domain, have deterministic arithmetic semantics, expose failure clearly and satisfy resource constraints.
 

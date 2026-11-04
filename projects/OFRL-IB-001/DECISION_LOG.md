@@ -108,6 +108,6 @@ PR #11 (open Draft; not merged) now contains:
 - BM-003: 640 independently expected exact-rational outputs across four five-year edge scenarios.
 - A standard-library Python reference that checks the canonical fixture identity and regenerates both goldens, reporting 800 exact expected outputs.
 - CycloneDX SBOM and RustSec advisory-scan automation.
-- A non-gating runtime-cost observation harness comparing the candidate arithmetic implementations; latest CI and timing artifact must be verified for its current head.
+- A non-gating runtime-cost observation harness comparing the candidate arithmetic implementations; the first timing run passed in workflow 41784590895 and artifacts are checksum-identified. Initial medians showed BigDecimal at 1.50×–2.21× and Exact Rational at 7.52×–10.30× the fixed Decimal candidate on one 4-vCPU runner.
 
 These are research results, not production approval. The following decisions remain explicitly unmade: Numeric Profile, production numeric backend, arithmetic/error budgets, accounting tolerance, output rounding, licence/source acceptance and Production Forecast Engine adoption.

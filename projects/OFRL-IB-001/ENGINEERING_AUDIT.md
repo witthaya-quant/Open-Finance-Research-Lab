@@ -5,7 +5,7 @@
 **Audit version:** 0.2.0  
 **Audit date:** 2026-11-04  
 **Production baseline:** `main` at `323d4da36bd5386d88a64fb67ff8ca77e73c5905`  
-**Research evidence:** PR #11, head `2b93a966978966843bd6f78ae7d719b4c35f6d9d`  
+**Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
 **System-design and CLI changes:** PR #13, head `8085fe4bfdce7ee4d5cbc7d5a0493693264fbaeb`  
 **Status:** Evidence-based audit; all open PR evidence is distinguished from merged production capability
@@ -33,7 +33,7 @@ This audit covers only OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`
 | Finance/accounting review | Not evidenced | No independent sign-off is claimed |
 | Production Forecast Engine | Not implemented | Must remain gated |
 
-A CI pass applies to the exact commit and workflow scope that ran. It does not transfer automatically to a later commit, and it does not approve a financial policy. PR #11's earlier research head `d9788253e8e06f374bcf89add71e793c3348286c` passed its four workflow groups. The later timing-harness commits exposed formatter differences; those were corrected in the current branch head, but the latest commit's full CI result must be checked before the timing artifact can be treated as verified evidence.
+A CI pass applies to the exact commit and workflow scope that ran. It does not transfer automatically to a later commit, and it does not approve a financial policy. The timing-harness code commit `334a1f835405d9520b24ebe6371f82b399e4be3d` passed all four workflow groups, including the new timing executable and uploads. The subsequent PR #11 head `120ccd3414fb7018011ea3991800728f86736319` adds documentation/evidence only; its follow-on workflow checks were in progress at the time of this audit refresh.
 
 ## 3. Capabilities already implemented on main
 
