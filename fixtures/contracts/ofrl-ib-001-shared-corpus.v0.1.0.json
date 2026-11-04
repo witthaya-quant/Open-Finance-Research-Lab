@@ -1,0 +1,77 @@
+{
+  "corpus_version": "0.1.0",
+  "schema_id": "urn:ofrl:schema:ofrl-ib-001-model-input:0.1.0",
+  "description": "Shared positive and negative inputs consumed by both the Draft 2020-12 JSON Schema validator and the Rust runtime semantic validator.",
+  "cases": [
+    {
+      "id": "canonical-case-a",
+      "input": "fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json",
+      "schema_valid": true,
+      "runtime_status": "accepted",
+      "diagnostic_codes": []
+    },
+    {
+      "id": "decimal-number-token",
+      "input": "fixtures/contracts/ofrl-ib-001-decimal-number-token.v0.1.0.json",
+      "schema_valid": false,
+      "runtime_status": "rejected",
+      "diagnostic_codes": [
+        "DECIMAL_STRING_REQUIRED"
+      ]
+    },
+    {
+      "id": "unknown-nested-field",
+      "input": "fixtures/contracts/ofrl-ib-001-unknown-nested-field.v0.1.0.json",
+      "schema_valid": false,
+      "runtime_status": "rejected",
+      "diagnostic_codes": [
+        "UNKNOWN_FIELD"
+      ]
+    },
+    {
+      "id": "invalid-calendar-date",
+      "input": "fixtures/contracts/ofrl-ib-001-invalid-calendar-date.v0.1.0.json",
+      "schema_valid": false,
+      "runtime_status": "rejected",
+      "diagnostic_codes": [
+        "INVALID_DATE"
+      ]
+    },
+    {
+      "id": "period-gap",
+      "input": "fixtures/contracts/ofrl-ib-001-period-gap.v0.1.0.json",
+      "schema_valid": true,
+      "runtime_status": "rejected",
+      "diagnostic_codes": [
+        "PERIOD_GAP"
+      ]
+    },
+    {
+      "id": "invalid-tax-rate",
+      "input": "fixtures/contracts/ofrl-ib-001-invalid-tax-rate.v0.1.0.json",
+      "schema_valid": true,
+      "runtime_status": "rejected",
+      "diagnostic_codes": [
+        "NUMERIC_DOMAIN_INVALID"
+      ]
+    },
+    {
+      "id": "missing-source-reference",
+      "input": "fixtures/contracts/ofrl-ib-001-missing-source-reference.v0.1.0.json",
+      "schema_valid": false,
+      "runtime_status": "rejected",
+      "diagnostic_codes": [
+        "REQUIRED_FIELD_MISSING"
+      ]
+    },
+    {
+      "id": "decimal-scale-exceeded",
+      "input": "fixtures/contracts/ofrl-ib-001-decimal-scale-exceeded.v0.1.0.json",
+      "schema_valid": false,
+      "runtime_status": "rejected",
+      "diagnostic_codes": [
+        "DECIMAL_SCALE_EXCEEDED"
+      ]
+    }
+  ]
+}
