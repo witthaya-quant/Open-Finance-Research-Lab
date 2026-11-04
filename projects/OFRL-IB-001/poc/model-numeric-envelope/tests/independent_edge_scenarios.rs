@@ -1,4 +1,4 @@
-use ofrl_model_numeric_envelope::{cash_deficit_case_a, forecast, load_case_a, ExactRational};
+use ofrl_model_numeric_envelope::{cash_deficit_case_a, forecast, load_case_a, ExactRational, Numeric};
 use num_traits::Signed;
 use serde_json::Value;
 
