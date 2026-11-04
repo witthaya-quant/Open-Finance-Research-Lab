@@ -46,6 +46,18 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 
 ## Project documents
 
+- [Research specification](RESEARCH_SPECIFICATION.md)
+- [Model conventions](MODEL_CONVENTIONS.md)
+- [Validation matrix](VALIDATION_MATRIX.md)
+- [Decision log](DECISION_LOG.md)
+- [Engineering architecture](ENGINEERING_ARCHITECTURE.md)
+- [Model input contract](MODEL_INPUT_CONTRACT.md)
+- [Numeric envelope](NUMERIC_ENVELOPE.md)
+- [Validation and error contract](VALIDATION_ERROR_CONTRACT.md)
+- [Synthetic reference case A](SYNTHETIC_REFERENCE_CASE.md)
+- [Decimal contract POC](poc/decimal-contract/README.md)
+- [Dependency review](poc/decimal-contract/DEPENDENCY_REVIEW.md)
+
 1. [Research specification](RESEARCH_SPECIFICATION.md)
 2. [Model conventions](MODEL_CONVENTIONS.md)
 3. [Engineering architecture](ENGINEERING_ARCHITECTURE.md)
