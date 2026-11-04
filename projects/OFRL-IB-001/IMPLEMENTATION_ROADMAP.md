@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Implementation Roadmap
 
-**Roadmap version:** 0.2.0  
+**Roadmap version:** 0.3.0  
 **Status:** Proposed execution plan with evidence-linked gates  
 **Date:** 2026-11-04
 
@@ -19,19 +19,21 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Versioned JSON input contract | Implemented on main | Draft 2020-12 schema and closed objects |
 | Synthetic Case A input | Implemented on main | Canonical three-history/five-forecast fixture |
 | Rust historical semantic validator | Implemented on main | Opening/historical statement and roll-forward checks |
+| Repository policy and branch controls | Implemented on main | Active Ruleset; six exact required contexts; always-running repository-policy workflow |
+| Portfolio registry and data controls | Implemented on main | Project manifest validation, data manifest and risk-tier controls |
+| OFRL project workflows | Implemented on main | Rust 1.85.0 / 1.99.1 checks run for all PRs without path filters |
+| Decimal POC lockfile | Implemented on main | Isolated POC lockfile and locked metadata/tree/Clippy/test/doc commands |
+| CLI SBOM/checksum preview | Implemented on main | Preview-only CycloneDX 1.5 artifact for Linux CLI validator; not an official forecast-model release |
 | Rust CLI input hardening | Implemented on PR #13 branch | 1 MiB bound, max-plus-one read, UTF-8 rejection and regression tests; not merged |
-| Decimal string interchange POC | Implemented in prior work | Isolated proof of boundary behaviour |
 | Full-formula numeric candidate comparison | Open PR #11, Draft | rust_decimal, BigDecimal and Exact Rational research path |
 | Independent multi-period expected values | Open PR #11, Draft | BM-002 160 values + BM-003 640 values = 800 exact outputs |
 | Independent Python reference | Open PR #11, Draft | Standard-library Decimal/Fraction; verifies fixture identity and goldens |
 | Rust SBOM/RustSec research | Open PR #11, Draft | Candidate/POC inventories and point-in-time advisory evidence |
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
-| Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile |
-| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; five applicable check contexts pass on head `6941b1f`; unmerged |
-| Repository policy / portfolio controls | Open PRs #14 and #18 | Always-running repository-policy workflow and hardened project/data controls; not yet on main |
-| Decimal POC lockfile | Open PR #20 | Separate Cargo lockfile and locked validation commands; source/legal review remains open |
-| CLI SBOM/checksum preview | Open PR #22 | Preview-only CycloneDX 1.5 for Linux CLI validator; not an official model release |
-| Model-specific Numeric Profile | Not approved | Bounds, headroom, error budget, tolerance and rounding remain TBD |
+| Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
+| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; code baseline passed both Rust toolchains; PR head must be synced with current main |
+| Numeric Profile worksheet and symbolic derivation | Open PR #13 branch | Formula-chain envelope documented symbolically; unbounded Model Owner inputs remain TBD |
+| Model-specific Numeric Profile | Not approved | Finite input bounds, headroom, error budgets, tolerance and rounding remain open |
 | Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
 | Independent finance/accounting sign-off | Not evidenced | Arithmetic benchmarks are not an accounting opinion |
 | Production forecast engine | Not started | POC is isolated and not the production library |
@@ -39,7 +41,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Canonical ModelRun and provenance | Not implemented | No run manifest or canonical result hash |
 | XLSX generation/reconciliation | Not implemented | No workbook exporter |
 
-**Branch interpretation:** PR #11, #12 and #13 remain Draft and unmerged. PR #14, #18, #20 and #22 are open, non-Draft but stacked in sequence; none is merged merely because its branch CI passed. Their exact branch evidence must remain distinguished from main-branch production capability.
+**Branch interpretation:** PR #14 was merged to main on 2026-11-04 after PR #18, #20 and #22 were integrated in sequence. PR #11, #12 and #13 remain Draft and unmerged. PR #13's contents are branch-local and must not be represented as merged production capability.
 
 ## 3. Delivery phases
 
@@ -53,13 +55,14 @@ Exit condition: malformed and historically inconsistent input is rejected before
 
 ### Phase 1 — Audit, architecture and input-bound hardening
 
-**Status:** Implemented in open PR #13; all five applicable project check contexts passed on head `6941b1f`; review and merge remain pending. The sixth `repository-policy` context awaits integration of the workflow into `main`.
+**Status:** Implemented on the PR #13 branch; its code baseline passed all five project checks before governance integration. PR #13 remains Draft and behind current `main`; merge-base synchronization and six-context CI on its refreshed head remain pending.
 
 Deliverables:
 - Engineering Audit with severity-ranked findings.
 - System Design and result/status contracts.
 - This gated roadmap.
-- Corrected project status and reference-case documentation.\n- Added a versioned shared Schema/Rust contract corpus with expected acceptance states and diagnostic codes; metadata, fixture containment, path traversal and symlink checks are implemented and covered by CI.
+- Corrected project status and reference-case documentation.
+- Added a versioned shared Schema/Rust contract corpus with expected acceptance states and diagnostic codes; metadata, fixture containment, path traversal and symlink checks are implemented and covered by CI.
 - CLI input bound and UTF-8 rejection tests.
 
 Exit conditions:
@@ -86,7 +89,9 @@ Exit conditions:
 - Translate tolerances into reporting currency amounts at the supported range endpoints.
 - Obtain Finance/Accounting and engineering approval; version the final policy.
 
-The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. It intentionally contains unresolved fields rather than fabricated limits.
+The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. The symbolic formula-chain derivation is `NUMERIC_PROFILE_DERIVATION.md`. It identifies the currently unbounded inputs and derives maximum-path formulas once Model Owner bounds are supplied. Both documents intentionally preserve unresolved fields rather than fabricate limits.
+
+**Current domain finding:** the V1 conventions provide no finite upper bound for revenue growth, COGS / revenue, Opex / revenue, DSO/DIO/DPO, CapEx / revenue, debt drawdowns or interest rate. A finite five-year numeric envelope cannot be certified until these bounds and absolute opening-balance limits are approved.
 
 #### Workstream B — Production backend decision
 
@@ -110,7 +115,7 @@ The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. It intentionally contains unres
 - Record source obligations and distribution-notice requirements.
 - Preserve SBOMs, checksums and exact source/build identity.
 
-The PR #11 workflow provides candidate/POC inventory and advisory evidence. PR #20 adds an isolated Cargo.lock with locked checks; PR #22 adds a preview-only CLI SBOM/checksum artifact. None closes source-level legal review, full advisory disposition or official-release authorization.
+The PR #11 workflow provides candidate/POC inventory and point-in-time advisory evidence. The isolated Decimal Contract POC lockfile, locked CI and preview-only CLI SBOM/checksum workflow are now on main through PRs #20/#22. They improve dependency reproducibility and artifact inventory but do not close source-level legal review, advisory disposition, multi-platform release evidence or official-release authorization. The yanked `xml-rs 0.8.19` preview-generator exception remains time-bounded and must be re-reviewed before official release.
 
 #### Workstream D — Independent finance and accounting review
 
@@ -220,21 +225,22 @@ Release statuses:
 
 | Work item | Branch / PR | Merge/acceptance condition |
 |---|---|---|
+| Repository foundation, portfolio controls, dependency lock and CLI SBOM preview | PR #14, with #18 → #20 → #22 integrated | MERGED to main as `cc2d01b`; post-merge Ruleset and workflow read-back completed |
+| Documentation-only Ruleset smoke test | PR #24 | Closed without merge after all six required contexts passed |
+| Project-code Ruleset smoke test | PR #27 | Closed without merge after all six required contexts passed |
 | Numeric candidate and independent arithmetic research | PR #11, Draft, targets main | POC checks pass; findings reviewed; production adoption remains separate |
-| Schema tooling lockfile | PR #12, Draft, targets main | Review and CI pass; shared corpus is a separate contract gate |
-| Audit, system design, bounded CLI and shared corpus | PR #13, Draft, targets main | Five applicable project contexts pass on head `6941b1f`; complete founder/governance required-check context after workflow integration; audit reviewed |
-| Repository foundation and policy workflow | PR #14, targets main | Review governance baseline and integrate PR #18's compatible hardening before final base-branch smoke verification |
-| Portfolio/data/workflow controls | PR #18, stacked on PR #14 | Integrate into PR #14 branch; verify six required checks and project registry behaviour |
-| Isolated Decimal POC lockfile | PR #20, stacked on PR #18 | Keep independent lockfile boundary; review inventory evidence |
-| CLI SBOM/checksum preview | PR #22, stacked on PR #20 | Keep preview-only; complete source/licence/security and release authorization gates separately |
-| Numeric Profile/backend decision | New OFRL-only PR | Phase 2 evidence complete |
+| Schema tooling lockfile | PR #12, Draft, targets main | Review and CI pass; shared corpus remains a separate contract gate |
+| Audit, system design, bounded CLI, shared corpus and Numeric Profile derivation | PR #13, Draft, targets main | Sync with current main; run all six required contexts on refreshed head; complete review |
+| Numeric Profile/backend decision | New OFRL-only PR | Finite input domain, error budgets, resource and Finance/Accounting gates accepted |
 | Production forecast engine | New OFRL-only PR | Phase 2 exit accepted |
 | ModelRun/provenance/CLI run | New OFRL-only PR | Production calculations and invariants accepted |
 | XLSX reporting | New OFRL-only PR | ModelRun contract stable and reconciled |
 
-**Current merge dependency:** the main Ruleset requires six exact contexts, including `repository-policy`. The Ruleset is active and correctly configured, but `repository-policy.yml` is not yet on current `main`; PR #14 introduces it and PR #18 hardens it. PR #13 currently cannot demonstrate the sixth context until this base-branch workflow dependency is integrated. Do not remove or relax the required check to bypass the sequence.
+**Governance status:** the active Ruleset still requires the six exact contexts. After PR #14 reached main, both a documentation-only PR (#24) and a project-code PR (#27) reported and passed all six contexts. Both smoke PRs were closed without merging. Do not remove or relax any required check.
 
-Keep research, governance, production formula and reporting changes in separately reviewable PRs. A Draft PR remains Draft when project-level gates are unresolved, even if its defined CI scope is green. No PR is merged by this roadmap without the required review.
+PR #13 remains Draft and its branch has not yet incorporated the governance merge commit. Refresh that branch and rerun its code and contract suite against the actual current base before any ready-for-review transition.
+
+Keep research, production formula and reporting changes in separately reviewable PRs. A Draft PR remains Draft when project-level gates are unresolved, even if its CI is green. No PR is merged by this roadmap without the required review.
 
 ## 5. Required test layers
 
