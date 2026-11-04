@@ -60,6 +60,10 @@ jobs:
           rustc --version
           cargo --version
 
+      - name: Verify independent Python exact-rational references
+        run: |
+          python3 projects/OFRL-IB-001/poc/model-numeric-envelope/reference/independent_reference.py --check
+
       - name: Check formatting
         run: cargo fmt --all -- --check
 
