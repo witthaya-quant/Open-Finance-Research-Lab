@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/ofrl_model",
+    "crates/ofrl_cli",
+]
+exclude = ["poc/decimal-contract"]
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+publish = false
+
+[workspace.dependencies]
+rust_decimal = { version = "=1.43.0", features = ["serde", "serde-with-str"] }
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.154"

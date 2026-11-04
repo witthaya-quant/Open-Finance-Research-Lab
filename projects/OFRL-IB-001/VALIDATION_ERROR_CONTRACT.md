@@ -2,8 +2,8 @@
 
 # OFRL-IB-001 — Validation and Error Contract
 
-**Contract version:** 0.1.0  
-**Status:** Proposed for V1 implementation
+**Contract version:** 0.2.0  
+**Status:** Rust input-validation diagnostics implemented; forecast-calculation diagnostics remain part of the target contract
 
 ## 1. Purpose
 
@@ -63,13 +63,13 @@ All Decimal fields must pass the same canonical text boundary before domain-spec
 | UNKNOWN_FIELD | An undeclared field is present |
 | INVALID_ENUM_VALUE | A value is outside the declared enumeration |
 | INVALID_DATE | A date is malformed or invalid |
-| INVALID_CURRENCY_FORMAT | Reporting currency fails the declared syntax |
+| INVALID_CURRENCY_FORMAT | Reporting currency fails the declared syntax |\n| INVALID_IDENTIFIER_FORMAT | A model or period identifier fails its declared lexical format |\n| STRING_CONSTRAINT_VIOLATION | A string field violates its declared length or content constraint |
 | PERIOD_COUNT_INVALID | Historical or forecast array length is incorrect |
 | PERIOD_ID_DUPLICATE | Period identifier is duplicated |
 | PERIOD_ORDER_INVALID | Periods are not in chronological order |
 | PERIOD_OVERLAP | Period date ranges overlap |
 | PERIOD_GAP | Adjacent periods are not contiguous |
-| PERIOD_HANDOFF_INVALID | Opening, historical, or forecast hand-off dates do not align |
+| PERIOD_HANDOFF_INVALID | Opening, historical, or forecast hand-off dates do not align |\n| PERIOD_DURATION_INVALID | A reporting period is not an allowed annual period length under V1 |\n| PERIOD_ID_YEAR_MISMATCH | Period identifier does not match the calendar year in which the period ends |
 | NUMERIC_DOMAIN_INVALID | A valid decimal is outside the field's allowed domain |
 | UNIT_METADATA_INVALID | Currency or unit metadata is missing or inconsistent |
 | DEBT_REPAYMENT_EXCEEDS_AVAILABLE | Principal repayment exceeds opening debt plus drawdowns |
@@ -146,3 +146,24 @@ A single overall PASS must not hide a failed sub-status. The CLI and workbook mu
 ## 10. Implementation note
 
 These codes and categories are a proposed stable contract. The Rust implementation must map internal errors to these public codes rather than leak crate-specific error strings as the external API.
+
+## 11. Rust runtime-validator implementation status
+
+The V1 Rust input validator implements the following subset of this contract:
+
+- JSON syntax and strict typed deserialization.
+- Unsupported schema version, missing fields, unknown fields, wrong types, and invalid enum values.
+- Decimal-string-only parsing, canonical lexical form, scale limit, negative-zero rejection, and exact Decimal parse-to-string preservation.
+- Model metadata syntax and constraints.
+- Annual period count, unique identifiers, identifier format/year mapping, Gregorian date validity, period duration, contiguity, and opening-to-history/forecast hand-offs.
+- Opening and historical Balance Sheet identities.
+- Historical Income Statement net-income reconciliation.
+- Historical Cash Flow Statement arithmetic, opening/closing cash ties, and working-capital movement.
+- Historical PP&E, debt, retained-earnings, and share-capital roll-forwards.
+- Forecast assumption domains and debt repayment limits.
+
+The validator returns an \`input_status\` and a deterministic list of diagnostics. It does not calculate forecast statements, produce Scenario Feasibility findings, or implement the production calculation-error surface. Those remain later milestones.
+
+The Rust runtime uses strict typed Serde deserialization and semantic rules. The separate Draft 2020-12 JSON Schema and its Ajv CI validation remain an independent contract gate; the Rust runtime does not embed an arbitrary JSON Schema execution engine.
+
+A missing \`json_pointer\` on a parse/deserialization diagnostic means the current Serde boundary could not reliably expose the field path. Semantic diagnostics include the field pointer where available.

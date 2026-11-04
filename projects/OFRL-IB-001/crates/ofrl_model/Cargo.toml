@@ -1,0 +1,13 @@
+[package]
+name = "ofrl_model"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Typed V1 input and historical semantic validation for OFRL-IB-001"
+
+[dependencies]
+rust_decimal.workspace = true
+serde.workspace = true
+serde_json.workspace = true
