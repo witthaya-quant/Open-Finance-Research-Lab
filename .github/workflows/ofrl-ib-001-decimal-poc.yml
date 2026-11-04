@@ -50,11 +50,43 @@ jobs:
           rustc --version
           cargo --version
 
-      - name: Verify frozen dependency graph
+      - name: Verify frozen dependency graph and licence metadata
         run: |
           set -euo pipefail
-          cargo metadata --locked --format-version 1 > /dev/null
+
+          metadata_file="$RUNNER_TEMP/ofrl-decimal-cargo-metadata.json"
+          cargo metadata --locked --format-version 1 > "$metadata_file"
           cargo tree --locked --edges normal,build,dev
+
+          command -v jq >/dev/null 2>&1 || {
+            echo "::error::jq is required on the ubuntu-24.04 runner for dependency metadata validation."
+            exit 1
+          }
+
+          registry_count="$(jq '[.packages[] | select((.source // "") | startswith("registry+"))] | length' "$metadata_file")"
+          missing_licences="$(jq -r '
+            [
+              .packages[]
+              | select((.source // "") | startswith("registry+"))
+              | select((.license // "") == "")
+              | "\(.name)@\(.version)"
+            ] | .[]?
+          ' "$metadata_file")"
+
+          printf 'Resolved crates.io registry packages: %s\n' "$registry_count"
+          printf 'Packages without declared Cargo licence metadata: %s\n' "$(printf '%s\n' "$missing_licences" | sed '/^$/d' | wc -l | tr -d ' ')"
+
+          if [[ -n "$missing_licences" ]]; then
+            printf '::error::Registry packages without declared Cargo licence metadata:\n%s\n' "$missing_licences"
+            exit 1
+          fi
+
+          # Preserve the publisher-declared expressions in the job log for review.
+          jq -r '
+            .packages[]
+            | select((.source // "") | startswith("registry+"))
+            | [.name, .version, .license] | @tsv
+          ' "$metadata_file" | sort
 
       - name: Check formatting
         run: cargo fmt -- --check
