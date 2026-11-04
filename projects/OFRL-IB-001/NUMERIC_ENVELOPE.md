@@ -196,6 +196,18 @@ The isolated comparison in [the model numeric-envelope POC](poc/model-numeric-en
 - Maximum unrounded Case A Balance Sheet residual for `bigdecimal`: `0/1` in the five-year Case A run.
 - Both residual results were identical on Rust 1.85.0 and 1.99.1. They are observed test outputs, not the final model reconciliation tolerance.
 
+
+
+**Intermediate stress point (monetary inputs scaled by (10^{18}))**
+- A second full-formula stress case uses the same extreme operating assumptions as the (10^{22}) capacity probe but scales the historical monetary inputs by (10^{18}).
+- Both `rust_decimal 1.43.0` and `bigdecimal 0.4.11` completed all five forecast years without arithmetic failure.
+- Each candidate matched the Exact Rational reference exactly across all 160 compared output metrics: maximum absolute error `0/1`, zero provisional two-decimal display mismatches.
+- Maximum unrounded Balance Sheet residual was `0/1` for both candidates.
+- The largest Exact Rational forecast metric was `2,160,000,000,000,000,000,000,000.00` in FY2030 accounts payable.
+- The result passed on Rust 1.85.0 and 1.99.1, including strict formatting, Clippy, 12 tests, and documentation build in [Numeric Envelope POC run 41777136666](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41777136666).
+
+The (10^{18}) and (10^{22}) cases are two deliberately selected numerical stress points, not a precise overflow boundary. They do not define supported production company size, maximum monetary input, or the final V1 model-specific operating envelope.
+
 **Provisional stress observations**
 - The deliberately extreme stress case scaled starting monetary amounts by (10^{22}) and raised selected assumptions. Its exact-rational reference completed and remained arithmetically balanced.
 - The largest exact-rational forecast metric was `21,600,000,000,000,000,000,000,000,000.00` in FY2030 accounts payable.
