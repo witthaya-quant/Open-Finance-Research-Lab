@@ -71,11 +71,17 @@ pub fn validate_input_json(input: &str) -> ValidationReport {
 
 fn deserialize_failure(message: String) -> ValidationReport {
     let (code, category, human_message) =
-        if message.contains("DECIMAL_STRING_REQUIRED") || message.contains("JSON_TYPE_MISMATCH") {
+        if message.contains("DECIMAL_STRING_REQUIRED") {
+            (
+                DiagnosticCode::DecimalStringRequired,
+                DiagnosticCategory::InputSyntax,
+                "A Decimal field was supplied as a JSON number or another non-string token.".to_owned(),
+            )
+        } else if message.contains("JSON_TYPE_MISMATCH") {
             (
                 DiagnosticCode::JsonTypeMismatch,
                 DiagnosticCategory::InputSyntax,
-                "A field has the wrong JSON type. Decimal inputs must be JSON strings.".to_owned(),
+                "A field has the wrong JSON type.".to_owned(),
             )
         } else if message.contains("DECIMAL_TEXT_NON_CANONICAL") {
             (
@@ -197,7 +203,7 @@ fn validate_metadata(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
     if !model_id_valid {
         push_semantic(
             diagnostics,
-            DiagnosticCode::NumericDomainInvalid,
+            DiagnosticCode::InvalidIdentifierFormat,
             "model_id must match [A-Za-z0-9][A-Za-z0-9._-]{0,63}.",
             "/model/model_id",
             None,
@@ -210,7 +216,7 @@ fn validate_metadata(model: &ModelInput, diagnostics: &mut Vec<Diagnostic>) {
     if model.model.model_name.trim().is_empty() || model.model.model_name.chars().count() > 160 {
         push_semantic(
             diagnostics,
-            DiagnosticCode::RequiredFieldMissing,
+            DiagnosticCode::StringConstraintViolation,
             "model_name must contain 1 to 160 characters and must not be whitespace-only.",
             "/model/model_name",
             None,
@@ -532,18 +538,27 @@ fn validate_historical_periods(model: &ModelInput, diagnostics: &mut Vec<Diagnos
         let pointer = format!("/historical_periods/{index}");
         let period_id = period.period_id.as_str();
 
-        if period.source.source_reference.trim().is_empty()
-            || period.source.source_reference.chars().count() > 1024
-        {
+        if period.source.source_reference.trim().is_empty() {
             push_semantic(
                 diagnostics,
                 DiagnosticCode::RequiredFieldMissing,
-                "Every synthetic historical period must include a non-empty source_reference of at most 1024 characters.",
+                "Every synthetic historical period must include a non-empty source_reference.",
                 format!("{pointer}/source/source_reference"),
                 Some(period_id),
                 Some("source_reference"),
-                Some("1 to 1024 non-whitespace-only characters".to_owned()),
+                Some("non-empty provenance reference".to_owned()),
                 Some(period.source.source_reference.clone()),
+            );
+        } else if period.source.source_reference.chars().count() > 1024 {
+            push_semantic(
+                diagnostics,
+                DiagnosticCode::StringConstraintViolation,
+                "source_reference must not exceed 1024 characters.",
+                format!("{pointer}/source/source_reference"),
+                Some(period_id),
+                Some("source_reference"),
+                Some("maximum 1024 characters".to_owned()),
+                Some(period.source.source_reference.chars().count().to_string()),
             );
         }
 
