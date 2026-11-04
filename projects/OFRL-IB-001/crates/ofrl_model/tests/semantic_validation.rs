@@ -205,3 +205,12 @@ fn currency_must_have_three_uppercase_ascii_letters() {
     let report = validate(&value);
     assert!(has_code(&report, DiagnosticCode::InvalidCurrencyFormat));
 }
+
+
+#[test]
+fn malformed_period_identifier_is_rejected() {
+    let mut value = payload();
+    value["historical_periods"][0]["period_id"] = json!("2023-FY");
+    let report = validate(&value);
+    assert!(has_code(&report, DiagnosticCode::InvalidIdentifierFormat));
+}
