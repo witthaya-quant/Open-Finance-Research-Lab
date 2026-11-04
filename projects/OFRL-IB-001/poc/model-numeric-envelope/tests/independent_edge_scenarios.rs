@@ -90,7 +90,9 @@ fn four_edge_scenarios_match_independent_exact_golden_for_all_five_years() {
         for (actual, expected) in actual_periods.iter().zip(expected_periods) {
             assert_eq!(
                 actual.period_id,
-                expected["period_id"].as_str().expect("period_id must be a string")
+                expected["period_id"]
+                    .as_str()
+                    .expect("period_id must be a string")
             );
             let expected_values = expected["values"]
                 .as_object()
@@ -100,7 +102,10 @@ fn four_edge_scenarios_match_independent_exact_golden_for_all_five_years() {
 
             for (metric, expected_fraction) in expected_values {
                 let expected_fraction = expected_fraction.as_str().unwrap_or_else(|| {
-                    panic!("{actual_case_id}.{}.{metric} must be a string", actual.period_id)
+                    panic!(
+                        "{actual_case_id}.{}.{metric} must be a string",
+                        actual.period_id
+                    )
                 });
                 let actual_fraction = actual.values.get(metric).unwrap_or_else(|| {
                     panic!("{actual_case_id}.{} is missing {metric}", actual.period_id)
@@ -171,9 +176,18 @@ fn zero_revenue_and_zero_capex_preserve_exact_zero_operating_lines() {
 
     for period in periods {
         for metric in [
-            "revenue", "cogs", "gross_profit", "operating_expenses", "ebitda",
-            "accounts_receivable", "inventory", "accounts_payable", "net_working_capital",
-            "capex", "cash_from_investing", "cash_from_financing",
+            "revenue",
+            "cogs",
+            "gross_profit",
+            "operating_expenses",
+            "ebitda",
+            "accounts_receivable",
+            "inventory",
+            "accounts_payable",
+            "net_working_capital",
+            "capex",
+            "cash_from_investing",
+            "cash_from_financing",
         ] {
             assert_eq!(
                 period.values[metric].raw_text(),
@@ -193,7 +207,10 @@ fn high_capex_funding_deficit_does_not_create_automatic_debt() {
         .expect("high-CapEx edge scenario must exist");
     let periods = forecast::<ExactRational>(&input).expect("high-CapEx forecast must complete");
 
-    assert_eq!(periods[0].values["closing_cash"].raw_text(), "-1531866007/292000");
+    assert_eq!(
+        periods[0].values["closing_cash"].raw_text(),
+        "-1531866007/292000"
+    );
     assert_eq!(periods[0].values["closing_debt"].raw_text(), "140/1");
     assert!(periods[0].values["closing_cash"].0.is_negative());
 }
