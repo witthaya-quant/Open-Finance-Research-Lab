@@ -452,18 +452,36 @@ fn inspect_period(
         );
     }
 
-    let expected_id = format!("FY{:04}", end.year);
-    if period_id != expected_id {
+    let id_bytes = period_id.as_bytes();
+    let id_format_valid = id_bytes.len() == 6
+        && id_bytes[..2] == *b"FY"
+        && id_bytes[2..].iter().all(u8::is_ascii_digit);
+
+    if !id_format_valid {
         push_semantic(
             diagnostics,
-            DiagnosticCode::PeriodIdYearMismatch,
-            "The V1 period_id must use the calendar year in which the reporting period ends.",
+            DiagnosticCode::InvalidIdentifierFormat,
+            "period_id must use the V1 format FY followed by four ASCII digits.",
             format!("{pointer}/period_id"),
             Some(period_id),
             Some("period_id"),
-            Some(expected_id),
+            Some("FYyyyy".to_owned()),
             Some(period_id.to_owned()),
         );
+    } else {
+        let expected_id = format!("FY{:04}", end.year);
+        if period_id != expected_id {
+            push_semantic(
+                diagnostics,
+                DiagnosticCode::PeriodIdYearMismatch,
+                "The V1 period_id must use the calendar year in which the reporting period ends.",
+                format!("{pointer}/period_id"),
+                Some(period_id),
+                Some("period_id"),
+                Some(expected_id),
+                Some(period_id.to_owned()),
+            );
+        }
     }
 
     Some(PeriodWindow {
