@@ -83,9 +83,9 @@ A deferred item must not be approximated silently. Adding it requires a versione
 
 The input-contract and historical semantic-validation gates are complete. The following gates remain open:
 
-1. Complete the transitive dependency inventory, machine-readable SBOM, security-advisory review, and licence/notice audit for the Rust application and numeric POC workspaces. The numeric POC now has a committed Cargo.lock and uses `--locked`; the separate JSON Schema tooling lockfile remains tracked in Issue #9.
+1. Complete the transitive dependency inventory, machine-readable SBOM, security-advisory review, and licence/notice audit for the Rust application and numeric POC workspaces. The numeric POC now has a committed Cargo.lock and uses `--locked`; the separate JSON Schema tooling lockfile and pinned Node/npm tooling are implemented in PR #12 and pending merge.
 2. Define the V1 model-specific numeric envelope: supported monetary ranges, intermediate headroom, rate/day bounds, error budget, reconciliation tolerance, and reporting-rounding policy.
-3. Complete independent formula/accounting review and separately derived benchmark cases. The Exact Rational numeric POC shares its generic formula implementation with the candidate backends and is not an independent model implementation.
+3. Complete independent formula/accounting review and expand the benchmark suite beyond the independently derived FY2026 Case A benchmark (cover negative earnings, zero denominators, funding shortfalls, boundary values, and multi-year propagation). The Exact Rational numeric POC shares its generic formula implementation with the candidate backends and is not an independent model implementation.
 4. Record the production numeric-library decision only after the numeric envelope, dependency review, and operational cost/complexity comparison are complete.
 5. Implement the Rust forecast calculation core and deterministic Case A outputs with unit, integration, property, golden, and boundary tests.
 6. Validate all forecast statement identities, schedules, negative-cash outcomes, and funding-feasibility behaviour.
@@ -98,4 +98,4 @@ Material changes must record the previous decision, the new decision, the reason
 
 A V1 approval does not waive a failed implementation or validation gate.
 
-| D-012 | Compare fixed-point Decimal, arbitrary-precision Decimal, and exact Rational reference on the complete Case A formula path before selecting the production numeric foundation | Comparative POC passes; production decision remains open | Both toolchains pass 10 tests; Case A residuals and stress capacity are measured. Production adoption still requires a model-specific envelope, independent formula review, and dependency/SBOM/security approval |
+| D-012 | Compare fixed-point Decimal, arbitrary-precision Decimal, and exact Rational reference on the complete Case A formula path before selecting the production numeric foundation | Comparative POC passes; production decision remains open | Both toolchains pass 11 tests, including the independently derived 32-metric FY2026 benchmark; Case A residuals and stress capacity are measured. Production adoption still requires a model-specific envelope, independent formula review, and dependency/SBOM/security approval |
