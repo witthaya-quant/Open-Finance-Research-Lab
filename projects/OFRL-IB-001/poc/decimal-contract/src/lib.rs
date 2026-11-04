@@ -209,20 +209,8 @@ mod tests {
     #[test]
     fn non_canonical_decimal_strings_are_rejected() {
         for invalid in [
-            "",
-            "+1",
-            "01",
-            "-01",
-            ".5",
-            "1.",
-            "1e3",
-            "1E3",
-            "1,000",
-            " 1.0",
-            "1.0 ",
-            "NaN",
-            "Infinity",
-            "--1",
+            "", "+1", "01", "-01", ".5", "1.", "1e3", "1E3", "1,000", " 1.0", "1.0 ", "NaN",
+            "Infinity", "--1",
         ] {
             let json = format!(
                 r#"{{"schema_version":"0.1.0","model_id":"OFRL-IB-001","period":"FY2026","line_item":"revenue","currency":"USD","unit_scale":"thousands","amount":"{invalid}"}}"#
@@ -255,7 +243,9 @@ mod tests {
             .has_headers(true)
             .from_writer(Vec::new());
 
-        writer.serialize(&record).expect("CSV serialization should succeed");
+        writer
+            .serialize(&record)
+            .expect("CSV serialization should succeed");
         let bytes = writer
             .into_inner()
             .expect("CSV writer should flush successfully");
@@ -286,7 +276,8 @@ mod tests {
         assert!(Decimal::ONE.checked_div(Decimal::ZERO).is_none());
 
         let max_round_trip = sample_record(&Decimal::MAX.to_string());
-        let json = serde_json::to_string(&max_round_trip).expect("maximum Decimal should serialize");
+        let json =
+            serde_json::to_string(&max_round_trip).expect("maximum Decimal should serialize");
         let decoded: AmountRecord =
             serde_json::from_str(&json).expect("maximum Decimal string should deserialize");
         assert_eq!(decoded.amount, Decimal::MAX);
@@ -312,8 +303,14 @@ mod tests {
         // represented or documented as exact rational arithmetic.
         assert_ne!(reconstructed, Decimal::ONE);
 
-        println!("POC decimal 1/365 = {one_over_365} (scale {})", one_over_365.scale());
-        println!("POC decimal 1/3   = {one_over_three} (scale {})", one_over_three.scale());
+        println!(
+            "POC decimal 1/365 = {one_over_365} (scale {})",
+            one_over_365.scale()
+        );
+        println!(
+            "POC decimal 1/3   = {one_over_three} (scale {})",
+            one_over_three.scale()
+        );
         println!("POC decimal (1/3)*3 = {reconstructed}");
     }
 
