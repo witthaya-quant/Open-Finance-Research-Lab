@@ -55,6 +55,12 @@ Default licence allocation:
 
 Apache-2.0 permits commercial use, modification, and redistribution subject to its terms. CC BY 4.0 permits commercial sharing and adaptation with attribution and compliance with its conditions. A public release must be made on the assumption that another person or company may use it commercially.
 
+Apache-2.0 is permissive rather than copyleft. Another company may incorporate OFRL code into a commercial product and keep its separately developed proprietary components closed, provided it complies with the licence for the OFRL material. If OFRL expects downstream changes to covered software to remain under a reciprocal open-source licence, that is a different licensing objective and must be decided at the component level before publication.
+
+GPL and AGPL are still open-source licences and do not prohibit commercial use. They impose source-sharing obligations in specified circumstances, such as distribution of covered derivative works under GPL or remote network interaction with a modified AGPL-covered program. Those obligations can affect adoption and compatibility, so they should not be adopted casually or retroactively. See the [GNU GPL FAQ](https://www.gnu.org/licenses/gpl-faq.en.html).
+
+For the current OFRL repository, retain Apache-2.0 for software and CC BY 4.0 for documentation. Consider a different software licence only for a future, clearly bounded component with a documented reason and a separate Decision Record.
+
 ### 3.2 Private know-how — do not publish
 
 Keep information private when its value depends on confidentiality, it is not authorised for disclosure, or the Founder has not decided to release it.
