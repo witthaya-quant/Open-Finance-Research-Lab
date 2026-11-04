@@ -76,4 +76,4 @@ jobs:
         run: cargo doc --workspace --no-deps
 
       - name: Validate canonical synthetic Case A through CLI
-        run: cargo run --quiet -p ofrl_cli -- validate fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json
+        run: cargo run --quiet -p ofrl_cli -- validate ../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json
