@@ -1,0 +1,81 @@
+name: OFRL-IB-001 Numeric Envelope POC
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ofrl-ib-001-numeric-envelope-poc.yml"
+      - "projects/OFRL-IB-001/Cargo.toml"
+      - "projects/OFRL-IB-001/NUMERIC_ENVELOPE.md"
+      - "projects/OFRL-IB-001/MODEL_CONVENTIONS.md"
+      - "projects/OFRL-IB-001/DECISION_LOG.md"
+      - "projects/OFRL-IB-001/poc/model-numeric-envelope/**"
+      - "fixtures/synthetic/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: \${{ github.workflow }}-\${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  numeric-envelope:
+    name: Numeric envelope (Rust \${{ matrix.rust }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        rust:
+          - "1.85.0"
+          - "1.99.1"
+    env:
+      RUST_BIGDECIMAL_DEFAULT_PRECISION: "80"
+      RUST_BIGDECIMAL_DEFAULT_ROUNDING_MODE: "HalfEven"
+    defaults:
+      run:
+        shell: bash
+        working-directory: projects/OFRL-IB-001/poc/model-numeric-envelope
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install selected Rust toolchain
+        working-directory: .
+        env:
+          RUST_TOOLCHAIN: \${{ matrix.rust }}
+        run: |
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://sh.rustup.rs \
+              | sh -s -- -y --profile minimal
+          fi
+          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --component rustfmt --component clippy
+          rustup default "$RUST_TOOLCHAIN"
+          rustc --version
+          cargo --version
+
+      - name: Generate POC dependency lockfile (bootstrap only)
+        run: cargo generate-lockfile
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run Clippy
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Run full-formula comparison tests
+        run: cargo test --all-targets -- --nocapture
+
+      - name: Build documentation
+        env:
+          RUSTDOCFLAGS: "-D warnings"
+        run: cargo doc --no-deps
+
+      - name: Export generated Cargo.lock (bootstrap only)
+        run: base64 --wrap=0 Cargo.lock
