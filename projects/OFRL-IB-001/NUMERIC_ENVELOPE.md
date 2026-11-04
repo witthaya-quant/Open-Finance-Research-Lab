@@ -175,3 +175,74 @@ The numeric foundation cannot be declared approved for the full model until:
 7. Direct/transitive dependency, lockfile, licence, and security reviews are completed.
 
 The Decimal POC passed its own test scope. These model-level acceptance gates remain open.
+
+## 12. Comparative full-formula POC evidence (2026-11-04)
+
+The isolated comparison in [the model numeric-envelope POC](poc/model-numeric-envelope/README.md) ran the five-year Case A formula sequence using one shared generic forecast implementation with three numeric backends. Both CI jobs passed on Rust 1.85.0 and 1.99.1 in the initial measurement run [Numeric Envelope POC run 41769881131](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41769881131). The strict-formatting, committed-lockfile, and expanded 10-test rerun passed in [run 41775548498](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41775548498). The 11-test run that includes the independent FY2026 benchmark passed both toolchains in [run 41776373568](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41776373568).
+
+**Independent formula benchmark**
+
+- [Independent FY2026 calculation benchmark](poc/model-numeric-envelope/BENCHMARKS.md) records the opening balances, model assumptions, separate calculation sequence, and exact expected fractions for all 32 first-year forecast metrics.
+- Rust test `case_a_fy2026_matches_independently_derived_exact_benchmark` asserts the exact fractions without using the generic forecast routine to generate its expected values. It passed in both toolchains as part of the 11-test run above.
+- BM-001 has been extended by BM-002 to an independent five-year Case A golden benchmark covering all 160 outputs; edge-case benchmarks and independent finance/accounting review remain required.
+
+**Canonical Case A observations**
+- 160 forecast metric values were compared per candidate across five years.
+- Both `rust_decimal 1.43.0` and `bigdecimal 0.4.11` had zero mismatches after the POC's provisional two-decimal display quantization.
+- The maximum exact rational difference reported for rust_decimal was `39/365000000000000000000000000`, in FY2030 closing cash.
+- The maximum exact rational difference reported for BigDecimal was `1/114062500000000000000000000000000000000000000000000000000000000000000000000000`, in FY2029 cash from operations.
+- These are arithmetic differences in the model's configured unit (illustratively USD thousands), not final materiality conclusions. The two-decimal display comparison is a POC diagnostic, not the approved reporting or reconciliation tolerance.
+- Maximum unrounded Case A Balance Sheet residual for `rust_decimal`: `1/10000000000000000000000000` in FY2029 (10^-25 model units).
+- Maximum unrounded Case A Balance Sheet residual for `bigdecimal`: `0/1` in the five-year Case A run.
+- Both residual results were identical on Rust 1.85.0 and 1.99.1. They are observed test outputs, not the final model reconciliation tolerance.
+
+
+
+**Intermediate stress point (monetary inputs scaled by (10^{18}))**
+- A second full-formula stress case uses the same extreme operating assumptions as the (10^{22}) capacity probe but scales the historical monetary inputs by (10^{18}).
+- Both `rust_decimal 1.43.0` and `bigdecimal 0.4.11` completed all five forecast years without arithmetic failure.
+- Each candidate matched the Exact Rational reference exactly across all 160 compared output metrics: maximum absolute error `0/1`, zero provisional two-decimal display mismatches.
+- Maximum unrounded Balance Sheet residual was `0/1` for both candidates.
+- The largest Exact Rational forecast metric was `2,160,000,000,000,000,000,000,000.00` in FY2030 accounts payable.
+- The result passed on Rust 1.85.0 and 1.99.1, including strict formatting, Clippy, 12 tests, and documentation build in [Numeric Envelope POC run 41777136666](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41777136666).
+
+The (10^{18}) and (10^{22}) cases are two deliberately selected numerical stress points, not a precise overflow boundary. They do not define supported production company size, maximum monetary input, or the final V1 model-specific operating envelope.
+
+**Provisional stress observations**
+- The deliberately extreme stress case scaled starting monetary amounts by (10^{22}) and raised selected assumptions. Its exact-rational reference completed and remained arithmetically balanced.
+- The largest exact-rational forecast metric was `21,600,000,000,000,000,000,000,000,000.00` in FY2030 accounts payable.
+- rust_decimal rejected the stressed path at FY2026 accounts-receivable numerator multiplication due to checked Decimal overflow.
+- BigDecimal completed the stress path with zero difference from the exact-rational reference across the 160 compared output values under the POC context.
+- This stress case is a representation-capacity probe, not a realistic company-size requirement or a production V1 input limit.
+- A separate high-CapEx diagnostic produced FY2026 closing cash of -5,246.116462328767 model units (exact value -1531866007/292000) while the algebraic Balance Sheet residual remained zero. Closing debt remained 140 (opening debt 180 less explicit repayment 40); no automatic financing was inserted. This is a funding-shortfall diagnostic, not a valid negative cash asset or a reportable feasible Balance Sheet.
+
+**Interpretation and remaining gates**
+
+The evidence demonstrates that the fixed-width candidate has a finite capacity boundary and that the arbitrary-precision candidate can represent this particular extreme path under an 80-significant-digit HalfEven division context. It does not establish that BigDecimal is the better production choice: performance, operational bounds, memory use, deterministic context control, dependency health, serialization, and the intended real-world model envelope still require review.
+
+The exact-rational backend shares the same generic forecast formula implementation as the candidates. It is an arithmetic oracle, not an independent verification of the financial-model formulas. BM-002 now provides independent exact expected values for all 160 Case A outputs across five years; edge-case benchmarks and independent finance/accounting review remain open. A model-specific error budget, the full dependency/SBOM/security review, and production numeric-library decision also remain open.
+
+
+## 13. Five-year independent Case A benchmark (BM-002)
+
+The independent FY2026 expected values in BM-001 have been extended to FY2026–FY2030. [BM-002](poc/model-numeric-envelope/BENCHMARKS_FIVE_YEAR.md) documents the independent derivation and assumptions; [the golden JSON](poc/model-numeric-envelope/golden/case-a-five-year.v0.1.0.json) stores 160 reduced rational values. The integration test checks every metric against the exact fraction and asserts zero Balance Sheet difference in each year. The test makes no use of display tolerance.
+
+This closes the multi-period golden-output gap for synthetic Case A only. It does not provide accounting sign-off, edge-case coverage, or Numeric Profile approval.
+
+
+## 15. Runtime-cost evidence — initial observation
+
+The non-gating backend timing harness has now completed on both supported Rust toolchains. Run [41784590895](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41784590895) records the following median forecast times:
+
+| Rust toolchain | Scenario | rust_decimal | BigDecimal | Exact Rational |
+|---|---|---:|---:|---:|
+| 1.85.0 | Case A | 42.117 µs | 87.877 µs | 316.808 µs |
+| 1.85.0 | Stress (10^{18}) | 43.032 µs | 64.566 µs | 367.050 µs |
+| 1.99.1 | Case A | 37.235 µs | 82.277 µs | 324.448 µs |
+| 1.99.1 | Stress (10^{18}) | 38.158 µs | 63.559 µs | 392.920 µs |
+
+BigDecimal's median time was 1.50×–2.21× the fixed Decimal candidate in this one observed CI environment. Exact Rational was 7.52×–10.30×. The runner reported 4 vCPUs on an AMD EPYC 7763 virtualized environment, and the BigDecimal context was 80 significant digits / HalfEven.
+
+This is a limited measurement of the five-year forecast function over small synthetic inputs. It does not measure peak memory, allocations, tail latency, concurrency, file I/O, input validation, serialization or workbook generation. Timing results vary by runner and are not production service-level estimates.
+
+The data therefore informs the performance dimension only. It does not override the checked-overflow finding at the selected (10^{22}) rust_decimal stress point, prove an approved operating envelope, or determine the production backend. Backend selection remains OPEN pending Numeric Profile, resource limits, deterministic context and dependency/licence review. See [BENCHMARKS_PERFORMANCE.md](poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md) for sample counts, artifact checksums and limitations.

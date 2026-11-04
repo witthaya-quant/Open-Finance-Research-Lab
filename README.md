@@ -62,7 +62,7 @@ As components become generally useful beyond one project, I intend to consider p
 
 ### OFRL-IB-001 — Integrated Three-Statement Financial Model
 
-**Status:** Model-input contract and Rust runtime semantic validator are implemented and CI-verified on Rust 1.85.0 and 1.99.1. The forecast calculation engine and analyst-facing workbook have not been released.
+**Status:** The model-input contract and Rust runtime semantic validator are implemented and CI-verified. The isolated numeric-foundation comparison POC also passes its 10-test matrix on Rust 1.85.0 and 1.99.1, but no production numeric library has been selected. The forecast calculation engine and analyst-facing workbook have not been released.
 
 The first project is a financial model for a generic non-financial operating company. The plan is to implement the calculation engine and validation suite in Rust, then provide an Excel report for finance practitioners. The Rust implementation will be the reference for the calculations.
 
@@ -74,6 +74,8 @@ The first project is a financial model for a generic non-financial operating com
 - [Decision log](projects/OFRL-IB-001/DECISION_LOG.md)
 - [Decimal contract POC](projects/OFRL-IB-001/poc/decimal-contract/README.md)
 - [Dependency review](projects/OFRL-IB-001/poc/decimal-contract/DEPENDENCY_REVIEW.md)
+- [Full-formula numeric foundation comparison POC](projects/OFRL-IB-001/poc/model-numeric-envelope/README.md)
+- [Independent FY2026 exact calculation benchmark](projects/OFRL-IB-001/poc/model-numeric-envelope/BENCHMARKS.md)
 - [Model input contract](projects/OFRL-IB-001/MODEL_INPUT_CONTRACT.md)
 - [Numeric envelope and precision policy](projects/OFRL-IB-001/NUMERIC_ENVELOPE.md)
 - [Validation and error contract](projects/OFRL-IB-001/VALIDATION_ERROR_CONTRACT.md)

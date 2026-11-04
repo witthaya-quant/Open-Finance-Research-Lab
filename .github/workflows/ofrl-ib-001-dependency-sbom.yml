@@ -1,0 +1,271 @@
+name: OFRL-IB-001 Dependency SBOM
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ofrl-ib-001-dependency-sbom.yml"
+      - "projects/OFRL-IB-001/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ofrl-ib-001-sbom-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-sbom:
+    name: Generate scoped CycloneDX SBOMs
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Install isolated SBOM toolchain
+        shell: bash
+        run: |
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://sh.rustup.rs \
+              | sh -s -- -y --profile minimal
+          fi
+          export PATH="$HOME/.cargo/bin:$PATH"
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          rustup toolchain install 1.99.1 --profile minimal
+          rustup default 1.99.1
+          rustc --version
+          cargo --version
+
+          TOOL_DIR="$RUNNER_TEMP/ofrl-tools"
+          mkdir -p "$TOOL_DIR/cyclonedx" "$TOOL_DIR/audit" "$HOME/.cargo/bin"
+
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+            "https://github.com/CycloneDX/cyclonedx-rust-cargo/releases/download/cargo-cyclonedx-0.5.9/cargo-cyclonedx-x86_64-unknown-linux-gnu.tar.xz" \
+            -o "$TOOL_DIR/cargo-cyclonedx.tar.xz"
+          echo "fb8dbee9f182173e062a64a387b21a0badc6fab8b2abf9294973f012972bf6d8  $TOOL_DIR/cargo-cyclonedx.tar.xz" \
+            | sha256sum --check -
+          tar -xJf "$TOOL_DIR/cargo-cyclonedx.tar.xz" -C "$TOOL_DIR/cyclonedx"
+          CYCLEDX_BIN="$(find "$TOOL_DIR/cyclonedx" -type f -name cargo-cyclonedx -print -quit)"
+          test -n "$CYCLEDX_BIN"
+          install -m 0755 "$CYCLEDX_BIN" "$HOME/.cargo/bin/cargo-cyclonedx"
+
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+            "https://github.com/rustsec/rustsec/releases/download/cargo-audit/v0.22.2/cargo-audit-x86_64-unknown-linux-gnu-v0.22.2.tgz" \
+            -o "$TOOL_DIR/cargo-audit.tgz"
+          echo "ab28a1bdb54db4d5d8ad5981cf1f959410370b3d28250dbd35f6a44248620e39  $TOOL_DIR/cargo-audit.tgz" \
+            | sha256sum --check -
+          tar -xzf "$TOOL_DIR/cargo-audit.tgz" -C "$TOOL_DIR/audit"
+          AUDIT_BIN="$(find "$TOOL_DIR/audit" -type f -name cargo-audit -print -quit)"
+          test -n "$AUDIT_BIN"
+          install -m 0755 "$AUDIT_BIN" "$HOME/.cargo/bin/cargo-audit"
+
+          cargo cyclonedx --help >/dev/null
+          cargo audit --version
+
+      - name: Generate separate production and POC SBOMs
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          PROJECT="projects/OFRL-IB-001"
+          OUTPUT="$RUNNER_TEMP/ofrl-ib-001-sbom"
+          mkdir -p "$OUTPUT"
+
+          PROD_LOCK="$PROJECT/Cargo.lock"
+          NUMERIC_LOCK="$PROJECT/poc/model-numeric-envelope/Cargo.lock"
+          DECIMAL_DIR="$PROJECT/poc/decimal-contract"
+          DECIMAL_MANIFEST="$DECIMAL_DIR/Cargo.toml"
+          DECIMAL_LOCK="$DECIMAL_DIR/Cargo.lock"
+
+          test -f "$PROD_LOCK"
+          test -f "$NUMERIC_LOCK"
+          test -f "$DECIMAL_MANIFEST"
+
+          PROD_LOCK_BEFORE="$(sha256sum "$PROD_LOCK" | awk '{print $1}')"
+          NUMERIC_LOCK_BEFORE="$(sha256sum "$NUMERIC_LOCK" | awk '{print $1}')"
+          DECIMAL_LOCK_BEFORE=""
+
+          # A stable commit timestamp removes nondeterministic SBOM serial/timestamp fields.
+          export SOURCE_DATE_EPOCH
+          SOURCE_DATE_EPOCH="$(git log -1 --format=%ct "$SOURCE_COMMIT")"
+
+          echo "Generating production workspace SBOMs (all features, all target platforms)..."
+          cargo cyclonedx \
+            --manifest-path "$PROJECT/Cargo.toml" \
+            --format json \
+            --spec-version 1.5 \
+            --all-features \
+            --target all
+
+          cp "$PROJECT/crates/ofrl_model/ofrl_model.cdx.json" "$OUTPUT/production-ofrl_model.cdx.json"
+          cp "$PROJECT/crates/ofrl_cli/ofrl_cli.cdx.json" "$OUTPUT/production-ofrl_cli.cdx.json"
+
+          echo "Generating isolated numeric-envelope POC SBOM..."
+          cargo cyclonedx \
+            --manifest-path "$PROJECT/poc/model-numeric-envelope/Cargo.toml" \
+            --format json \
+            --spec-version 1.5 \
+            --all-features \
+            --target all
+
+          cp "$PROJECT/poc/model-numeric-envelope/ofrl-model-numeric-envelope.cdx.json" \
+            "$OUTPUT/poc-model-numeric-envelope.cdx.json"
+
+          # The Decimal Contract POC currently has no committed Cargo.lock.
+          # Resolve it only to create an explicitly ephemeral discovery snapshot.
+          DECIMAL_LOCK_STATUS="ephemeral-generated-for-this-run"
+          if [[ -e "$DECIMAL_LOCK" ]]; then
+            DECIMAL_LOCK_STATUS="committed-or-preexisting"
+            DECIMAL_LOCK_BEFORE="$(sha256sum "$DECIMAL_LOCK" | awk '{print $1}')"
+          else
+            DECIMAL_LOCK_STATUS="ephemeral-generated-for-this-run"
+            cargo generate-lockfile --manifest-path "$DECIMAL_MANIFEST"
+            test -f "$DECIMAL_LOCK"
+            DECIMAL_LOCK_BEFORE="$(sha256sum "$DECIMAL_LOCK" | awk '{print $1}')"
+            cp "$DECIMAL_LOCK" "$OUTPUT/decimal-contract.Cargo.lock.ephemeral"
+          fi
+
+          echo "Generating isolated Decimal Contract POC SBOM..."
+          cargo cyclonedx \
+            --manifest-path "$DECIMAL_MANIFEST" \
+            --format json \
+            --spec-version 1.5 \
+            --all-features \
+            --target all
+
+          cp "$DECIMAL_DIR/ofrl-decimal-contract-poc.cdx.json" \
+            "$OUTPUT/poc-decimal-contract.cdx.json"
+
+          # Capture security findings for every dependency graph without silently accepting warnings.
+          # A failing audit is recorded so the SBOM/report artifact is still uploaded before the job fails.
+          AUDIT_FAILURE=0
+          run_audit() {
+            local label="$1"
+            local lockfile="$2"
+            local report="$OUTPUT/$label.cargo-audit.json"
+            local exit_code=0
+
+            set +e
+            cargo audit --file "$lockfile" --deny warnings --json > "$report"
+            exit_code=$?
+            set -e
+
+            printf '%s=%s\n' "$label" "$exit_code" >> "$OUTPUT/audit-exit-codes.txt"
+            if [[ "$exit_code" -ne 0 ]]; then
+              AUDIT_FAILURE=1
+            fi
+          }
+
+          run_audit "production" "$PROD_LOCK"
+          run_audit "numeric-envelope-poc" "$NUMERIC_LOCK"
+          run_audit "decimal-contract-poc" "$DECIMAL_LOCK"
+
+          if [[ "$AUDIT_FAILURE" -ne 0 ]]; then
+            touch "$OUTPUT/AUDIT_FINDINGS_OR_AUDIT_ERROR"
+          fi
+
+          # Lockfiles present before generation must never be mutated.
+          test "$PROD_LOCK_BEFORE" = "$(sha256sum "$PROD_LOCK" | awk '{print $1}')"
+          test "$NUMERIC_LOCK_BEFORE" = "$(sha256sum "$NUMERIC_LOCK" | awk '{print $1}')"
+          test "$DECIMAL_LOCK_BEFORE" = "$(sha256sum "$DECIMAL_LOCK" | awk '{print $1}')"
+
+          # Do not leave a generated, non-reproducible lockfile in the checkout.
+          if [[ "$DECIMAL_LOCK_STATUS" == "ephemeral-generated-for-this-run" ]]; then
+            rm "$DECIMAL_LOCK"
+          fi
+
+          python3 - "$OUTPUT" "$SOURCE_COMMIT" "$SOURCE_DATE_EPOCH" "$DECIMAL_LOCK_STATUS" <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          output = pathlib.Path(sys.argv[1])
+          metadata = {
+              "project": "OFRL-IB-001",
+              "source_commit": sys.argv[2],
+              "source_date_epoch": int(sys.argv[3]),
+              "sbom_generator": "cargo-cyclonedx 0.5.9",
+              "advisory_scanner": "cargo-audit 0.22.2 (--deny warnings)",
+              "rust_toolchain": "1.99.1",
+              "cyclonedx_specification": "1.5",
+              "feature_selection": "all-features",
+              "target_selection": "all",
+              "dependency_scope": "runtime and build dependency graph; dev-only dependencies are not part of the default SBOM",
+              "lockfiles": {
+                  "production_workspace": "committed Cargo.lock; verified unchanged",
+                  "numeric_envelope_poc": "committed Cargo.lock; verified unchanged",
+                  "decimal_contract_poc": sys.argv[4],
+              },
+              "advisory_audit": "See per-workspace cargo-audit JSON reports and audit-exit-codes.txt; any non-zero exit is a blocking finding or audit error.",
+              "interpretation": (
+                  "Inventory and advisory-scan evidence only. An SBOM does not itself constitute a "
+                  "licence, source-trust, maintenance, or legal approval."
+              ),
+          }
+          (output / "sbom-metadata.json").write_text(
+              json.dumps(metadata, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          for bom in "$OUTPUT"/*.cdx.json; do
+            test -s "$bom"
+            python3 - "$bom" <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          path = pathlib.Path(sys.argv[1])
+          bom = json.loads(path.read_text(encoding="utf-8"))
+          if bom.get("bomFormat") != "CycloneDX":
+              raise SystemExit(f"{path.name}: invalid bomFormat")
+          if not isinstance(bom.get("components"), list):
+              raise SystemExit(f"{path.name}: missing components array")
+          print(f"{path.name}: {len(bom['components'])} components")
+          PY
+          done
+
+          (
+            cd "$OUTPUT"
+            find . -maxdepth 1 -type f ! -name SHA256SUMS -printf '%f\0' \
+              | sort -z \
+              | xargs -0 sha256sum > SHA256SUMS
+          )
+
+          echo "SBOM output files:"
+          find "$OUTPUT" -maxdepth 1 -type f -printf '%f\n' | sort
+          echo "Git status after generation:"
+          git status --short
+
+      - name: Upload dependency inventory and audit reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ofrl-ib-001-sbom-${{ github.sha }}
+          path: ${{ runner.temp }}/ofrl-ib-001-sbom/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Enforce advisory audit results
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          REPORT="${{ runner.temp }}/ofrl-ib-001-sbom/audit-exit-codes.txt"
+          if [[ ! -f "$REPORT" ]]; then
+            echo "Advisory audit report is missing; dependency audit cannot be considered passed."
+            exit 1
+          fi
+          if grep -Eq '=[1-9][0-9]*$' "$REPORT"; then
+            echo "One or more cargo-audit checks failed or found warnings. Review the uploaded JSON reports."
+            cat "$REPORT"
+            exit 1
+          fi
+          echo "All cargo-audit checks passed with --deny warnings."

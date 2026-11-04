@@ -61,7 +61,7 @@ The POC does not close the complete dependency/security review. No Cargo.lock or
 | C-005 | Separate JSON Schema validation from accounting and cross-period semantic validation | Required design policy | Structural validity does not establish accounting consistency or model correctness |
 | C-006 | Use a typed external diagnostic contract rather than expose dependency-specific error strings | Proposed | Keeps CLI and future consumers stable when internal crates change |
 
-The schema and synthetic fixture passed standard Draft 2020-12 compilation and positive/negative fixture validation in GitHub Actions on 2026-11-04. This accepts the external structural/lexical schema gate only. The Rust semantic validator, typed error mapper, and all accounting/cross-period checks remain unimplemented.
+The schema and synthetic fixture passed the Draft 2020-12 gate in PR #8. The typed Rust runtime semantic validator, historical accounting checks, CLI diagnostic contract, and regression tests were delivered in PR #10 and passed CI on Rust 1.85.0 and 1.99.1. These milestones validate input acceptance and historical statements; they do not calculate forecast statements or establish Scenario Feasibility.
 
 ## 3. Deferred scope
 
@@ -81,18 +81,21 @@ A deferred item must not be approximated silently. Adding it requires a versione
 
 ## 4. Open engineering gates
 
-These are implementation gates, not unresolved choices about the overall direction:
+The input-contract and historical semantic-validation gates are complete. The following gates remain open:
 
-1. Complete the Draft 2020-12 schema compilation and positive/negative fixture checks in CI.
-2. Implement the Rust semantic input validator and typed diagnostic mapping; schema validation alone is insufficient.
-3. Finalize the model-specific numeric envelope, maximum intermediate values, error budget, and reporting-rounding policy.
-4. Complete the transitive dependency inventory, SBOM, licence/security review, and Cargo.lock policy for the application workspace.
-5. Implement the Rust calculation core and synthetic reference case with unit, integration, property, golden, and boundary tests.
-6. Verify workbook export precision and canonical-output reconciliation.
-7. Establish full CI, reproducibility instructions, and independent review.
+1. Complete the transitive dependency inventory, machine-readable SBOM, security-advisory review, and licence/notice audit for the Rust application and numeric POC workspaces. The numeric POC now has a committed Cargo.lock and uses `--locked`; the separate JSON Schema tooling lockfile and pinned Node/npm tooling are implemented in PR #12 and pending merge.
+2. Define the V1 model-specific numeric envelope: supported monetary ranges, intermediate headroom, rate/day bounds, error budget, reconciliation tolerance, and reporting-rounding policy.
+3. Complete independent formula/accounting review and expand the benchmark suite beyond the independently derived FY2026 Case A benchmark (cover negative earnings, zero denominators, funding shortfalls, boundary values, and multi-year propagation). The Exact Rational numeric POC shares its generic formula implementation with the candidate backends and is not an independent model implementation.
+4. Record the production numeric-library decision only after the numeric envelope, dependency review, and operational cost/complexity comparison are complete.
+5. Implement the Rust forecast calculation core and deterministic Case A outputs with unit, integration, property, golden, and boundary tests.
+6. Validate all forecast statement identities, schedules, negative-cash outcomes, and funding-feasibility behaviour.
+7. Generate the analyst-facing XLSX from canonical Rust outputs and verify export precision/reconciliation.
+8. Establish release CI, reproducibility instructions, independent review, and correction/versioning procedures.
 
 ## 5. Change control
 
 Material changes must record the previous decision, the new decision, the reason, the affected model assumptions, and the validation tests that must be rerun. Acceptance criteria must not be weakened after a failed test simply to obtain a pass.
 
 A V1 approval does not waive a failed implementation or validation gate.
+
+| D-012 | Compare fixed-point Decimal, arbitrary-precision Decimal, and exact Rational reference on the complete Case A formula path before selecting the production numeric foundation | Comparative POC passes; production decision remains open | Both toolchains pass 12 tests, including the independent FY2026 benchmark and intermediate numeric-capacity stress point, including the independently derived 32-metric FY2026 benchmark; Case A residuals and stress capacity are measured. Production adoption still requires a model-specific envelope, independent formula/accounting review, and dependency/SBOM/security approval |
