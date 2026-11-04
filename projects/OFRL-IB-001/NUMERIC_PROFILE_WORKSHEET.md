@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Profile Decision Worksheet
 
-**Worksheet version:** 0.1.0  
+**Worksheet version:** 0.2.0  
 **Status:** Working paper — NOT APPROVED  
 **Purpose:** Capture the evidence and decisions required before selecting a production arithmetic backend or implementing forecast calculations.
 
@@ -47,6 +47,26 @@ A production numeric profile is approved only when:
 | Maximum dividend payout ratio | Explicit domain | TBD |
 
 For each bound, record its source: product requirements, intended users/data, financial materiality, regulatory/accounting context (if applicable), or a deliberately conservative operational limit. Record owner and evidence reference.
+
+### 2.1 Current convention audit — 2026-11-04
+
+A formula-level review of `MODEL_CONVENTIONS.md` found that the following currently proposed domains have no finite upper bound. This prevents a finite worst-case envelope from being derived from the current specification.
+
+| Input class | Current convention | Decision still required |
+|---|---|---|
+| Revenue growth | Lower bound -100%; no upper bound stated | Approved finite maximum annual growth |
+| COGS / revenue | Non-negative; no 100% cap | Approved finite maximum; preserve loss-making outcomes |
+| Operating expenses / revenue | Non-negative; no upper bound | Approved finite maximum |
+| DSO / DIO / DPO | Non-negative days; no upper bound | Separate finite maximum for each driver |
+| CapEx / revenue | Non-negative; no upper bound | Approved finite maximum |
+| Debt drawdowns | Non-negative; no upper bound | Maximum per-period drawdown and/or total debt cap |
+| Interest rate | Non-negative; no upper bound | Approved finite maximum and convention |
+| Opening / last historical balances | Structurally constrained by current validator, but no numeric profile maxima | Per-field maxima for cash, receivables, inventory, gross PP&E, accumulated depreciation, payables, debt, share capital and absolute retained earnings |
+
+Tax, depreciation and dividend payout ratios already have proposed 0-to-1 intervals. Principal repayment is constrained by opening debt plus drawdown, but that does not bound debt if drawdowns are unbounded.
+
+The complete symbolic formula-chain derivation is in [NUMERIC_PROFILE_DERIVATION.md](NUMERIC_PROFILE_DERIVATION.md). Do not populate the TBD cells from the 10^18 or 10^22 POC stress points; those are candidate capacity probes, not Model Owner-approved operating limits.
+
 
 ## 3. Formula-chain intermediate envelope
 
