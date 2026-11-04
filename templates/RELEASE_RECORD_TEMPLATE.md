@@ -32,13 +32,19 @@ Link the Validation Matrix and CI runs. Do not describe a check as passed unless
 
 | Item | Value |
 |---|---|
-| Source commit | |
+| Source commit (full SHA) | |
+| Source commit timestamp / `SOURCE_DATE_EPOCH` | |
 | Toolchain / runtime | |
-| Build command | |
-| Dependency lockfile | |
-| SBOM format and path | |
+| Build target triple | |
+| Build command and feature flags | |
+| Dependency lockfile and SHA-256 | |
+| SBOM format / specification version | |
+| SBOM generator and exact version | |
+| SBOM component scope | |
 | Artifact names | |
-| SHA-256 checksums | |
+| Per-file SHA-256 checksums | |
+| Workflow artifact name / archive digest | |
+| Build or SBOM attestation URI (if generated) | |
 
 ## 4. Data, licence, and disclosure
 
