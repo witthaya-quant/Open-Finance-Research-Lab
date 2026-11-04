@@ -81,7 +81,9 @@ The bootstrap run executed:
 - `cargo tree --locked --edges normal,build,dev`.
 - The existing formatting, Clippy, test, and documentation checks.
 
-The 55 external package records all resolve from the crates.io registry source and all expose a `license` value in their Cargo package metadata. No package in the metadata inventory was marked `UNDECLARED`. The lockfile stores the selected versions and registry checksums; the inventory includes optional/transitive packages represented by the resolved package metadata, not only crates compiled under the default feature set.
+The 55 external package records all resolve from the crates.io registry source and all expose a non-empty `license` value in their Cargo package metadata. The POC workflow now reproduces this check on both Rust toolchains: it runs `cargo metadata --locked`, counts registry packages, fails if any registry package has an empty/missing Cargo `license` field, and prints the name, version, and publisher-declared expression for review. The lockfile stores the selected versions and registry checksums; the metadata inventory includes the packages represented by Cargo's resolved metadata, not only crates compiled under the default feature set.
+
+This is a metadata-presence control only. It does not validate the syntax or legal interpretation of every expression and does not verify the exact source archive, licence text, copyright notice, exception, or feature-specific obligations. Those remain release-time review gates.
 
 ### Licence metadata items requiring source-level confirmation
 
