@@ -3,12 +3,12 @@
 # OFRL-IB-001 — Dependency Audit Results
 
 **Evidence date:** 2026-11-04  
-**Workflow:** [Dependency SBOM run #41782449058](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41782449058)  
+**Workflow:** [Dependency SBOM run #41782569943](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41782569943)  
 **Pull request:** [PR #11](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/11)  
-**PR head:** `af4c0d84bf8f98cd76c021fdd7edcdb3ef15f79d`  
-**Artifact source commit:** `1fd6de84d7a0d8034b189fce0f84262dcc51d947` (GitHub pull-request merge ref used by the workflow)  
-**Artifact ID:** `13299916484`  
-**Artifact SHA-256:** `9ce1f660e51da303637e0e70818cb19eb2cd24e52775d00e6f5e6e9b0adc54b3`  
+**PR head:** `7ae94f8489a57fa7cbf5ec9d6970cbe88daad8cb`  
+**Artifact source commit:** `6434fdca7ed3300b6463d06b2840d64d720e17bf` (GitHub pull-request merge ref used by the workflow)  
+**Artifact ID:** `13298869510`  
+**Artifact SHA-256:** `d105afc11e010701ad845c63347eefc56a9ed16d1f132f6c213f1b574dc77e12`  
 **Result:** Inventory and advisory scan PASS; licence/source/legal review remains OPEN
 
 ## 1. Executive result
@@ -59,7 +59,7 @@ The artifact contains:
 - `SHA256SUMS`.
 - `decimal-contract.Cargo.lock.ephemeral`.
 
-The latest downloaded artifact (`ofrl-ib-001-sbom-1fd6de84d7a0d8034b189fce0f84262dcc51d947`, 39,787 bytes) had SHA-256 `9ce1f660e51da303637e0e70818cb19eb2cd24e52775d00e6f5e6e9b0adc54b3`, matching the GitHub artifact digest. All 10 entries in `SHA256SUMS` were re-computed locally and matched. The archive contains 11 files total including `SHA256SUMS` itself.
+The latest downloaded artifact (`ofrl-ib-001-sbom-6434fdca7ed3300b6463d06b2840d64d720e17bf`, 39,789 bytes) had SHA-256 `d105afc11e010701ad845c63347eefc56a9ed16d1f132f6c213f1b574dc77e12`, matching the GitHub artifact digest. All 10 entries in `SHA256SUMS` were re-computed locally and matched. The archive contains 11 files total including `SHA256SUMS` itself.
 
 ## 4. Lockfile reproducibility
 
