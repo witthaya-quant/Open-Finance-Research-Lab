@@ -55,6 +55,9 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Numeric envelope](NUMERIC_ENVELOPE.md)
 - [Validation and error contract](VALIDATION_ERROR_CONTRACT.md)
 - [Synthetic reference case A](SYNTHETIC_REFERENCE_CASE.md)
+- [Model input JSON Schema](../../schemas/ofrl-ib-001-model-input-0.1.0.schema.json)
+- [Synthetic Case A input fixture](../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json)
+- [Schema validation script](../../scripts/validate-ofrl-ib-001-model-input-schema.sh)
 - [Decimal contract POC](poc/decimal-contract/README.md)
 - [Dependency review](poc/decimal-contract/DEPENDENCY_REVIEW.md)
 
