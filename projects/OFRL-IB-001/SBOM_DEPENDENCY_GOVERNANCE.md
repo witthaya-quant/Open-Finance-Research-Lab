@@ -3,7 +3,7 @@
 # OFRL-IB-001 — Dependency Governance and SBOM Policy
 
 **Policy version:** 0.1.0  
-**Status:** SBOM inventory and fail-closed advisory scan automated; source and licence approval remain open  
+**Status:** SBOM inventory automated; latest RustSec scan found zero vulnerabilities/warnings; source and licence approval remain open  
 **Scope:** OFRL-IB-001 production Rust workspace and its isolated Rust POCs
 
 ## 1. Purpose
@@ -94,4 +94,22 @@ The Numeric Foundation phase remains blocked until all of the following are evid
 - Required notices and source obligations are identified.
 - The Rust numeric backend and precision policy are approved separately; dependency approval does not select the financial numeric representation.
 
-**Current conclusion:** SBOM inventory automation is implemented as a project-scoped workflow. It is not a completed dependency/security/licence audit, and it does not authorize the Production Forecast Engine.
+**Current conclusion:** SBOM inventory automation is implemented as a project-scoped workflow. The latest pinned RustSec scan returned zero vulnerabilities and zero warnings for all three audited lockfile snapshots; see [Dependency Audit Results](DEPENDENCY_AUDIT_RESULTS.md). This is a point-in-time advisory scan, not a completed software-supply-chain, source, licence or legal audit, and it does not authorize the Production Forecast Engine.
+
+
+## 7. License expressions observed in the current SBOM
+
+The 2026-11-04 inventory recorded the following SPDX expressions across the four workspaces. These are expressions as declared by package metadata; an `OR` expression records alternative licensing options and is not a conclusion that every listed licence is imposed simultaneously.
+
+- `(MIT OR Apache-2.0) AND Unicode-3.0`
+- `Apache-2.0`
+- `Apache-2.0 OR BSL-1.0`
+- `Apache-2.0 OR MIT`
+- `Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT`
+- `BSD-2-Clause OR Apache-2.0 OR MIT`
+- `MIT`
+- `MIT OR Apache-2.0`
+- `MIT OR Apache-2.0 OR LGPL-2.1-or-later`
+- `Unlicense OR MIT`
+
+No component in these four generated SBOMs had missing license metadata. This does not replace verification against the original licence texts, notice files, distribution obligations or a founder-approved licence policy. No allow-list or legal acceptance is inferred here.
