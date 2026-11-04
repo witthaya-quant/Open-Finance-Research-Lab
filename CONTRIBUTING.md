@@ -4,11 +4,13 @@
 
 Thank you for taking an interest in Open Finance Research Lab. OFRL values careful thinking, technical clarity, reproducible work, and constructive disagreement.
 
+All contributors are expected to follow the [OFRL Code of Conduct](CODE_OF_CONDUCT.md), [Governance Policy](GOVERNANCE.md), and applicable [Security Policy](SECURITY.md). The governance model applies now, including during the founder-maintained stage.
+
 The objective is not to maximise the number of notebooks or commits. It is to produce research that another person can understand, test, and improve.
 
 ## Before opening a contribution
 
-For a new research direction, open an issue or discussion with:
+For a new research direction, use the GitHub [Research Proposal issue form](.github/ISSUE_TEMPLATE/research_proposal.yml) or the reusable [Research Proposal Template](templates/RESEARCH_PROPOSAL_TEMPLATE.md). Open an issue or discussion with:
 
 1. The problem and why it matters.
 2. The proposed research question.
@@ -53,6 +55,8 @@ Where relevant, include:
 - Documentation for public interfaces.
 
 Avoid bundling unrelated changes into one pull request.
+
+Use the repository's [Pull Request template](.github/PULL_REQUEST_TEMPLATE.md). During the current single-maintainer stage, the Founder may author, review, and merge a Pull Request, but that action is recorded as a single-maintainer decision—not independent review. Once other eligible Maintainers are appointed, authors must not approve their own contributions and the approval requirements in [GOVERNANCE.md](GOVERNANCE.md) apply.
 
 ## Attribution and contribution rights
 
