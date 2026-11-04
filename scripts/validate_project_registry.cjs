@@ -262,8 +262,11 @@ function validateManifest(projectDir, folderName, catalogText, seenIds) {
   for (const type of Array.isArray(manifest.project_types) ? manifest.project_types : []) {
     const requirements = TYPE_REQUIREMENTS[type] || [];
     for (const alternatives of requirements) {
-      if (!alternatives.some((file) => existsWithin(projectDir, file))) {
+      const selected = alternatives.find((file) => existsWithin(projectDir, file));
+      if (!selected) {
         fail(`${relativeDir}: project type '${type}' requires one of: ${alternatives.join(", ")}`);
+      } else if (Array.isArray(manifest.required_documents) && !manifest.required_documents.includes(selected)) {
+        fail(`${relativeDir}/project.json: required_documents must list type-specific document '${selected}'`);
       }
     }
   }
