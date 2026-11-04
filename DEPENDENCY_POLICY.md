@@ -59,7 +59,7 @@ An isolated package excluded from the main Cargo workspace is a separate depende
 - Do not assume the workspace lockfile governs an excluded package.
 - Label POC conclusions as conditional on the tested lockfile, toolchain, features, and test coverage.
 
-The OFRL-IB-001 Decimal POC is currently a separate package. Its dependency review identifies that no POC-local lockfile was committed at the audit snapshot; closing that gap is tracked as remediation.
+The OFRL-IB-001 Decimal POC is a separate package. Its dependency review identifies that no POC-local lockfile was committed at the audit snapshot; that Rust lockfile gap remains open and is tracked for remediation.
 
 ### 4.3 JavaScript / Node validation tools
 
@@ -68,7 +68,7 @@ The OFRL-IB-001 Decimal POC is currently a separate package. Its dependency revi
 - Direct version pins without a lockfile do not freeze the transitive dependency graph.
 - Do not hide dependency resolution by installing unrecorded packages into a temporary directory in a release-critical validation path.
 
-The current JSON Schema validator installs exact direct package versions into a temporary directory while disabling lockfile generation. This passes the current schema tests, but it does not freeze transitive dependency resolution. It must be migrated to a committed manifest and lockfile before the validator becomes a mandatory release-wide gate.
+The repository now maintains an isolated schema-validation package at `scripts/schema-validator/`, with exact direct dependencies and a committed lockfile for the resolved transitive graph. CI runs `npm ci` with lifecycle scripts disabled before compiling the project-manifest schema and validating OFRL-IB-001 model-input fixtures. The package is development/CI tooling only and is not a runtime dependency of OFRL projects.
 
 ## 5. GitHub Actions and workflow security
 
@@ -90,6 +90,7 @@ Dependabot should be configured for every package ecosystem actually introduced 
 - Cargo dependencies in the OFRL-IB-001 application workspace.
 - Cargo dependencies in the isolated Decimal POC.
 - GitHub Actions references under `.github/workflows`.
+- npm dependencies in `scripts/schema-validator`.
 
 When a future project introduces another ecosystem (for example npm, Python, or container images), its package path and update policy must be added to `.github/dependabot.yml` in the same Pull Request that establishes the dependency boundary. Do not add unused ecosystem entries merely for appearance.
 
