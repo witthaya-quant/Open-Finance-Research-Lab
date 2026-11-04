@@ -5,7 +5,7 @@
 This log records the baseline decisions and changes that govern the first release. A decision marked **Approved for V1** is a scope decision for this project version; it is not a claim of statutory accounting compliance or proof that an implementation has passed its tests.
 
 **Baseline authorization:** 2026-11-04  
-**Basis:** Founder-directed implementation mandate to proceed with the project using professional engineering and research standards. Technical candidates remain subject to the proof-of-concept and validation gates below.
+**Basis:** Founder-directed implementation mandate to proceed with the project using disciplined engineering and research controls. Technical candidates remain subject to the proof-of-concept and validation gates below.
 
 ## 1. V1 baseline decisions
 
@@ -48,20 +48,20 @@ The Decimal/string-interchange POC passed on 2026-11-04 at PR #6 head commit 88e
 - A 29-fractional-digit raw parser case was observed to lose precision; the POC input adapter now rejects the over-scale value and checks exact parse-to-string round-trip.
 - Direct package metadata and the effective MSRV are documented in [DEPENDENCY_REVIEW.md](poc/decimal-contract/DEPENDENCY_REVIEW.md).
 
-The POC does not close the complete dependency/security review. No Cargo.lock or complete SBOM is committed at this stage. It also does not validate the full financial model, XLSX export, or three-statement invariants. Those remain explicit implementation gates.
+The Decimal POC does not close the complete dependency/source/licence review. PR #11 contains a separate numeric POC lockfile, CycloneDX inventories and RustSec workflow, but remains open and unmerged. The Decimal Contract POC still uses an ephemeral lockfile in CI. Its point-in-time scan reported zero findings; licence texts, notices, source provenance and distribution obligations remain open. Neither POC is the production calculation engine.
 
 ## 2.2 Input contract design decisions
 
 | ID | Decision / constraint | Status | Rationale / consequence |
 |---|---|---|---|
-| C-001 | Use a versioned JSON Schema Draft 2020-12 input contract with closed objects | Schema CI passed; runtime semantic validation pending | Ajv 8.20.0 compiled the schema and accepted/rejected the defined fixture cases; accounting and cross-period checks remain in Rust |
+| C-001 | Use a versioned JSON Schema Draft 2020-12 input contract with closed objects | Schema and Rust runtime semantic validation implemented and CI-verified | Ajv validates the published structural/lexical contract; PR #10 delivered the Rust typed historical semantic validator. Neither gate calculates forecasts |
 | C-002 | V1 schema 0.1.0 accepts synthetic historical data only | Proposed | Real filings and licensed feeds need expanded provenance, accounting-basis, restatement, and normalization metadata |
 | C-003 | Require an opening Balance Sheet immediately before the first historical period | Proposed | Enables three historical years of working-capital, PP&E, debt, cash, and retained-earnings roll-forward checks |
-| C-004 | Require exactly three historical annual periods and five forecast annual periods | Approved V1 scope; semantic validation pending | Keeps the external model horizon deterministic |
+| C-004 | Require exactly three historical annual periods and five forecast annual periods | Approved V1 scope; enforced by the runtime validator | Keeps the external model horizon deterministic and prevents silent horizon changes |
 | C-005 | Separate JSON Schema validation from accounting and cross-period semantic validation | Required design policy | Structural validity does not establish accounting consistency or model correctness |
-| C-006 | Use a typed external diagnostic contract rather than expose dependency-specific error strings | Proposed | Keeps CLI and future consumers stable when internal crates change |
+| C-006 | Use a typed external diagnostic contract rather than expose dependency-specific error strings | Contract and diagnostic types implemented; deserialization path/cause mapping still needs hardening | Stable public codes exist, but the current mapper inspects Serde message text and does not expose a JSON Pointer for every deserialization error |
 
-The schema and synthetic fixture passed standard Draft 2020-12 compilation and positive/negative fixture validation in GitHub Actions on 2026-11-04. This accepts the external structural/lexical schema gate only. The Rust semantic validator, typed error mapper, and all accounting/cross-period checks remain unimplemented.
+The schema and synthetic fixture passed Draft 2020-12 compilation and positive/negative fixture validation in PR #8. PR #10 subsequently delivered the Rust typed input and historical semantic validator, including accounting/cross-period checks, and passed the Rust 1.85.0/1.99.1 CI matrix. This validates input acceptance and historical statements only; forecast calculation, Scenario Feasibility and the production calculation-error surface remain unimplemented.
 
 ## 3. Deferred scope
 
@@ -81,18 +81,33 @@ A deferred item must not be approximated silently. Adding it requires a versione
 
 ## 4. Open engineering gates
 
-These are implementation gates, not unresolved choices about the overall direction:
+The schema and historical semantic-validation gates are implemented on main. The following remain open; open-PR evidence is not treated as merged capability.
 
-1. Complete the Draft 2020-12 schema compilation and positive/negative fixture checks in CI.
-2. Implement the Rust semantic input validator and typed diagnostic mapping; schema validation alone is insufficient.
-3. Finalize the model-specific numeric envelope, maximum intermediate values, error budget, and reporting-rounding policy.
-4. Complete the transitive dependency inventory, SBOM, licence/security review, and Cargo.lock policy for the application workspace.
-5. Implement the Rust calculation core and synthetic reference case with unit, integration, property, golden, and boundary tests.
-6. Verify workbook export precision and canonical-output reconciliation.
-7. Establish full CI, reproducibility instructions, and independent review.
+1. Approve a versioned Numeric Profile: supported monetary/rate/day bounds, formula-chain intermediate headroom, deterministic division context, five-year error budget, separate accounting/schedule/display tolerances and output rounding.
+2. Select the production numeric backend only after the Numeric Profile, controlled performance/resource evidence, serialization semantics and migration impact on the rust_decimal-based validator are reviewed.
+3. Complete dependency governance: commit or retire the Decimal Contract POC lockfile; review package source, duplicate versions, original licence texts, notices, legal alternatives and distribution obligations. PR #11's SBOM/RustSec workflow is evidence of inventory and a point-in-time advisory scan, not final approval.
+4. Obtain independent finance/accounting review of V1 conventions and statement formulas. PR #11's BM-002/BM-003 provide 800 exact expected outputs for the declared synthetic mechanics; they do not constitute accounting sign-off.
+5. Replace message-substring deserialization classification with typed error/path mapping and expose stable JSON Pointer diagnostics.
+6. Run one versioned positive/negative contract corpus through both JSON Schema and Rust runtime validation.
+7. Implement typed production forecast schedules/statements, calculation errors, Structural Integrity, Scenario Feasibility and explicit reportability status.
+8. Implement canonical ModelRun, versioned serialization, SHA-256 provenance, deterministic fingerprint and metric-level formula lineage.
+9. Generate XLSX only from canonical Rust outputs; reconcile every material displayed value and preserve Decimal-string canonical outputs.
+10. Add property, numeric-boundary, negative, determinism, output and clean-checkout reproduction evidence.
 
+The Production Forecast Engine is not authorized until gates 1–4 are explicitly accepted and recorded.
 ## 5. Change control
 
 Material changes must record the previous decision, the new decision, the reason, the affected model assumptions, and the validation tests that must be rerun. Acceptance criteria must not be weakened after a failed test simply to obtain a pass.
 
 A V1 approval does not waive a failed implementation or validation gate.
+
+## 6. Research evidence update — 2026-11-04
+
+PR #11 (open Draft; not merged) now contains:
+- BM-002: 160 independently expected exact-rational outputs for FY2026–FY2030.
+- BM-003: 640 independently expected exact-rational outputs across four five-year edge scenarios.
+- A standard-library Python reference that checks the canonical fixture identity and regenerates both goldens, reporting 800 exact expected outputs.
+- CycloneDX SBOM and RustSec advisory-scan automation.
+- A non-gating runtime-cost observation harness comparing the candidate arithmetic implementations; the first timing run passed in workflow 41784590895 and artifacts are checksum-identified. Initial medians showed BigDecimal at 1.50×–2.21× and Exact Rational at 7.52×–10.30× the fixed Decimal candidate on one 4-vCPU runner.
+
+These are research results, not production approval. The following decisions remain explicitly unmade: Numeric Profile, production numeric backend, arithmetic/error budgets, accounting tolerance, output rounding, licence/source acceptance and Production Forecast Engine adoption.

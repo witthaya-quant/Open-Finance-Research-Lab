@@ -164,6 +164,8 @@ cargo run --locked -p ofrl_cli -- validate ../../fixtures/synthetic/ofrl-ib-001-
 
 The command prints a JSON validation report.
 
+The CLI enforces a 1 MiB maximum input-document size before JSON parsing. It reads at most the configured limit plus one byte, rejects an oversized document before allocating the full file, and rejects invalid UTF-8. These are CLI transport-boundary controls; they do not change the JSON Schema or historical semantic rules. The V1 size limit is intentionally generous for the fixed three-history/five-forecast contract and must be versioned if the contract is expanded.
+
 Exit codes:
 
 | Code | Meaning |
