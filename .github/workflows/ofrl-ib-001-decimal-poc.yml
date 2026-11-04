@@ -17,9 +17,15 @@ concurrency:
 
 jobs:
   decimal-contract:
-    name: Decimal and JSON/CSV contract
+    name: Decimal contract (Rust ${{ matrix.rust }})
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        rust:
+          - "1.73.0"
+          - "1.99.1"
     defaults:
       run:
         shell: bash
@@ -32,8 +38,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install Rust stable toolchain
+      - name: Install selected Rust toolchain
         working-directory: .
+        env:
+          RUST_TOOLCHAIN: ${{ matrix.rust }}
         run: |
           if ! command -v rustup >/dev/null 2>&1; then
             curl --proto '=https' --tlsv1.2 --fail --silent --show-error https://sh.rustup.rs \
@@ -41,8 +49,8 @@ jobs:
           fi
           export PATH="$HOME/.cargo/bin:$PATH"
           echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          rustup toolchain install stable --profile minimal --component rustfmt --component clippy
-          rustup default stable
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --component rustfmt --component clippy
+          rustup default "$RUST_TOOLCHAIN"
           rustc --version
           cargo --version
 
