@@ -223,7 +223,7 @@ fn is_plain_decimal_text(text: &str) -> bool {
     }
 
     let is_negative = bytes[0] == b'-';
-    let mut index = usize::from(is_negative);
+    let mut index = if is_negative { 1 } else { 0 };
     if index >= bytes.len() {
         return false;
     }
@@ -354,5 +354,12 @@ fn days_in_month(year: u16, month: u8) -> u8 {
         2 if is_leap_year(year) => 29,
         2 => 28,
         _ => 0,
+    }
+}
+
+
+impl core::fmt::Display for CalendarDate {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(formatter, "{:04}-{:02}-{:02}", self.year, self.month, self.day)
     }
 }
