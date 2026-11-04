@@ -59,7 +59,7 @@ pub(crate) struct HistoricalSource {
     pub source_reference: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Copy, Deserialize)]
 pub(crate) enum SourceClassification {
     #[serde(rename = "synthetic")]
     Synthetic,
