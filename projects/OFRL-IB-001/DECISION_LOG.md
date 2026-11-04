@@ -54,14 +54,14 @@ The POC does not close the complete dependency/security review. No Cargo.lock or
 
 | ID | Decision / constraint | Status | Rationale / consequence |
 |---|---|---|---|
-| C-001 | Use a versioned JSON Schema Draft 2020-12 input contract with closed objects | Proposed; CI validation pending | Catch structural drift and unknown fields before model execution |
+| C-001 | Use a versioned JSON Schema Draft 2020-12 input contract with closed objects | Schema CI passed; runtime semantic validation pending | Ajv 8.20.0 compiled the schema and accepted/rejected the defined fixture cases; accounting and cross-period checks remain in Rust |
 | C-002 | V1 schema 0.1.0 accepts synthetic historical data only | Proposed | Real filings and licensed feeds need expanded provenance, accounting-basis, restatement, and normalization metadata |
 | C-003 | Require an opening Balance Sheet immediately before the first historical period | Proposed | Enables three historical years of working-capital, PP&E, debt, cash, and retained-earnings roll-forward checks |
 | C-004 | Require exactly three historical annual periods and five forecast annual periods | Approved V1 scope; semantic validation pending | Keeps the external model horizon deterministic |
 | C-005 | Separate JSON Schema validation from accounting and cross-period semantic validation | Required design policy | Structural validity does not establish accounting consistency or model correctness |
 | C-006 | Use a typed external diagnostic contract rather than expose dependency-specific error strings | Proposed | Keeps CLI and future consumers stable when internal crates change |
 
-The schema and synthetic fixture have been created on the input-contract branch. Their standard Draft 2020-12 compile/validation and negative-fixture CI results must be confirmed before this design stage is treated as accepted. The Rust semantic validator has not yet been implemented.
+The schema and synthetic fixture passed standard Draft 2020-12 compilation and positive/negative fixture validation in GitHub Actions on 2026-11-04. This accepts the external structural/lexical schema gate only. The Rust semantic validator, typed error mapper, and all accounting/cross-period checks remain unimplemented.
 
 ## 3. Deferred scope
 
