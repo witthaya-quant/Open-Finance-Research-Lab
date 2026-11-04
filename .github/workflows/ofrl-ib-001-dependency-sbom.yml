@@ -64,7 +64,7 @@ jobs:
           test -n "$AUDIT_BIN"
           install -m 0755 "$AUDIT_BIN" "$HOME/.cargo/bin/cargo-audit"
 
-          cargo-cyclonedx --version
+          cargo cyclonedx --help >/dev/null
           cargo audit --version
 
       - name: Generate separate production and POC SBOMs
@@ -263,8 +263,7 @@ jobs:
             echo "Advisory audit report is missing; dependency audit cannot be considered passed."
             exit 1
           fi
-          if grep -Eq '=[1-9][0-9]*
- "$REPORT"; then
+          if grep -Eq '=[1-9][0-9]*$' "$REPORT"; then
             echo "One or more cargo-audit checks failed or found warnings. Review the uploaded JSON reports."
             cat "$REPORT"
             exit 1
