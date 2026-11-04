@@ -109,13 +109,9 @@ jobs:
           node --version
           npm --version
 
-      # Temporary bootstrap step. Remove after the generated lockfile has
-      # been committed; the normal verification script already uses npm ci.
-      - name: Bootstrap package-lock for initial commit
-        working-directory: scripts/schema-validator
-        run: |
-          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-          base64 --wrap=0 package-lock.json
-
       - name: Validate Draft 2020-12 schema and fixtures
         run: bash scripts/validate-ofrl-ib-001-model-input-schema.sh
+
+      - name: Audit locked schema-validator dependencies
+        working-directory: scripts/schema-validator
+        run: npm audit --audit-level=high
