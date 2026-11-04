@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Rust Runtime Semantic Validator
 
-**Status:** Implemented on the validation branch; CI acceptance pending  
+**Status:** Implemented; CI matrix passed on Rust 1.85.0 and 1.99.1  
 **Scope:** V1 input parsing, typed validation, and historical accounting checks  
 **Not included:** Forecast calculation engine, Scenario Feasibility evaluation, XLSX output
 
@@ -159,7 +159,7 @@ Passing either gate alone is not sufficient to establish financial-model correct
 From the OFRL-IB-001 project directory:
 
 ~~~bash
-cargo run -p ofrl_cli -- validate fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json
+cargo run --locked -p ofrl_cli -- validate ../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json
 ~~~
 
 The command prints a JSON validation report.
@@ -189,7 +189,7 @@ The test suite covers the canonical synthetic Case A fixture and negative cases 
 - Forecast assumption domain violations.
 - A valid -100% revenue-growth assumption, which must not be rejected merely because it is economically unfavourable.
 
-The CI matrix is intended to run formatting, Clippy, unit/integration tests, documentation builds, and a CLI smoke test on Rust 1.85.0 and 1.99.1.
+The CI matrix runs formatting, Clippy with warnings denied, all workspace tests, documentation builds with warnings denied, a valid Case A CLI smoke test, and a rejected-input CLI exit-code test on Rust 1.85.0 and 1.99.1. Cargo commands that resolve dependencies use the committed Cargo.lock with --locked.
 
 ## 11. Explicit limitations
 
