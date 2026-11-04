@@ -1,11 +1,11 @@
 use std::str::FromStr;
 
 use num_rational::BigRational;
-use num_traits::One;
+use num_traits::{One, Signed};
 use ofrl_model_numeric_envelope::{
-    balance_sheet_differences_are_zero, compare_to_reference, forecast, load_case_a,
-    parse_decimal_rational, round_half_even, stress_case_a, ArbitraryDecimal, ExactRational,
-    FixedDecimal, Numeric,
+    balance_sheet_differences_are_zero, cash_deficit_case_a, compare_to_reference, forecast,
+    load_case_a, maximum_absolute_metric, parse_decimal_rational, round_half_even, stress_case_a,
+    ArbitraryDecimal, ExactRational, FixedDecimal, Numeric,
 };
 use rust_decimal::Decimal;
 
@@ -72,7 +72,17 @@ fn arbitrary_decimal_context_is_visible_and_repeating_division_is_finite() {
 
     println!("BIGDECIMAL_ONE_THIRD={rendered}");
     println!("BIGDECIMAL_ONE_THIRD_FRACTIONAL_DIGITS={fractional_digits}");
-    assert!(fractional_digits >= 50);
+    assert_eq!(
+        option_env!("RUST_BIGDECIMAL_DEFAULT_PRECISION"),
+        Some("80"),
+        "the POC must compile BigDecimal with an explicit 80-digit default context"
+    );
+    assert_eq!(
+        option_env!("RUST_BIGDECIMAL_DEFAULT_ROUNDING_MODE"),
+        Some("HalfEven"),
+        "the POC must compile BigDecimal with the declared HalfEven rounding mode"
+    );
+    assert_eq!(fractional_digits, 80, "the compile-time context must be effective");
 }
 
 #[test]
@@ -118,6 +128,13 @@ fn all_candidates_match_case_a_at_the_two_decimal_test_boundary() {
     println!("CASE_A_FIXED={fixed_summary:#?}");
     println!("CASE_A_BIGDECIMAL={arbitrary_summary:#?}");
 
+    let fixed_balance_residual =
+        maximum_absolute_metric(&fixed, "balance_difference").unwrap();
+    let arbitrary_balance_residual =
+        maximum_absolute_metric(&arbitrary, "balance_difference").unwrap();
+    println!("CASE_A_FIXED_MAX_ABS_BS_RESIDUAL={fixed_balance_residual:?}");
+    println!("CASE_A_BIGDECIMAL_MAX_ABS_BS_RESIDUAL={arbitrary_balance_residual:?}");
+
     assert_eq!(fixed_summary.compared_values, 160);
     assert_eq!(arbitrary_summary.compared_values, 160);
     assert_eq!(fixed_summary.display_mismatches, 0);
@@ -148,4 +165,33 @@ fn stress_case_exact_reference_remains_balanced_and_candidates_report_capacity()
 
     let maximum = ofrl_model_numeric_envelope::maximum_absolute_value(&reference).unwrap();
     println!("STRESS_EXACT_REFERENCE_MAXIMUM={maximum:#?}");
+}
+
+
+#[test]
+fn negative_cash_is_reported_as_infeasible_without_fabricating_financing() {
+    let fixture = cash_deficit_case_a();
+    let forecast = forecast::<ExactRational>(&fixture).unwrap();
+
+    assert_eq!(forecast.len(), 5);
+    assert!(
+        balance_sheet_differences_are_zero(&forecast),
+        "negative cash must not be hidden by a balancing plug"
+    );
+    assert!(
+        forecast.iter().any(|period| {
+            period
+                .values
+                .get("closing_cash")
+                .is_some_and(|cash| cash.0.is_negative())
+        }),
+        "the deliberately high-CapEx scenario must demonstrate a funding deficit"
+    );
+
+    // Opening debt is 180; first-year drawdown is 0 and principal repayment is 40.
+    // A cash deficit must not trigger automatic borrowing.
+    assert_eq!(
+        forecast[0].values.get("closing_debt").unwrap().raw_text(),
+        "140/1"
+    );
 }
