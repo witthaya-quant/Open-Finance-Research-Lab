@@ -62,6 +62,7 @@ Every current and future project follows the same admission, identity, decision-
 - [Project Lifecycle](PROJECT_LIFECYCLE.md) — proposal, admission, development, validation, release, maintenance, and archival.
 - [Project Standards](PROJECT_STANDARDS.md) — universal requirements, project-type profiles, risk tiers, and validation profiles.
 - [Project Manifest Schema](schemas/ofrl-project-manifest-1.0.0.schema.json) — machine-readable project metadata contract.
+- [Project Templates](templates/README.md) — reusable starting documents for every project type.
 
 OFRL establishes governance from the beginning, including while it is maintained by one person. [GOVERNANCE.md](GOVERNANCE.md) defines founder-led authority, contributor roles, review controls, and Decision Records. OFRL is designed to remain under the Founder's personal GitHub account; a GitHub Organization is optional, not a required destination.
 
@@ -73,7 +74,9 @@ OFRL establishes governance from the beginning, including while it is maintained
 - [Central Decision Register](decisions/README.md)
 - [Contributing Guide](CONTRIBUTING.md)
 - [Research Standards](RESEARCH_STANDARDS.md)
-
+- [Dependency Policy](DEPENDENCY_POLICY.md)
+- [Release Policy](RELEASE_POLICY.md)
+- [Repository Audit](REPOSITORY_AUDIT.md)
 
 ## Research areas
 
