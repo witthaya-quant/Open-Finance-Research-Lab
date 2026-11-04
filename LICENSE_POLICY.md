@@ -2,7 +2,7 @@
 
 # OFRL Licensing and Reuse Policy
 
-OFRL uses a content-type-specific licensing model. The default for original material is determined by the kind of work, not merely by the fact that it appears in this repository.
+OFRL uses a content-type-specific licensing model. The default for original material is determined by the kind of work, not merely by the fact that it appears in this repository. OFRL is a Founder-led Open Source Research Project; it does not describe restricted or source-available proprietary material as open source. See [PUBLICATION_AND_IP_BOUNDARY.md](PUBLICATION_AND_IP_BOUNDARY.md) for the distinction between the public repository and private know-how.
 
 ## Licence transition note
 
@@ -80,7 +80,7 @@ Contributors retain copyright in their original contributions while licensing su
 
 By intentionally submitting a contribution for inclusion, a contributor confirms that they have the authority to submit it under the applicable terms. Do not submit employer-owned, client-owned, confidential, or restricted material without appropriate authority.
 
-OFRL does not require a separate CLA for ordinary contributions at this stage. If the project later requires a CLA or a different governance structure, that change must be documented before it takes effect for new contributions.
+OFRL does not require a separate CLA for ordinary contributions at this stage. Contributors retain copyright in their original work; they grant the rights under the applicable content licence. Repository ownership does not give the Founder an automatic right to relicense a contributor's work under a proprietary licence. If the project later requires dual licensing, a CLA, or a copyright assignment, that requirement must be reviewed and documented before accepting affected contributions, with explicit agreement and appropriate legal advice.
 
 ## 6. Attribution, patents, and trademarks
 
