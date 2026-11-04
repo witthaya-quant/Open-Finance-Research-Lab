@@ -1,4 +1,6 @@
-use ofrl_model_numeric_envelope::{cash_deficit_case_a, forecast, load_case_a, ExactRational, Numeric};
+use ofrl_model_numeric_envelope::{
+    cash_deficit_case_a, forecast, load_case_a, ExactRational, Numeric,
+};
 use num_traits::Signed;
 use serde_json::Value;
 
@@ -60,8 +62,14 @@ fn edge_scenarios() -> Vec<(&'static str, Value)> {
 fn four_edge_scenarios_match_independent_exact_golden_for_all_five_years() {
     let expected: Value =
         serde_json::from_str(EDGE_GOLDEN).expect("BM-003 golden JSON must be valid");
-    assert_eq!(expected["benchmark_id"].as_str(), Some("OFRL-IB-001-BM-003"));
-    assert_eq!(expected["coverage"]["total_expected_values"].as_u64(), Some(640));
+    assert_eq!(
+        expected["benchmark_id"].as_str(),
+        Some("OFRL-IB-001-BM-003")
+    );
+    assert_eq!(
+        expected["coverage"]["total_expected_values"].as_u64(),
+        Some(640)
+    );
 
     let expected_cases = expected["cases"]
         .as_array()
