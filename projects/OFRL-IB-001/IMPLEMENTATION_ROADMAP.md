@@ -1,111 +1,133 @@
 <!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: CC-BY-4.0 -->
 
-# OFRL-IB-001 — Enterprise Implementation Roadmap
+# OFRL-IB-001 — Implementation Roadmap
 
-**Roadmap version:** 0.1.0  
-**Status:** Proposed execution plan  
+**Roadmap version:** 0.2.0  
+**Status:** Proposed execution plan with evidence-linked gates  
 **Date:** 2026-11-04
 
-## 1. Delivery strategy
+## 1. Delivery principles
 
-Deliver the first release in gated, reviewable increments. Each increment must leave the repository in a reproducible state and must not claim that an isolated POC is a production capability.
+Deliver in small, reviewable increments. Each increment must preserve a reproducible repository state, have a bounded scope, and distinguish research evidence from production capability.
 
-The plan preserves the founder-approved V1 scope. It does not expand into financial institutions, consolidation, multi-currency, statutory reporting, DCF or automated funding.
+The V1 scope remains one generic non-financial operating company, three annual historical periods, five annual forecast periods, one reporting currency and one model-level unit scale. The first release does not include financial institutions, consolidation, multi-currency translation, statutory reporting claims, DCF/LBO valuation or automatic funding mechanisms.
 
-### Current baseline
+## 2. Current implementation baseline
 
-| Capability | Status |
-|---|---|
-| V1 scope and model conventions | Defined; conventions remain subject to final implementation review |
-| Versioned JSON input schema | Implemented on main |
-| Synthetic Case A input | Implemented on main |
-| Rust historical semantic validator | Implemented and CI-verified on main |
-| Decimal JSON/CSV contract POC | Merged; isolated POC evidence |
-| Full-formula numeric comparison POC | Open Draft PR #11; CI evidence on its current head |
-| Schema validator pinned toolchain | Open Draft PR #12; CI evidence on its current head |
-| Model-specific numeric envelope | Open |
-| Rust SBOM/licence/security review | Open |
-| Independent five-year financial formula benchmark | Open |
-| Production forecast engine | Not started |
-| Forecast structural/feasibility validation | Not started |
-| Canonical ModelRun and provenance | Not started |
-| XLSX reporting and reconciliation | Not started |
+| Capability | Status | Evidence / boundary |
+|---|---|---|
+| Versioned JSON input contract | Implemented on main | Draft 2020-12 schema and closed objects |
+| Synthetic Case A input | Implemented on main | Canonical three-history/five-forecast fixture |
+| Rust historical semantic validator | Implemented on main | Opening/historical statement and roll-forward checks |
+| Rust CLI input hardening | Implemented in open PR #13 | 1 MiB bound, max-plus-one read, UTF-8 rejection and tests; not on main |
+| Decimal string interchange POC | Implemented in prior work | Isolated proof of boundary behaviour |
+| Full-formula numeric candidate comparison | Implemented in open PR #11 | rust_decimal, BigDecimal and Exact Rational research path |
+| Independent multi-period expected values | Implemented in open PR #11 | BM-002 160 values + BM-003 640 values = 800 exact outputs |
+| Independent Python reference | Implemented in open PR #11 | Standard-library Decimal/Fraction; verifies fixture identity and goldens |
+| Rust SBOM/RustSec automation | Implemented in open PR #11 | CycloneDX + advisory scan; one point-in-time scan reports zero findings |
+| Runtime-cost observation harness | Implemented in latest open PR #11 commit | Non-gating release-mode timing; latest CI/artifact result pending |
+| Schema validator dependency lock | Implemented in open PR #12 | AJV / Node toolchain lock; shared Rust/schema corpus still open |
+| Model-specific Numeric Profile | Not approved | Bounds, headroom, error budget, tolerance, rounding remain open |
+| Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
+| Independent finance/accounting sign-off | Not evidenced | Arithmetic benchmark is not an accounting opinion |
+| Production forecast engine | Not started | POC is isolated and not the production library |
+| Forecast SI/SF validation | Not implemented | No production forecast results |
+| Canonical ModelRun and provenance | Not implemented | No run manifest or canonical result hash |
+| XLSX generation/reconciliation | Not implemented | No workbook exporter |
 
-## 2. Phase plan
+**Branch interpretation:** PR #11, #12 and #13 are open Draft changes. Their code and CI evidence are not merged production capabilities. Main-branch documentation and status claims must retain this distinction.
+
+## 3. Delivery phases
 
 ### Phase 0 — Input and historical-validation foundation
 
-**Status:** Delivered
+**Status:** Delivered on main.
 
-Evidence:
-- PR #8: versioned JSON Schema and synthetic Case A.
-- PR #10: Rust typed input and historical semantic validation.
-- Cargo.lock and locked CI for the production Rust workspace.
+Evidence includes the versioned input schema, deterministic synthetic Case A, Rust typed historical validator, production Cargo.lock and two-toolchain CI.
 
-Exit evidence: the canonical Case A input passes the schema and Rust runtime validation; negative cases reject malformed input and inconsistent historical statements.
+Exit condition: malformed and historically inconsistent input is rejected before a future calculation stage.
 
-### Phase 1 — Enterprise architecture and audit baseline
+### Phase 1 — Audit, architecture and input-bound hardening
 
-**Status:** In progress
+**Status:** Implemented in open PR #13; review and merge remain pending.
 
 Deliverables:
-- Engineering audit and severity-ranked finding register.
-- Enterprise target architecture and result/status contract.
-- Delivery roadmap and PR sequence.
-- Corrected implementation-status documents.
-- Explicit statement of the existing validator's numeric coupling and diagnostic limitations.
-- CLI input-read bound (1 MiB), UTF-8 validation and regression tests, implemented on the enterprise-foundation branch.
+- Engineering Audit with severity-ranked findings.
+- System Design and result/status contracts.
+- This gated roadmap.
+- Corrected project status and reference-case documentation.
+- CLI input bound and UTF-8 rejection tests.
 
-Exit criteria:
-- Main-branch documentation matches delivered code.
-- Architecture preserves a single Rust calculation authority.
-- No production numeric backend is selected by assumption.
-- CLI transport boundary rejects oversized and invalid UTF-8 documents deterministically.
-- Blockers and owners/evidence are visible.
+Exit conditions:
+- Documentation accurately separates main-branch capability from open-PR evidence.
+- One Rust calculation authority is preserved.
+- No numeric backend is selected by assumption.
+- Input size and encoding boundary is explicit.
+- No files outside OFRL-IB-001 are changed.
 
-### Phase 2 — Numeric, dependency and independent-model gates
+### Phase 2 — Numeric, dependency and model-policy acceptance
 
-**Status:** Blocked on evidence and policy decisions
+**Status:** Partially evidenced; approval gates remain OPEN.
 
-Workstream A — Numeric Profile:
-- Set maximum/minimum monetary inputs by model unit.
-- Set maximum rate/day and assumption bounds.
-- Calculate maximum intermediate values for every formula chain.
-- Define supported source fractional scale and internal division behaviour.
-- Quantify accumulated error across five forecast periods.
-- Define separate accounting, schedule and display tolerances.
-- Define final rounding mode and display scale.
-- Test range headroom, overflow and near-boundary behaviour.
+#### Workstream A — Numeric Profile
 
-Workstream B — Numeric backend:
-- Compare fixed Decimal and arbitrary-precision candidates against the approved profile.
-- Measure runtime, memory, allocation behaviour and operational complexity.
-- Verify serialization, context control, determinism and error reporting.
-- Decide whether to retain rust_decimal or migrate the application boundary.
-- Record the decision in DECISION_LOG.md before production engine work.
+- Set approved minimum/maximum monetary input values by model unit.
+- Set maximum source fractional scale and accepted lexical form.
+- Set rate, day and operating assumption bounds.
+- Calculate intermediate bounds for every material formula chain, including multiplication before division.
+- Establish representation headroom and overflow rejection behaviour.
+- Define deterministic division precision/context and rounding semantics.
+- Quantify worst-case five-year propagation against exact rational results.
+- Define distinct budgets for arithmetic approximation, accounting identity, schedule roll-forward and workbook display.
+- Translate tolerances into reporting currency amounts at the supported range endpoints.
+- Obtain Finance/Accounting and engineering approval; version the final policy.
 
-Workstream C — Dependency/SBOM:
-- Inventory the production Cargo workspace and every isolated POC independently.
-- Produce machine-readable SBOMs.
-- Review direct/transitive licences, notices, source, maintenance and advisories.
-- Pin approved versions and document exceptions.
-- Re-run advisory checks at release.
+The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. It intentionally contains unresolved fields rather than fabricated limits.
 
-Workstream D — Independent formula validation:
-- Separately derive the full five-year Case A expected values.
-- Compare every statement and supporting schedule, not just selected headline metrics.
-- Include loss-making periods, zero denominators, zero debt, full repayment, invalid over-repayment, zero CapEx, cash shortfall and rate/day boundaries.
-- Obtain an accounting/formula review before production implementation is accepted.
+#### Workstream B — Production backend decision
 
-**Phase 2 exit:** Numeric Profile, production backend, dependency policy and independent benchmark are approved and versioned. Any missing item blocks Phase 3.
+- Evaluate candidates only against the accepted Numeric Profile.
+- Review checked arithmetic semantics, serialization and parse/format fidelity.
+- Make BigDecimal context explicit and deterministic if it remains a candidate.
+- Measure wall time, memory, allocation behaviour and operational resource limits in a controlled environment.
+- Consider production validator migration cost because its current domain types use rust_decimal.
+- Review error types, determinism, support/MSRV and dependency graph.
+- Record the selected backend and rejected alternatives in the Decision Log.
 
-### Phase 3 — Canonical Rust calculation engine
+**No forecast implementation should begin until Workstreams A and B have accepted decisions.**
 
-**Status:** Not started; gated by Phase 2
+#### Workstream C — Dependency and source review
 
-Implement inside the existing `ofrl_model` crate:
+- Retain production and selected POC lockfiles or formally retire the relevant POC.
+- Review direct/transitive package source, duplicate versions, licences, notices and maintenance.
+- Triage advisory findings from the release-date database.
+- Approve an explicit licence/exception policy.
+- Record source obligations and distribution-notice requirements.
+- Preserve SBOMs, checksums and exact source/build identity.
 
-1. Strong domain types and numeric boundary.
+The PR #11 workflow provides an initial inventory and advisory-scan mechanism; it does not itself close legal or source review.
+
+#### Workstream D — Independent finance and accounting review
+
+- Review the V1 model purpose, scope, classifications, sign conventions and equations.
+- Check working-capital mechanics and day-count convention.
+- Check aggregate PP&E depreciation cap and roll-forward.
+- Check average-debt interest timing and debt movement.
+- Check tax/dividend floors and same-period cash settlement.
+- Check negative cash, funding shortfall, structural integrity and reportability.
+- Record reviewer scope, findings, decisions and unresolved limitations.
+
+BM-002 and BM-003 give 800 exact expected arithmetic outputs. They are not a substitute for this review.
+
+**Phase 2 exit:** Numeric Profile, production backend, dependency/source/licence disposition and finance/accounting review are approved, versioned and linked to evidence. Any unresolved blocker keeps Phase 3 closed.
+
+### Phase 3 — Canonical Rust forecast engine
+
+**Status:** Not started; gated by Phase 2.
+
+Implement inside the existing production `ofrl_model` crate:
+
+1. Numeric/domain boundary and typed calculation errors.
 2. Operating forecast.
 3. Working-capital schedule.
 4. Aggregate PP&E schedule.
@@ -113,117 +135,116 @@ Implement inside the existing `ofrl_model` crate:
 6. Tax, dividends and retained earnings.
 7. Income Statement.
 8. Cash Flow Statement.
-9. Balance Sheet diagnostic state.
+9. Balance Sheet result and diagnostic cash.
 10. Structural Integrity and Scenario Feasibility checks.
-11. Typed calculation diagnostics.
-12. Canonical ModelRun result.
+11. Formula identifiers and metric lineage.
+12. Canonical ModelRun.
 
 Acceptance:
-- Every formula has a stable ID.
-- No binary floating-point in authoritative monetary calculations.
-- Checked arithmetic failures are typed and surfaced.
-- No hidden funding or balancing plugs.
-- All SI/SF checks have deterministic tests.
-- Golden and property tests pass over the approved Numeric Profile.
-- Exact outputs match the independently reviewed benchmark within the approved error policy.
+- Every material output has a stable formula ID.
+- All monetary operations use the approved arithmetic backend and checked error handling.
+- No binary floating-point in authoritative calculations.
+- No hidden cash, debt, equity or balancing plugs.
+- Negative calculated cash is a feasibility failure and not a reportable asset.
+- All formulas match independently reviewed expected values under the accepted error policy.
+- Unit, integration, property, boundary and negative tests pass.
 
-### Phase 4 — Deterministic run manifest and CLI
+### Phase 4 — ModelRun, deterministic provenance and CLI
 
-**Status:** Not started; depends on Phase 3
+**Status:** Not started; depends on Phase 3.
 
 Deliver:
-- `validate`, `run`, `inspect` and later `export` commands.
-- Canonical input and output serialization.
-- SHA-256 input/output fingerprint and run manifest.
-- Engine, model, schema and Numeric Profile versions.
-- Stable exit codes and typed diagnostic output.
-- Bounded input handling and safe output writes.
+- `validate`, `run`, `inspect`, and later `export` commands.
+- Versioned canonical JSON/CSV output contracts.
+- SHA-256 input and output digests.
+- Model, schema, conventions, Numeric Profile, backend/context and engine identity.
+- Formula/assumption/source lineage.
+- Stable exit codes and deterministic machine-readable diagnostics.
+- Atomic output writes and safe path/overwrite semantics.
 
 Acceptance:
-- Identical canonical inputs and policy/build identity reproduce identical canonical output.
-- Wall-clock metadata is separated from deterministic hashes.
-- Invalid inputs and arithmetic failures produce distinct status/exit semantics.
+- Identical canonical input plus identical model/policy/engine identity produces identical canonical output and fingerprint.
+- Time, host and local paths are separated from deterministic hashes.
+- Invalid input, calculation failure, Structural Integrity failure and Scenario Feasibility failure are distinct statuses.
 
 ### Phase 5 — Analyst-facing XLSX
 
-**Status:** Not started; depends on Phase 3 and Phase 4
+**Status:** Not started; depends on Phases 3 and 4.
 
-Deliver:
-- Cover and run status.
-- Assumptions register.
-- Income Statement, Balance Sheet and Cash Flow Statement.
-- Working capital, PP&E, debt and KPI schedules.
-- Structural Integrity and Scenario Feasibility.
-- Diagnostics, provenance and limitations.
+Sheets:
+1. Cover and Run Status.
+2. Executive Summary.
+3. Assumptions Register.
+4. Income Statement.
+5. Balance Sheet.
+6. Cash Flow Statement.
+7. Working Capital.
+8. PP&E.
+9. Debt and Interest.
+10. Structural Integrity and Scenario Feasibility.
+11. Diagnostics and Provenance.
 
 Acceptance:
-- Workbook contains no independent financial calculations.
-- Currency, scale, sign and display precision are explicit.
-- Negative cash is represented as a funding-shortfall diagnostic, not a valid cash asset.
-- Every material displayed value reconciles to canonical ModelRun outputs.
-- Canonical JSON/CSV is retained independently of workbook precision.
+- Workbook is generated only from canonical ModelRun values.
+- No independent forecast formulas recalculate outputs.
+- Currency, scale, sign convention and precision are explicit.
+- Negative diagnostic cash is presented as a funding shortfall, not a cash asset.
+- Every material displayed value reconciles to canonical output.
+- Canonical JSON/CSV strings remain the authoritative precision record.
 
 ### Phase 6 — Release hardening and independent reproduction
 
-**Status:** Not started
+**Status:** Not started.
 
 Deliver:
-- Full CI matrix and reproducible build instructions.
-- SBOM/licence/security review snapshot.
-- Property, boundary, golden and negative test evidence.
-- Workbook reconciliation report.
+- Complete property, boundary, golden, negative and determinism test evidence.
+- Shared JSON Schema/Rust contract corpus.
+- Final SBOM, licence/source/advisory disposition and release artifact hashes.
+- Reproducible clean-checkout build/run instructions.
+- XLSX structure and display reconciliation report.
 - Known-limitations and model-assumptions register.
-- Independent reviewer reproduction.
+- Independent reproduction and documented review.
 
-Release claims:
-- **Structural Integrity PASS** only if every SI hard gate passes.
-- **Scenario Feasibility PASS** only if every SF hard gate passes.
-- **Research Release PASS** only if all release gates pass.
-- A failed scenario may still be reproducible, but it must never be presented as funded or feasible.
+Release statuses:
+- Structural Integrity PASS only if every SI hard gate passes.
+- Scenario Feasibility PASS only if every SF hard gate passes.
+- Research Release PASS only if its release gates pass.
+- A scenario can be reproducible while infeasible; it must not be presented as funded or reportable.
 
-## 3. PR sequencing and merge controls
+## 4. Pull-request sequence and merge controls
 
-| Work item | Intended branch / PR | Merge condition |
+| Work item | Branch / PR | Merge/acceptance condition |
 |---|---|---|
-| Decimal/full-formula research | Existing PR #11 | POC scope reviewed; production adoption remains separate |
-| Schema-tooling lockfile | Existing PR #12 | Review and CI complete |
-| Enterprise audit/design package | `work/ofrl-ib-001-enterprise-foundation` | Documentation review and scope check |
-| Numeric Profile/backend decision | Separate OFRL-only PR | Phase 2 evidence complete |
-| Production forecast core | Separate OFRL-only PR | Phase 2 exit criteria PASS |
-| ModelRun/CLI | Separate OFRL-only PR | Core formulas and invariants accepted |
-| XLSX export | Separate OFRL-only PR | Canonical output contract stable |
+| Numeric candidate and independent arithmetic research | PR #11 | POC checks pass; findings reviewed; production adoption remains separate |
+| Schema tooling lockfile | PR #12 | Review and CI pass; shared corpus follow-up remains required |
+| Audit, system design, bounded CLI | PR #13 | Documentation and scope review; all changes limited to OFRL-IB-001 |
+| Numeric Profile/backend decision | New OFRL-only PR | Phase 2 evidence complete |
+| Production forecast engine | New OFRL-only PR | Phase 2 exit accepted |
+| ModelRun/provenance/CLI run | New OFRL-only PR | Production calculations and invariants accepted |
+| XLSX reporting | New OFRL-only PR | ModelRun contract stable and reconciled |
 
-Keep PRs small enough to review. Do not combine research dependency changes, production formula changes and workbook presentation changes into one unreviewable patch.
+Keep research, production formula and reporting changes in separately reviewable PRs. A Draft PR remains Draft when project-level gates are unresolved, even if its defined CI scope is green. No PR is merged by this roadmap without the required review.
 
-No Draft PR should be made ready merely because CI is green. A PR may pass its defined test scope while its project-level acceptance gates remain open.
-
-## 4. Required test layers
+## 5. Required test layers
 
 | Layer | Purpose | Required evidence |
 |---|---|---|
-| Unit | Formula and schedule mechanics | Formula-specific expected values and boundary tests |
-| Integration | Full model paths | All five periods, all three statements and schedules |
-| Property | Invariants over generated valid inputs | Reproducible seeds and shrunk regression cases |
-| Golden | Independent expected outputs | Reviewed exact/decimal expected values by period |
-| Negative | Invalid inputs and unsupported scenarios | Stable diagnostic code and path |
-| Numeric | Range, scale and accumulated error | Approved Numeric Profile boundaries |
-| Determinism | Same input/model/build identity | Stable canonical run hash |
-| Export | Workbook structure and displayed values | Period-by-period canonical reconciliation |
-| Dependency | Package provenance and risk | SBOM, licence inventory and advisory snapshot |
-| Reproduction | Independent repeatability | Clean-checkout instructions and recorded environment |
+| Unit | Formula/schedule mechanics | Reviewed expected values and edge boundaries |
+| Integration | Complete model paths | All five years, three statements and supporting schedules |
+| Property | Invariants over generated inputs | Reproducible seeds and minimized regression cases |
+| Golden | Independent expected outputs | Versioned reviewed expected values |
+| Negative | Unsupported inputs/scenarios | Stable diagnostic codes and JSON Pointer |
+| Numeric | Bounds, scale and accumulated error | Approved Numeric Profile endpoints |
+| Contract parity | Schema vs Rust behaviour | Same positive/negative fixture corpus |
+| Determinism | Same input/policy/build | Canonical output and SHA-256 reproducibility |
+| Export | Workbook fidelity | Structural checks and period-by-period reconciliation |
+| Dependency | Package/source risk | SBOM, advisory and licence/source disposition |
+| Reproduction | Independent repeatability | Clean-checkout reproduction report |
 
-## 5. Change control
+## 6. Change control and scope
 
-Every material change must record:
-- the previous decision and new decision;
-- the reason and evidence;
-- affected formula IDs, inputs and outputs;
-- schema/model/numeric policy version impact;
-- tests that must be rerun;
-- whether a migration is required.
+Every material change records the prior decision, new decision, rationale, affected formula IDs/inputs/outputs, version impact, required migration and tests to rerun.
 
-Never change a tolerance after observing a failed result merely to produce PASS. Any acceptance-criterion change requires a rationale, a versioned policy update and rerunning the affected suite.
+Never change a tolerance after observing a failed result merely to produce PASS. Any threshold change requires a dated rationale, policy version change and complete rerun.
 
-## 6. Scope guard
-
-This roadmap authorizes work only in OFRL-IB-001 within `witthaya-quant/Open-Finance-Research-Lab`. It does not authorize work in other repositories or projects. Any proposed dependency or shared repository-level change must be directly required by OFRL-IB-001 and listed explicitly in its PR.
+This roadmap authorizes work only in `projects/OFRL-IB-001/` within `witthaya-quant/Open-Finance-Research-Lab`. It does not authorize edits to other projects or unrelated repository files.

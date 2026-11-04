@@ -4,8 +4,8 @@
 
 > **Division:** Financial Modelling & Valuation  
 > **Project ID:** OFRL-IB-001  
-> **Status:** Rust runtime semantic validator implemented and CI-verified; forecast calculation engine not started  
-> **Evidence maturity:** 0 / Proposed  
+> **Status:** Input and historical validation implemented on main; forecast calculation engine not started  
+> **Evidence maturity:** Research evidence in progress; production calculation not implemented  
 > **Specification version:** 0.1.0  
 > **Project owner:** Kenny
 
@@ -79,3 +79,18 @@ Banks, insurers, REITs, consolidated groups, multi-currency operations, leases, 
 ## Data and licensing
 
 The first reproducible case will use synthetic data created specifically for this project. No company financial statements or licensed market-data feeds will be redistributed. Code is licensed under Apache-2.0; project documentation is licensed under CC BY 4.0. See the repository licensing and data policies.
+
+## Engineering and evidence documents
+
+- [Engineering Audit](ENGINEERING_AUDIT.md)
+- [System Design and Control Architecture](SYSTEM_DESIGN.md)
+- [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md)
+- [Numeric Profile Decision Worksheet](NUMERIC_PROFILE_WORKSHEET.md)
+
+## Current stage and branch boundaries
+
+The production Rust library on `main` validates model input and historical accounting relationships. It does not calculate the forecast periods and does not generate a workbook.
+
+PR #11 contains the independent five-year and edge-case arithmetic research, dependency inventory automation and a non-gating timing harness. PR #12 contains schema-tooling lockfile work. PR #13 contains this audit/design package and a bounded CLI input reader. These pull requests are open Draft changes; their contents are not merged release capabilities.
+
+No production numeric backend is selected. No Numeric Profile or independent finance/accounting approval is claimed. The Production Forecast Engine remains gated.

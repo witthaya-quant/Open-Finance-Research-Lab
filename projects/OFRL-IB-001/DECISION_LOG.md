@@ -5,7 +5,7 @@
 This log records the baseline decisions and changes that govern the first release. A decision marked **Approved for V1** is a scope decision for this project version; it is not a claim of statutory accounting compliance or proof that an implementation has passed its tests.
 
 **Baseline authorization:** 2026-11-04  
-**Basis:** Founder-directed implementation mandate to proceed with the project using professional engineering and research standards. Technical candidates remain subject to the proof-of-concept and validation gates below.
+**Basis:** Founder-directed implementation mandate to proceed with the project using disciplined engineering and research controls. Technical candidates remain subject to the proof-of-concept and validation gates below.
 
 ## 1. V1 baseline decisions
 
@@ -48,7 +48,7 @@ The Decimal/string-interchange POC passed on 2026-11-04 at PR #6 head commit 88e
 - A 29-fractional-digit raw parser case was observed to lose precision; the POC input adapter now rejects the over-scale value and checks exact parse-to-string round-trip.
 - Direct package metadata and the effective MSRV are documented in [DEPENDENCY_REVIEW.md](poc/decimal-contract/DEPENDENCY_REVIEW.md).
 
-The Decimal POC does not close the complete dependency/security review. The production application Cargo.lock is committed in PR #10; the separate full-formula numeric POC lockfile is present on the still-open PR #11 branch and is not yet part of main. No complete Rust SBOM/licence/security review is recorded. The POC also does not validate the full production financial model or XLSX export.
+The Decimal POC does not close the complete dependency/source/licence review. PR #11 contains a separate numeric POC lockfile, CycloneDX inventories and RustSec workflow, but remains open and unmerged. The Decimal Contract POC still uses an ephemeral lockfile in CI. Its point-in-time scan reported zero findings; licence texts, notices, source provenance and distribution obligations remain open. Neither POC is the production calculation engine.
 
 ## 2.2 Input contract design decisions
 
@@ -81,20 +81,33 @@ A deferred item must not be approximated silently. Adding it requires a versione
 
 ## 4. Open engineering gates
 
-The schema and historical semantic-validation gates are complete. The following implementation gates remain open:
+The schema and historical semantic-validation gates are implemented on main. The following remain open; open-PR evidence is not treated as merged capability.
 
-1. Finalize the model-specific Numeric Profile: supported monetary ranges, rate/day bounds, intermediate headroom, division behaviour, accumulated error budget, reconciliation policy and reporting rounding.
-2. Complete transitive dependency inventories, machine-readable SBOMs, licence/notice audits and security-advisory review for the production Rust workspace and isolated POCs.
-3. Complete an independently derived five-year Case A formula benchmark and an independent accounting/formula review; the Exact Rational POC shares its generic forecast formulas with the candidate backends.
-4. Record the production numeric-backend decision only after the Numeric Profile, dependency review and operational cost/complexity comparison are accepted.
-5. Harden the public diagnostic mapping, including stable typed errors and field-path capture.
-6. Implement the Rust forecast calculation core and deterministic ModelRun result with unit, integration, property, golden and boundary tests.
-7. Validate forecast statement identities, schedule roll-forwards, funding feasibility and reportability without plugs.
-8. Generate the analyst-facing XLSX from canonical Rust outputs and reconcile display values to canonical outputs.
-9. Establish release CI, deterministic run provenance, reproduction instructions and independent review.
+1. Approve a versioned Numeric Profile: supported monetary/rate/day bounds, formula-chain intermediate headroom, deterministic division context, five-year error budget, separate accounting/schedule/display tolerances and output rounding.
+2. Select the production numeric backend only after the Numeric Profile, controlled performance/resource evidence, serialization semantics and migration impact on the rust_decimal-based validator are reviewed.
+3. Complete dependency governance: commit or retire the Decimal Contract POC lockfile; review package source, duplicate versions, original licence texts, notices, legal alternatives and distribution obligations. PR #11's SBOM/RustSec workflow is evidence of inventory and a point-in-time advisory scan, not final approval.
+4. Obtain independent finance/accounting review of V1 conventions and statement formulas. PR #11's BM-002/BM-003 provide 800 exact expected outputs for the declared synthetic mechanics; they do not constitute accounting sign-off.
+5. Replace message-substring deserialization classification with typed error/path mapping and expose stable JSON Pointer diagnostics.
+6. Run one versioned positive/negative contract corpus through both JSON Schema and Rust runtime validation.
+7. Implement typed production forecast schedules/statements, calculation errors, Structural Integrity, Scenario Feasibility and explicit reportability status.
+8. Implement canonical ModelRun, versioned serialization, SHA-256 provenance, deterministic fingerprint and metric-level formula lineage.
+9. Generate XLSX only from canonical Rust outputs; reconcile every material displayed value and preserve Decimal-string canonical outputs.
+10. Add property, numeric-boundary, negative, determinism, output and clean-checkout reproduction evidence.
 
+The Production Forecast Engine is not authorized until gates 1–4 are explicitly accepted and recorded.
 ## 5. Change control
 
 Material changes must record the previous decision, the new decision, the reason, the affected model assumptions, and the validation tests that must be rerun. Acceptance criteria must not be weakened after a failed test simply to obtain a pass.
 
 A V1 approval does not waive a failed implementation or validation gate.
+
+## 6. Research evidence update — 2026-11-04
+
+PR #11 (open Draft; not merged) now contains:
+- BM-002: 160 independently expected exact-rational outputs for FY2026–FY2030.
+- BM-003: 640 independently expected exact-rational outputs across four five-year edge scenarios.
+- A standard-library Python reference that checks the canonical fixture identity and regenerates both goldens, reporting 800 exact expected outputs.
+- CycloneDX SBOM and RustSec advisory-scan automation.
+- A non-gating runtime-cost observation harness comparing the candidate arithmetic implementations; latest CI and timing artifact must be verified for its current head.
+
+These are research results, not production approval. The following decisions remain explicitly unmade: Numeric Profile, production numeric backend, arithmetic/error budgets, accounting tolerance, output rounding, licence/source acceptance and Production Forecast Engine adoption.

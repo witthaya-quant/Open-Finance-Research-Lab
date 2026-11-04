@@ -2,235 +2,289 @@
 
 # OFRL-IB-001 — Engineering Audit
 
-**Audit version:** 0.1.0  
+**Audit version:** 0.2.0  
 **Audit date:** 2026-11-04  
-**Audited baseline:** `main` at `4992ae702bf0c378c92112966f0f727262d615c4`  
-**Related research branches:** PR #11 (`research/ofrl-ib-001-numeric-envelope`), PR #12 (`chore/schema-validator-lockfile`)  
-**Status:** Initial technical audit; findings require closure evidence
+**Production baseline:** `main` at `323d4da36bd5386d88a64fb67ff8ca77e73c5905`  
+**Research evidence:** PR #11, head `2b93a966978966843bd6f78ae7d719b4c35f6d9d`  
+**Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
+**System-design and CLI changes:** PR #13, head `8085fe4bfdce7ee4d5cbc7d5a0493693264fbaeb`  
+**Status:** Evidence-based audit; all open PR evidence is distinguished from merged production capability
 
 ## 1. Executive assessment
 
-OFRL-IB-001 has a sound V1 direction and a useful first layer of engineering controls. The repository already contains a versioned input contract, a strict Decimal-string boundary, historical semantic validation, a deterministic synthetic reference input, a Rust workspace, and CI coverage on two Rust toolchains.
+OFRL-IB-001 has progressed beyond a basic input-validator prototype. The main branch contains a versioned input contract, a strict Decimal-string boundary, historical accounting validation, a deterministic synthetic case, a Rust library/CLI and a two-toolchain CI matrix.
 
-It is **not yet a production three-statement model**. The production workspace validates inputs and historical relationships; it does not calculate forecast statements, return a complete model-run result, evaluate forecast funding feasibility, or generate an analyst-facing workbook. The formula path in PR #11 is an isolated research POC, not a production engine.
+The open research PR #11 materially improves the evidence base: it contains a five-year independent exact-rational baseline, four independent edge scenarios, a standard-library Python reference that checks 800 exact expected outputs, and project-scoped CycloneDX/RustSec automation. A new runtime-cost observation harness has also been added to that branch. These are meaningful research deliverables, but they remain unmerged and do not select a production arithmetic backend.
 
-The correct next move is to close the numeric, dependency, diagnostic, and independent-formula gates, then implement one canonical Rust calculation path. Building workbook formulas or selecting a numeric backend from the two stress points alone would create avoidable rework and control risk.
+The system is **not yet a production forecast model**. The production Rust workspace still validates inputs and historical relationships only. It does not calculate the five forecast years, produce a canonical ModelRun, evaluate Structural Integrity / Scenario Feasibility for calculated results, produce deterministic provenance, or generate an XLSX report.
 
-## 2. Scope and evidence
+The principal remaining risk is not simply a lack of code. It is the unresolved boundary between (a) evidence that software follows the currently written equations and (b) approval that those equations, conventions, numeric limits and reporting treatments are appropriate for the declared modelling purpose. The implementation must preserve that distinction.
 
-This audit is limited to the files and branches of OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`.
+## 2. Scope, branch state and evidence rules
 
-| Evidence area | Audited reference |
-|---|---|
-| Production baseline | `main` at `4992ae702bf0c378c92112966f0f727262d615c4` |
-| Numeric comparison POC | PR #11; research branch and its CI evidence |
-| Schema-tooling POC | PR #12; lockfile, pinned Node/npm toolchain and npm audit |
-| Input contract | `MODEL_INPUT_CONTRACT.md`, Draft 2020-12 schema, Case A fixture |
-| Runtime implementation | `crates/ofrl_model/src/domain.rs`, `validation.rs`, `diagnostics.rs` |
-| CLI | `crates/ofrl_cli/src/main.rs` |
-| Model policy | `MODEL_CONVENTIONS.md`, `NUMERIC_ENVELOPE.md`, `VALIDATION_MATRIX.md` |
-| Dependency evidence | Cargo.toml, Cargo.lock, POC dependency review and PR #12 |
+This audit covers only OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`. No other project is included.
 
-The application Cargo.lock on the audited baseline contains 54 package entries. This is a dependency inventory observation, not a completed SBOM, licence audit, or security approval.
-
-PR #11 and PR #12 remain separate open Draft pull requests in the audited state. Their CI evidence is useful but does not make the changes part of `main`.
-
-## 3. What is already sound
-
-| Area | Evidence-based assessment |
-|---|---|
-| V1 scope | Three historical years, five forecast years, one generic non-financial operating company and one currency/unit scale per model are explicitly bounded. |
-| Canonical data | JSON Decimal fields are strings; unknown fields are rejected; schema version is explicit. |
-| Decimal lexical safety | The current parser rejects non-string tokens, non-canonical notation, negative zero and scale above 28, and checks parse-to-string equality. |
-| Historical validation | Opening and historical Balance Sheet, Income Statement, Cash Flow Statement, and key roll-forwards are checked. |
-| Period controls | Period counts, identifiers, Gregorian dates, ordering, duration, contiguity and hand-offs are checked. |
-| No silent funding | The project policy prohibits an invented revolver, cash plug or equity issuance to conceal a cash shortfall. |
-| Separation of concerns | Excel is specified as an output adapter; Python is not a V1 runtime dependency. |
-| Reproducibility | The production Rust workspace has a committed lockfile and CI runs on Rust 1.85.0 and 1.99.1. |
-| Numeric research | PR #11 compares two Decimal candidates against an exact-rational arithmetic reference and records candidate-specific differences and capacity observations. |
-| Schema tooling | PR #12 isolates and pins the JSON Schema validator toolchain and lockfile; its npm audit is a point-in-time result for that tooling package. |
-
-These are meaningful foundations. They should be extended, not replaced.
-
-## 4. Findings and required disposition
-
-Severity definitions:
-
-- **Blocker:** must close before Production Forecast Engine acceptance.
-- **Major:** must close before a reproducible V1 release.
-- **Moderate:** should close before external distribution or broader data intake.
-
-### EA-01 — Production forecast engine is not implemented
-
-**Severity:** Blocker  
-**Evidence:** `crates/ofrl_model/src/lib.rs` describes an input and historical semantic validator. `RUNTIME_VALIDATOR.md` explicitly excludes forecast calculation. The forecast implementation in PR #11 is an isolated POC.
-
-**Risk:** Treating the POC as production would bypass domain types, calculation error contracts, production result types, full independent accounting review and the model-level numeric envelope.
-
-**Required disposition:** Implement the forecast engine only after the numeric and dependency gates below are accepted. Keep the existing validator as the input gate; do not replace it with POC code.
-
-### EA-02 — Production numeric policy is not approved
-
-**Severity:** Blocker  
-**Evidence:** `NUMERIC_ENVELOPE.md` is Proposed. The POC tests selected (10^{18}) and (10^{22}) capacity points, not a complete operating envelope. Neither point establishes the exact overflow boundary or the V1 maximum supported company scale.
-
-**Risk:** An apparently passing test range may omit intermediate-value overflow, rate/day extremes, scale loss, or five-year accumulated division error.
-
-**Required disposition:** Ratify a versioned Numeric Profile that defines input bounds, intermediate headroom, rate/day bounds, scale, arithmetic behaviour, error budget, reconciliation criteria and display policy. Do not infer a universal company-size ceiling from a stress test.
-
-### EA-03 — Input validation is currently coupled to rust_decimal
-
-**Severity:** Blocker if BigDecimal or another backend is selected  
-**Evidence:** `domain.rs` stores parsed fields as `rust_decimal::Decimal`; `validation.rs` uses Decimal arithmetic for historical checks; the production Cargo manifest pins rust_decimal 1.43.0. PR #11's BigDecimal candidate is confined to its isolated POC.
-
-**Risk:** Selecting BigDecimal for production after implementing the engine would force a broad refactor across input types, validation, calculations and serialization.
-
-**Required disposition:** Decide whether the production numeric backend is fixed before forecast-engine implementation. If the selected backend differs from the validator's current type, introduce a reviewed canonical decimal boundary and perform an explicit migration. Do not hide multiple numeric implementations behind casual type conversions.
-
-### EA-04 — Rust dependency/SBOM review remains incomplete
-
-**Severity:** Blocker before production dependency approval  
-**Evidence:** The production application has Cargo.lock. The POC records candidate-specific dependencies. PR #12's npm audit covers the separate JavaScript schema-validator toolchain, not the Rust application or numeric POC dependency graphs.
-
-**Risk:** Direct package review alone does not establish transitive licence compatibility, security posture, maintenance status or reproducible software composition.
-
-**Required disposition:** Produce machine-readable SBOMs for the production workspace and each isolated POC workspace; record direct and transitive licence data, advisories, source and tool versions, exceptions and review date. A lockfile is necessary but not sufficient.
-
-### EA-05 — The numeric oracle is not an independent model oracle
-
-**Severity:** Blocker before model correctness claims  
-**Evidence:** PR #11 documents that Exact Rational, rust_decimal and BigDecimal use the same generic forecast implementation. An independent FY2026 benchmark checks 32 exact output metrics, while the full five-year comparison contains 160 metrics per candidate.
-
-**Risk:** A shared formula error can propagate identically through all three numeric backends and remain invisible to the arithmetic comparison.
-
-**Required disposition:** Build a separately derived five-year benchmark with independently implemented formula sequencing or independently reviewed exact expected outputs. Include all statements, schedules, signs, bounds, negative earnings, zero denominators, debt edge cases, funding shortfalls and multi-period propagation. The arithmetic oracle and model oracle must remain conceptually separate.
-
-### EA-06 — The proposed reconciliation tolerance is not yet justified as a model policy
-
-**Severity:** Major  
-**Evidence:** `VALIDATION_MATRIX.md` proposes (10^{-6} + 10^{-8}\times\max(|A|,|B|,1)). The policy has not been approved against the final model unit, numeric backend, schedule depth or materiality.
-
-**Risk:** A relative tolerance grows with balance size. At sufficiently large amounts it may permit a residual that is numerically small relative to the balance but financially material in absolute currency terms. Conversely, an absolute tolerance changes its economic meaning when the model scale changes from units to thousands or millions.
-
-**Required disposition:** Separate at least (a) arithmetic/backend error budget, (b) accounting identity tolerance, (c) schedule roll-forward tolerance and (d) workbook display tolerance. Express monetary tolerances in explicit model units and show their converted currency meaning. Test the proposed policy at the minimum and maximum supported scale before approval. Do not weaken a gate to fit observed results.
-
-### EA-07 — Deserialization diagnostics depend on error-message text
-
-**Severity:** Major  
-**Evidence:** `validation.rs` maps Serde failures by checking substrings such as `DECIMAL_STRING_REQUIRED`, `DECIMAL_SCALE_EXCEEDED`, `unknown field` and `missing field`. Some deserialization failures return no JSON Pointer.
-
-**Risk:** A Serde upgrade or wording change can alter classification. Consumers cannot reliably locate every rejected field from a structured pointer.
-
-**Required disposition:** Introduce a typed deserialization boundary with stable error variants and path capture. Review any new dependency before adoption. Keep external diagnostic codes independent of third-party error strings. Add tests for nested fields, array indices, missing fields, unknown fields and invalid enum values.
-
-### EA-08 — Schema and Rust contract can drift
-
-**Severity:** Major  
-**Evidence:** The Draft 2020-12 JSON Schema and Rust Serde/domain constraints are separate artifacts and are tested by separate workflows.
-
-**Risk:** A payload can satisfy one contract but fail the other; duplicated required fields, patterns or enum values can drift unnoticed.
-
-**Required disposition:** Maintain a shared positive/negative contract corpus and run it against both schema validation and the Rust runtime. Document intentional differences between structural/lexical schema checks and cross-field semantic checks.
-
-### EA-09 — Negative cash needs a non-misleading report state
-
-**Severity:** Major  
-**Evidence:** PR #11's high-CapEx diagnostic has negative calculated closing cash and an algebraically zero Balance Sheet residual. The PR's updated model-convention proposal correctly states that negative diagnostic cash is not a valid reportable cash asset.
-
-**Risk:** A mathematically reconciled schedule could be presented as a feasible Balance Sheet even though it has no approved source of funding.
-
-**Required disposition:** Keep calculated diagnostic cash and positive funding-shortfall amount visible; mark Scenario Feasibility FAIL. Do not publish negative diagnostic cash as an ordinary cash asset, force it to zero, or create an undisclosed overdraft. The final output contract must distinguish calculation completion, structural integrity and financial-statement reportability.
-
-### EA-10 — Model-run provenance and calculation lineage are not implemented
-
-**Severity:** Major  
-**Evidence:** The current public result is an input ValidationReport. There is no production ModelRun manifest, canonical input hash, engine/model-policy fingerprint, formula lineage or output hash.
-
-**Risk:** A reviewer cannot prove which input, model version, numeric policy and engine build produced an output or trace a reported metric to its assumptions and formula.
-
-**Required disposition:** Add a deterministic run manifest and a metric-level formula/assumption lineage contract. Keep timestamps and environment details outside the deterministic canonical result hash where they would otherwise destroy repeatability.
-
-### EA-11 — XLSX export and reconciliation are not implemented
-
-**Severity:** Major  
-**Evidence:** The architecture defines the reporting boundary, but the current CLI exposes only `validate`; no production workbook generator exists.
-
-**Risk:** A workbook developed before canonical output semantics are fixed can introduce a second calculation engine or imply precision Excel cannot retain.
-
-**Required disposition:** Generate all workbook values from a completed Rust ModelRun. Do not implement financial formulas in Excel. Publish a display policy, preserve canonical JSON/CSV, and test every displayed statement and schedule against canonical outputs.
-
-### EA-12 — Test depth is not yet sufficient for a forecast model
-
-**Severity:** Major  
-**Evidence:** The production semantic validation integration suite has 28 ordinary tests. The numeric POC has its own 12-test suite. The production suite does not yet contain the full forecast property/golden/export tests specified by the validation matrix.
-
-**Risk:** Successful parsing and a small set of fixed examples do not establish invariant behaviour over the supported numeric envelope.
-
-**Required disposition:** Add unit, integration, property-based, golden, boundary, negative, determinism and export tests. Persist shrunk failing property cases as regression fixtures. Keep expected outputs independently reviewed.
-
-### EA-13 — CLI input handling is intentionally minimal
-
-**Severity:** Moderate  
-**Evidence at audited main baseline:** `ofrl_cli` implemented `validate <path>` and used `fs::read_to_string` without an explicit byte limit.
-
-**Risk:** The initial CLI could allocate memory proportional to an untrusted file before JSON parsing. It also has no production run/export interface yet.
-
-**Remediation on this enterprise-foundation branch:** the CLI now reads at most 1 MiB + 1 byte, rejects documents over 1 MiB before full allocation, rejects invalid UTF-8 and includes four focused reader regression tests. This change is not part of main until its PR is reviewed and merged.
-
-**Remaining disposition:** Before broader input distribution, define output-path behaviour, overwrite protection, deterministic exit codes and commands for validate/run/export. Do not add a large CLI dependency solely for cosmetic features.
-
-### EA-14 — Some main-branch documentation is stale
-
-**Severity:** Major documentation-integrity issue  
-**Evidence:** On the audited `main`, `DECISION_LOG.md` still says runtime semantic validation is pending/unimplemented, and `SYNTHETIC_REFERENCE_CASE.md` still describes schema/runtime validation as pending. PR #10 has already delivered the runtime validator.
-
-**Risk:** The repository tells contributors two different implementation stories and can cause duplicated work or incorrect status reporting.
-
-**Required disposition:** Correct these status statements and retain the explicit distinction between delivered historical validation and the not-yet-built forecast engine.
-
-## 5. Numeric POC interpretation
-
-PR #11 provides useful evidence:
-
-- Canonical Case A compares 160 forecast metric values per numeric backend.
-- Both candidates have zero mismatches at the POC's provisional two-decimal comparison boundary.
-- The measured unrounded Balance Sheet residual differs between candidates.
-- The (10^{18}) stress point is supported by both candidates in the tested path.
-- The (10^{22}) stress point produces checked overflow in rust_decimal and completes in the tested BigDecimal context.
-- The high-CapEx case demonstrates a funding shortfall without adding automatic debt.
-
-These observations are not production selection criteria by themselves. They do not establish throughput, memory cost, exact overflow threshold, full dependency acceptability, real-world company coverage, formula correctness or five-year accumulated materiality.
-
-## 6. Release-blocking decision register
-
-| Gate | Required evidence | Current disposition |
+| Evidence | Current status | Interpretation |
 |---|---|---|
-| Numeric operating envelope | Approved amount/rate/day bounds, intermediate headroom and scale policy | OPEN |
-| Numeric backend | Comparative range, precision, performance, memory and dependency decision | OPEN |
-| Error budget | Formula-chain propagation and approved monetary tolerance by purpose | OPEN |
-| Rust SBOM/security/licences | Machine-readable inventories and reviewed exceptions | OPEN |
-| Independent model oracle | Five-year independently derived benchmark and formula review | OPEN |
-| Stable diagnostic contract | Typed errors, field paths and regression coverage | OPEN |
-| Forecast engine | Typed production schedules, statements and calculation results | NOT STARTED |
-| Forecast validation | SI/SF checks over all five periods and failure scenarios | NOT STARTED |
-| Canonical run manifest | Input/model/policy/engine identity and deterministic fingerprints | NOT STARTED |
-| XLSX output | Generated from canonical outputs and reconciled | NOT STARTED |
-| Release reproduction | Documented clean-environment reproduction and review | NOT STARTED |
+| `main` | Merged baseline | Authoritative production code currently available on the default branch |
+| PR #11 — numeric research | Open, Draft | Contains research code, independent benchmarks, SBOM workflow and the new timing harness; not yet production capability |
+| PR #12 — schema tooling | Open, Draft | Contains a pinned Node/AJV validator toolchain and lockfile; does not yet prove parity with Rust |
+| PR #13 — audit/design/CLI | Open, Draft | Contains the audit, design, roadmap and bounded CLI reader; not merged |
+| Finance/accounting review | Not evidenced | No independent sign-off is claimed |
+| Production Forecast Engine | Not implemented | Must remain gated |
 
-## 7. Audit conclusion
+A CI pass applies to the exact commit and workflow scope that ran. It does not transfer automatically to a later commit, and it does not approve a financial policy. PR #11's earlier research head `d9788253e8e06f374bcf89add71e793c3348286c` passed its four workflow groups. The later timing-harness commits exposed formatter differences; those were corrected in the current branch head, but the latest commit's full CI result must be checked before the timing artifact can be treated as verified evidence.
 
-The project is ready for controlled engineering preparation, not for an un-gated production forecast implementation.
+## 3. Capabilities already implemented on main
 
-The preferred sequence is:
+| Area | Assessment |
+|---|---|
+| Input contract | Versioned Draft 2020-12 JSON Schema, closed objects and canonical synthetic fixture |
+| Decimal input boundary | Decimal values are JSON strings; non-string tokens, non-canonical text, negative zero, excess fractional scale and parse/format changes are rejected |
+| Typed input | Rust structures reject unknown fields and constrain declared enum values |
+| Period validation | Three historical and five forecast periods, Gregorian dates, sequence, contiguity, annual duration and hand-offs |
+| Historical accounting | Opening/historical Balance Sheet, Income Statement, Cash Flow Statement and selected NWC, PP&E, debt and retained-earnings roll-forwards |
+| CLI baseline | `validate <input.json>`; no production forecast or export command |
+| Build reproducibility | Production Cargo.lock and two-toolchain CI |
+| Calculation engine | Not implemented |
+| Canonical ModelRun / provenance | Not implemented |
+| Forecast integrity / feasibility | Not implemented |
+| XLSX reporting | Not implemented |
 
-1. Correct the main-branch documentation drift.
-2. Ratify the numeric operating envelope and error budget.
-3. Complete the Rust dependency/SBOM/licence/security review.
-4. Complete the independent multi-period formula benchmark.
-5. Finalize stable typed diagnostics and the ModelRun output contract.
-6. Implement the canonical Rust forecast engine.
-7. Add structural-integrity and scenario-feasibility validation.
-8. Generate and reconcile the analyst-facing workbook.
-9. Complete release reproducibility and independent review.
+The bounded input reader (1 MiB limit, max-plus-one byte read, UTF-8 rejection and four tests) exists on PR #13's branch. It is not on `main` until reviewed and merged.
 
-No audit finding authorizes changes outside OFRL-IB-001. A successful build or isolated POC must not be represented as production readiness.
+## 4. Updated assessment of research evidence in PR #11
+
+### 4.1 Independent arithmetic and formula-output verification
+
+PR #11 now contains:
+
+- BM-001: an independently derived FY2026 benchmark covering 32 output metrics.
+- BM-002: FY2026–FY2030, 32 metrics per year, 160 exact rational expected values.
+- BM-003: four named edge scenarios × five years × 32 metrics, 640 exact rational expected values.
+- A Python standard-library reference using `Decimal` and `Fraction`; it does not import, invoke or read Rust forecast output. It verifies the canonical fixture Git blob identity and regenerates the committed golden data.
+- Rust integration tests comparing against immutable goldens without display quantization or tolerance.
+
+The combined BM-002/BM-003 reference check reports **800 exact expected outputs PASS** on the inspected PR #11 CI runs. The edge set includes high-CapEx funding deficit, loss-making operations, full debt repayment followed by a later redraw, and zero revenue/zero CapEx.
+
+**What this proves:** the tested Rust POC output matches separately generated exact expected values for the documented synthetic cases, and the independent reference regenerates the committed golden datasets.
+
+**What it does not prove:** the model conventions are appropriate accounting policy, all formula choices are correct for every intended entity, the model is IFRS/US GAAP/statutory compliant, or all valid input combinations have been covered. Independent finance/accounting review remains open.
+
+### 4.2 Numeric candidate evidence
+
+The isolated POC compares `rust_decimal 1.43.0`, `bigdecimal 0.4.11` and Exact Rational across the same five-year formula path. It records division behaviour, checked overflow and output differences.
+
+Observed stress evidence:
+
+- At the selected (10^{18}) monetary scaling point, both Decimal candidates completed the tested path and matched the exact-rational reference for the compared outputs.
+- At the selected (10^{22}) capacity point, `rust_decimal` raised a checked multiplication overflow in the FY2026 accounts-receivable numerator; BigDecimal completed the tested path under the POC's 80-significant-digit HalfEven context.
+- The values (10^{18}) and (10^{22}) are two chosen test points, not the exact transition boundary, a supported company-size envelope or approved production limits.
+- The provisional two-decimal comparison is a POC observation, not the approved reporting or reconciliation policy.
+
+A dependency-free release-mode timing executable has been added to PR #11 for Case A and the (10^{18}) stress input. It reports min/median/max per-forecast elapsed time and runner/toolchain metadata. It is explicitly non-gating. The newest branch commit must complete CI before its timing artifact can be cited as verified. Memory, allocations, tail latency, concurrent workloads and workbook costs remain unmeasured.
+
+**Disposition:** no production numeric library is selected by this audit. Production input types and historical validation currently use `rust_decimal::Decimal`; selecting a different backend would require an explicit input/validation boundary migration, not only swapping the calculation implementation.
+
+### 4.3 Dependency and supply-chain evidence
+
+PR #11 adds a project-scoped workflow that creates separate CycloneDX 1.5 inventories for the production model, CLI and isolated POCs. It pins `cargo-cyclonedx 0.5.9` and `cargo-audit 0.22.2` release binaries by SHA-256, runs RustSec with `--deny warnings`, preserves JSON reports and checksums, and verifies committed lockfiles remain unchanged.
+
+The inspected 2026-11-04 scan reported zero vulnerability findings and zero warnings for the production graph (54 package dependencies), Numeric Envelope POC (58), and Decimal Contract POC snapshot (56). This is a point-in-time advisory-database result, not proof that software has no vulnerabilities or application defects.
+
+Open items remain:
+
+- Decimal Contract POC has no committed Cargo.lock; its scan uses an ephemeral lock snapshot and is not reproducible dependency evidence.
+- Package source provenance, duplicate versions, licence texts, legal alternatives, notices and distribution/source obligations require review.
+- A declared SPDX expression is inventory metadata, not legal acceptance.
+- Broader build provenance, artifact attestation and non-Rust/system dependency coverage are not established by this workflow.
+
+## 5. Findings and required disposition
+
+Severity definitions: **Blocker** must close before production forecast acceptance; **Major** must close before a reproducible V1 release; **Moderate** should close before broader distribution or real-data intake.
+
+### EA-01 — Production Numeric Profile is not approved
+
+**Severity:** Blocker
+
+**Evidence:** `NUMERIC_ENVELOPE.md` remains Proposed. Stress tests exercise selected monetary scaling points but do not define business-approved maxima/minima, rate/day bounds, intermediate headroom, source scale, division context, five-year error budget or display precision.
+
+**Risk:** A candidate may pass the selected examples and still overflow or lose material precision elsewhere in the permitted domain. An arbitrary-precision type does not solve unlimited resource use or remove the need for a finite supported input contract.
+
+**Disposition:** Complete the versioned Numeric Profile worksheet, derive formula-by-formula intermediate bounds, quantify error propagation and separate arithmetic, accounting, schedule and display tolerances. No production limits may be invented from the stress points.
+
+### EA-02 — Production numeric backend remains undecided
+
+**Severity:** Blocker
+
+**Evidence:** The POC is isolated. Production input and historical validation types use `rust_decimal::Decimal`. BigDecimal's POC division relies on a configured default environment context; production use would need explicit, deterministic arithmetic-context ownership and provenance.
+
+**Risk:** Early engine implementation could hardwire a representation and create costly migrations. Arbitrary precision can also introduce CPU/memory growth and less predictable latency.
+
+**Disposition:** Decide only after EA-01, controlled performance/memory evidence, serialization review, error-semantics review and dependency/license approval. Record the decision and migration impact before forecast implementation.
+
+### EA-03 — Independent accounting/formula sign-off remains open
+
+**Severity:** Blocker
+
+**Evidence:** BM-002/BM-003 provide 800 exact synthetic expected values and independent computation. The benchmark methodology itself states that it implements the published V1 equations; it is not an accounting opinion.
+
+**Risk:** A consistently implemented but conceptually inappropriate convention can still reconcile perfectly. Examples requiring explicit review include average-debt interest timing, same-period cash settlement, tax floor, dividend floor, aggregate PP&E depreciation cap, working-capital day basis and treatment of funding shortfall.
+
+**Disposition:** Obtain a documented independent review of model assumptions, equations, statement classifications, sign conventions, edge outcomes and stated non-compliance boundary. Review must identify reviewer role, scope, findings and disposition. Do not describe the work as independent review until it occurs.
+
+### EA-04 — Dependency/licence/source acceptance is incomplete
+
+**Severity:** Blocker before production dependency approval
+
+**Evidence:** PR #11 automates SBOM and RustSec inventory, with a point-in-time clean advisory scan. The Decimal Contract POC lockfile is ephemeral. Licence and source review is explicitly open.
+
+**Risk:** A clean advisory scan does not establish source trust, exploitability, licence compatibility, notice obligations, maintainability or absence of defects.
+
+**Disposition:** Commit or retire the Decimal Contract POC; review each direct/transitive component, source, duplicate versions, SPDX expression and original licence text; approve an allow/exception policy; record notices and distribution obligations; retain release-date evidence.
+
+### EA-05 — Forecast engine and result contract are not implemented
+
+**Severity:** Blocker
+
+**Evidence:** Production `ofrl_model` exposes input validation and historical semantic checks only. POC forecast code is isolated and consumes generic JSON values rather than the production typed domain.
+
+**Risk:** Promoting POC code directly would couple production to research abstractions, omit typed domain validation and bypass a stable calculation result/error contract.
+
+**Disposition:** After EA-01 through EA-04 are accepted, design a production typed numeric boundary, typed schedules, typed calculation errors, formula identifiers and canonical ModelRun. Port formulas into production in small reviewed increments, with independently checked expected values.
+
+### EA-06 — Deserialization classification is based on error-message text
+
+**Severity:** Major
+
+**Evidence:** `validation.rs` maps Serde failures by substring inspection (for example, `unknown field`, `missing field` and custom Decimal markers); failures do not consistently expose JSON Pointer paths.
+
+**Risk:** Dependency wording changes can silently alter public diagnostic codes. Callers cannot locate nested fields and array indices reliably.
+
+**Disposition:** Introduce a typed deserialization/error-path boundary with stable code mapping and JSON Pointer capture. Review any additional dependency and lockfile/SBOM impact before adoption. Add regression tests for nested values, missing/unknown fields, invalid enums, array indices and malformed Decimal values.
+
+### EA-07 — JSON Schema and Rust contract parity is not enforced
+
+**Severity:** Major
+
+**Evidence:** Schema validation and Rust semantic validation run in separate jobs. PR #12 makes the schema toolchain reproducible but does not yet run one shared positive/negative corpus through both validators.
+
+**Risk:** Structural rules, field names, enum values and lexical constraints can drift. Passing schema validation does not guarantee Rust acceptance, and vice versa.
+
+**Disposition:** Create a versioned shared contract corpus with case ID, JSON document, expected schema result and expected Rust result/code. Run the same files through AJV and Rust in CI. Document intentional differences between structural checks and cross-field/accounting semantics.
+
+### EA-08 — Reconciliation tolerances are proposed, not approved
+
+**Severity:** Major
+
+**Evidence:** `VALIDATION_MATRIX.md` proposes (10^{-6}+10^{-8}\times\max(|A|,|B|,1)). The policy is not tied to accepted scale, materiality or approved numeric representation.
+
+**Risk:** A relative tolerance grows with the magnitude of the balance. For a value of (10^{12}) model units, the relative component alone is (10^4) model units. Under a thousands unit scale, that corresponds to 10 million currency units. Such a threshold may be unacceptable even though the percentage appears small.
+
+**Disposition:** Define independent policies for backend error, accounting identities, schedule roll-forwards and workbook display. Express each in model units and converted currency amounts at the supported range endpoints. Establish the policy before looking at production pass/fail results; do not widen it to make tests pass.
+
+### EA-09 — Forecast Structural Integrity and Scenario Feasibility are not implemented
+
+**Severity:** Blocker before accepting forecast outputs
+
+**Evidence:** The validator checks historical statements and forecast assumption domains only. The high-CapEx POC demonstrates negative calculated closing cash with an algebraic Balance Sheet residual of zero.
+
+**Risk:** Algebraic reconciliation can be confused with an economically funded/reportable forecast.
+
+**Disposition:** For every calculated period, expose separate status dimensions for calculation completion, Structural Integrity, Scenario Feasibility and reportability. Preserve diagnostic cash and funding shortfall, mark feasibility FAIL when cash is negative, and never insert hidden financing or show negative diagnostic cash as a valid reportable asset.
+
+### EA-10 — Test coverage is not yet sufficient for production domain claims
+
+**Severity:** Major
+
+**Evidence:** The independent goldens cover one baseline plus four edge scenarios (800 outputs). Production validation tests cover fixed input cases. No production forecast property suite exists; broad rate/day boundaries, zero denominator ratios, invalid debt paths, near-overflow bounds and generated combinations remain incomplete.
+
+**Risk:** A finite set of fixed fixtures cannot establish invariants across the complete supported input domain.
+
+**Disposition:** After Numeric Profile approval, add property-based tests with reproducible seeds, boundary partitions, invalid-input generators, shrunk regression fixtures, formula-level tests and complete five-year integration cases. Keep the independent goldens separate from the implementation generating actual outputs.
+
+### EA-11 — Deterministic ModelRun and audit lineage are not implemented
+
+**Severity:** Major
+
+**Evidence:** The public result is currently a ValidationReport. There is no canonical run manifest, input/output SHA-256, model/conventions/numeric-policy identity, formula lineage or deterministic run fingerprint.
+
+**Risk:** A reviewer cannot establish which policy and exact input generated a figure or reproduce a result after an engine change.
+
+**Disposition:** Version canonical JSON serialization, key ordering, Decimal formatting and null/omission rules. Hash canonical input/output and model/engine identity. Keep timestamps and machine-specific execution details outside the deterministic fingerprint. Link every material metric to formula ID, period, driver and prior-period dependency.
+
+### EA-12 — XLSX generation and reconciliation are not implemented
+
+**Severity:** Major
+
+**Evidence:** No production exporter exists. The workbook design requires Rust canonical outputs and acknowledges Excel's finite numeric precision.
+
+**Risk:** Formula duplication or display precision can make workbook figures disagree with authoritative results.
+
+**Disposition:** Build XLSX only after ModelRun schema stabilizes. Workbook must be a presentation adapter, contain no independent forecast formulas, expose run status and diagnostics, and reconcile every material displayed value to canonical outputs. Keep JSON/CSV Decimal strings as authoritative evidence.
+
+### EA-13 — CLI operational contract is incomplete
+
+**Severity:** Moderate
+
+**Evidence:** Main supports `validate` only. PR #13 adds bounded input reading and UTF-8 rejection on its branch, but no `run`, `inspect` or `export` commands or safe output-write contract.
+
+**Risk:** A later CLI can overwrite source files, produce partial outputs or confuse invalid input with calculation failure.
+
+**Disposition:** Keep commands incremental. Define stable exit codes, bounded inputs, output destination policy, source/target collision checks and atomic writes before adding run/export commands. Do not add a command framework without a demonstrated need.
+
+### EA-14 — Release evidence is not yet independently reproduced
+
+**Severity:** Major
+
+**Evidence:** CI matrices and artifact checks provide useful project-internal evidence. No independent clean-checkout reproduction/reviewer report is recorded.
+
+**Risk:** The project may overstate reproducibility if instructions depend on hidden local state or unpinned external conditions.
+
+**Disposition:** Add a clean-checkout reproduction script/instructions, identify environment and versions, verify hashes and artifacts, and record an independent reproduction report before a reproducible-release claim.
+
+## 6. Numeric tolerance interpretation
+
+The proposed tolerance must not be treated as approved merely because it is already written in the Validation Matrix. At large balances the relative term can dominate the absolute term. For example:
+
+| Reconciled magnitude (model units) | Relative component at (10^{-8}) | Interpretation |
+|---:|---:|---|
+| (10^6) | 0.01 | Model units |
+| (10^9) | 10 | Model units |
+| (10^{12}) | 10,000 | Model units |
+
+The currency meaning then scales with `unit_scale`. The accepted policy should be derived from financial materiality and the approved Numeric Profile, not from a convenient generic epsilon.
+
+## 7. Current release-gate register
+
+| Gate | Evidence required | Status |
+|---|---|---|
+| Numeric Profile | Approved input/intermediate bounds, scale, precision, rounding and separate error budgets | OPEN |
+| Production arithmetic backend | Profile-based comparison, arithmetic context, serialization and cost/complexity review | OPEN |
+| Independent finance/accounting review | Written review and disposition of equations, conventions and edge cases | OPEN |
+| Rust dependencies | Locked graphs, SBOM, security disposition, source and licence/notice acceptance | PARTIAL |
+| Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR |
+| Schema/Rust parity | Shared fixture corpus run against both implementations | OPEN |
+| Typed diagnostics | Stable error variants and field-path capture | OPEN |
+| Production forecast engine | Typed Rust schedules and three statements | NOT STARTED |
+| Forecast integrity/feasibility | SI/SF/reportability results over all periods | NOT STARTED |
+| ModelRun provenance | Canonical serialization, SHA-256 and metric lineage | NOT STARTED |
+| XLSX | Output-only workbook and canonical reconciliation | NOT STARTED |
+| Independent reproduction | Clean-checkout reproduction and reviewer evidence | NOT STARTED |
+
+## 8. Audit conclusion and implementation order
+
+The next implementation increment should not be a speculative production forecast engine. First close the evidence and contract gaps that would otherwise dictate a second rewrite:
+
+1. Complete the Numeric Profile using the worksheet and obtain documented review.
+2. Complete the production backend decision using correctness, deterministic context, performance, memory and dependency evidence.
+3. Close lockfile, source, licence and advisory dispositions for dependencies intended to remain.
+4. Obtain independent finance/accounting review of V1 conventions and formulas.
+5. Implement typed deserialization errors and shared Schema/Rust contract tests.
+6. Freeze the production calculation/result contracts, then implement the Rust schedules and statements.
+7. Add SI/SF/reportability checks and property/boundary tests.
+8. Implement canonical ModelRun, deterministic fingerprints and formula lineage.
+9. Generate XLSX solely from canonical outputs and reconcile it.
+10. Complete clean-checkout reproduction and release review.
+
+No research POC or green CI run is to be represented as production financial-model approval. This audit authorizes work only within OFRL-IB-001.

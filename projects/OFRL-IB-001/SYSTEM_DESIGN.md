@@ -1,8 +1,8 @@
 <!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: CC-BY-4.0 -->
 
-# OFRL-IB-001 — Enterprise Target Design
+# OFRL-IB-001 — System Design and Control Architecture
 
-**Design version:** 0.1.0  
+**Design version:** 0.2.0  
 **Status:** Proposed target architecture; existing V1 decisions remain authoritative  
 **Date:** 2026-11-04  
 **Implementation language:** Rust  
@@ -12,7 +12,7 @@
 
 Build a deterministic, auditable and maintainable three-statement modelling system for one generic non-financial operating company, with three annual historical periods and five annual forecast periods.
 
-The system must provide professional financial-model controls without creating unnecessary infrastructure. The first release remains a single Rust Cargo workspace with a model library and a thin CLI. The design does not require a service, database, cloud deployment, plugin framework, model API, Python runtime or separate microservices.
+The system must provide strong financial-model controls without creating unnecessary infrastructure. The first release remains a single Rust Cargo workspace with a model library and a thin CLI. The design does not require a service, database, cloud deployment, plugin framework, model API, Python runtime or separate microservices.
 
 The core invariant is:
 
@@ -99,7 +99,7 @@ projects/OFRL-IB-001/
 ├── Cargo.toml
 ├── Cargo.lock
 ├── ENGINEERING_AUDIT.md
-├── ENTERPRISE_DESIGN.md
+├── system_DESIGN.md
 ├── IMPLEMENTATION_ROADMAP.md
 ├── MODEL_CONVENTIONS.md
 ├── MODEL_INPUT_CONTRACT.md
@@ -484,3 +484,16 @@ The Rust version matrix must be reviewed when dependencies change. A green CI bu
 - A web service, database or multi-tenant deployment.
 
 A non-goal can be added only through a versioned scope change and new validation gates.
+
+
+## 18. Evidence status and implementation boundary
+
+This design describes the target system, not a claim that all target components exist.
+
+- The production input/schema/historical validator is on `main`.
+- The numeric comparison, 800 independent expected outputs and SBOM/RustSec workflow are in open Draft PR #11.
+- The schema validator lockfile is in open Draft PR #12; a shared Schema/Rust corpus is still required.
+- The bounded CLI input reader and this system design are in open Draft PR #13.
+- Production forecast calculations, Structural Integrity/Scenario Feasibility evaluation, ModelRun provenance and XLSX generation are not implemented on `main`.
+
+PR-only evidence must not be presented as merged release capability. The Numeric Profile and independent finance/accounting review are mandatory before production forecast calculations begin.
