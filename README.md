@@ -22,11 +22,19 @@ I am deliberately building deeper systems-engineering capability with Rust. The 
 
 **Mission:** To bring together people with different experiences and areas of expertise to investigate financial and business problems, develop and examine alternative methods, and turn useful research into reproducible models, software, and practical resources.
 
-People may learn the same financial and mathematical foundations but apply them differently in practice. Their methods are shaped by different objectives, assumptions, information, markets, business models, and constraints. I see those differences as an opportunity to learn from one another—not a reason to rank people or assume that one approach is universally superior.
+Many of us come into finance and business through shared foundations. We study the same core ideas, equations, frameworks, and concepts—whether through a degree, professional qualification, certificate, or independent study. Black–Scholes is one familiar example: the equation is widely known, but people may build very different ways of applying it.
 
-OFRL is not here to prove who is smarter or whose method must win. It is here to understand how different methods work, examine where they are useful, identify where they fall short, and work out what can be improved or built from them.
+The differences often sit in the practical work around those foundations: the assumptions we choose, the information we trust, the way we structure a model, the constraints we face, and the methods we develop through experience. In practice, each person or team may have its own "สูตรน้ำจิ้ม"—a way of doing things that they have refined for a particular purpose.
 
-This does not mean that every method is equally sound or that every idea should be accepted. We remain open to different approaches while examining them against clear objectives, mathematical and financial correctness, implementation quality, evidence, robustness, and practical constraints.
+I do not see those differences as a reason to decide who is better, whose credentials carry more weight, or whose method must be the one correct answer. I see an opportunity to put different approaches alongside one another, understand how each was built, and learn what each can contribute.
+
+The question we want to work on is practical: **What can this method help us do? Under which assumptions and conditions does it work? Where does it fall short? What should be improved, combined, simplified, or developed further so that someone else can build on it?**
+
+That does not mean every method is equally reliable, or that evidence and correctness do not matter. We still examine the mathematics, financial logic, implementation, data, robustness, and results. But the purpose of that examination is to understand the work and improve the outcome—not to rank the people behind it or turn every discussion into a contest over who is right.
+
+A method may be useful for one objective and unsuitable for another. Two approaches may solve different parts of the same problem. A third approach may emerge by combining useful ideas. Sometimes the evidence will show that one method is more suitable under clearly stated conditions; sometimes it will not justify choosing a winner. All of these are valid outcomes when they are explained honestly.
+
+**OFRL is a place to develop ideas together, not a place to defend personal territory.** We want people to bring what they have learned and built, make the reasoning understandable, test what can be tested, share what can be shared, and help turn useful work into something others can inspect, adapt, and use in practice.
 
 Read [FOUNDATION_AND_DIRECTION.md](FOUNDATION_AND_DIRECTION.md) for the full foundation, vision, mission, principles, and collaboration philosophy.
 
@@ -169,9 +177,13 @@ See [LICENSE](LICENSE), [LICENSE-docs](LICENSE-docs), [LICENSE_POLICY.md](LICENS
 
 ## Collaboration
 
-I welcome research proposals, alternative methods, technical discussion, careful review, independent implementations, and replication. You do not need to agree with the existing approach or the founder to contribute. What matters is whether the work is explained clearly, relevant to the problem, supported by appropriate evidence, and developed with respect for other contributors and their rights.
+I welcome people who want to bring a method they have developed, question an established approach, reproduce someone else's work, contribute a different implementation, or help turn a useful finding into a tool others can use. You do not need to agree with the founder, hold a particular qualification, or use the same technique as an existing contributor.
 
-A contribution is not accepted simply because it is different or novel. Reviews focus on the quality of the work: its assumptions, correctness, evidence, implementation, reproducibility, licensing, and maintainability. Critique methods and claims, not people.
+A useful contribution does not have to replace what is already there. It may explain a limitation, improve one part of a workflow, provide a more suitable method for a specific situation, make an implementation easier to reproduce, or show that two approaches can complement one another.
+
+When we review work, we ask what problem it addresses, what assumptions it makes, how it behaves, what evidence supports it, where it is useful, and what remains to be improved. We do not use credentials, seniority, reputation, or personal preference as a substitute for examining the work.
+
+Contributors should explain their reasoning and give others enough information to inspect and build on it. Where an approach is not yet supported, we can identify what evidence or improvement is needed rather than dismissing the person who proposed it. Where a method fails, the failure can still teach us something useful.
 
 Start with [CONTRIBUTING.md](CONTRIBUTING.md), [RESEARCH_CHARTER.md](RESEARCH_CHARTER.md), and [RESEARCH_STANDARDS.md](RESEARCH_STANDARDS.md).
 
