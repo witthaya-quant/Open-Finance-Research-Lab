@@ -1,4 +1,4 @@
-use ofrl_model::{validate_input_json, DiagnosticCode, InputStatus};
+use ofrl_model::{validate_input_json, InputStatus};
 use serde::Deserialize;
 use std::fs;
 use std::path::Path;
