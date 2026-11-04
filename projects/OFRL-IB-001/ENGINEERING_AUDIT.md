@@ -170,7 +170,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Risk:** Dependency wording changes can silently alter public diagnostic codes. Callers cannot locate nested fields and array indices reliably.
 
-**Disposition:** Introduce a typed deserialization/error-path boundary with stable code mapping and JSON Pointer capture. Review any additional dependency and lockfile/SBOM impact before adoption. Add regression tests for nested values, missing/unknown fields, invalid enums, array indices and malformed Decimal values.
+**Disposition:** Tracked for a separate implementation increment in [Issue #23](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/23). Introduce a typed deserialization/error-path boundary with stable code mapping and RFC 6901 JSON Pointer capture. Review any additional dependency and lockfile/SBOM impact before adoption. Add regression tests for nested values, missing/unknown fields, invalid enums, array indices, pointer escaping and malformed Decimal values.
 
 ### EA-07 — JSON Schema and Rust contract parity is not enforced
 
