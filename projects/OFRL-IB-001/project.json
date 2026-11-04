@@ -1,0 +1,38 @@
+{
+  "$schema": "../../schemas/ofrl-project-manifest-1.0.0.schema.json",
+  "schema_version": "1.0.0",
+  "project_id": "OFRL-IB-001",
+  "title": "Integrated Three-Statement Financial Model",
+  "lifecycle_status": "in_development",
+  "project_types": [
+    "research",
+    "financial_model",
+    "software"
+  ],
+  "risk_tier": "R2",
+  "owner": "Kenny (Witthaya Maidee)",
+  "created_at": "2026-11-04",
+  "updated_at": "2026-11-04",
+  "summary": "A driver-based financial model for a generic non-financial operating company, connecting historical and forecast Income Statements, Balance Sheets, and Cash Flow Statements through documented assumptions, schedules, numerical policies, and validation controls. The input schema and historical semantic validator are implemented; the forecast calculation engine and analyst-facing workbook remain unimplemented.",
+  "evidence_maturity": 0,
+  "license_profile": "apache-2.0-software_cc-by-4.0-documentation",
+  "data_classification": "synthetic",
+  "validation_profiles": [
+    "research",
+    "financial_model",
+    "software"
+  ],
+  "required_documents": [
+    "README.md",
+    "DECISION_LOG.md",
+    "RESEARCH_SPECIFICATION.md",
+    "MODEL_CONVENTIONS.md",
+    "ENGINEERING_ARCHITECTURE.md",
+    "VALIDATION_MATRIX.md",
+    "NUMERIC_ENVELOPE.md",
+    "MODEL_INPUT_CONTRACT.md",
+    "VALIDATION_ERROR_CONTRACT.md",
+    "RUNTIME_VALIDATOR.md"
+  ],
+  "release_status": "not_released"
+}
