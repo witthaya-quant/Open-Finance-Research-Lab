@@ -95,7 +95,15 @@ Use:
 
 Use the exact ID as the project directory name. A material change in research objective, ownership boundary, or independently versioned deliverable may justify a separate project ID; a routine implementation phase does not.
 
-## 7. Change control
+## 7. Project-specific CI and validation ownership
+
+The repository-wide workflow validates shared metadata, local links, configuration syntax, and project registration. It is not a substitute for each project's own test/build workflow.
+
+Every project containing executable code or generated artifacts must define the commands and CI checks needed to validate its supported scope. The workflow must trigger for changes to the project, its shared schemas/fixtures, and relevant build configuration. It must use least-privilege permissions, avoid secrets on untrusted fork Pull Requests, and report failures without silently skipping required checks. A project may reuse common scripts or workflows, but its domain-specific acceptance criteria remain in its own validation matrix.
+
+Pure research or documentation projects must still validate references, data/source rights, calculations where applicable, and reproducibility evidence. Do not add a software build workflow to a project that has no software to build.
+
+## 8. Change control
 
 A project change requires a new Decision Record or a Decision Log entry when it materially changes:
 
@@ -110,13 +118,13 @@ Routine implementation details may be recorded in the Pull Request without a sep
 
 A project-level decision may make a project stricter than the lab-wide standard. It may not silently waive a lab-wide requirement, legal obligation, licence, data restriction, security control, or Founder-reserved decision.
 
-## 8. Project pause, rejection, and archival
+## 9. Project pause, rejection, and archival
 
 A project may be rejected, deferred, paused, deprecated, or archived because the question is no longer relevant, evidence is insufficient, rights are unclear, risk cannot be controlled, resources are unavailable, or the work does not meet its stated purpose.
 
 A negative result or failed hypothesis is not by itself a reason to hide or delete a project. Preserve useful findings and limitations. Do not leave abandoned prototypes labelled as released or validated.
 
-## 9. Relationship to other policies
+## 10. Relationship to other policies
 
 - [PROJECT_STANDARDS.md](PROJECT_STANDARDS.md) defines project type profiles, risk tiers, and minimum evidence requirements.
 - [GOVERNANCE.md](GOVERNANCE.md) defines authority and review rights.
@@ -126,6 +134,6 @@ A negative result or failed hypothesis is not by itself a reason to hide or dele
 - [RELEASE_POLICY.md](RELEASE_POLICY.md) defines publication and release authorization.
 - [templates/PROJECT_CHARTER_TEMPLATE.md](templates/PROJECT_CHARTER_TEMPLATE.md) and [templates/PROJECT_MANIFEST_TEMPLATE.json](templates/PROJECT_MANIFEST_TEMPLATE.json) provide starting materials.
 
-## 10. Review and amendment
+## 11. Review and amendment
 
 Review this policy at least annually and when a new project type, material risk class, or release model is introduced. Amendments require a Pull Request and a lab-wide Decision Record.
