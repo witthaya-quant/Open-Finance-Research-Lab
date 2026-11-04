@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Validation Matrix
 
-**Version:** 0.1.0  
+**Version:** 0.1.1  
 **Status:** Proposed — acceptance criteria must be approved before implementation  
 **Purpose:** Define objective PASS/FAIL gates before any model results are reviewed.
 
@@ -14,7 +14,7 @@ The project reports three independent result groups:
 2. **Scenario Feasibility** — whether the modelled scenario can fund its cash requirements under the stated financing assumptions.
 3. **Research Release Readiness** — documentation, reproducibility, data rights, and review requirements.
 
-A PASS in one group does not imply a PASS in another. In particular, a mathematically balanced model may still have negative cash, while a cash-positive model may still contain broken statement links.
+A PASS in one group does not imply a PASS in another. In particular, a mathematically balanced model may still have an unfunded cash deficit, while a cash-positive model may still contain broken statement links. An algebraic zero residual does not turn negative cash into a valid reportable asset.
 
 ## 2. Numerical tolerance
 
@@ -65,9 +65,11 @@ All SI tests are hard gates for Structural Integrity PASS.
 | SF-02 | Funding transparency | No hidden financing plug or unapproved automatic borrowing is used | Model silently funds a deficit |
 | SF-03 | Debt capacity under scope | Forecast debt drawdowns and repayments follow the explicit assumptions and debt bounds | Debt schedule violates its permitted mechanics |
 
-A negative closing cash balance is not automatically a structural accounting failure. It is a **Scenario Feasibility FAIL** because the model does not include an approved funding source for that deficit.
+A negative calculated closing cash is a **Scenario Feasibility FAIL** because the model has no approved source of funding for that deficit. Its arithmetic Balance Sheet residual may still equal zero, but that proves only that the unadjusted equations reconcile; it does not make negative cash a valid reportable asset or the scenario economically feasible.
 
-The model must display both result groups clearly rather than collapsing them into one overall PASS indicator.
+The diagnostic may retain the unadjusted calculated cash value and must separately expose the funding shortfall as `max(0, -calculated_closing_cash)`. The analyst-facing workbook must not present a negative cash diagnostic as a viable forecast Balance Sheet. Do not insert an overdraft liability, automatic borrowing, or a zero-cash plug unless a separately approved model scope defines and validates that financing treatment.
+
+The model must display Structural Integrity, Scenario Feasibility, and Research Release Readiness separately rather than collapsing them into one overall PASS indicator.
 
 ## 5. Boundary and negative tests
 
