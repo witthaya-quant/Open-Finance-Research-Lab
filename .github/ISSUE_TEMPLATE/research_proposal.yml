@@ -1,17 +1,46 @@
-name: Research Proposal
-description: Propose a financial, quantitative, business, or engineering research question for OFRL.
-title: "[Research Proposal]: "
+name: Project / Research Proposal
+description: Propose a new research, model, software, data, benchmark, prototype, or infrastructure project for OFRL.
+title: "[Project / Research Proposal]: "
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for proposing research to OFRL. Different methods and perspectives are welcome. Please explain the problem, assumptions, intended use, and how the work could be examined. A proposal is not an endorsement or project acceptance.
+        Thank you for proposing work to OFRL. Different methods and perspectives are welcome. Please explain the problem, intended use, project type, risk, rights, and how the work could be examined. A proposal is not project approval or permission to publish restricted material.
   - type: input
     id: working-title
     attributes:
       label: Working title
       description: Use a clear, descriptive title.
       placeholder: "Example: Robust alternatives for volatility estimation under regime changes"
+    validations:
+      required: true
+  - type: dropdown
+    id: project-type
+    attributes:
+      label: Primary project type
+      description: Select the closest primary type. Additional types can be stated in the proposal.
+      options:
+        - Research
+        - Quantitative research
+        - Financial model
+        - Software / reusable tooling
+        - Data product / dataset
+        - Benchmark / test corpus
+        - Prototype / proof of concept
+        - Infrastructure / integration
+    validations:
+      required: true
+  - type: dropdown
+    id: preliminary-risk
+    attributes:
+      label: Preliminary risk tier
+      description: Select the highest plausible tier. OFRL may assign a higher tier after review.
+      options:
+        - R0 — Informational
+        - R1 — Analytical
+        - R2 — Decision-support / reusable software
+        - R3 — Operational / sensitive
+        - Not yet known
     validations:
       required: true
   - type: textarea
@@ -39,7 +68,7 @@ body:
   - type: dropdown
     id: research-area
     attributes:
-      label: Main research area
+      label: Main research area or discipline
       options:
         - Quantitative Finance
         - Financial Modelling and Valuation
@@ -51,6 +80,8 @@ body:
         - Corporate Finance and Capital Markets
         - Financial Data Science and Machine Learning
         - Research Methodology and Model Validation
+        - Software Engineering / Infrastructure
+        - Data Engineering / Data Products
         - Cross-disciplinary / Other
     validations:
       required: true
@@ -121,5 +152,5 @@ body:
           required: true
         - label: I understand that novelty or personal confidence is not evidence of superiority, and that OFRL may accept, defer, redirect, or decline the proposal.
           required: true
-        - label: I have read the OFRL [Contributing Guide](../../CONTRIBUTING.md) and [Research Standards](../../RESEARCH_STANDARDS.md).
+        - label: I have read the OFRL [Project Lifecycle](../../PROJECT_LIFECYCLE.md), [Project Standards](../../PROJECT_STANDARDS.md), [Contributing Guide](../../CONTRIBUTING.md), and [Research Standards](../../RESEARCH_STANDARDS.md).
           required: true
