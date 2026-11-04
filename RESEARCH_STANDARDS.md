@@ -118,6 +118,24 @@ A well-designed experiment that finds no effect, rejects a hypothesis, or expose
 
 Material corrections should identify what changed, why it changed, and whether previously reported results are affected. Preserve enough history for readers to understand the evolution of the research.
 
-## 10. Project-specific standards
+## 10. Comparative evaluation of alternative methods
+
+When a project compares two or more methods, the comparison should be designed to answer a defined question—not to produce a winner by default.
+
+Where relevant, document:
+
+- **Purpose and intended use:** What decision, problem, or outcome is each method intended to support?
+- **Evaluation criteria:** Which measures matter for this problem, and why? Define them before interpreting results where practicable.
+- **Assumptions and conditions:** Identify differences in assumptions, inputs, data requirements, constraints, and operating environments.
+- **Baseline and benchmark:** Explain why the selected baseline is appropriate. Avoid choosing a baseline simply because it makes a preferred method look stronger.
+- **Comparability:** State whether the methods were evaluated under common conditions. If they were not, explain why and avoid presenting the results as a direct like-for-like comparison.
+- **Trade-offs:** Report relevant differences in accuracy, robustness, complexity, precision, latency, cost, interpretability, data needs, and operational risk as appropriate.
+- **Failure conditions:** Examine where each method becomes unreliable, unsuitable, or invalid.
+- **Evidence limits:** Distinguish mathematical properties, implementation test results, empirical performance, and real-world usefulness. Evidence in one category does not automatically establish another.
+- **Conclusion by context:** State which method is better supported for the specified objective and conditions, where the evidence is inconclusive, and what further work is required.
+
+Do not infer that a method is universally superior from performance in one dataset, one market regime, one sample, or one implementation. Where different approaches serve different use cases, preserve and document those distinctions. Where the evidence does not justify a conclusion, say so.
+
+## 11. Project-specific standards
 
 Projects may add stricter domain standards—for example, accounting reconciliation rules for three-statement models, curve-construction conventions for fixed income, or execution-cost assumptions for market microstructure research. Additional requirements must be documented in the project itself.
