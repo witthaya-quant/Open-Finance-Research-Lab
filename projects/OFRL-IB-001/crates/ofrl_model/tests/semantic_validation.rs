@@ -2,7 +2,7 @@ use ofrl_model::{validate_input_json, DiagnosticCode, InputStatus};
 use serde_json::{json, Value};
 
 const CASE_A: &str =
-    include_str!("../../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json");
+    include_str!("../../../../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json");
 
 fn payload() -> Value {
     serde_json::from_str(CASE_A).expect("Case A fixture must be valid JSON")
