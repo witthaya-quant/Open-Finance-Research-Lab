@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://open-finance-research-lab.github.io/schemas/ofrl-ib-001-amount-record-0.1.0.schema.json",
+  "$id": "urn:ofrl:schema:ofrl-ib-001-amount-record:0.1.0",
   "title": "OFRL-IB-001 Amount Record",
   "description": "Minimal numeric interchange record used by the isolated Decimal contract proof of concept.",
   "type": "object",
