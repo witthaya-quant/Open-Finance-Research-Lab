@@ -43,7 +43,7 @@ fn decimal_numeric_tokens_are_rejected() {
     let mut value = payload();
     value["historical_periods"][0]["income_statement"]["revenue"] = json!(1000.0);
     let report = validate(&value);
-    assert!(has_code(&report, DiagnosticCode::JsonTypeMismatch));
+    assert!(has_code(&report, DiagnosticCode::DecimalStringRequired));
 }
 
 #[test]
