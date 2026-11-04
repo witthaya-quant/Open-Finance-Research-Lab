@@ -3,7 +3,7 @@
 # OFRL-ADR-2026-001: Founder-Led Governance and Staged Organization Transition
 
 > **Decision ID:** OFRL-ADR-2026-001  
-> **Status:** Accepted  
+> **Status:** Superseded on 2026-11-04 by [OFRL-ADR-2026-002](OFRL-ADR-2026-002-founder-controlled-open-source-no-mandatory-organization.md)  
 > **Decision date:** 2026-11-04  
 > **Decision owner:** Kenny (Witthaya Maidee), Founder / Principal Maintainer  
 > **Author:** Kenny (Witthaya Maidee)  
