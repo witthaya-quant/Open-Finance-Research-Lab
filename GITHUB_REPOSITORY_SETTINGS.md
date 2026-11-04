@@ -10,19 +10,38 @@ This document translates OFRL Governance into GitHub repository controls for a r
 
 ## 1. Current observed state
 
-As checked on 2026-11-04 through the connected GitHub repository metadata:
+As checked on 2026-11-04 through the repository metadata and GitHub Rulesets API:
 
 | Control | Observed state |
 |---|---|
 | Repository owner | Personal account: `witthaya-quant` |
 | Default branch | `main` |
 | Repository visibility | Public |
-| Main branch protection | Not enabled |
-| Required status checks on main | None configured |
+| Active ruleset | `OFRL-main-protection` (ID `26516806`) |
+| Enforcement / target | Active; `~DEFAULT_BRANCH` (currently `main`) |
+| Require Pull Request | Enabled |
+| Required approving reviews | 0 (Stage 0 single-maintainer policy) |
+| Require conversation resolution | Enabled |
+| Required status checks | Exactly six GitHub Actions contexts listed below |
+| Require branches to be up to date | Enabled (`strict_required_status_checks_policy: true`) |
+| Branch deletion | Blocked |
+| Non-fast-forward / force push | Blocked |
+| Bypass actors | None; API reports current user cannot bypass |
+| Code Quality / Copilot review rules | Not configured in this Ruleset |
 | Merge methods | Merge commit, rebase, and squash enabled |
-| Repository permissions available to current account | Admin, maintain, push, pull, triage |
 
-This is a snapshot, not a guarantee that settings remain unchanged. Recheck after configuration changes and after the repository moves to an Organization.
+Required contexts (exact spelling and case):
+
+1. `repository-policy`
+2. `Model input JSON Schema`
+3. `Decimal contract (Rust 1.85.0)`
+4. `Decimal contract (Rust 1.99.1)`
+5. `Semantic validator (Rust 1.85.0)`
+6. `Semantic validator (Rust 1.99.1)`
+
+The Ruleset configuration is active and complete. The `repository-policy` workflow is introduced by PR #14 and hardened in stacked PR #18; it is not yet present on the current `main` commit at this audit snapshot. PR #14 and PR #18 both reported the exact required contexts successfully on their inspected heads. The post-merge verification must confirm the workflow exists on `main` and that a fresh documentation-only and project-code PR both report all six contexts.
+
+This is a dated snapshot, not a guarantee that settings remain unchanged. Re-read the Rulesets API after any configuration change and after the repository moves to an Organization.
 
 ## 2. Stage 0 baseline — one active maintainer
 
@@ -95,7 +114,7 @@ Do not guess check names.
 5. Select only the exact check names that are stable and applicable.
 6. Test a failing check and confirm it blocks merge; test a passing check and confirm the control behaves as intended.
 
-**Current OFRL caution:** the existing OFRL-IB-001 workflows use path filters. A documentation-only Pull Request may not run the same jobs as a model-code Pull Request. Do not make those path-filtered jobs globally required until a stable always-running gate or suitable required-workflow design exists. A required check that is skipped or never reported can leave a Pull Request blocked.
+**Current OFRL integration note:** the current `main` revision still contains path-filtered OFRL-IB-001 workflows. PR #18 removes those path filters so the two model validation workflows report their stable job names on every Pull Request. PR #14 adds the always-running `repository-policy` workflow. These changes must be integrated and then smoke-tested before the six-context baseline is considered fully exercised across both documentation-only and model-code changes.
 
 A workflow that runs only on pushes to the default branch is not sufficient evidence that it protects Pull Requests.
 
