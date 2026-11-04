@@ -44,9 +44,11 @@ OFRL is not trying to settle every debate or force everyone into one methodology
 
 ### 4.1 Common foundations, different applications
 
-People may share the same academic foundations and still reach different approaches in practice. That is normal in a field where objectives, assumptions, data, environments, and constraints differ.
+Many people in finance and business learn the same foundations through degrees, professional qualifications, certificates, or independent study. We become familiar with common concepts, frameworks, and equations. Black–Scholes is one example: people may learn the same model and then develop different ways to apply, extend, parameterise, test, or combine it.
 
-A familiar formula is a starting point, not a complete answer to every real-world problem. We should understand the foundation, then examine how it is applied and whether that application is suitable for its purpose.
+In practice, every person or team may develop its own “secret sauce”—the assumptions, techniques, information, processes, and judgement refined through experience for a particular objective. Those differences are worth understanding. They are not, by themselves, a reason to rank the people behind them or assume that one approach must be universally superior.
+
+A familiar formula is a starting point, not a complete answer to every real-world problem. I want us to understand the shared foundation, examine how each method applies it, and learn what can be used, adapted, improved, or developed further.
 
 ### 4.2 Different methods deserve examination, not automatic ranking
 
