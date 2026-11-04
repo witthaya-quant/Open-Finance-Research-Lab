@@ -40,7 +40,7 @@ Configure a branch protection rule or repository ruleset targeting the exact def
 | Require signed commits | Optional; enable only after the signing workflow is adopted and tested | Avoid an unworkable control that causes accidental lockout |
 | Require linear history | Optional; decide alongside merge-method policy | Do not enable without confirming the chosen merge workflow |
 | Code-owner review | Not applicable until a meaningful `CODEOWNERS` file and eligible owners exist | Avoid a nominal control with no reviewer coverage |
-| Admin bypass | Keep restricted; document any emergency bypass and its reason | Preserve accountability without pretending a technical control removes all administrator power |
+| Admin bypass | Enable **Do not allow bypassing the above settings / include administrators** where available; otherwise record the owner-bypass limitation as a residual risk | Branch protection does not automatically constrain administrators; verify the rule against the repository owner's account |
 
 The Founder may merge a Founder-authored PR under Stage 0 because independent review is not available. The PR checklist and validation evidence remain mandatory. This must be described as a single-maintainer decision, not an independent approval.
 
