@@ -203,7 +203,7 @@ Acceptance:
 
 Deliver:
 - Complete property, boundary, golden, negative and determinism test evidence.
-- Shared JSON Schema/Rust contract corpus.
+- Complete review and CI acceptance of the shared JSON Schema/Rust contract corpus introduced on PR #13.
 - Final SBOM, licence/source/advisory disposition and release artifact hashes.
 - Reproducible clean-checkout build/run instructions.
 - XLSX structure and display reconciliation report.
