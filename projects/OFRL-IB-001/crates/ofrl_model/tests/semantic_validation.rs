@@ -13,9 +13,11 @@ fn validate(value: &Value) -> ofrl_model::ValidationReport {
 }
 
 fn has_code(report: &ofrl_model::ValidationReport, code: DiagnosticCode) -> bool {
-    report.diagnostics.iter().any(|diagnostic| diagnostic.code == code)
+    report
+        .diagnostics
+        .iter()
+        .any(|diagnostic| diagnostic.code == code)
 }
-
 #[test]
 fn canonical_synthetic_case_a_passes_all_historical_semantic_checks() {
     let report = validate_input_json(CASE_A);
@@ -57,8 +59,7 @@ fn non_canonical_decimal_text_is_rejected() {
 #[test]
 fn excessive_decimal_scale_is_rejected_before_parsing() {
     let mut value = payload();
-    value["forecast_periods"][0]["assumptions"]["dso"] =
-        json!("0.12345678901234567890123456789");
+    value["forecast_periods"][0]["assumptions"]["dso"] = json!("0.12345678901234567890123456789");
     let report = validate(&value);
     assert!(has_code(&report, DiagnosticCode::DecimalScaleExceeded));
 }
@@ -139,8 +140,7 @@ fn historical_net_income_must_reconcile_to_income_statement() {
 #[test]
 fn historical_nwc_movement_must_reconcile_to_balance_sheets() {
     let mut value = payload();
-    value["historical_periods"][0]["cash_flow_statement"]["change_in_operating_nwc"] =
-        json!("9.0");
+    value["historical_periods"][0]["cash_flow_statement"]["change_in_operating_nwc"] = json!("9.0");
     let report = validate(&value);
     assert!(has_code(
         &report,
@@ -162,8 +162,7 @@ fn historical_ppe_must_roll_forward_without_disposals() {
 #[test]
 fn historical_debt_repayment_cannot_exceed_available_debt() {
     let mut value = payload();
-    value["historical_periods"][0]["cash_flow_statement"]["principal_repayments"] =
-        json!("400.0");
+    value["historical_periods"][0]["cash_flow_statement"]["principal_repayments"] = json!("400.0");
     let report = validate(&value);
     assert!(has_code(
         &report,
@@ -195,7 +194,12 @@ fn zero_revenue_growth_floor_is_valid_and_not_rejected_as_a_bad_input() {
     let mut value = payload();
     value["forecast_periods"][0]["assumptions"]["revenue_growth"] = json!("-1.0");
     let report = validate(&value);
-    assert_eq!(report.input_status, InputStatus::Accepted, "{:#?}", report.diagnostics);
+    assert_eq!(
+        report.input_status,
+        InputStatus::Accepted,
+        "{:#?}",
+        report.diagnostics
+    );
 }
 
 #[test]
@@ -232,7 +236,10 @@ fn historical_cash_flow_closing_cash_must_tie_to_balance_sheet() {
     let mut value = payload();
     value["historical_periods"][1]["cash_flow_statement"]["closing_cash"] = json!("999.0");
     let report = validate(&value);
-    assert!(has_code(&report, DiagnosticCode::HistoricalCashTieoutFailed));
+    assert!(has_code(
+        &report,
+        DiagnosticCode::HistoricalCashTieoutFailed
+    ));
 }
 
 #[test]
@@ -240,7 +247,10 @@ fn historical_retained_earnings_must_roll_forward() {
     let mut value = payload();
     value["historical_periods"][1]["balance_sheet"]["retained_earnings"] = json!("999.0");
     let report = validate(&value);
-    assert!(has_code(&report, DiagnosticCode::HistoricalRetainedEarningsFailed));
+    assert!(has_code(
+        &report,
+        DiagnosticCode::HistoricalRetainedEarningsFailed
+    ));
 }
 
 #[test]
@@ -248,7 +258,10 @@ fn historical_share_capital_movement_is_rejected() {
     let mut value = payload();
     value["historical_periods"][1]["balance_sheet"]["share_capital"] = json!("1001.0");
     let report = validate(&value);
-    assert!(has_code(&report, DiagnosticCode::ShareCapitalMovementUnsupported));
+    assert!(has_code(
+        &report,
+        DiagnosticCode::ShareCapitalMovementUnsupported
+    ));
 }
 
 #[test]
@@ -262,8 +275,7 @@ fn duplicate_period_identifiers_are_rejected() {
 #[test]
 fn cash_flow_component_reconciliation_is_rejected() {
     let mut value = payload();
-    value["historical_periods"][1]["cash_flow_statement"]["cash_from_operations"] =
-        json!("123.0");
+    value["historical_periods"][1]["cash_flow_statement"]["cash_from_operations"] = json!("123.0");
     let report = validate(&value);
     assert!(has_code(
         &report,
