@@ -128,7 +128,7 @@ Schema 0.1.0 is intentionally synthetic-only. Real issuer filings, vendor feeds,
 
 The opening Balance Sheet is supplied immediately before the first historical period. This is necessary to validate historical changes in operating working capital, PP&E, debt, cash, and retained earnings across all three historical years.
 
-The current artifacts are design-stage inputs. The Draft 2020-12 schema compilation and valid/invalid fixture checks are being added to CI. Cross-field semantic validation remains a separate Rust implementation gate; passing JSON Schema alone will not validate accounting identities or period continuity.
+The Draft 2020-12 schema compiled and the canonical/negative fixture checks passed with Ajv 8.20.0 in GitHub Actions on 2026-11-04. Cross-field semantic validation remains a separate Rust implementation gate; passing JSON Schema alone does not validate accounting identities, period continuity, or statement roll-forwards.
 
 ## 5. Candidate Rust ecosystem components
 
