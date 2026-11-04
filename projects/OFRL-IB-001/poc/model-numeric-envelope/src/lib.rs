@@ -338,7 +338,7 @@ pub fn load_case_a() -> Value {
 
 pub fn stress_case_a() -> Value {
     let mut value = load_case_a();
-    scale_money_fields(&mut value, 11);
+    scale_money_fields(&mut value, 22);
 
     for period in value["forecast_periods"]
         .as_array_mut()
@@ -873,7 +873,7 @@ pub fn compare_to_reference<N: Numeric>(
         candidate: candidate_name.to_owned(),
         compared_values,
         display_mismatches,
-        maximum_absolute_error: round_half_even(&maximum_error, 12),
+        maximum_absolute_error: format!("{}/{}", maximum_error.numer(), maximum_error.denom()),
         maximum_error_period,
         maximum_error_metric,
     })
