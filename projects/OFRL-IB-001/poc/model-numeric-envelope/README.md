@@ -150,3 +150,18 @@ The POC can be marked **Reproducible** only when:
 - Results and remaining risks are documented in \`NUMERIC_ENVELOPE.md\`.
 
 Passing this POC does not, on its own, authorize production-engine adoption. The final choice must be recorded in the Decision Log after the model-specific envelope and dependency audit are complete.
+
+## 10. Interpretation boundary — arithmetic evidence is not model validation
+
+The three candidate types use one shared generic forecast implementation with different numeric representations. This deliberately isolates arithmetic behaviour while holding the formula sequence constant.
+
+The exact-rational implementation is therefore an **arithmetic oracle for this comparison**, not an independent implementation of the financial model's business logic. A shared formula defect would be shared by all three numeric candidates. The POC's balanced Balance Sheet result proves that the defined equations reconcile under exact arithmetic; it does not prove that every accounting policy or formula choice is independently correct.
+
+Before the production forecast engine is accepted, OFRL still requires:
+- Independent finance-model review of the equations and schedule dependencies.
+- Hand-calculated benchmark cases for selected periods and edge conditions.
+- Independent checks of the accounting interpretation and cash-flow classifications.
+- Golden outputs reviewed against a separately derived reference calculation.
+- Explicit negative-cash / funding-feasibility tests, separate from Balance Sheet integrity.
+
+The POC includes a deterministic high-CapEx case to demonstrate that a negative cash outcome can coexist with a balanced set of equations. It must be reported as **Scenario Feasibility FAIL**, not repaired through hidden funding.
