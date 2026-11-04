@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Engineering Architecture
 
-**Architecture version:** 0.3.0  
+**Architecture version:** 0.4.0  
 **Status:** Approved for V1 engineering baseline; dependency adoption remains gated by proof-of-concept  
 **Implementation language:** Rust  
 **Baseline date:** 2026-11-04
@@ -112,6 +112,23 @@ The PR #6 head commit passed formatting, Clippy, 9 unit tests, and documentation
 The tests also exposed a raw-parser input hazard for a 29-fractional-digit string. The POC's Serde boundary now rejects scale above 28 and requires exact parse-to-string round-trip before accepting input. This is a required boundary control for the selected candidate.
 
 **POC conclusion:** the current Decimal-string interchange approach passes its defined test scope. rust_decimal 1.43.0 remains a candidate, not an approved final engine dependency. The full transitive dependency inventory/SBOM, lockfile policy, security review, model-specific numeric envelope, calculation error analysis, and XLSX reconciliation remain open. POC success does not establish three-statement model correctness.
+
+### Model input-contract design (2026-11-04)
+
+The V1 input boundary is being specified before the calculation engine is implemented.
+
+- [Model Input Contract](MODEL_INPUT_CONTRACT.md)
+- [Numeric Envelope and Precision Policy](NUMERIC_ENVELOPE.md)
+- [Validation and Error Contract](VALIDATION_ERROR_CONTRACT.md)
+- [Synthetic Reference Case A](SYNTHETIC_REFERENCE_CASE.md)
+- [Draft 2020-12 model input schema](../../schemas/ofrl-ib-001-model-input-0.1.0.schema.json)
+- [Synthetic Case A fixture](../../fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json)
+
+Schema 0.1.0 is intentionally synthetic-only. Real issuer filings, vendor feeds, and externally normalized statements are outside this V1 input contract until a later schema version includes the required accounting-basis, restatement, provenance, and normalization metadata.
+
+The opening Balance Sheet is supplied immediately before the first historical period. This is necessary to validate historical changes in operating working capital, PP&E, debt, cash, and retained earnings across all three historical years.
+
+The Draft 2020-12 schema compiled and the canonical/negative fixture checks passed with Ajv 8.20.0 in GitHub Actions on 2026-11-04. Cross-field semantic validation remains a separate Rust implementation gate; passing JSON Schema alone does not validate accounting identities, period continuity, or statement roll-forwards.
 
 ## 5. Candidate Rust ecosystem components
 

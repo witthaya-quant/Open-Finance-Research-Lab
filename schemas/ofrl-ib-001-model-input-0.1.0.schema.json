@@ -1,0 +1,586 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ofrl:schema:ofrl-ib-001-model-input:0.1.0",
+  "title": "OFRL-IB-001 Model Input",
+  "description": "Versioned JSON input contract for the V1 annual three-statement financial model. All numeric financial and assumption values are canonical decimal strings.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "model",
+    "opening_balance_sheet",
+    "historical_periods",
+    "forecast_periods"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_id",
+        "model_name",
+        "reporting_currency",
+        "unit_scale",
+        "day_count_basis"
+      ],
+      "properties": {
+        "model_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+        },
+        "model_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "reporting_currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "unit_scale": {
+          "type": "string",
+          "enum": [
+            "units",
+            "thousands",
+            "millions"
+          ]
+        },
+        "day_count_basis": {
+          "const": 365
+        }
+      }
+    },
+    "opening_balance_sheet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "as_of_date",
+        "balances"
+      ],
+      "properties": {
+        "as_of_date": {
+          "type": "string",
+          "format": "date",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "balances": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cash",
+            "accounts_receivable",
+            "inventory",
+            "gross_ppe",
+            "accumulated_depreciation",
+            "accounts_payable",
+            "interest_bearing_debt",
+            "share_capital",
+            "retained_earnings"
+          ],
+          "properties": {
+            "cash": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+              "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+            },
+            "accounts_receivable": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+              "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+            },
+            "inventory": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+              "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+            },
+            "gross_ppe": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+              "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+            },
+            "accumulated_depreciation": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+              "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+            },
+            "accounts_payable": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+              "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+            },
+            "interest_bearing_debt": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+              "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+            },
+            "share_capital": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+              "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+            },
+            "retained_earnings": {
+              "type": "string",
+              "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+              "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+            }
+          }
+        }
+      }
+    },
+    "historical_periods": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "period_id",
+          "start_date",
+          "end_date",
+          "source",
+          "income_statement",
+          "balance_sheet",
+          "cash_flow_statement"
+        ],
+        "properties": {
+          "period_id": {
+            "type": "string",
+            "pattern": "^FY[0-9]{4}$"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "classification",
+              "source_reference"
+            ],
+            "properties": {
+              "classification": {
+                "const": "synthetic"
+              },
+              "source_reference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024
+              }
+            }
+          },
+          "income_statement": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "revenue",
+              "cogs",
+              "operating_expenses",
+              "depreciation",
+              "interest_expense",
+              "income_tax_expense",
+              "net_income"
+            ],
+            "properties": {
+              "revenue": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "cogs": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "operating_expenses": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "depreciation": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "interest_expense": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "income_tax_expense": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "net_income": {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+              }
+            }
+          },
+          "balance_sheet": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cash",
+              "accounts_receivable",
+              "inventory",
+              "gross_ppe",
+              "accumulated_depreciation",
+              "accounts_payable",
+              "interest_bearing_debt",
+              "share_capital",
+              "retained_earnings"
+            ],
+            "properties": {
+              "cash": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "accounts_receivable": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "inventory": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "gross_ppe": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "accumulated_depreciation": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "accounts_payable": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "interest_bearing_debt": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "share_capital": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "retained_earnings": {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+              }
+            }
+          },
+          "cash_flow_statement": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "net_income",
+              "depreciation_addback",
+              "change_in_operating_nwc",
+              "cash_from_operations",
+              "capex",
+              "cash_from_investing",
+              "debt_drawdowns",
+              "principal_repayments",
+              "dividends",
+              "cash_from_financing",
+              "net_change_in_cash",
+              "opening_cash",
+              "closing_cash"
+            ],
+            "properties": {
+              "net_income": {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+              },
+              "depreciation_addback": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "change_in_operating_nwc": {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+              },
+              "cash_from_operations": {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+              },
+              "capex": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "cash_from_investing": {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+              },
+              "debt_drawdowns": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "principal_repayments": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "dividends": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "cash_from_financing": {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+              },
+              "net_change_in_cash": {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+              },
+              "opening_cash": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "closing_cash": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              }
+            }
+          }
+        }
+      }
+    },
+    "forecast_periods": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "period_id",
+          "start_date",
+          "end_date",
+          "assumptions"
+        ],
+        "properties": {
+          "period_id": {
+            "type": "string",
+            "pattern": "^FY[0-9]{4}$"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "assumptions": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "revenue_growth",
+              "cogs_pct_revenue",
+              "operating_expenses_pct_revenue",
+              "dso",
+              "dio",
+              "dpo",
+              "capex_pct_revenue",
+              "depreciation_rate",
+              "debt_drawdowns",
+              "principal_repayments",
+              "interest_rate",
+              "tax_rate",
+              "dividend_payout_ratio"
+            ],
+            "properties": {
+              "revenue_growth": {
+                "type": "string",
+                "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+              },
+              "cogs_pct_revenue": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "operating_expenses_pct_revenue": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "dso": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "dio": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "dpo": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "capex_pct_revenue": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "depreciation_rate": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "debt_drawdowns": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "principal_repayments": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "interest_rate": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "tax_rate": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              },
+              "dividend_payout_ratio": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+                "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "signed_decimal_string": {
+      "type": "string",
+      "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+      "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+    },
+    "non_negative_decimal_string": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+      "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+    },
+    "balance_sheet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cash",
+        "accounts_receivable",
+        "inventory",
+        "gross_ppe",
+        "accumulated_depreciation",
+        "accounts_payable",
+        "interest_bearing_debt",
+        "share_capital",
+        "retained_earnings"
+      ],
+      "properties": {
+        "cash": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+          "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+        },
+        "accounts_receivable": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+          "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+        },
+        "inventory": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+          "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+        },
+        "gross_ppe": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+          "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+        },
+        "accumulated_depreciation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+          "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+        },
+        "accounts_payable": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+          "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+        },
+        "interest_bearing_debt": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+          "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+        },
+        "share_capital": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+          "description": "Canonical non-negative Decimal string; maximum fractional scale is 28."
+        },
+        "retained_earnings": {
+          "type": "string",
+          "pattern": "^(?!-0(?:\\.0+)?$)-?(0|[1-9][0-9]*)(\\.[0-9]{1,28})?$",
+          "description": "Canonical signed Decimal string. Negative zero is not canonical; maximum fractional scale is 28."
+        }
+      }
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "period_id": {
+      "type": "string",
+      "pattern": "^FY[0-9]{4}$"
+    }
+  }
+}

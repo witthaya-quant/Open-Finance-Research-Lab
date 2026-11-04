@@ -62,7 +62,7 @@ As components become generally useful beyond one project, I intend to consider p
 
 ### OFRL-IB-001 — Integrated Three-Statement Financial Model
 
-**Status:** Proposed — specification stage.
+**Status:** Input-contract and schema-validation stage. The production calculation engine and workbook have not been released.
 
 The first project is a financial model for a generic non-financial operating company. The plan is to implement the calculation engine and validation suite in Rust, then provide an Excel report for finance practitioners. The Rust implementation will be the reference for the calculations.
 
@@ -74,6 +74,14 @@ The first project is a financial model for a generic non-financial operating com
 - [Decision log](projects/OFRL-IB-001/DECISION_LOG.md)
 - [Decimal contract POC](projects/OFRL-IB-001/poc/decimal-contract/README.md)
 - [Dependency review](projects/OFRL-IB-001/poc/decimal-contract/DEPENDENCY_REVIEW.md)
+- [Model input contract](projects/OFRL-IB-001/MODEL_INPUT_CONTRACT.md)
+- [Numeric envelope and precision policy](projects/OFRL-IB-001/NUMERIC_ENVELOPE.md)
+- [Validation and error contract](projects/OFRL-IB-001/VALIDATION_ERROR_CONTRACT.md)
+- [Synthetic reference case A](projects/OFRL-IB-001/SYNTHETIC_REFERENCE_CASE.md)
+- [Model input JSON Schema](schemas/ofrl-ib-001-model-input-0.1.0.schema.json)
+- [Synthetic Case A input fixture](fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json)
+- [Schema validation script](scripts/validate-ofrl-ib-001-model-input-schema.sh)
+
 
 No calculation engine or workbook is claimed to be complete at this stage.
 
