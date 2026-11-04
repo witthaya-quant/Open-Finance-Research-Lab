@@ -50,6 +50,19 @@ The Decimal/string-interchange POC passed on 2026-11-04 at PR #6 head commit 88e
 
 The POC does not close the complete dependency/security review. No Cargo.lock or complete SBOM is committed at this stage. It also does not validate the full financial model, XLSX export, or three-statement invariants. Those remain explicit implementation gates.
 
+## 2.2 Input contract design decisions
+
+| ID | Decision / constraint | Status | Rationale / consequence |
+|---|---|---|---|
+| C-001 | Use a versioned JSON Schema Draft 2020-12 input contract with closed objects | Proposed; CI validation pending | Catch structural drift and unknown fields before model execution |
+| C-002 | V1 schema 0.1.0 accepts synthetic historical data only | Proposed | Real filings and licensed feeds need expanded provenance, accounting-basis, restatement, and normalization metadata |
+| C-003 | Require an opening Balance Sheet immediately before the first historical period | Proposed | Enables three historical years of working-capital, PP&E, debt, cash, and retained-earnings roll-forward checks |
+| C-004 | Require exactly three historical annual periods and five forecast annual periods | Approved V1 scope; semantic validation pending | Keeps the external model horizon deterministic |
+| C-005 | Separate JSON Schema validation from accounting and cross-period semantic validation | Required design policy | Structural validity does not establish accounting consistency or model correctness |
+| C-006 | Use a typed external diagnostic contract rather than expose dependency-specific error strings | Proposed | Keeps CLI and future consumers stable when internal crates change |
+
+The schema and synthetic fixture have been created on the input-contract branch. Their standard Draft 2020-12 compile/validation and negative-fixture CI results must be confirmed before this design stage is treated as accepted. The Rust semantic validator has not yet been implemented.
+
 ## 3. Deferred scope
 
 The following are deliberately outside the V1 baseline:
@@ -70,12 +83,13 @@ A deferred item must not be approximated silently. Adding it requires a versione
 
 These are implementation gates, not unresolved choices about the overall direction:
 
-1. Complete the Decimal and serialization proof-of-concept.
-2. Record the exact dependency versions, enabled features, MSRV, licences, and transitive dependency review.
-3. Confirm the input/output schema and validation error contract.
-4. Implement the calculation core and synthetic reference case.
-5. Verify workbook export precision and canonical-output reconciliation.
-6. Establish CI checks for formatting, Clippy, tests, documentation, and dependency review.
+1. Complete the Draft 2020-12 schema compilation and positive/negative fixture checks in CI.
+2. Implement the Rust semantic input validator and typed diagnostic mapping; schema validation alone is insufficient.
+3. Finalize the model-specific numeric envelope, maximum intermediate values, error budget, and reporting-rounding policy.
+4. Complete the transitive dependency inventory, SBOM, licence/security review, and Cargo.lock policy for the application workspace.
+5. Implement the Rust calculation core and synthetic reference case with unit, integration, property, golden, and boundary tests.
+6. Verify workbook export precision and canonical-output reconciliation.
+7. Establish full CI, reproducibility instructions, and independent review.
 
 ## 5. Change control
 
