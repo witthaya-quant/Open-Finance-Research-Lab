@@ -99,7 +99,7 @@ projects/OFRL-IB-001/
 ├── Cargo.toml
 ├── Cargo.lock
 ├── ENGINEERING_AUDIT.md
-├── system_DESIGN.md
+├── SYSTEM_DESIGN.md
 ├── IMPLEMENTATION_ROADMAP.md
 ├── MODEL_CONVENTIONS.md
 ├── MODEL_INPUT_CONTRACT.md
