@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Engineering Audit
 
-**Audit version:** 0.3.0  
+**Audit version:** 0.4.0  
 **Audit date:** 2026-11-04  
 **Production baseline:** `main` at `abd5d5f439f85805ac732d147f5d42d48cabc2aa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
@@ -116,21 +116,21 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Blocker
 
-**Evidence:** `NUMERIC_ENVELOPE.md` remains Proposed. Stress tests exercise selected monetary scaling points but do not define business-approved maxima/minima, rate/day bounds, intermediate headroom, source scale, division context, five-year error budget or display precision.
+**Evidence:** `NUMERIC_ENVELOPE.md` remains Proposed and the Numeric Profile worksheet remains unapproved. The formula-level review in `NUMERIC_PROFILE_DERIVATION.md` establishes that the current conventions do not define a finite upper bound for revenue growth, COGS ratio, operating-expense ratio, DSO/DIO/DPO, CapEx ratio, debt drawdowns or interest rate. The five-year revenue bound therefore cannot be derived, and neither can the downstream intermediate bounds. The derivation documents the symbolic path from bounded inputs through revenue, AR / inventory / AP numerators, PP&E, debt, interest, NWC, CFO, cash, retained earnings and statement totals without inventing parameter values.
 
-**Risk:** A candidate may pass the selected examples and still overflow or lose material precision elsewhere in the permitted domain. An arbitrary-precision type does not solve unlimited resource use or remove the need for a finite supported input contract.
+**Risk:** A candidate may pass selected fixtures and still overflow or lose material precision elsewhere in the admitted domain. An arbitrary-precision type does not solve an unbounded input domain or remove the need for finite CPU, memory, scale and output limits.
 
-**Disposition:** Complete the versioned Numeric Profile worksheet, derive formula-by-formula intermediate bounds, quantify error propagation and separate arithmetic, accounting, schedule and display tolerances. No production limits may be invented from the stress points.
+**Disposition:** Obtain Model Owner decisions for every unbounded input and opening-balance class. Use the symbolic derivation to calculate formula-chain bounds and capacity headroom, then complete the versioned worksheet and reviewer sign-offs. The 10^18 and 10^22 probes are candidate stress points only and must not become business limits by inference.
 
 ### EA-02 — Production numeric backend remains undecided
 
 **Severity:** Blocker
 
-**Evidence:** The POC is isolated. Production input and historical validation types use `rust_decimal::Decimal`. BigDecimal's POC division relies on a configured default environment context; production use would need explicit, deterministic arithmetic-context ownership and provenance.
+**Evidence:** The POC remains isolated and production input/history types use `rust_decimal::Decimal`. In the POC, BigDecimal 0.4.11 is run under an 80-significant-digit / HalfEven environment-configured default context; the test proves this setting is effective for the tested 1/3 division, but it is not a run-scoped production arithmetic context. The 10^22 stress fixture fails rust_decimal's checked multiplication at the FY2026 AR numerator; the 10^18 fixture passes. Those points do not establish the transition boundary. The timing evidence is from one shared 4-vCPU runner and does not measure allocations, peak memory, tail latency or concurrency.
 
-**Risk:** Early engine implementation could hardwire a representation and create costly migrations. Arbitrary precision can also introduce CPU/memory growth and less predictable latency.
+**Risk:** Selecting rust_decimal without an approved envelope risks checked overflow in a permitted input. Selecting BigDecimal without explicit context ownership, scale/resource limits and deterministic serialization risks hidden environment dependence and unbounded operational cost. Replacing the existing Decimal type also has a migration cost in the production validator.
 
-**Disposition:** Decide only after EA-01, controlled performance/memory evidence, serialization review, error-semantics review and dependency/license approval. Record the decision and migration impact before forecast implementation.
+**Disposition:** Do not select a production backend yet. After EA-01 is closed, compare candidates against the frozen domain using exact-rational error propagation, operation-specific failure/rounding tests, per-run context and provenance, controlled memory/allocation/concurrency measurements, serialization fidelity, dependency acceptance and a reviewed migration design. The POC's generic JSON-value forecast routine and string error surface must not be ported directly into production.
 
 ### EA-03 — Independent accounting/formula sign-off remains open
 
@@ -186,11 +186,11 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Major
 
-**Evidence:** `VALIDATION_MATRIX.md` proposes (10^{-6}+10^{-8}\times\max(|A|,|B|,1)). The policy is not tied to accepted scale, materiality or approved numeric representation.
+**Evidence:** `VALIDATION_MATRIX.md` proposes (10^{-6}+10^{-8}\times\max(|A|,|B|,1)), but it is not tied to an approved numeric domain or financial materiality. `NUMERIC_PROFILE_DERIVATION.md` now specifies an operation-level error-propagation method (addition/subtraction, multiplication, fixed-constant division, min/max and five-year state recurrence). The existing POC comparison counts two-decimal display mismatches and calculates exact maximum absolute candidate/reference error, but the tests do not assert an approved maximum error threshold.
 
-**Risk:** A relative tolerance grows with the magnitude of the balance. For a value of (10^{12}) model units, the relative component alone is (10^4) model units. Under a thousands unit scale, that corresponds to 10 million currency units. Such a threshold may be unacceptable even though the percentage appears small.
+**Risk:** A relative tolerance grows with balance size. At 10^12 model units the proposed relative component alone is 10^4 model units; with a thousands scale that is 10 million reporting-currency units. Conversely, a two-decimal display match can hide non-zero internal arithmetic error. Neither is proof of financial immateriality.
 
-**Disposition:** Define independent policies for backend error, accounting identities, schedule roll-forwards and workbook display. Express each in model units and converted currency amounts at the supported range endpoints. Establish the policy before looking at production pass/fail results; do not widen it to make tests pass.
+**Disposition:** After bounds are approved, derive local operation error bounds for each candidate and propagate them through all five years. Define separate budgets for arithmetic approximation, accounting identity, schedule roll-forward and display/export; express each in model units and reporting currency at the approved range endpoints. Freeze the policies before inspecting production PASS/FAIL results and never widen a budget simply to clear a failed test.
 
 ### EA-09 — Forecast Structural Integrity and Scenario Feasibility are not implemented
 
@@ -278,14 +278,14 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 
 | Gate | Evidence required | Status |
 |---|---|---|
-| Numeric Profile | Approved input/intermediate bounds, scale, precision, rounding and separate error budgets | OPEN — worksheet remains TBD |
-| Production arithmetic backend | Profile-based comparison, explicit arithmetic context, serialization and cost/resource review | OPEN — no backend selected |
+| Numeric Profile | Approved finite bounds, formula-chain headroom, source scale, precision, rounding and separate error budgets | OPEN — symbolic derivation complete; all unbounded Model Owner inputs remain TBD |
+| Production arithmetic backend | Profile-based comparison, explicit run-scoped context, serialization and controlled resource evidence | OPEN — no backend selected; POC observations are insufficient |
 | Independent finance/accounting review | Written independent review and disposition of equations, conventions and edge cases | OPEN — not evidenced |
-| Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — PR #20/#22 open; official release review open |
+| Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — PR #20/#22 merged into PR #18 branch; not on main; source/legal and release review open |
 | Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR — research evidence only |
 | Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | IMPLEMENTED IN OPEN PR #13 — five applicable project contexts pass on head `6941b1f`; not merged |
 | Typed diagnostics | Stable error variants and JSON Pointer for deserialization failures | OPEN — message-substring mapping remains |
-| Repository required checks | All six Ruleset contexts available on main and reported on fresh PRs | OPEN — repository-policy workflow not yet on main |
+| Repository required checks | All six Ruleset contexts available on main and reported on fresh PRs | OPEN — corrected workflow stack is under PR #18 / PR #14; main still needs integration and smoke tests |
 | Production forecast engine | Typed Rust schedules and three statements | NOT STARTED — gated |
 | Forecast integrity/feasibility | SI/SF/reportability results over all periods | NOT STARTED |
 | ModelRun provenance | Canonical serialization, SHA-256 and metric lineage | NOT STARTED |
@@ -296,8 +296,8 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 
 The next implementation increment should not be a speculative production forecast engine. First close the evidence and contract gaps that would otherwise dictate a second rewrite:
 
-1. Complete the Numeric Profile using the worksheet and obtain documented review.
-2. Complete the production backend decision using correctness, deterministic context, performance, memory and dependency evidence.
+1. Obtain Model Owner input-domain decisions for every currently unbounded driver and opening-balance class; use the symbolic derivation to compute formula-chain bounds.
+2. Complete arithmetic error propagation and controlled CPU/memory/allocation/concurrency evidence, then make the backend decision only against the approved profile.
 3. Close lockfile, source, licence and advisory dispositions for dependencies intended to remain.
 4. Obtain independent finance/accounting review of V1 conventions and formulas.
 5. Complete and maintain the shared Schema/Rust contract corpus in PR #13; separately replace message-substring deserialization classification with typed error/path mapping.
