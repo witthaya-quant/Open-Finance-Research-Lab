@@ -9,7 +9,7 @@
 
 ## 1. Purpose
 
-A release is a published statement about the state of a project at a specific point in its development. It must be possible to identify what was released, which source and dependencies produced it, what validation was performed, and what limitations remain.
+A release is a published statement about the state of one project or deliverable at a specific point in its development. This policy applies to every current and future OFRL project, regardless of language, discipline, or artifact type. It must be possible to identify what was released, which source/data/dependencies produced it, what validation was performed, and what limitations remain.
 
 OFRL does not release work merely because code compiles or a document is complete. Publication maturity must match the evidence.
 
@@ -124,7 +124,13 @@ At the audit date, OFRL-IB-001 has an implemented input schema and Rust runtime 
 
 The input validator may be documented and shared as an implemented component, but it must not be presented as a completed integrated three-statement forecast model. A full model release remains blocked until the relevant numerical, accounting, calculation, workbook, and research gates are complete.
 
-## 10. Related documents
+## 10. Portfolio-wide release control
+
+Each registered project's `project.json` must reflect its lifecycle and release state. A project is not considered released merely because a source file is public or a GitHub branch exists. A release must be linked to a project ID, reviewed source or publication revision, applicable licence/data profile, evidence maturity, and release record.
+
+Project-specific versioning may differ. Do not impose one version number across unrelated research, data, software, and model deliverables. Where a project contains multiple independently released components, record their versions and compatibility separately.
+
+## 11. Related documents
 
 - [Research Standards](RESEARCH_STANDARDS.md)
 - [Dependency Policy](DEPENDENCY_POLICY.md)
