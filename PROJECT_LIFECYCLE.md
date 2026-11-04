@@ -26,6 +26,7 @@ Every project admitted under the OFRL name must have:
 - A project README describing purpose, scope, status, and limitations.
 - A project Decision Log.
 - A validation matrix or explicit validation plan proportionate to the project.
+- A project README and type-specific documents created from the templates under [templates/](templates/).
 - An identified project owner and lifecycle status.
 - Declared project types, risk tier, evidence maturity, licence profile, and data classification.
 - Links to the applicable specification, standards, and supporting artifacts.
@@ -78,7 +79,7 @@ The `project.json` file is the authoritative machine-readable metadata for one p
 - Required project documents and validation profiles.
 - Release status.
 
-The repository-wide [Project Catalog](PROJECT_CATALOG.md) is a human-readable navigation index. Every project directory must appear in the catalog. The repository policy workflow validates that each project folder has a manifest, that the directory and manifest IDs agree, and that the catalog includes the project.
+The repository-wide [Project Catalog](PROJECT_CATALOG.md) is a human-readable navigation index. Every project directory must appear in the catalog. The repository policy workflow compiles the manifest JSON Schema with Ajv and validates each project manifest, then checks directory/ID consistency, required files, type/risk profiles, workflow paths, lifecycle/release consistency, and catalog-field agreement.
 
 Do not duplicate mutable project facts across multiple root registries. Update the project manifest first, then update the catalog links and summary in the same Pull Request.
 
@@ -132,7 +133,7 @@ A negative result or failed hypothesis is not by itself a reason to hide or dele
 - [DATA_POLICY.md](DATA_POLICY.md) and [LICENSE_POLICY.md](LICENSE_POLICY.md) define rights and data boundaries.
 - [DEPENDENCY_POLICY.md](DEPENDENCY_POLICY.md) defines software supply-chain controls.
 - [RELEASE_POLICY.md](RELEASE_POLICY.md) defines publication and release authorization.
-- [templates/PROJECT_CHARTER_TEMPLATE.md](templates/PROJECT_CHARTER_TEMPLATE.md) and [templates/PROJECT_MANIFEST_TEMPLATE.json](templates/PROJECT_MANIFEST_TEMPLATE.json) provide starting materials.
+- The [project templates](templates/) provide starting materials for README, charter, manifest, decision log, validation matrix, research specifications, financial-model conventions, numerical policy, data, benchmarks, software architecture, threat modelling, prototypes, and release records.
 
 ## 11. Review and amendment
 
