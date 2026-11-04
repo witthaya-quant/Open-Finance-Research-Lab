@@ -152,8 +152,9 @@ fn stress_case_exact_reference_remains_balanced_and_candidates_report_capacity()
     assert_eq!(reference.len(), 5);
     assert!(balance_sheet_differences_are_zero(&reference));
 
-    let fixed_error = forecast::<FixedDecimal>(&fixture)
-        .expect_err("the 10^22 representation-capacity probe must trigger checked Decimal overflow");
+    let fixed_error = forecast::<FixedDecimal>(&fixture).expect_err(
+        "the 10^22 representation-capacity probe must trigger checked Decimal overflow",
+    );
     assert!(
         fixed_error.contains("FY2026: AR numerator"),
         "overflow must be identified at the FY2026 accounts-receivable numerator: {fixed_error}"
