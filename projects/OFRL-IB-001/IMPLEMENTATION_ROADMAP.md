@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Implementation Roadmap
 
-**Roadmap version:** 0.4.0  
+**Roadmap version:** 0.5.0  
 **Status:** Proposed execution plan with evidence-linked gates  
 **Date:** 2026-11-04
 
@@ -78,33 +78,37 @@ Exit conditions:
 
 #### Workstream A — Numeric Profile
 
-- Set approved minimum/maximum monetary input values by model unit.
-- Set maximum source fractional scale and accepted lexical form.
-- Set rate, day and operating assumption bounds.
-- Calculate intermediate bounds for every material formula chain, including multiplication before division.
-- Establish representation headroom and overflow rejection behaviour.
-- Define deterministic division precision/context and rounding semantics.
-- Quantify worst-case five-year propagation against exact rational results.
-- Define distinct budgets for arithmetic approximation, accounting identity, schedule roll-forward and workbook display.
-- Translate tolerances into reporting currency amounts at the supported range endpoints.
-- Obtain Finance/Accounting and engineering approval; version the final policy.
+- Approve finite minimum/maximum monetary input and calculated-balance values by model unit and field class.
+- Approve source integer/fractional-digit limits separately for monetary values, rates/ratios and days; retain canonical lexical rules.
+- Set finite rate, day and operating-assumption bounds without accidentally excluding valid loss-making cases.
+- Derive five-year maximum magnitude bounds at every formula node, including multiplication before division.
+- Derive a separate pre-normalization scale graph and coefficient-digit envelope for every material formula node and recurrence.
+- Prove representation headroom, scale behaviour and overflow/reduction rejection at exact boundaries and just outside them.
+- Define deterministic division precision/context, rounding semantics and canonical output formatting.
+- Quantify worst-case five-year arithmetic-error propagation against exact-rational results and distinguish it from accounting and schedule residuals.
+- Define separate budgets for arithmetic approximation, accounting identity, schedule roll-forward and display/export.
+- Translate each budget into reporting-currency amounts at approved domain endpoints.
+- Set finite CPU, memory, allocation, concurrency, input-size and run-resource limits.
+- Obtain Finance/Accounting and Engineering review; version the final policy.
 
-The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. The symbolic formula-chain derivation is `NUMERIC_PROFILE_DERIVATION.md`. It identifies the currently unbounded inputs and derives maximum-path formulas once Model Owner bounds are supplied. Both documents intentionally preserve unresolved fields rather than fabricate limits.
+The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. The symbolic formula-chain and scale derivation is `NUMERIC_PROFILE_DERIVATION.md`. It identifies currently unbounded inputs and derives maximum-path formulas once Model Owner bounds are supplied. It deliberately preserves TBD values rather than fabricate limits.
 
-**Current domain finding:** the V1 conventions provide no finite upper bound for revenue growth, COGS / revenue, Opex / revenue, DSO/DIO/DPO, CapEx / revenue, debt drawdowns or interest rate. A finite five-year numeric envelope cannot be certified until these bounds and absolute opening-balance limits are approved.
+**Current domain finding:** V1 has no finite upper bound for revenue growth, COGS / revenue, Opex / revenue, DSO/DIO/DPO, CapEx / revenue, debt drawdowns or interest rate. The current Decimal parser ceiling of 28 fractional digits is only a source-field grammar limit; it is not proof that five forecast years of multiplications preserve that scale. A finite magnitude, scale and coefficient envelope cannot be certified until the owner approves finite bounds for all relevant drivers and opening/historical amounts.
 
 #### Workstream B — Production backend decision
 
-- Evaluate candidates only against the accepted Numeric Profile.
-- Review checked arithmetic semantics, serialization and parse/format fidelity.
-- Make BigDecimal context explicit and deterministic if it remains a candidate.
-- Initial CI timing observations now exist: BigDecimal was 1.50×–2.21× the fixed Decimal candidate in the measured synthetic cases; Exact Rational was 7.52×–10.30×. See the artifacts and limitations in `poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md` on PR #11.
-- Measure wall time, memory, allocation behaviour and operational resource limits in a controlled environment beyond the single shared-runner observation.
-- Consider production validator migration cost because its current domain types use rust_decimal.
-- Review error types, determinism, support/MSRV and dependency graph.
-- Record the selected backend and rejected alternatives in the Decision Log.
+- Evaluate candidates only against the accepted magnitude, scale/coefficient and resource profile; no candidate can be selected before Workstream A closes.
+- Review checked arithmetic, scale reduction, operation-specific rounding, parse/format fidelity and canonical serialization.
+- For BigDecimal, replace ambient compile-time defaults with a documented immutable run-scoped arithmetic policy for every rounded operation; bound exact multiplication coefficient growth independently.
+- For rust_decimal, test mantissa/scale capacity and precision-reduction behaviour at every material operation node.
+- Keep Exact Rational as a correctness oracle unless a separate operational resource case justifies evaluating it as a production candidate.
+- Treat existing timing observations as directional only: BigDecimal was 1.50×–2.21× the fixed Decimal candidate in the tested synthetic cases, while Exact Rational was 7.52×–10.30×. They are not production workload evidence. See `poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md` on PR #11.
+- Measure latency, throughput, allocations, peak memory/RSS, tail latency, concurrency and long-running process behaviour under a controlled workload generated from the approved profile.
+- Measure migration cost because production input/history domain types currently use `rust_decimal`.
+- Review typed failure semantics, determinism, MSRV/platform support, dependency source/licence/advisory status and per-run provenance.
+- Record the selected backend, explicit rejected alternatives, context, known limitations and evidence references in the Decision Log.
 
-**No forecast implementation should begin until Workstreams A and B have accepted decisions.**
+**No forecast implementation should begin until Workstreams A and B have accepted decisions and Workstream D has documented the required formula/accounting review. A finite magnitude bound without a finite scale/coefficient/resource bound is not a completed Numeric Profile.**
 
 #### Workstream C — Dependency and source review
 
@@ -251,7 +255,7 @@ Keep research, production formula and reporting changes in separately reviewable
 | Property | Invariants over generated inputs | Reproducible seeds and minimized regression cases |
 | Golden | Independent expected outputs | Versioned reviewed expected values |
 | Negative | Unsupported inputs/scenarios | Stable diagnostic codes and JSON Pointer |
-| Numeric | Bounds, scale and accumulated error | Approved Numeric Profile endpoints |
+| Numeric | Magnitude, source/intermediate scale, coefficient growth and accumulated error | Approved Numeric Profile endpoints and just-inside/just-outside tests |
 | Contract parity | Schema vs Rust behaviour | Same positive/negative fixture corpus |
 | Determinism | Same input/policy/build | Canonical output and SHA-256 reproducibility |
 | Export | Workbook fidelity | Structural checks and period-by-period reconciliation |
