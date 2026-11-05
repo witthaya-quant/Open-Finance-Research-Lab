@@ -18,6 +18,7 @@
     "opening_balance_sheet",
     "historical_period",
     "forecast_drivers",
+    "arithmetic_policy",
     "resource_limits",
     "error_budgets",
     "approvals"
@@ -172,13 +173,48 @@
         "dividend_payout_ratio_max": { "$ref": "#/$defs/unitIntervalDecimal" }
       }
     },
+    "arithmetic_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "division_fractional_scale",
+        "division_rounding_mode",
+        "reporting_fraction_digits",
+        "reporting_rounding_mode"
+      ],
+      "properties": {
+        "division_fractional_scale": {
+          "oneOf": [
+            { "type": "integer", "minimum": 1, "maximum": 10000 },
+            { "type": "null" }
+          ]
+        },
+        "division_rounding_mode": {
+          "oneOf": [
+            { "$ref": "#/$defs/roundingMode" },
+            { "type": "null" }
+          ]
+        },
+        "reporting_fraction_digits": {
+          "oneOf": [
+            { "type": "integer", "minimum": 0, "maximum": 28 },
+            { "type": "null" }
+          ]
+        },
+        "reporting_rounding_mode": {
+          "oneOf": [
+            { "$ref": "#/$defs/roundingMode" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
     "resource_limits": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "max_intermediate_scale",
         "max_coefficient_digits",
-        "division_precision_digits",
         "max_input_bytes",
         "max_cpu_ms",
         "max_peak_memory_mib",
@@ -187,7 +223,6 @@
       "properties": {
         "max_intermediate_scale": { "type": "integer", "minimum": 1, "maximum": 10000 },
         "max_coefficient_digits": { "type": "integer", "minimum": 1, "maximum": 10000 },
-        "division_precision_digits": { "type": "integer", "minimum": 1, "maximum": 10000 },
         "max_input_bytes": { "type": "integer", "minimum": 1, "maximum": 1048576 },
         "max_cpu_ms": { "type": "integer", "minimum": 1 },
         "max_peak_memory_mib": { "type": "integer", "minimum": 1 },
@@ -222,7 +257,19 @@
   "allOf": [
     {
       "if": { "properties": { "approval_state": { "const": "approved" } } },
-      "then": { "properties": { "approvals": { "$ref": "#/$defs/approvalSet" } } },
+      "then": {
+        "properties": {
+          "approvals": { "$ref": "#/$defs/approvalSet" },
+          "arithmetic_policy": {
+            "properties": {
+              "division_fractional_scale": { "type": "integer", "minimum": 1 },
+              "division_rounding_mode": { "$ref": "#/$defs/roundingMode" },
+              "reporting_fraction_digits": { "type": "integer", "minimum": 0 },
+              "reporting_rounding_mode": { "$ref": "#/$defs/roundingMode" }
+            }
+          }
+        }
+      },
       "else": { "properties": { "approvals": { "type": "null" } } }
     }
   ],
@@ -264,6 +311,9 @@
         "share_capital_max": { "$ref": "#/$defs/nonNegativeDecimal" },
         "retained_earnings_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" }
       }
+    },
+    "roundingMode": {
+      "enum": ["half_even", "half_up", "toward_zero", "away_from_zero"]
     },
     "approvalRecord": {
       "type": "object",
