@@ -54,8 +54,8 @@ The Decimal/string-interchange POC passed on 2026-11-04 at PR #6 head commit 88e
 PR #13 adds a closed Numeric Profile input schema, exact BigInt-rational derivation for opening/historical/forecast arithmetic, separate division-error propagation, and a static candidate-capacity evaluator. The derivation graph now contains arithmetic nodes only; comparison/tie-out checks do not create fictitious sum nodes. Each node reports an exact outward-rounded coefficient-integer upper bound at its declared scale.
 
 The code-tested branch head `daac2fc472ddabac09114399ecdaedc5e6bd46c4` passed all six required Ruleset contexts and 30/30 Numeric Envelope tests. The test-only fixture produced 287 arithmetic nodes:
-- `rust_decimal 1.43.0`: static FAIL on 37 nodes; all 37 exceed the exact 96-bit coefficient maximum and 19 exceed scale 28 (overlapping reasons); 50 additional nodes remain conditional because the division policy is unresolved.
-- `bigdecimal 0.4.11`: static CONDITIONAL on 50 division-dependent nodes; no profile static-ceiling failure was reported, but this is not a runtime or operational pass.
+- `rust_decimal 1.43.0`: `STATIC_BOUND_EXCEEDS_LIMIT` on 37 nodes; 37 conservative coefficient upper bounds exceed the exact 96-bit maximum and 19 exceed scale 28 (overlapping reasons); 50 additional nodes remain conditional because the division policy is unresolved. This is not an observed runtime failure.
+- `bigdecimal 0.4.11`: static CONDITIONAL on 50 division-dependent nodes; no profile static-ceiling excess was reported, but this is not a runtime or operational pass.
 
 The fixture is illustrative only. It is not the intended V1 operating domain. BigDecimal's POC uses an 80-significant-digit compile-time default context, while the current Numeric Profile schema specifies a fixed fractional division scale; a production adapter or a deliberate versioned policy change is required to prove equivalence. The static evaluator does not execute candidate arithmetic, measure CPU/memory/allocations/concurrency, or authorize production use.
 
