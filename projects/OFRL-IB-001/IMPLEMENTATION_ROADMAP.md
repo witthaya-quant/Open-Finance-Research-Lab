@@ -99,6 +99,8 @@ The branch also contains a candidate-neutral exact derivation tool (`tools/numer
 
 #### Workstream B — Production backend decision
 
+Use [`NUMERIC_BACKEND_EVALUATION.md`](NUMERIC_BACKEND_EVALUATION.md) as the candidate acceptance and measurement protocol. Candidates must pass all hard gates; a weighted score cannot compensate for a correctness, domain, determinism, resource or dependency failure.
+
 - Evaluate candidates only against the accepted magnitude, scale/coefficient and resource profile; no candidate can be selected before Workstream A closes.
 - Review checked arithmetic, scale reduction, operation-specific rounding, parse/format fidelity and canonical serialization.
 - For BigDecimal, replace ambient compile-time defaults with a documented immutable run-scoped arithmetic policy for every rounded operation; bound exact multiplication coefficient growth independently.
