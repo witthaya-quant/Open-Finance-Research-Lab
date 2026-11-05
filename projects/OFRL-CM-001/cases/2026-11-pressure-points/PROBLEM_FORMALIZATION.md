@@ -200,6 +200,26 @@ The Queen-member identity is independently corroborated by QueenOnline; the lett
 
 Official Real Madrid and FC Barcelona profiles corroborate possible identities for the names. However, `GARETH` is a given name while INIESTA, BUSQUETS, and MESSI are surnames; the letters do not identify Gareth Bale rather than another footballer named Gareth. The four-person set has no independently established common criterion or cardinal orientation, and the +E residual remains unexplained. H-015 is a low-confidence candidate semantic cluster only.
 
+**H-016 — Computer / Diamond Model of Intrusion Analysis (CM-T0008 lead).** Four currently unassigned source sequences admit the four core features of the Diamond Model of Intrusion Analysis:
+- **North / top: ADVERSARY** — source `AADERRSUVY` contains one additional U (+U).
+- **East / right: CAPABILITY** — exact anagram of source `AABCIILPTY`.
+- **South / bottom: VICTIM** — exact anagram of source `CIIMTV`.
+- **West / left: INFRASTRUCTURE** — source `ACFINRRRSTTUU` is missing E (−E).
+
+The original technical report by Caltagirone, Pendergast, and Betz defines an intrusion event through four core features—adversary, infrastructure, capability, and victim—connected by edges and arranged as a diamond. Its Figure 1 places adversary at the top, infrastructure at the left, capability at the right, and victim at the bottom. The Threat Intelligence Academy's official model page summarizes the same four-feature structure and cites Technical Report ADA586960 (5 July 2013). The published geometry therefore supports the proposed top/right/bottom/left assignment without inventing a new orientation convention.
+
+A laptop emoji is semantically compatible with computer intrusion analysis, and the four target terms match an established four-vertex diamond model. This is stronger contextual and positional support than a generic set of computer-related words. However, the mapping from Jane Street's 💻 emoji to this particular model remains inferred, not source-stated. The group residual is +U/−E; it is not explained by the current global residual hypothesis. H-016 is a high-quality candidate hypothesis, not an accepted puzzle rule or a solved group.
+
+### CM-T0008 — Preliminary lexical lead screen
+
+After provisionally assigning the four H-016 source sequences, the unassigned inventory is 23 letter sequences plus Ø (24 visible items), alongside six emoji without a candidate group. The numerical equality 24 = 6 × 4 is consistent with, but does not prove, the proposed four-vertices-per-emoji model.
+
+A local exploratory scan of the remaining alphabetized sequences used the installed `cmudict` Python package (version 1.1.3) as an English pronunciation-lexicon candidate generator. It produced exact single-word candidates including **PALISADES**, **HEAVEN**, **VIOLINS**, **GO**, **XI**, **MOO**, and **SUN**. **PUTTI** was independently checked as an exact character-multiset match but was not returned by that dictionary. The National Gallery glossary defines *putti* as winged infants appearing in religious and other artworks; this makes 🖼️ a possible semantic lead, but one word does not establish a four-member group.
+
+Near-match candidates include **CONDUCTOR** (one missing R), **PERCUSSION** (one additional X), **EXCURSIONS** (one additional P), and the community-reported **MONTANA** (one additional D). Some can suggest art, music, geography, or other themes, but no complete quartet with independently supported positions has been derived. Short forms such as GO, XI, MOO, SUN, SW, T, and V are low-information lexical hits and must not be promoted to semantic assignments without stronger evidence.
+
+This scan is deliberately non-exhaustive. CMUdict is an English pronunciation dictionary, not a comprehensive proper-name, multilingual, or phrase lexicon; its maintainers explicitly warn of possible errors, omissions, and inconsistencies. The Python wrapper is not a project dependency, no dictionary file or package code has been copied into the repository, and dictionary matches are leads only. Exact anagrams can arise by chance and do not prove emoji intent, cardinal position, or the global extraction mechanism.
+
 ### Secondary-source status review — 2026-11-05
 
 The additional public sources reviewed in this session do not close a formalization blocker:
@@ -216,9 +236,11 @@ Accordingly, the candidate phrase remains externally reported but **not independ
 
 ### Cross-group evidence boundary
 
-H-007 through H-012 expand the partial candidate inventory from four to ten emoji themes. The external sources independently corroborate the named star system, conventional clock positions, India's national flower and state geography, the NFPA quadrant layout, and the Colorado/Four Corners geography. They do **not** establish that Jane Street intended these exact groups, that their proposed orientations are the puzzle's orientations, or that the remaining nine emojis follow the same construction.
+H-007 through H-012 expanded the initial four-cluster inventory to ten themes; H-014 and H-015 brought the recorded candidate inventory to twelve. Their contextual sources corroborate selected facts and conventions but do **not** establish Jane Street's intended emoji mappings or a common residual rule. The CM-T0007 audit separately assessed those twelve clusters without promoting any to fact. H-016 is a new CM-T0008 lead for 💻, based on the four vertices of the published Diamond Model of Intrusion Analysis; it is not part of the completed twelve-cluster CM-T0007 audit.
 
-The exact local character-count residuals are preserved above. They must not be normalized away: Crux +C/−U; clock +H and +A/−S; India +G/−L; NFPA +E/−S; Colorado +N/−E; joystick +H/−T. These observations do not yet yield one consistent global transformation or extraction rule.
+After H-016's four source entries are included provisionally, 13 candidate clusters account for 52 distinct source sequences. The remaining inventory is 23 sequences plus Ø, or 24 visible items, with six emoji still lacking candidate groups. The equality 24 = 6 × 4 remains arithmetic alignment only.
+
+The residuals from the first twelve clusters remain as audited in CM-T0007. H-016 adds +U for ADVERSARY and −E for INFRASTRUCTURE. Across all 52 provisional assignments there are 27 exact pairs and 25 residual-bearing pairs, with 14 surplus and 12 deficit characters. The aggregate net residual is +A×2, +C, +G, +H, +N×2, +O, −E, −L×2, −S×2, −T. This still does not yield one global transformation or extraction rule.
 
 ### CM-T0007 — Candidate-cluster independent audit (2026-11-05)
 
@@ -260,7 +282,7 @@ No edit-distance normalization, silent spelling change, or unrecorded pluralizat
 
 
 
-**Evidence required before accepting any of H-001 through H-015:**
+**Evidence required before accepting any of H-001 through H-016:**
 1. Explain the semantic role of the leading marker and account for all 76 entries.
 2. Define the four positions and show why each emoji produces exactly four relevant vertices.
 3. Provide a reproducible mapping from every source entry to exactly one vertex, with no omissions or collisions.
@@ -275,7 +297,7 @@ No edit-distance normalization, silent spelling change, or unrecorded pluralizat
 12. Reconcile every local character residual and the leading Ø under one explicit global rule, or document why a proposed group is false.
 13. Independently validate community-reported readings against the primary input, and distinguish those readings from the missing global mapping.
 
-Twelve candidate clusters are recorded across H-004, H-006, H-007 through H-012, H-014, and H-015, with additional ungrouped community readings in H-013. The CM-T0007 audit found 48 unique source assignments, 25 exact candidate anagrams, 23 residual-bearing pairs, and 27 unused source sequences plus Ø. Candidate semantic fit and cardinal orientation are not equally strong: Crux is chart-orientation dependent; Colorado remains weak; Queen has no cardinal ordering; and the football group is underdetermined by GARETH. The complete 76-item bijection, Ø's role, global residual transformation, output extraction, and uniqueness/completeness remain unestablished. U-001 through U-010 remain unresolved. No algorithm family is selected and no solver is authorized by this update.
+The CM-T0007 audit covered twelve candidate clusters across H-004, H-006, H-007 through H-012, H-014, and H-015. During CM-T0008, H-016 adds a thirteenth provisional cluster for 💻 based on the Diamond Model of Intrusion Analysis. The current inventory therefore has 13 candidate clusters and 52 distinct provisional source assignments, with 23 source sequences plus Ø remaining and six emoji still unmapped. The first twelve groups had 25 exact and 23 residual-bearing pairs; H-016 adds two exact and two residual-bearing pairs, giving 27 exact and 25 residual-bearing pairs overall. Candidate semantic fit and cardinal orientation remain unequal: Crux is chart-orientation dependent; Colorado remains weak; Queen has no cardinal ordering; football is underdetermined by GARETH; and H-016 is source-grounded as a model but not yet tied to Jane Street's emoji by an explicit rule. The complete 76-item bijection, Ø's role, global residual transformation, output extraction, and uniqueness/completeness remain unestablished. U-001 through U-010 remain unresolved. No algorithm family is selected and no solver is authorized by this update.
 
 ## 5. Candidate model structure — intentionally unselected
 
@@ -328,6 +350,10 @@ Secondary research leads, accessed 2026-11-05:
 - [U.S. Department of Homeland Security, Hazardous Materials Facility Markings](https://cdp.dhs.gov/shared/se/courses/default/AWR-358%20dL%20040921/groups/119.html) — describes the four NFPA 704 quadrants and their conventional positions.
 - [State Maps, Colorado](https://www.state-maps.org/colorado-map/) — secondary reference for Colorado's cardinal neighbouring states; notes additional northeast/southeast neighbours.
 - [U.S. Department of Energy, Atomic Legacy Discovery Guide: Colorado Plateau](https://www.energy.gov/lm/atomic-legacy-discovery-guide-colorado-plateau) — describes the Four Corners high-desert region as contextual geography only, not proof of the emoji interpretation.
+- [Threat Intelligence Academy, Diamond Model of Intrusion Analysis](https://www.threatintel.academy/diamond/) — cites Caltagirone, Pendergast, and Betz's Technical Report ADA586960 (5 July 2013) and describes the four core intrusion-analysis features arranged as a diamond; contextual framework evidence for H-016, not proof of Jane Street's intended emoji mapping.
+- [Carnegie Mellon University, CMU Pronouncing Dictionary](https://github.com/cmusphinx/cmudict) — exploratory English pronunciation lexicon used through the locally installed `cmudict` 1.1.3 wrapper; its maintainers warn that errors, omissions, and inconsistencies may remain. Lexical candidate generation only, not an authoritative word or proper-name inventory.
+- [PyPI, cmudict 1.1.3](https://pypi.org/project/cmudict/) — documents the Python wrapper and its GPL-3.0-or-later package licence; the wrapper is not a project dependency and no package code or dictionary files are included in OFRL.
+- [The National Gallery, Putti glossary](https://www.nationalgallery.org.uk/paintings/glossary/putti) — defines putti as winged infants commonly depicted in religious and other artworks; supports the lexical/context lead only, not a four-member emoji grouping.
 
 Programme rationale: Jane Street, [Puzzles](https://www.janestreet.com/puzzles/).
 
@@ -346,3 +372,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.6.0 | 2026-11-05 | Audited current secondary solver-status sources and corrected Archive search-result semantics; no complete derivation retrieved and no formalization blocker closed |
 | 0.7.0 | 2026-11-05 | Added two source-cross-checked candidate clusters (Queen members and footballers) with exact residual audits; no cardinal orientation or global rule established |
 | 0.8.0 | 2026-11-05 | Completed CM-T0007: audited all twelve candidate clusters, 48 unique source assignments, exact/residual counts, aggregate residual vector, evidence strength, and the 27+Ø inventory remainder; no puzzle rule established |
+| 0.9.0 | 2026-11-05 | Added H-016, a source-grounded but unaccepted Diamond Model candidate for 💻; recorded four feature terms, diagram positions, +U/−E residuals, six remaining emoji, and a caveated CMUdict lexical lead scan; CM-T0008 remains in progress |
