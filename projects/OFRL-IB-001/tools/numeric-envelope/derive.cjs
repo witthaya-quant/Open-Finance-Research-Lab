@@ -242,7 +242,7 @@ function validateProfile(p) {
   assertObject(p.forecast_drivers, "forecast_drivers", driverKeys);
 
   const resourceKeys = [
-    "max_intermediate_scale", "max_coefficient_digits", "division_precision_digits",
+    "max_intermediate_scale", "max_coefficient_digits",
     "max_input_bytes", "max_cpu_ms", "max_peak_memory_mib", "max_concurrent_runs"
   ];
   assertObject(p.resource_limits, "resource_limits", resourceKeys);
@@ -382,7 +382,7 @@ function createDerivation(profile) {
   const div = (name, operand, denominator, exactScale = null) => {
     const value = operand.value.div(new Fraction(BigInt(denominator)));
     const scale = exactScale === null ? null : operand.scale + exactScale;
-    return record(name, value, scale, "fixed_positive_divisor");
+    return record(name, value, scale, "fixed_positive_divisor", exactScale === null);
   };
   const maxOf = (name, items) => {
     const value = items.reduce((best, item) =>
@@ -398,18 +398,20 @@ function createDerivation(profile) {
     const scale = known ? Math.max(...items.map(item => item.scale)) : null;
     return record(name, value, scale, "minimum_of_non_negative_branch_bounds");
   };
-  function record(name, value, scale, method) {
-    const exactScale = scale === null ? terminatingScale(value.d) : scale;
-    const coefficientDigits = exactCoefficientDigits(value, exactScale);
+  function record(name, value, scale, method, forceDivisionContext = false) {
+    const terminatingScaleForBound = terminatingScale(value.d);
+    const exactScale = scale === null ? terminatingScaleForBound : scale;
+    const divisionContextRequired = forceDivisionContext || terminatingScaleForBound === null;
+    const coefficientDigits = divisionContextRequired ? null : exactCoefficientDigits(value, exactScale);
     const node = {
       id: name,
       method,
       exact_upper_bound: value.toString(),
       decimal_upper_bound_18dp: roundOutward(value, 18),
       pre_normalization_scale: scale,
-      terminating_decimal_scale: terminatingScale(value.d),
+      terminating_decimal_scale_for_bound_value: terminatingScaleForBound,
       coefficient_digits_if_exact: coefficientDigits,
-      division_context_required: terminatingScale(value.d) === null
+      division_context_required: divisionContextRequired
     };
     nodes.push(node);
     return { value, scale, node };
@@ -695,11 +697,18 @@ function createDerivation(profile) {
       formula_node_count: nodes.length,
       candidate_backend_selected: false,
       production_engine_authorized: false,
-      pre_normalization_scale_limit_status: failedScale.length === 0 ? "PASS" : "FAIL",
-      coefficient_digit_limit_status: failedCoefficient.length === 0 ? "PASS" : "FAIL",
+      pre_normalization_scale_limit_status: failedScale.length > 0
+        ? "FAIL" : divisionNodes.length > 0 ? "CONDITIONAL_DIVISION_POLICY" : "PASS",
+      coefficient_digit_limit_status: failedCoefficient.length > 0
+        ? "FAIL" : divisionNodes.length > 0 ? "CONDITIONAL_DIVISION_POLICY" : "PASS",
       division_context_required_nodes: divisionNodes,
       unresolved_candidate_capacity_nodes: divisionNodes,
+      operational_resource_evidence: "NOT_MEASURED_BY_THIS_DERIVATION_TOOL",
       limit_checks: limitChecks
+    },
+    resource_limits: {
+      ...profile.resource_limits,
+      cpu_memory_allocation_tail_latency_and_concurrency_status: "TARGETS_ONLY__NO_MEASUREMENT_EVIDENCE"
     },
     error_budgets: errorBudgets,
     nodes
