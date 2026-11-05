@@ -158,7 +158,7 @@
         "dividend_payout_ratio_max"
       ],
       "properties": {
-        "revenue_growth_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "revenue_growth_max": { "$ref": "#/$defs/signedDecimal" },
         "cogs_pct_revenue_max": { "$ref": "#/$defs/nonNegativeDecimal" },
         "operating_expenses_pct_revenue_max": { "$ref": "#/$defs/nonNegativeDecimal" },
         "dso_max": { "$ref": "#/$defs/nonNegativeDecimal" },
@@ -230,6 +230,10 @@
     "nonNegativeDecimal": {
       "type": "string",
       "pattern": "^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
+    },
+    "signedDecimal": {
+      "type": "string",
+      "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
     },
     "unitIntervalDecimal": {
       "type": "string",
