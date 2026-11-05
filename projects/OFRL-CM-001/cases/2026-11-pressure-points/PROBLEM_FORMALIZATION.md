@@ -220,6 +220,34 @@ Near-match candidates include **CONDUCTOR** (one missing R), **PERCUSSION** (one
 
 This scan is deliberately non-exhaustive. CMUdict is an English pronunciation dictionary, not a comprehensive proper-name, multilingual, or phrase lexicon; its maintainers explicitly warn of possible errors, omissions, and inconsistencies. The Python wrapper is not a project dependency, no dictionary file or package code has been copied into the repository, and dictionary matches are leads only. Exact anagrams can arise by chance and do not prove emoji intent, cardinal position, or the global extraction mechanism.
 
+### CM-T0008 — Structured family screening of remaining source sequences
+
+To distinguish plausible semantic themes from lexical matches, four known four-member structures were screened against the 23 remaining source sequences. The screen used a character-multiset L1 distance:
+
+\[
+D(s,t)=\sum_{a\in\{A,\ldots,Z\}}\left|n_s(a)-n_t(a)\right|,
+\]
+
+where \(n_s(a)\) and \(n_t(a)\) are the counts of letter \(a\) in source sequence \(s\) and candidate term \(t\). For each four-term candidate set, an injective one-to-one assignment to four distinct remaining source sequences was chosen to minimize the sum of the four distances. This is a minimum-cost bipartite matching screen; it is not a solver and does not encode a puzzle rule. No acceptance threshold was defined in advance. The scores are used only to compare candidate lexical fit with the H-016 lead, whose four terms have aggregate distance 2.
+
+| Candidate family | Best one-to-one source assignment | Minimum total distance | Independent structural evidence | Screen disposition |
+|---|---|---:|---|---|
+| Four Dragon Kings: AOGUANG, AOQIN, AORUN, AOSHUN | GO→AOGUANG (5); IX→AOQIN (5); MOO→AORUN (6); NSU→AOSHUN (3) | **19** | A four-king sea/dragon tradition is a possible semantic lead for 🐉. The candidate roster came from a secondary search result; direct page retrieval failed, so canonical names and cardinal correspondences were not verified in this review | **NOT ACCEPTED** — poor multiset fit and no verified roster/orientation source |
+| Four Heavenly Kings: DHRITARASHTRA, VIRUDHAKA, VIRUPAKSHA, VAISHRAVANA | AAAABBIRRST→DHRITARASHTRA (8); V→VIRUDHAKA (8); AADEILPSS→VIRUPAKSHA (9); AEEHNV→VAISHRAVANA (9) | **34** | Japan Tourism Agency describes a Four Heavenly Kings statue group that guards the cardinal directions: Tamonten north, Zochoten south, Jikokuten east, Komokuten west | **NOT ACCEPTED** — strong cardinal semantics for a temple-like clue, but very poor lexical fit to this literal transliteration roster |
+| Four U.S. swine-industry breeds: DUROC, HAMPSHIRE, LANDRACE, YORKSHIRE | CCDNOOTU→DUROC (5); AEILLNPSU→HAMPSHIRE (8); AADEILPSS→LANDRACE (7); GO→YORKSHIRE (9) | **29** | U.S. Livestock Genetics Export identifies these four breeds as the backbone of the U.S. swine industry | **NOT ACCEPTED** — plausible 🐷 theme, but no independent cardinal-order rule and poor lexical fit |
+| Classical architectural orders: DORIC, IONIC, CORINTHIAN, COMPOSITE | GO→DORIC (5); IILNOSV→IONIC (4); AADMNNOT→CORINTHIAN (8); MOO→COMPOSITE (6) | **23** | University of Illinois identifies **five** classical orders: Doric, Ionic, Corinthian, Tuscan, and Composite | **NOT ACCEPTED** — selecting only four omits Tuscan without a puzzle-derived reason; no cardinal-order rule and poor lexical fit |
+
+**Interpretation and limits.**
+- The Dragon Kings candidate is not accepted: the roster and any directional association were not verified from an accessible source in this review, and the minimum multiset distance is 19.
+- The Four Heavenly Kings are the strongest positional concept screened because the Japan Tourism Agency explicitly maps four guardians to north, south, east, and west. Their best lexical assignment still has total distance 34. This is evidence against this *literal transliteration roster* matching the remaining strings; it is not proof that 🏛️ cannot refer to a different temple, guardian, or architectural concept.
+- The four pig breeds are a legitimate industry grouping, but the external source does not arrange them as cardinal vertices. Their minimum lexical distance is 29.
+- Classical architecture is a useful false-positive control: the standard set contains five, not four, orders. Selecting four because the puzzle is hypothesized to use four vertices would be circular; its minimum distance is 23.
+
+The assignments above are minimum-cost mappings among the 23 remaining strings for those exact candidate spellings only. They do not test all transliterations, epithets, languages, compound names, or alternative four-member sets. These are **tested-but-not-accepted leads**, not rejected meanings of the emojis. Their purpose is to preserve negative research evidence and prevent another agent from repeating the same unproductive literal roster without new evidence.
+
+The lexical scan and structured family screen do not establish any additional four-member group. The live inventory therefore remains 13 provisional clusters / 52 provisional source assignments, with 23 sequences plus Ø and six emoji unassigned. The count 24 = 6×4 remains arithmetic alignment only.
+
+
 ### Secondary-source status review — 2026-11-05
 
 The additional public sources reviewed in this session do not close a formalization blocker:
@@ -373,3 +401,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.7.0 | 2026-11-05 | Added two source-cross-checked candidate clusters (Queen members and footballers) with exact residual audits; no cardinal orientation or global rule established |
 | 0.8.0 | 2026-11-05 | Completed CM-T0007: audited all twelve candidate clusters, 48 unique source assignments, exact/residual counts, aggregate residual vector, evidence strength, and the 27+Ø inventory remainder; no puzzle rule established |
 | 0.9.0 | 2026-11-05 | Added H-016, a source-grounded but unaccepted Diamond Model candidate for 💻; recorded four feature terms, diagram positions, +U/−E residuals, six remaining emoji, and a caveated CMUdict lexical lead scan; CM-T0008 remains in progress |
+| 0.9.1 | 2026-11-05 | Screened four established four-member structures against the 23 remaining sequences with one-to-one minimum-cost character-multiset distance; recorded Dragon Kings (19), Heavenly Kings (34), swine breeds (29), and four selected architectural orders (23) as tested but not accepted; no new group promoted |
