@@ -348,6 +348,34 @@ test("approved state requires three explicit review records and still does not s
     "NOT_INCLUDED__REQUIRES_EXPORTER_MEASUREMENT");
 });
 
+test("coefficient integer upper bound is exact at the declared intermediate scale", () => {
+  const result = createDerivation(readFixture());
+  const ar = node(result, "forecast.year_1.accounts_receivable");
+  assert.equal(typeof ar.coefficient_integer_upper_bound, "string");
+  assert.match(ar.coefficient_integer_upper_bound, /^(0|[1-9][0-9]*)$/);
+  assert.equal(
+    ar.coefficient_digits_upper_bound,
+    ar.coefficient_integer_upper_bound.length
+  );
+});
+
+test("comparison-only validator checks do not create fictitious arithmetic nodes", () => {
+  const result = createDerivation(readFixture());
+  assert.ok(result.nodes.some(item =>
+    item.id === "history.period_1.income_statement.recomputed_net_income"
+  ));
+  assert.ok(result.nodes.some(item =>
+    item.id === "history.period_1.cash_flow.closing_cash_rollforward"
+  ));
+  assert.ok(result.nodes.some(item =>
+    item.id === "history.period_1.cash_flow.capex_cash_outflow_bound"
+  ));
+  assert.equal(
+    result.nodes.some(item => item.id.includes("comparison_bound") || item.id.includes("tieout_bound")),
+    false
+  );
+});
+
 test("CLI cannot silently treat a test-only profile as approved", () => {
   const scriptPath = path.join(__dirname, "..", "derive.cjs");
   const result = spawnSync(process.execPath, [
