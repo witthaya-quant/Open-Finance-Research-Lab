@@ -126,7 +126,7 @@ The emoji associations are plausible, but they are not an authoritative mapping.
 | Emoji candidate | North | East | South | West | Candidate letter residuals |
 |---|---|---|---|---|---|
 | Compass | NORTH | EAST | SOUTH | WEST | Candidate source for NORTH contains one extra E; candidate source for EAST lacks one E; SOUTH and WEST are exact anagrams. Aggregate multiset equality holds over all four entries. |
-| Game controller | TRIANGLE | CIRCLE | CROSS | SQUARE | Candidate source for TRIANGLE is the plural TRIANGLES (+S); candidate source for CIRCLE lacks E; CROSS and SQUARE are exact anagrams. |
+| Game controller | TRIANGLE | CIRCLE | CROSS | SQUARE | Candidate source for the singular button name TRIANGLE contains one additional S (+S); candidate source for CIRCLE lacks E; CROSS and SQUARE are exact anagrams. |
 | Baseball | SECOND | FIRST | HOME | THIRD | Candidate source for SECOND contains one extra O; candidate source for THIRD lacks H; FIRST and HOME are exact anagrams. |
 | Sailing vessel | BOW | STARBOARD | STERN | PORT | Candidate source for BOW contains one extra A; candidate source for STERN lacks S; STARBOARD and PORT are exact anagrams. |
 
@@ -138,7 +138,7 @@ The emoji associations are plausible, but they are not an authoritative mapping.
 
 **Reproducible letter-count residual audit:** compare the candidate alphagram with the target term using character multisets, not edit distance or visual similarity. The observed residuals are:
 - Compass: +E on NORTH and −E on EAST.
-- Controller: +S on TRIANGLE(S) and −E on CIRCLE.
+- Controller: +S relative to singular TRIANGLE and −E relative to CIRCLE.
 - Baseball: +O on SECOND and −H on THIRD.
 - Sailing: +A on BOW and −S on STERN.
 
@@ -152,7 +152,7 @@ The source alphagrams themselves are not copied into this document. A researcher
 - Foot: ACRUX — the source alphagram is missing U.
 - West arm: IMAI — exact anagram.
 
-The European Southern Observatory confirms Acrux, Mimosa, Gacrux, and Imai as the four main stars of Crux. An astronomy education reference describes Gacrux at the top, Acrux at the foot, Mimosa on the eastern arm, and Imai on the western arm. The east/west labels are chart-orientation dependent, not a universal sky-coordinate convention. The star emoji → Crux association remains an unverified interpretation of Jane Street's clue.
+The European Southern Observatory confirms Acrux, Mimosa, Gacrux, and Imai as the four main stars of Crux. An astronomy education reference describes Gacrux at the top, Acrux at the foot, Mimosa on the eastern arm, and Imai on the western arm of its chart. A Southern Cross navigation reference notes that the apparent sky orientation rotates around the celestial pole. Therefore these are chart-relative positions, not a fixed terrestrial N/E/S/W assignment; any cardinal interpretation would require an explicit orientation convention. The star emoji → Crux association remains an unverified interpretation of Jane Street's clue.
 
 **H-008 — Clock face.** A candidate set is TWELVE (12 o'clock), THREE (3 o'clock), SIX (6 o'clock), and NINE (9 o'clock). The source alphagram for TWELVE has one extra H; the source alphagram for SIX has one extra A and is missing S; THREE and NINE are exact anagrams. The four positions are conventional clock positions, but the residuals and intended extraction rule remain unexplained.
 
@@ -170,7 +170,7 @@ The Survey of India map and an Indian government reference support the geographi
 - Bottom: SPECIAL — source alphagram is missing S.
 - Left: HEALTH — exact anagram.
 
-The NFPA standard identifies the hazard-diamond system; a U.S. Department of Homeland Security training reference describes the four quadrants and their positions. The category is precisely *flammability*, not a separate “fire” label. The puzzle-specific association is not proven.
+The NFPA standard identifies the hazard-diamond system; a U.S. Department of Homeland Security training reference describes the four quadrants and their positions. The category is precisely *flammability*, not a separate “fire” label. `FIRE` is a candidate lexical surrogate for the top quadrant, not the standard's canonical field name; this weakens the exact semantic match. The puzzle-specific association is not proven.
 
 **H-011 — Desert / Colorado and the Four Corners region (provisional).** A candidate cardinal-neighbour set around Colorado is:
 - North: WYOMING — source alphagram has one extra N.
@@ -198,7 +198,7 @@ The Queen-member identity is independently corroborated by QueenOnline; the lett
 - BUSQUETS — exact anagram of source `BEQSSTUU`.
 - MESSI — source `EEIMSS` contains one additional E.
 
-Official Real Madrid and FC Barcelona profiles corroborate the named footballers. The football-emoji association is plausible, but the source data does not identify Gareth's surname, prove the intended four-person set, provide any cardinal orientation, or explain the +E residual. H-015 is a candidate semantic cluster only.
+Official Real Madrid and FC Barcelona profiles corroborate possible identities for the names. However, `GARETH` is a given name while INIESTA, BUSQUETS, and MESSI are surnames; the letters do not identify Gareth Bale rather than another footballer named Gareth. The four-person set has no independently established common criterion or cardinal orientation, and the +E residual remains unexplained. H-015 is a low-confidence candidate semantic cluster only.
 
 ### Secondary-source status review — 2026-11-05
 
@@ -220,6 +220,44 @@ H-007 through H-012 expand the partial candidate inventory from four to ten emoj
 
 The exact local character-count residuals are preserved above. They must not be normalized away: Crux +C/−U; clock +H and +A/−S; India +G/−L; NFPA +E/−S; Colorado +N/−E; joystick +H/−T. These observations do not yet yield one consistent global transformation or extraction rule.
 
+### CM-T0007 — Candidate-cluster independent audit (2026-11-05)
+
+**Audit purpose.** Test the twelve recorded candidate clusters against the complete visible sequence inventory, correct the singular/plural and terminology ambiguities, and grade semantic fit separately from positional support. This is an audit of candidate hypotheses, not an acceptance of Jane Street's intended solution.
+
+**Method.** For each proposed target term, uppercase it, remove spaces, and compare character-frequency multisets with the corresponding alphabetized source sequence. For each letter \(c\), record:
+- **surplus**: source count minus target count when positive;
+- **deficit**: target count minus source count when positive.
+
+No edit-distance normalization, silent spelling change, or unrecorded pluralization is permitted. The only explicit semantic alias below is the NFPA candidate FIRE for the standard's canonical top-quadrant label *flammability*; that alias is marked as weaker evidence.
+
+**Inventory reconciliation.** The official source contains 75 distinct, lexicographically ordered alphabetized sequences totaling 504 letters, plus the leading Ø marker and 19 emoji clues. The twelve candidate clusters consume 48 distinct source sequences; all 48 occur in the official sequence list and none is reused. The audit therefore leaves 27 source sequences plus Ø, or 28 visible items, unassigned. Seven emoji clues are not represented by a candidate cluster. The arithmetic identity \(28=7\times4\) is consistent with H-001's proposed four vertices per remaining emoji, but it does not prove that Ø is a mapped entry, that each emoji has four vertices, or that the 19×4 bijection is intended.
+
+**Lexical residual summary.** Against the 48 candidate target terms as stated below:
+- 25 source/target pairs are exact anagrams.
+- 23 pairs have one or more character residuals.
+- Across those 23 pairs there are 13 surplus letters and 11 deficit letters. The AIX/SIX pair contributes both one surplus (+A) and one deficit (−S).
+- After cancelling identical surplus and deficit letters across groups, the net residual is **+A×2, +C, +G, +H, +N×2, +O, −L×2, −S×2, −T, −U**. This is a net surplus of two characters; no common global transfer/extraction rule follows from this aggregate.
+
+| Emoji candidate | Candidate N / E / S / W terms and source residuals | Net group residual | Semantic fit | Positional evidence | Audit disposition |
+|---|---|---|---|---|---|
+| 🧭 Compass | NORTH (+E), EAST (−E), SOUTH (exact), WEST (exact) | balanced | High: clue and four terms directly denote compass directions | High: N/E/S/W are intrinsic to the terms | Strongest candidate; author intent still unproven |
+| 🎮 Controller | TRIANGLE (+S), CIRCLE (−E), CROSS (exact), SQUARE (exact) | +S / −E | Moderate–high: four PlayStation-style face-button names; emoji is generic, not brand-specific | High conditional on the Sony face-button layout | Candidate layout supported; keep TRIANGLE singular and preserve +S |
+| ⚾ Baseball | SECOND (+O), FIRST (exact), HOME (exact), THIRD (−H) | +O / −H | High: four baseball-diamond bases/positions | High: standard diamond diagram supplies top/right/bottom/left | Strong candidate; residual rule unresolved |
+| ⛵ Sailing | BOW (+A), STARBOARD (exact), STERN (−S), PORT (exact) | +A / −S | Moderate–high: four vessel-relative directions/parts | Conditional: right/left are defined while facing the bow; mapping bow to North is an added reference-frame choice | Plausible, but not an intrinsic geographic cardinal mapping |
+| ⭐ Crux / Southern Cross | GACRUX (+C), MIMOSA (exact), ACRUX (−U), IMAI (exact) | +C / −U | Moderate: four main stars of Crux fit a star/constellation clue | Unestablished as fixed N/E/S/W: east/west are chart-relative and the apparent sky orientation rotates | Retain star-identity hypothesis; do not treat chart directions as proven cardinal vertices |
+| 🕓 Clock | TWELVE (+H), THREE (exact), SIX (+A / −S), NINE (exact) | +H, +A / −S | High: four conventional clock labels | High: 12/3/6/9 form the expected four clock positions | Strong candidate; residual rule unresolved |
+| 🪷 Lotus / India | HIMACHAL PRADESH (+G), WEST BENGAL (exact), TAMIL NADU (−L), GUJARAT (exact) | +G / −L | Moderate–high: lotus–India connection is contextually supported | Moderate: map supports broad north/east/south/west placement, not an exact geometric vertex rule | Plausible geographic candidate; state-selection/orientation rule remains unproven |
+| ⚠️ NFPA 704 | FIRE (+E), INSTABILITY (exact), SPECIAL (−S), HEALTH (exact) | +E / −S | Moderate: warning emoji can suggest a hazard diamond; FIRE is not the canonical term | High for the standard quadrant arrangement: top flammability, right instability, bottom special, left health | Retain as a qualified candidate; record FIRE as a non-canonical shorthand |
+| 🏜️ Colorado / Four Corners | WYOMING (+N), KANSAS (exact), NEW MEXICO (−E), UTAH (exact) | +N / −E | Low: desert → Four Corners → Colorado is inferential | Moderate for the four selected cardinal neighbours, but not a complete border set: Nebraska is northeast, Oklahoma southeast, and Arizona touches at Four Corners | Provisional / weakest geographic candidate; do not promote without a stronger emoji-to-region rule |
+| 🕹️ Joystick | UP (+H), RIGHT (exact), DOWN (exact), LEFT (−T) | +H / −T | High: four directional controls directly fit a joystick clue | High: the words themselves define the four directions | Strong candidate; residual rule unresolved |
+| 🎶 Queen | DEACON (exact), MERCURY (exact), MAY (+N), TAYLOR (−L) | +N / −L | Moderate–high: QueenOnline corroborates the four classic-member surnames | Unestablished: no source or rule assigns these four members to N/E/S/W | Retain as a semantic member-set candidate only; no cardinal mapping |
+| ⚽ Footballers | GARETH (exact), INIESTA (exact), BUSQUETS (exact), MESSI (+E) | +E | Low: football is a broad theme and GARETH is an underdetermined given name | Unestablished: no common quartet rule or N/E/S/W order established | Low-confidence lead; do not accept Gareth Bale or a four-player grouping as uniquely identified |
+
+**Context-source limits.** SRC-009 supports the PlayStation-style face-button layout, not that the generic controller emoji uniquely means Sony. SRC-010 supports the conventional baseball-diamond positions. SRC-011–SRC-013 support nautical and cardinal-direction conventions, not a ship's geographic heading. SRC-014 confirms the Crux star identities; SRC-015 is chart context, and SRC-029 documents the changing apparent sky orientation. SRC-016–SRC-017 support Indian geography and the lotus symbol. SRC-018–SRC-019 support NFPA 704 and its canonical quadrant names. SRC-020–SRC-021 support Colorado/Four Corners context but also expose the omitted diagonal neighbours. SRC-024 supports Queen member identities. SRC-025–SRC-028 support possible footballer identities but do not disambiguate the given name GARETH. No contextual source establishes Jane Street's intended emoji-to-group mapping.
+
+**Result.** CM-T0007 is complete as an audit task: all twelve candidate clusters, 48 source assignments, and letter residuals have been independently recounted and the semantic/positional evidence has been graded separately. This does **not** solve the case. H-001 through H-015 remain hypotheses; H-005 is not established; U-001 through U-010 remain open; VAL-014 and VAL-015 remain BLOCKED; no method family, correctness predicate, or solver is authorized.
+
+
 
 
 **Evidence required before accepting any of H-001 through H-015:**
@@ -237,7 +275,7 @@ The exact local character-count residuals are preserved above. They must not be 
 12. Reconcile every local character residual and the leading Ø under one explicit global rule, or document why a proposed group is false.
 13. Independently validate community-reported readings against the primary input, and distinguish those readings from the missing global mapping.
 
-Twelve candidate emoji/member clusters have now been recorded across H-004, H-006, and H-007 through H-012, plus H-014 and H-015, with additional ungrouped community readings in H-013. The Queen and football clusters have contextual identity support but no established cardinal orientation. Their candidate category meanings and several positional conventions have supporting references, but Jane Street's intended grouping, the complete 76-entry bijection, Ø's role, the cross-group residual mechanism, and output extraction are not established. U-001 through U-010 remain unresolved. No algorithm family is selected and no solver is authorized by this update.
+Twelve candidate clusters are recorded across H-004, H-006, H-007 through H-012, H-014, and H-015, with additional ungrouped community readings in H-013. The CM-T0007 audit found 48 unique source assignments, 25 exact candidate anagrams, 23 residual-bearing pairs, and 27 unused source sequences plus Ø. Candidate semantic fit and cardinal orientation are not equally strong: Crux is chart-orientation dependent; Colorado remains weak; Queen has no cardinal ordering; and the football group is underdetermined by GARETH. The complete 76-item bijection, Ø's role, global residual transformation, output extraction, and uniqueness/completeness remain unestablished. U-001 through U-010 remain unresolved. No algorithm family is selected and no solver is authorized by this update.
 
 ## 5. Candidate model structure — intentionally unselected
 
@@ -307,3 +345,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.5.0 | 2026-11-05 | Added six further candidate themes, community-reported decoded readings, source cross-checks, and explicit evidence boundaries; no formalization blocker closed |
 | 0.6.0 | 2026-11-05 | Audited current secondary solver-status sources and corrected Archive search-result semantics; no complete derivation retrieved and no formalization blocker closed |
 | 0.7.0 | 2026-11-05 | Added two source-cross-checked candidate clusters (Queen members and footballers) with exact residual audits; no cardinal orientation or global rule established |
+| 0.8.0 | 2026-11-05 | Completed CM-T0007: audited all twelve candidate clusters, 48 unique source assignments, exact/residual counts, aggregate residual vector, evidence strength, and the 27+Ø inventory remainder; no puzzle rule established |

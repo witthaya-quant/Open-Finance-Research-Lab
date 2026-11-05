@@ -33,7 +33,7 @@ The visible sequences are distinct, internally alphabetically ordered, and displ
 
 The page content reviewed on 2026-11-05 does not expose a complete prose rule specification that resolves the relationship between these elements. Secondary public research suggests a possible one-to-one mapping between the 76 visible marker/sequence entries and four cardinal vertices for each of the 19 emoji clues. A separate solver-status note reports the candidate phrase ANTWERPSCHE DIAMANTKRING. A further solver-status page says a write-up is forthcoming in December, but provides no worked derivation in the reviewed content. The 2026-11-05 review therefore found multiple public solver-status signals, but no complete derivation that OFRL can independently inspect. The phrase remains a hypothesis.
 
-A partial reconstruction now records twelve candidate emoji/member clusters: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, joystick directions, Queen's four classic members, and four footballer candidates (Gareth, Iniesta, Busquets, Messi). The Colorado/desert association remains provisional; the Queen and football clusters have identity cross-checks but no verified cardinal orientation. Exact residuals are preserved without forcing a common transformation rule. A separate community discussion reports further ungrouped readings, including VIOLINS and INSTABILITY, but does not supply a complete derivation. See H-004 to H-015 in the formalization record.
+A partial reconstruction now records twelve candidate emoji/member clusters: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, joystick directions, Queen's four classic members, and four footballer candidates (Gareth, Iniesta, Busquets, Messi). The Colorado/desert association remains provisional; the Queen cluster has identity cross-checks but no cardinal ordering; and the football cluster is underdetermined because GARETH is a given name. CM-T0007 independently audited all twelve candidates: 48 distinct source sequences are assigned, 25 target comparisons are exact and 23 carry explicit residuals. The 27 unused sequences plus Ø total 28, matching seven remaining emojis times four only arithmetically. These results do not prove the 19×4 model or a common residual rule. A separate community discussion reports additional ungrouped readings, including VIOLINS and MONTANA + D, but no complete derivation. See CM-T0007 in PROBLEM_FORMALIZATION.md.
 
 The full sequence list, emoji sequence, images, and official solution are intentionally not copied into this repository.
 
@@ -45,12 +45,12 @@ The full sequence list, emoji sequence, images, and official solution are intent
 | Visible structure described without reproducing the puzzle | PASS |
 | Sequence counts and ordering properties checked | PASS |
 | Formal input and output semantics established | BLOCKED |
-| Twelve candidate category/member clusters documented with contextual identity or convention references; Queen/football cardinal order remains unresolved | PASS |
+| CM-T0007 audit of twelve candidate clusters: 48 distinct source assignments checked; 25 exact candidate anagrams and 23 residual-bearing pairs; semantic fit and positional evidence graded separately | PASS — audit only, not proof of puzzle intent |
 | Local letter-count residuals reproduced for the documented candidate groups | PASS |
 | Community-reported anagram readings registered as unverified leads | PASS |
 | Secondary solver-status sources reviewed and correctly classified as leads, not proofs | PASS |
 | Direct official solution URL and worked derivation retrieved | BLOCKED |
-| All 19 emoji groups and 76 cardinal assignments reconstructed | BLOCKED |
+| All 19 emoji groups and 76 cardinal assignments reconstructed | BLOCKED — 27 sequences plus Ø remain unassigned; 28 equals 7×4 only as a cardinality coincidence |
 | One global letter-reallocation / extraction rule explained across all 19 groups | BLOCKED |
 | Candidate output phrase independently verified | BLOCKED |
 | Candidate mathematical model selected | NOT RUN |
@@ -79,7 +79,7 @@ These are questions, not proposed answers. Hypotheses H-001 to H-015 and blocker
 
 Do not select SAT, CSP, graph search, string matching, anagram search, or another method until the rules support that representation.
 
-The next permitted activity is source-grounded clarification and formal problem analysis. If authoritative rule semantics cannot be established, record the blocker and recommend pausing or replacing the pilot rather than inventing missing rules.
+The next research task is **CM-T0008**: investigate the seven unassigned emoji clues against the 27 unused sequences plus Ø. Treat the 28 = 7×4 equality as a count check only, not as proof of a four-vertex bijection. If semantic rules cannot be established, preserve the blocker rather than inventing missing rules.
 
 ## 7. Attribution
 
