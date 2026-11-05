@@ -203,6 +203,31 @@ test("configured magnitude-scale constraints fail closed when a test bound is to
   ));
 });
 
+test("division errors can be derived while unresolved display policy remains conditional", () => {
+  const profile = readFixture();
+  profile.arithmetic_policy = {
+    division_fractional_scale: 18,
+    division_rounding_mode: "half_even",
+    reporting_fraction_digits: null,
+    reporting_rounding_mode: null
+  };
+  validateProfile(profile);
+  const result = createDerivation(profile);
+  assert.equal(
+    result.error_propagation.status,
+    "DERIVED_UNDER_DIVISION_POLICY__REPORTING_POLICY_UNRESOLVED"
+  );
+  assert.equal(result.error_propagation.display_rounding_error_bound_model_units, null);
+  assert.equal(
+    result.error_propagation.budget_checks.display_export_absolute.status,
+    "UNRESOLVED"
+  );
+  assert.equal(
+    result.error_propagation.budget_checks.accounting_identity_absolute.status,
+    "PASS"
+  );
+});
+
 test("zero division scale is valid input but fails the declared error budgets", () => {
   const profile = readFixture();
   profile.arithmetic_policy = {
