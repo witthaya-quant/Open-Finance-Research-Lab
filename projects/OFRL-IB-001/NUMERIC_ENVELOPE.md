@@ -204,6 +204,8 @@ No financial calculation may be delegated to spreadsheet formulas as a parallel 
 
 ## 11. Acceptance gates for numeric policy
 
+The candidate-specific hard gates and controlled measurement procedure are documented in [NUMERIC_BACKEND_EVALUATION.md](NUMERIC_BACKEND_EVALUATION.md). No candidate is eligible until the model-domain profile is approved.
+
 The numeric foundation cannot be declared approved for the full model until:
 
 1. The model-specific input and intermediate magnitude, scale and coefficient envelopes are documented.
