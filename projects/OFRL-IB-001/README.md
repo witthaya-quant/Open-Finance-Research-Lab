@@ -60,6 +60,11 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Engineering architecture](ENGINEERING_ARCHITECTURE.md)
 - [Model input contract](MODEL_INPUT_CONTRACT.md)
 - [Numeric envelope](NUMERIC_ENVELOPE.md)
+- [Numeric Profile worksheet](NUMERIC_PROFILE_WORKSHEET.md)
+- [Numeric Profile derivation](NUMERIC_PROFILE_DERIVATION.md)
+- [Numeric backend evaluation protocol](NUMERIC_BACKEND_EVALUATION.md)
+- [Numeric Profile input schema](../../schemas/ofrl-ib-001-numeric-profile-0.1.0.schema.json)
+- [Numeric envelope derivation tool](tools/numeric-envelope/derive.cjs) (analysis tooling only; not part of the Rust runtime)
 - [Validation and error contract](VALIDATION_ERROR_CONTRACT.md)
 - [Rust runtime semantic validator](RUNTIME_VALIDATOR.md)
 - [Synthetic reference case A](SYNTHETIC_REFERENCE_CASE.md)
@@ -84,3 +89,30 @@ Banks, insurers, REITs, consolidated groups, multi-currency operations, leases, 
 ## Data and licensing
 
 The first reproducible case will use synthetic data created specifically for this project. No company financial statements or licensed market-data feeds will be redistributed. Code is licensed under Apache-2.0; project documentation is licensed under CC BY 4.0. See the repository licensing and data policies.
+
+
+## Engineering and evidence documents
+
+- [Engineering Audit](ENGINEERING_AUDIT.md)
+- [System Design and Control Architecture](SYSTEM_DESIGN.md)
+- [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md)
+- [Numeric Profile Decision Worksheet](NUMERIC_PROFILE_WORKSHEET.md)
+- [Numeric Profile Derivation and Backend Decision Basis](NUMERIC_PROFILE_DERIVATION.md)
+- [Numeric Backend Evaluation Protocol](NUMERIC_BACKEND_EVALUATION.md)
+- [Shared Schema/Rust contract corpus](../../fixtures/contracts/ofrl-ib-001-shared-corpus.v0.1.0.json)
+
+## Current branch and approval boundaries
+
+The current `main` branch contains the input contract, historical semantic validator, repository governance controls, project registry/data controls, unfiltered Rust validation workflows, the isolated Decimal Contract POC lockfile, and a preview-only SBOM/checksum workflow for the existing Linux CLI input validator. The preview workflow does not represent a released forecast model.
+
+PR #13 is Open / Ready for Review and remains unmerged. It contains the bounded CLI input reader, shared Schema/Rust contract corpus, typed deserialization preflight with RFC 6901 JSON Pointer diagnostics, engineering audit, system design, roadmap, Numeric Profile schema/worksheet, exact candidate-neutral derivation tool, division-error propagation, a candidate-specific static capacity evaluator and the Numeric Backend Evaluation Protocol.
+
+The latest code-tested candidate-capacity increment passed all six required Ruleset contexts and 30/30 Numeric Envelope tests on the branch. The test-only fixture emits 287 arithmetic nodes. Static screening reports `rust_decimal 1.43.0` `STATIC_BOUND_EXCEEDS_LIMIT` on 37 nodes (conservative coefficient and/or scale 0–28 upper bounds) and `bigdecimal 0.4.11` CONDITIONAL on 50 nodes because the fixture leaves division scale unresolved. The Rust result means capacity is not proven for the conservative bound; it is not an observed runtime overflow. These are test-only static-capacity observations, not a production-domain or backend decision. The BigDecimal POC's 80-significant-digit compile-time context is not equivalent to the current fixed-fractional-scale Numeric Profile policy.
+
+The typed-diagnostics implementation and nine versioned mutation fixtures passed the full semantic-validator matrix on validated source checkpoint `e18ca49676ffdaed7ace57e52fd0db4c89536e52`, including formatting, Clippy, tests, documentation, canonical Case A CLI acceptance and unsupported-schema CLI rejection on Rust 1.85.0 and 1.99.1 (workflow `41976312265`). All six required Ruleset contexts, Numeric Envelope derivation and the separate Release Candidate Preview also passed on that exact source checkpoint (runs `41976312218`, `41976312346`, `41976312265`, `41976312273`). The artifacts were `13391434439` (Numeric Envelope) and `13391253547` (CLI Release Candidate Preview). The preview generated a binary-scoped CycloneDX SBOM and immutable build/checksum bundle; it is a preview artifact, not an official forecast-model release. This is a dated evidence checkpoint; verify current PR head and checks separately before merge.
+
+OFRL is in Governance Stage 0 — Founder-maintained. Under `GOVERNANCE.md` sections 3 and 6, the Founder / Principal Maintainer may review and merge their own PR when no independent Maintainer exists; that must be recorded as a single-maintainer review, not an independent approval. PR #13 is Ready for Review and remains branch-local until merged.
+
+The Ruleset on `main` is active with six exact required contexts. Documentation-only and project-code smoke PRs (#24 and #27) each passed all six contexts and were closed without merging.
+
+No production arithmetic backend or Numeric Profile has been approved. Independent Finance/Accounting review and source-level dependency licence/security acceptance remain open. The Production Forecast Engine, forecast Structural Integrity / Scenario Feasibility, canonical ModelRun provenance and XLSX reporting remain unimplemented.

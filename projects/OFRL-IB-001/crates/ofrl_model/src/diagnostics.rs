@@ -31,6 +31,7 @@ pub enum Severity {
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum DiagnosticCode {
     JsonParseFailed,
+    InputDeserializationFailed,
     JsonTypeMismatch,
     DecimalStringRequired,
     DecimalTextNonCanonical,

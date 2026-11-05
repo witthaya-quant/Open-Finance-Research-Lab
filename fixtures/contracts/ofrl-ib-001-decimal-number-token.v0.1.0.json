@@ -1,0 +1,260 @@
+{
+  "schema_version": "0.1.0",
+  "model": {
+    "model_id": "OFRL-IB-001-CASE-A",
+    "model_name": "Synthetic Operating Company - Case A",
+    "reporting_currency": "USD",
+    "unit_scale": "thousands",
+    "day_count_basis": 365
+  },
+  "opening_balance_sheet": {
+    "as_of_date": "2022-12-31",
+    "balances": {
+      "cash": "1000.0",
+      "accounts_receivable": "120.0",
+      "inventory": "80.0",
+      "gross_ppe": "600.0",
+      "accumulated_depreciation": "200.0",
+      "accounts_payable": "50.0",
+      "interest_bearing_debt": "300.0",
+      "share_capital": "800.0",
+      "retained_earnings": "450.0"
+    }
+  },
+  "historical_periods": [
+    {
+      "period_id": "FY2023",
+      "start_date": "2023-01-01",
+      "end_date": "2023-12-31",
+      "source": {
+        "classification": "synthetic",
+        "source_reference": "OFRL-IB-001 Synthetic Reference Case A"
+      },
+      "income_statement": {
+        "revenue": 1000,
+        "cogs": "400.0",
+        "operating_expenses": "250.0",
+        "depreciation": "30.0",
+        "interest_expense": "15.0",
+        "income_tax_expense": "61.0",
+        "net_income": "244.0"
+      },
+      "balance_sheet": {
+        "cash": "1154.0",
+        "accounts_receivable": "130.0",
+        "inventory": "90.0",
+        "gross_ppe": "650.0",
+        "accumulated_depreciation": "230.0",
+        "accounts_payable": "60.0",
+        "interest_bearing_debt": "280.0",
+        "share_capital": "800.0",
+        "retained_earnings": "654.0"
+      },
+      "cash_flow_statement": {
+        "net_income": "244.0",
+        "depreciation_addback": "30.0",
+        "change_in_operating_nwc": "10.0",
+        "cash_from_operations": "264.0",
+        "capex": "50.0",
+        "cash_from_investing": "-50.0",
+        "debt_drawdowns": "40.0",
+        "principal_repayments": "60.0",
+        "dividends": "40.0",
+        "cash_from_financing": "-60.0",
+        "net_change_in_cash": "154.0",
+        "opening_cash": "1000.0",
+        "closing_cash": "1154.0"
+      }
+    },
+    {
+      "period_id": "FY2024",
+      "start_date": "2024-01-01",
+      "end_date": "2024-12-31",
+      "source": {
+        "classification": "synthetic",
+        "source_reference": "OFRL-IB-001 Synthetic Reference Case A"
+      },
+      "income_statement": {
+        "revenue": "1200.0",
+        "cogs": "480.0",
+        "operating_expenses": "300.0",
+        "depreciation": "35.0",
+        "interest_expense": "14.0",
+        "income_tax_expense": "74.2",
+        "net_income": "296.8"
+      },
+      "balance_sheet": {
+        "cash": "1317.8",
+        "accounts_receivable": "144.0",
+        "inventory": "96.0",
+        "gross_ppe": "710.0",
+        "accumulated_depreciation": "265.0",
+        "accounts_payable": "72.0",
+        "interest_bearing_debt": "230.0",
+        "share_capital": "800.0",
+        "retained_earnings": "900.8"
+      },
+      "cash_flow_statement": {
+        "net_income": "296.8",
+        "depreciation_addback": "35.0",
+        "change_in_operating_nwc": "8.0",
+        "cash_from_operations": "323.8",
+        "capex": "60.0",
+        "cash_from_investing": "-60.0",
+        "debt_drawdowns": "20.0",
+        "principal_repayments": "70.0",
+        "dividends": "50.0",
+        "cash_from_financing": "-100.0",
+        "net_change_in_cash": "163.8",
+        "opening_cash": "1154.0",
+        "closing_cash": "1317.8"
+      }
+    },
+    {
+      "period_id": "FY2025",
+      "start_date": "2025-01-01",
+      "end_date": "2025-12-31",
+      "source": {
+        "classification": "synthetic",
+        "source_reference": "OFRL-IB-001 Synthetic Reference Case A"
+      },
+      "income_statement": {
+        "revenue": "1350.0",
+        "cogs": "540.0",
+        "operating_expenses": "337.5",
+        "depreciation": "40.0",
+        "interest_expense": "11.5",
+        "income_tax_expense": "84.2",
+        "net_income": "336.8"
+      },
+      "balance_sheet": {
+        "cash": "1493.6",
+        "accounts_receivable": "162.0",
+        "inventory": "108.0",
+        "gross_ppe": "780.0",
+        "accumulated_depreciation": "305.0",
+        "accounts_payable": "81.0",
+        "interest_bearing_debt": "180.0",
+        "share_capital": "800.0",
+        "retained_earnings": "1177.6"
+      },
+      "cash_flow_statement": {
+        "net_income": "336.8",
+        "depreciation_addback": "40.0",
+        "change_in_operating_nwc": "21.0",
+        "cash_from_operations": "355.8",
+        "capex": "70.0",
+        "cash_from_investing": "-70.0",
+        "debt_drawdowns": "0.0",
+        "principal_repayments": "50.0",
+        "dividends": "60.0",
+        "cash_from_financing": "-110.0",
+        "net_change_in_cash": "175.8",
+        "opening_cash": "1317.8",
+        "closing_cash": "1493.6"
+      }
+    }
+  ],
+  "forecast_periods": [
+    {
+      "period_id": "FY2026",
+      "start_date": "2026-01-01",
+      "end_date": "2026-12-31",
+      "assumptions": {
+        "revenue_growth": "0.05",
+        "cogs_pct_revenue": "0.40",
+        "operating_expenses_pct_revenue": "0.25",
+        "dso": "44.0",
+        "dio": "73.0",
+        "dpo": "54.75",
+        "capex_pct_revenue": "0.052",
+        "depreciation_rate": "0.055",
+        "debt_drawdowns": "0.0",
+        "principal_repayments": "40.0",
+        "interest_rate": "0.05",
+        "tax_rate": "0.20",
+        "dividend_payout_ratio": "0.20"
+      }
+    },
+    {
+      "period_id": "FY2027",
+      "start_date": "2027-01-01",
+      "end_date": "2027-12-31",
+      "assumptions": {
+        "revenue_growth": "0.05",
+        "cogs_pct_revenue": "0.40",
+        "operating_expenses_pct_revenue": "0.25",
+        "dso": "44.0",
+        "dio": "73.0",
+        "dpo": "54.75",
+        "capex_pct_revenue": "0.052",
+        "depreciation_rate": "0.055",
+        "debt_drawdowns": "20.0",
+        "principal_repayments": "30.0",
+        "interest_rate": "0.05",
+        "tax_rate": "0.20",
+        "dividend_payout_ratio": "0.20"
+      }
+    },
+    {
+      "period_id": "FY2028",
+      "start_date": "2028-01-01",
+      "end_date": "2028-12-31",
+      "assumptions": {
+        "revenue_growth": "0.05",
+        "cogs_pct_revenue": "0.40",
+        "operating_expenses_pct_revenue": "0.25",
+        "dso": "44.0",
+        "dio": "73.0",
+        "dpo": "54.75",
+        "capex_pct_revenue": "0.052",
+        "depreciation_rate": "0.055",
+        "debt_drawdowns": "0.0",
+        "principal_repayments": "30.0",
+        "interest_rate": "0.05",
+        "tax_rate": "0.20",
+        "dividend_payout_ratio": "0.20"
+      }
+    },
+    {
+      "period_id": "FY2029",
+      "start_date": "2029-01-01",
+      "end_date": "2029-12-31",
+      "assumptions": {
+        "revenue_growth": "0.05",
+        "cogs_pct_revenue": "0.40",
+        "operating_expenses_pct_revenue": "0.25",
+        "dso": "44.0",
+        "dio": "73.0",
+        "dpo": "54.75",
+        "capex_pct_revenue": "0.052",
+        "depreciation_rate": "0.055",
+        "debt_drawdowns": "0.0",
+        "principal_repayments": "30.0",
+        "interest_rate": "0.05",
+        "tax_rate": "0.20",
+        "dividend_payout_ratio": "0.20"
+      }
+    },
+    {
+      "period_id": "FY2030",
+      "start_date": "2030-01-01",
+      "end_date": "2030-12-31",
+      "assumptions": {
+        "revenue_growth": "0.05",
+        "cogs_pct_revenue": "0.40",
+        "operating_expenses_pct_revenue": "0.25",
+        "dso": "44.0",
+        "dio": "73.0",
+        "dpo": "54.75",
+        "capex_pct_revenue": "0.052",
+        "depreciation_rate": "0.055",
+        "debt_drawdowns": "0.0",
+        "principal_repayments": "30.0",
+        "interest_rate": "0.05",
+        "tax_rate": "0.20",
+        "dividend_payout_ratio": "0.20"
+      }
+    }
+  ]
+}

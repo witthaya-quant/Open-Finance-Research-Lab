@@ -8,6 +8,7 @@
 
 mod diagnostics;
 mod domain;
+mod typed_deserialization;
 mod validation;
 
 pub use diagnostics::{

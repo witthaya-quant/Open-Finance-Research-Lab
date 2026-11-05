@@ -20,12 +20,13 @@ The V1 processing sequence is:
 
 1. Read the input document.
 2. Parse JSON syntax.
-3. Deserialize into closed, typed Rust structures.
-4. Enforce the Decimal string boundary.
-5. Validate model metadata and period semantics.
-6. Validate opening and historical accounting relationships.
-7. Validate forecast assumption domains and debt repayment bounds.
-8. Return a typed validation report.
+3. Run a typed structural preflight over the closed V1 Rust input shape.
+4. Classify structural and Decimal failures with contract-owned error kinds and RFC 6901 JSON Pointers.
+5. Deserialize into closed, typed Rust structures after preflight passes.
+6. Validate model metadata and period semantics.
+7. Validate opening and historical accounting relationships.
+8. Validate forecast assumption domains and debt repayment bounds.
+9. Return a typed validation report.
 
 The forecast calculation engine is a separate later stage. This crate does not generate forecast statements or balances.
 
@@ -40,7 +41,7 @@ The Rust model types use closed Serde objects with unknown fields rejected. All 
 - Parses with the pinned rust_decimal candidate.
 - Requires the parsed Decimal's string representation to match the original text exactly.
 
-This is a fixed-precision Decimal boundary, not arbitrary-precision or rational arithmetic. The current validator uses checked addition and subtraction for accounting checks. It does not yet establish the model-level numeric envelope or accumulated forecast error budget.
+The typed preflight and Serde field deserializer call the same Decimal parser, so both layers use one canonical grammar, scale check, and exact parse/format-preservation rule. Structural failures are classified before Serde decoding; no public diagnostic code depends on Serde error wording. This is a fixed-precision Decimal boundary, not arbitrary-precision or rational arithmetic. The current validator uses checked addition and subtraction for accounting checks. It does not yet establish the model-level numeric envelope or accumulated forecast error budget.
 
 ## 4. Metadata and period rules
 
@@ -139,7 +140,7 @@ The validate_input_json API returns a ValidationReport with:
 - input_status: accepted or rejected.
 - diagnostics: stable code, category, severity, human-readable message, optional JSON Pointer, period ID, field, expected value, and actual value.
 
-Diagnostics are emitted in a deterministic validation order. Parsing and deserialization failures stop early because later semantic checks would not be reliable. Semantic validation accumulates independent findings where safe.
+Diagnostics are emitted in a deterministic validation order. Structural preflight stops at the first contract violation and includes an RFC 6901 JSON Pointer with correctly escaped object keys and exact array indices. Root-document type errors use the empty pointer `""`; malformed JSON syntax has no fabricated pointer when its location is ambiguous. A valid historical/forecast `period_id` is attached where available. A defensive `INPUT_DESERIALIZATION_FAILED` code covers disagreement between preflight and typed Serde construction without exposing dependency error text. Semantic validation accumulates independent findings where safe.
 
 The external diagnostic codes are defined in [VALIDATION_ERROR_CONTRACT.md](VALIDATION_ERROR_CONTRACT.md). Human-readable message text may improve without changing the stable code.
 
@@ -164,6 +165,8 @@ cargo run --locked -p ofrl_cli -- validate ../../fixtures/synthetic/ofrl-ib-001-
 
 The command prints a JSON validation report.
 
+The CLI enforces a 1 MiB maximum input-document size before JSON parsing. It reads at most the configured limit plus one byte, rejects an oversized document before allocating the full file, and rejects invalid UTF-8. These are CLI transport-boundary controls; they do not change the JSON Schema or historical semantic rules. The V1 size limit is intentionally generous for the fixed three-history/five-forecast contract and must be versioned if the contract is expanded.
+
 Exit codes:
 
 | Code | Meaning |
@@ -180,6 +183,7 @@ The test suite covers the canonical synthetic Case A fixture and negative cases 
 - JSON numeric tokens where Decimal strings are required.
 - Non-canonical Decimal strings, negative zero, and excessive scale.
 - Unknown fields and missing provenance.
+- Nested missing/unknown fields, invalid enums, array-element type errors, `~`/`/` pointer escaping, Decimal token/text/scale/range errors, root type errors, and malformed JSON with no fabricated pointer.
 - Invalid Gregorian dates and fiscal-period gaps.
 - Period identifier/year mismatch and malformed identifiers.
 - Opening Balance Sheet imbalance.
