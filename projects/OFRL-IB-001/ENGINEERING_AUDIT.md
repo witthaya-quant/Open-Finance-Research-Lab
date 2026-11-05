@@ -2,13 +2,13 @@
 
 # OFRL-IB-001 — Engineering Audit
 
-**Audit version:** 1.1.0  
+**Audit version:** 1.2.0  
 **Audit date:** 2026-11-05  
-**Production baseline:** `main` at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`  
+**Production baseline:** `main` at `593d04d125522e5ec42bea06da6b94c3c2abf604`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design, CLI hardening and Numeric Profile tooling:** PR #13 remains Open / Ready for Review and unmerged. Validated CI evidence checkpoint: source head `e18ca49676ffdaed7ace57e52fd0db4c89536e52` passed all six required Ruleset contexts, Numeric Envelope derivation and Release Candidate Preview (workflow runs `41976312218`, `41976312346`, `41976312265`, `41976312273`; artifacts `13391434439` and `13391253547`). This is an immutable checkpoint for that source SHA, not a statement of the branch's future head; re-read the PR head and exact-head checks before every merge decision.  
-**Status:** Evidence-based audit at main `cc2d01b`; merged governance and supply-chain controls are distinguished from branch-local OFRL-IB-001 implementation evidence
+**System design, CLI hardening, typed diagnostics and Numeric Profile tooling:** PR #13 merged to `main` at `593d04d125522e5ec42bea06da6b94c3c2abf604` from validated source head `17b77e385f9980ff00c6ab1466361a54a5d34d23`. All six required Ruleset contexts, Numeric Envelope derivation and Release Candidate Preview passed on that exact source head. Workflows: `41980695313`, `41980695585`, `41980695359`, `41980695504`; artifacts: Numeric Envelope `13393328236`, Release Candidate Preview `13394285657`. The source checkpoint and merge commit are distinct and recorded separately.  
+**Status:** Post-merge evidence-based audit at `main` `593d04d125522e5ec42bea06da6b94c3c2abf604`; input hardening, Schema/Rust corpus, typed diagnostics, design documents and test-only numeric tooling are now merged. Numeric Profile approval, backend selection and production forecast authorization remain separate open gates.
 
 ## 1. Executive assessment
 
@@ -18,7 +18,7 @@ The open research PR #11 materially improves the numeric evidence base: it conta
 
 Repository governance and supply-chain controls are now on `main` following PR #14, which integrated the reviewed PR #18 / #20 / #22 sequence. The active Ruleset and its six required checks were re-read after merge. Documentation-only and project-code smoke PRs (#24 and #27) each reported and passed all six exact required contexts, then were closed without merge. These changes improve repository controls; they do not create a production forecast engine.
 
-The system is **not yet a production forecast model**. The production Rust workspace still validates inputs and historical relationships only. It does not calculate the five forecast years, produce a canonical ModelRun, evaluate Structural Integrity / Scenario Feasibility for calculated results, produce deterministic provenance, or generate an XLSX report. PR #13 is Ready for Review and contains branch-local input hardening, shared contract corpus, system design and numeric derivation work.
+The system is **not yet a production forecast model**. The production Rust workspace validates inputs and historical relationships, including bounded CLI input transport, typed deserialization diagnostics and the shared Schema/Rust contract corpus. It does not calculate the five forecast years, produce a canonical ModelRun, evaluate Structural Integrity / Scenario Feasibility for calculated results, produce deterministic provenance, or generate an XLSX report. PR #13 delivered the merged engineering foundation; Numeric Profile approval and forecast implementation remain gated.
 
 The principal remaining risk is not simply a lack of code. It is the unresolved boundary between (a) evidence that software follows the currently written equations and (b) approval that those equations, conventions, numeric limits and reporting treatments are appropriate for the declared modelling purpose. The implementation must preserve that distinction.
 
@@ -28,13 +28,13 @@ This audit covers only OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`
 
 | Evidence | Current status | Interpretation |
 |---|---|---|
-| `main` | Governance merge `cc2d01b` | Input/history validator plus active Ruleset, repository policy workflow, portfolio/data controls, unfiltered OFRL CI, isolated Decimal POC lockfile and preview-only Linux CLI SBOM |
+| `main` | PR #13 merge `593d04d` | Input/history validator, bounded CLI input reader, typed diagnostics, shared Schema/Rust corpus, Numeric Profile schema/derivation tools, active Ruleset, repository policy workflow, portfolio/data controls, isolated Decimal POC lockfile and preview-only Linux CLI SBOM |
 | Ruleset / required contexts | Active; exactly six required contexts | Read back from Rulesets API after merge; no bypass actors; strict up-to-date and conversation-resolution rules |
 | PR #24 documentation smoke test | Closed without merge | All six required contexts passed on a documentation-only PR targeting current main |
 | PR #27 project-code smoke test | Closed without merge | All six required contexts passed on a project-code PR targeting current main |
 | PR #11 — numeric research | Open, Draft; head `120ccd3414` | 800 independent exact-rational expected outputs, candidate arithmetic comparison, point-in-time SBOM/RustSec and non-gating timing; no production backend approval |
 | PR #12 — schema tooling | Open, Draft; head `c38f9ad50` | Pinned Node/AJV toolchain and package lockfile; tooling change remains branch-local |
-| PR #13 — audit/design/CLI/numeric derivation | Open, Draft; head `daac2fc` | Audit, design, roadmap, bounded CLI reader, shared contract corpus, exact BigInt derivation and candidate-specific static capacity screen; six required contexts plus 30/30 numeric tests and preview workflow passed; branch-local and unmerged |
+| PR #13 — audit/design/CLI/numeric derivation | Merged to `main` at `593d04d` | 42 changed files; source head `17b77e3`; six required contexts, Numeric Envelope and Release Candidate Preview passed on that source head; Founder Stage 0 disposition recorded transparently in the PR conversation |
 | Finance/accounting review | Not evidenced | No independent sign-off is claimed |
 | Production Forecast Engine | Not implemented | Must remain gated |
 
@@ -49,20 +49,20 @@ A CI pass applies only to the exact commit and workflow scope that ran. It does 
 | Typed input | Rust structures reject unknown fields and constrain declared enum values |
 | Period validation | Three historical and five forecast periods, Gregorian dates, sequence, contiguity, annual duration and hand-offs |
 | Historical accounting | Opening/historical Balance Sheet, Income Statement, Cash Flow Statement and selected NWC, PP&E, debt and retained-earnings roll-forwards |
-| CLI baseline | `validate <input.json>`; no production forecast or export command |
-| Build reproducibility | Production Cargo.lock and two-toolchain CI |
+| CLI baseline | `validate <input.json>` with 1 MiB max-plus-one input bound and invalid UTF-8 rejection; no production forecast or export command |
+| Build reproducibility | Production Cargo.lock and two-toolchain CI |\n| Deserialization diagnostics | Contract-owned diagnostic codes, shared Decimal parser, RFC 6901 JSON Pointers and nine versioned mutation fixtures; merged and CI-verified |
 | Repository governance | Active main Ruleset, PR requirement, no bypass actors, required conversation resolution and six exact required contexts |
 | Repository policy | Always-running `repository-policy` workflow validates local Markdown links, JSON/YAML, project manifests/registry and policy contracts |
 | Portfolio/data controls | Project lifecycle/standards, project manifest schema, repository registry checks and OFRL-IB-001 data manifest |
 | OFRL validation CI | Decimal and semantic validation workflows execute for all Pull Requests on Rust 1.85.0 and 1.99.1 |
 | Decimal POC supply chain | Isolated POC Cargo.lock and locked metadata/tree/Clippy/test/docs commands |
-| CLI SBOM preview | Preview-only CycloneDX 1.5 SBOM and checksum bundle for the current Linux CLI input validator; not a forecast-model release |
+| CLI SBOM preview | Preview-only CycloneDX 1.5 SBOM and checksum bundle for the current Linux CLI input validator; not a forecast-model release |\n| Schema/Rust contract corpus | Versioned positive/negative corpus consumed by AJV and Rust, with fixture path-safety checks; merged and CI-verified |
 | Calculation engine | Not implemented |
 | Canonical ModelRun / provenance | Not implemented |
 | Forecast integrity / feasibility | Not implemented |
 | XLSX reporting | Not implemented |
 
-The bounded CLI input reader (1 MiB limit, max-plus-one byte read, UTF-8 rejection and regression tests) and the versioned shared Schema/Rust corpus exist on PR #13's branch only. They are not on `main` until PR #13 is synchronized, reviewed, passes all six required contexts and is merged.
+The bounded CLI input reader (1 MiB limit, max-plus-one byte read, UTF-8 rejection and regression tests), typed deserialization diagnostics and versioned shared Schema/Rust corpus are merged on `main` through PR #13. The merge source head was `17b77e3`; all six required contexts, Numeric Envelope derivation and Release Candidate Preview passed on that exact source head. This does not implement forecast calculation or authorize the Numeric Profile.
 
 ## 4. Updated assessment of research evidence in PR #11
 
@@ -152,7 +152,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 ### EA-17 — Numeric envelope arithmetic graph previously counted comparisons as additions
 
 **Severity:** Major for numeric-envelope evidence  
-**Status:** RESOLVED IN PR #13 BRANCH; merge/review pending
+**Status:** RESOLVED IN PR #13; merged to `main` at `593d04d`
 
 **Evidence:** The previous derivation represented several validator comparisons and statement tie-outs using the same `add(...)` operation used for real arithmetic. This could create artificial intermediate sums and overstate representability requirements. It also reported coefficient digit counts without an exact coefficient-integer bound that could be compared to a fixed-width mantissa.
 
@@ -160,7 +160,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Risk addressed:** An envelope may be falsely conservative if comparison checks are treated as arithmetic, or falsely permissive if a 29-digit coefficient is assumed safe solely because it has 29 digits. The exact mantissa value, not digit count alone, determines this fixed-width limit.
 
-**Disposition:** At validated checkpoint `e18ca49676ffdaed7ace57e52fd0db4c89536e52`, the implementation and 30/30 numeric-tool tests passed; all six required Ruleset contexts and the separate Release Candidate Preview also passed. The checks are tied to that source SHA and do not transfer to later commits. This closes the identified derivation-tool defect for the tested V1 formula graph only; it does not approve model bounds, division policy, candidate semantics or operational resources. Keep the finding branch-local until PR review/merge and rerun the suite whenever formulas or profile schema change.
+**Disposition:** The derivation correction is merged to `main` through PR #13 (`593d04d125522e5ec42bea06da6b94c3c2abf604`), using source head `17b77e385f9980ff00c6ab1466361a54a5d34d23`. The Numeric Envelope suite passed 30/30 tests; the exact-source artifact `13393328236` was downloaded and all five internal SHA-256 entries verified. This closes the identified derivation-tool defect for the tested V1 formula graph only; it does not approve model bounds, division policy, candidate semantics or operational resources. Rerun the suite whenever formulas or profile schema change.
 
 ### EA-03 — Independent accounting/formula sign-off remains open
 
@@ -196,7 +196,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Major
 
-**Status:** Remediated on PR #13 branch; not merged to `main`.
+**Status:** Remediated and merged to `main` through PR #13 (`593d04d`).
 
 **Finding:** The former validator mapped Serde failures by substring inspection and omitted reliable JSON Pointer paths for nested structural/deserialization failures.
 
@@ -204,17 +204,17 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Evidence:** `crates/ofrl_model/src/typed_deserialization.rs`, `src/domain.rs`, `src/validation.rs`, and `tests/typed_deserialization_diagnostics.rs`. At validated source checkpoint `e18ca49676ffdaed7ace57e52fd0db4c89536e52`, the semantic-validator workflow passed formatting, Clippy, tests, docs, Case A CLI acceptance and unsupported-schema CLI rejection on Rust 1.85.0 and 1.99.1 (workflow `41976312265`); the six required contexts, Numeric Envelope derivation and Release Candidate Preview also passed on that exact source head. The regression suite consumes nine versioned mutation cases.
 
-**Disposition:** The implementation is branch-local until PR #13 is merged. OFRL is in Governance Stage 0; `GOVERNANCE.md` sections 3 and 6 permit the Founder / Principal Maintainer to review and merge their own PR when no independent Maintainer exists, provided the decision is recorded as a single-maintainer review and not independent approval. Optional external peer review may strengthen assurance but is not a Stage 0 prerequisite. Issue #23 is linked with `Fixes #23` and will close on merge.
+**Disposition:** The implementation is merged to `main` through PR #13 (`593d04d125522e5ec42bea06da6b94c3c2abf604`); Issue #23 was automatically closed with all nine acceptance criteria checked. The PR conversation records the Stage 0 single-maintainer disposition and explicitly states that the technical assessment was AI-assisted, not independent human review. This closes EA-06 for the current V1 input contract; future contract changes must extend the mutation and shared-corpus suites.
 
 ### EA-07 — JSON Schema and Rust contract parity is not enforced
 
 **Severity:** Major
 
-**Evidence:** PR #13 now contains a versioned shared positive/negative corpus consumed by both AJV and the Rust runtime. Cases declare schema validity, runtime status and stable Rust diagnostic codes. The Rust test now validates corpus metadata, unique case IDs/fixture paths, canonical fixture paths under `fixtures/`, and rejects path traversal/symlink escape. AJV validation checks schema identity, corpus shape, expected outcome types and fixture containment. The shared corpus implementation first passed the five project-specific contexts on head `6941b1f`. After governance integration, PR #13 was synchronized with current `main`; the refreshed branch then passed all six required contexts, including `repository-policy`, on Rust 1.85.0 and 1.99.1. The corpus remains branch-local and is not merged to `main`.
+**Evidence:** The versioned shared positive/negative corpus is merged to `main` through PR #13 (`593d04d`). Cases declare schema validity, runtime status and stable Rust diagnostic codes. Rust validates corpus metadata, unique case IDs/fixture paths, canonical fixture paths under `fixtures/`, and rejects path traversal/symlink escape. AJV validation checks schema identity, corpus shape, expected outcome types and fixture containment. All six required contexts passed on source head `17b77e3`, including both Rust toolchains. The merged corpus provides finite regression coverage; it is not a mathematical proof of equivalence for every possible JSON document.
 
 **Risk:** A shared fixture set can still be incomplete or can drift if one side does not enforce the same metadata and expected outcome contract. Schema-invalid fixtures must never be accepted by the runtime; schema-valid fixtures may still correctly fail cross-field/accounting semantic checks.
 
-**Disposition:** Complete the current two-toolchain CI run, preserve the intentional structural-versus-semantic distinction, and add future cases whenever the versioned contract changes. Do not claim parity for all possible JSON documents from a finite fixture set.
+**Disposition:** Maintain the merged two-toolchain CI gate, preserve the intentional structural-versus-semantic distinction, and add future cases whenever the versioned contract changes. Do not claim parity for all possible JSON documents from a finite fixture set.
 
 ### EA-08 — Reconciliation tolerances are proposed, not approved
 
@@ -270,7 +270,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Moderate
 
-**Evidence:** Main supports `validate` only. PR #13 adds bounded input reading and UTF-8 rejection on its branch, but no `run`, `inspect` or `export` commands or safe output-write contract.
+**Evidence:** Main supports `validate` only. PR #13 merged bounded input reading (1 MiB max-plus-one) and UTF-8 rejection into `main`; no `run`, `inspect` or `export` commands or safe output-write contract are implemented.
 
 **Risk:** A later CLI can overwrite source files, produce partial outputs or confuse invalid input with calculation failure.
 
@@ -294,7 +294,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Original risk:** A required context that is absent from the protected base workflow set can leave PRs blocked. Weakening the Ruleset would have concealed the publication-order problem.
 
-**Disposition:** RESOLVED. Keep all six contexts unchanged. Repeat the API read-back and representative documentation/project-code smoke tests after material workflow or Ruleset changes. At validated source checkpoint `e18ca49676ffdaed7ace57e52fd0db4c89536e52`, PR #13 had synchronized with current main and all six required contexts passed. PR #13 is Ready for Review; the Founder may complete the Stage 0 single-maintainer review and merge after the applicable checklist. This review is separate from the closed governance dependency.
+**Disposition:** RESOLVED. Keep all six contexts unchanged. Repeat the API read-back and representative documentation/project-code smoke tests after material workflow or Ruleset changes. PR #13 subsequently passed all six contexts on source head `17b77e3` and was merged to `main` at `593d04d`. This is separate from the closed governance dependency.
 
 ## 6. Numeric tolerance interpretation
 
@@ -318,8 +318,8 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 | Independent finance/accounting review | Written independent review and disposition of equations, conventions and edge cases | OPEN — not evidenced |
 | Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — lockfile and preview SBOM workflow are on main; source-level licence/security and official release review remain open |
 | Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR — research evidence only |
-| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | PASS ON PR #13 CODE-TESTED CHECKPOINT — shared corpus and path-safety tests passed both Rust toolchains; all six required contexts passed on source checkpoint `e18ca496`; unmerged |
-| Typed diagnostics | Stable error variants and JSON Pointer for deserialization failures | OPEN — message-substring mapping remains |
+| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | PASS — merged to `main` by PR #13; shared corpus and path-safety tests passed both Rust toolchains on source head `17b77e3` |
+| Typed diagnostics | Stable error variants and JSON Pointer for deserialization failures | PASS — typed preflight and nine mutation fixtures merged to `main` by PR #13; future contract revisions require expanded regression cases |
 | Repository required checks | All six Ruleset contexts available on main and reported on fresh PRs | PASS — post-merge read-back plus documentation-only PR #24 and project-code PR #27 both passed 6/6 |
 | Production forecast engine | Typed Rust schedules and three statements | NOT STARTED — gated |
 | Forecast integrity/feasibility | SI/SF/reportability results over all periods | NOT STARTED |
@@ -336,11 +336,11 @@ The next implementation increment should not be a speculative production forecas
 3. Complete arithmetic error propagation and controlled CPU/memory/allocation/concurrency evidence, then make the backend decision only against the approved profile.
 4. Close lockfile, source, licence and advisory dispositions for dependencies intended to remain.
 5. Obtain independent finance/accounting review of V1 conventions and formulas.
-6. Complete and maintain the shared Schema/Rust contract corpus in PR #13; separately replace message-substring deserialization classification with typed error/path mapping.
+6. Maintain and extend the merged Schema/Rust contract corpus and typed diagnostic mutation suite as the versioned input contract evolves.
 7. Freeze the production calculation/result contracts only after all Phase 2 gates, then implement the Rust schedules and statements.
 8. Add SI/SF/reportability checks and property/boundary tests.
 9. Implement canonical ModelRun, deterministic fingerprints and formula lineage.
 10. Generate XLSX solely from canonical outputs and reconcile it.
 11. Complete clean-checkout reproduction and release review.
 
-The exact Numeric Profile derivation and candidate-capacity tools improve decision readiness, but they do not supply missing business-domain inputs or reviewer approvals. On validated PR #13 source checkpoint `e18ca49676ffdaed7ace57e52fd0db4c89536e52`, the six required Ruleset contexts, 30/30 Numeric Envelope tests and the separate Release Candidate Preview all passed. Numeric Envelope artifact `13391434439` (24,004 bytes) and Preview artifact `13391253547` (382,545 bytes) were uploaded on that source checkpoint. The Numeric Envelope artifact records 287 arithmetic nodes, 37 conservative rust_decimal bound exceedances (including 19 scale-related reasons that overlap the coefficient reasons), and 50 conditional nodes; BigDecimal remains conditional on unresolved coefficient/scale/division policy. These are test-only static-bound outputs, not observed runtime overflow or an approved V1 operating domain. The Release Candidate Preview packages the CLI input validator only, not a forecast model. No research POC, SBOM preview or green CI run is production financial-model approval. Governance controls are merged; Numeric Profile, backend selection and Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
+The exact Numeric Profile derivation and candidate-capacity tools are merged to `main` through PR #13 (`593d04d125522e5ec42bea06da6b94c3c2abf604`) but do not supply missing business-domain inputs or reviewer approvals. On validated source head `17b77e385f9980ff00c6ab1466361a54a5d34d23`, all six required Ruleset contexts, 30/30 Numeric Envelope tests and the separate Release Candidate Preview passed. Numeric Envelope artifact `13393328236` (24,005 bytes; ZIP SHA-256 `c1ecdb255e2b93bd057860a457f7d439456b64b18b7ccac8052c28171684ed36`) was downloaded and all five internal SHA-256 entries verified. Preview artifact `13394285657` (382,543 bytes; ZIP SHA-256 `ae8748218f83484920103e2b6d20ce524c2029d3c5c8758ee710716c5be55b5f`) was also downloaded and verified; its metadata labels it `PREVIEW_ONLY_NOT_A_RELEASE` and limits scope to CLI input-contract and historical semantic validation. The Numeric Envelope artifact records 287 arithmetic nodes, 37 conservative rust_decimal bound exceedances (including 19 overlapping scale reasons), and 50 conditional nodes; BigDecimal remains conditional on unresolved coefficient/scale/division policy. The profile is explicitly `TEST-ONLY-SYNTHETIC-NOT-APPROVED`, runtime correctness is `NOT_EXECUTED`, resources are `NOT_MEASURED`, no backend is selected, and the Forecast Engine is not authorized. These are static test-fixture observations, not observed runtime overflow or an approved V1 operating domain. No research POC, SBOM preview or green CI run is production financial-model approval. Numeric Profile, backend selection and independent Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
