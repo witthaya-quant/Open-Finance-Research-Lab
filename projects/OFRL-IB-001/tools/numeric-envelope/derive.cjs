@@ -310,6 +310,13 @@ function createDerivation(profile) {
     const scale = known ? Math.max(...items.map(item => item.scale)) : null;
     return record(name, value, scale, "maximum_of_non_negative_bounds");
   };
+  const minOf = (name, items) => {
+    const value = items.reduce((best, item) =>
+      item.value.compare(best) < 0 ? item.value : best, items[0].value);
+    const known = items.every(item => item.scale !== null);
+    const scale = known ? Math.max(...items.map(item => item.scale)) : null;
+    return record(name, value, scale, "minimum_of_non_negative_branch_bounds");
+  };
   function record(name, value, scale, method) {
     const exactScale = scale === null ? terminatingScale(value.d) : scale;
     const coefficientDigits = exactCoefficientDigits(value, exactScale);
@@ -430,10 +437,6 @@ function createDerivation(profile) {
         priorRetainedEarnings, i.net_income_absolute_max, c.dividends_absolute_max
       ]
     );
-    record(prefix + ".input_cash_rollforward_comparison_bound",
-      maxOf(prefix + ".tmp.cash_compare", [closingCash, c.closing_cash_absolute_max]).value,
-      monetaryScale, "maximum_of_calculated_and_declared_cash_bounds"
-    );
 
     // Each historical year can independently attain the declared input maxima.
     priorNwc = currentNwc;
@@ -452,8 +455,8 @@ function createDerivation(profile) {
     one.add(D.revenue_growth_max.value), ratioScale,
     "one_plus_maximum_annual_growth");
   let revenue = H.income_statement.revenue_absolute_max;
-  let grossPpe = O.gross_ppe_max;
-  let accumulatedDepreciation = O.accumulated_depreciation_max;
+  let grossPpe = H.balance_sheet.gross_ppe_max;
+  let accumulatedDepreciation = H.balance_sheet.accumulated_depreciation_max;
   let debt = H.balance_sheet.interest_bearing_debt_max;
   let cash = H.balance_sheet.cash_max;
   let retainedEarnings = H.balance_sheet.retained_earnings_absolute_max;
@@ -487,7 +490,7 @@ function createDerivation(profile) {
       grossPpe.value, grossPpe.scale,
       "net_ppe_is_bounded_by_gross_ppe_under_input_domain");
     const depreciationCapacity = add(prefix + ".depreciation_capacity", [openingNetPpe, capex]);
-    const depreciation = maxOf(prefix + ".depreciation", [
+    const depreciation = minOf(prefix + ".depreciation", [
       // The minimum of two non-negative formula branches is bounded by the
       // minimum of their independent upper bounds.
       depreciationByRate, depreciationCapacity
@@ -568,6 +571,12 @@ function createDerivation(profile) {
     }
   }
 
+  const failedScale = limitChecks.filter(
+    item => item.limit === "max_intermediate_scale" && item.status === "FAIL"
+  );
+  const failedCoefficient = limitChecks.filter(
+    item => item.limit === "max_coefficient_digits" && item.status === "FAIL"
+  );
   const failedLimits = limitChecks.filter(item => item.status === "FAIL");
   const divisionNodes = nodes.filter(item => item.division_context_required).map(item => item.id);
   const unitFactor = UNIT_FACTORS[profile.unit_scale];
@@ -601,8 +610,8 @@ function createDerivation(profile) {
       formula_node_count: nodes.length,
       candidate_backend_selected: false,
       production_engine_authorized: false,
-      pre_normalization_scale_limit_status: failedLimits.length === 0 ? "PASS" : "FAIL",
-      coefficient_digit_limit_status: failedLimits.length === 0 ? "PASS" : "FAIL",
+      pre_normalization_scale_limit_status: failedScale.length === 0 ? "PASS" : "FAIL",
+      coefficient_digit_limit_status: failedCoefficient.length === 0 ? "PASS" : "FAIL",
       division_context_required_nodes: divisionNodes,
       unresolved_candidate_capacity_nodes: divisionNodes,
       limit_checks: limitChecks
