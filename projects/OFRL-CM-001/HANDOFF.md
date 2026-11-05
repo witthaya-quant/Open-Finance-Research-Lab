@@ -9,7 +9,7 @@
 **Pull request:** [#29](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Working branch:** `research/ofrl-cm-001-admission-and-pilot`  
 **Base branch:** `main`  
-**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this research update `6c30d29a56b80b6c167d79dae86281675b61e982`.  
+**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this handoff update `5343cbddf039c2178e2b79ec062b249d8ab2c4f2`.  
 **Important:** These SHAs are historical checkpoints, not current write tokens. A new session MUST retrieve the current PR head SHA and branch state from GitHub before any write.
 
 ## 1. Purpose
@@ -127,11 +127,11 @@ Only then design the smallest useful implementation and independent verifier. A 
 
 ## 7. CI and release status
 
-Before this research update, the following workflows succeeded on head `6c30d29a56b80b6c167d79dae86281675b61e982`:
+Before this handoff update, the following workflows succeeded on head `5343cbddf039c2178e2b79ec062b249d8ab2c4f2`:
 
-- [OFRL Repository Policy run #41969058668](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41969058668)
-- [OFRL-IB-001 Rust Runtime Semantic Validator run #41969058718](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41969058718)
-- [OFRL-IB-001 Numeric and Input Contract Checks run #41969058810](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41969058810)
+- [OFRL Repository Policy run #41973717223](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973717223)
+- [OFRL-IB-001 Numeric and Input Contract Checks run #41973717157](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973717157)
+- [OFRL-IB-001 Rust Runtime Semantic Validator run #41973717253](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973717253)
 
 The two OFRL-IB-001 workflows were triggered by repository event behavior; their execution does not authorize changes to OFRL-IB-001. These results apply only to the checkpoint SHA above and must be rechecked after this handoff commit.
 
