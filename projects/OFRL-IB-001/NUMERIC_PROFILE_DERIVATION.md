@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Profile Derivation and Backend Decision Basis
 
-**Document version:** 0.1.0  
+**Document version:** 0.2.0  
 **Status:** Engineering derivation — NOT AN APPROVED NUMERIC PROFILE  
 **Scope:** V1 generic non-financial operating company; three historical periods; five forecast periods  
 **Reference implementation:** Numeric Envelope POC, branch `research/ofrl-ib-001-numeric-envelope`  
@@ -261,6 +261,19 @@ Then:
 \overline{CFI}_t=\overline{CapEx}_t
 \]
 
+The input repayment is constrained by debt available after drawdown. Its absolute upper bound is therefore derived from the prior debt bound and the per-period drawdown bound:
+
+\[
+0 \le Repayment_t \le D_{t-1}+U_t
+\]
+
+\[
+\overline{Repayment}_t
+\le \overline{D}_{t-1}+\overline{U}_t
+\]
+
+The Cash Flow Statement financing line is evaluated as drawdowns minus repayments minus dividends. A conservative absolute intermediate bound is:
+
 \[
 \overline{CFF}_t
 \le
@@ -297,6 +310,68 @@ Retained earnings requires its own signed opening bound:
 
 Total asset and total liabilities/equity bounds are obtained by summing the absolute bounds of their constituent accounts. The Balance Sheet residual must be derived separately from arithmetic error propagation; it must not be declared safe merely because exact rational Case A balances to zero.
 
+The Balance Sheet and historical validator also need a finite starting-state envelope. The last historical period is the forecast opening state, but the earlier historical periods must be bounded separately if the validator performs arithmetic on them. Do not derive historical amount maxima solely from forecast driver ratios unless the input contract explicitly constrains the historical data to those same ratios.
+
+### 4.5 Decimal scale and coefficient-growth envelope
+
+An absolute-value bound is not a complete representability proof. Every formula node must carry at least two separate envelopes:
+
+- \(M_x\): maximum absolute numeric value.
+- \(S_x\): maximum fractional scale (number of base-10 digits after the decimal point) before any explicitly approved rounding or normalization.
+
+A third measure is needed for arbitrary-precision candidates:
+
+- \(P_x\): maximum coefficient/significant-digit count after normalization.
+
+The following scale rules are conservative *pre-normalization* bounds for exact decimal operations:
+
+| Operation | Magnitude bound | Pre-normalization scale bound |
+|---|---|---|
+| Addition / subtraction | \(M_x+M_y\) | \(\max(S_x,S_y)\) |
+| Multiplication | \(M_xM_y\) | \(S_x+S_y\) |
+| Maximum / minimum | \(\max(M_x,M_y)\) | No greater than \(\max(S_x,S_y)\), before backend-specific normalization |
+| Division by 2 | \(M_x/2\) | May require one additional fractional digit for an odd final coefficient |
+| Division by 365 | \(M_x/365\) | 365 has prime factor 73, so non-terminating decimal results are possible; output scale and rounding are backend/context decisions |
+
+For the five-year revenue recurrence, if the maximum source scale of each annual growth assumption is \(S_g\) and last-historical revenue has maximum scale \(S_{R_0}\), the unreduced multiplication scale can grow as:
+
+\[
+S_{R_t} \le S_{R_0}+\sum_{i=1}^{t}S_{g_i}
+\]
+
+and therefore:
+
+\[
+S_{R_5} \le S_{R_0}+5S_g
+\]
+
+This is a scale-growth bound, not a statement that every runtime value will attain that scale. Trailing zeros and common factors can reduce actual scale, but a capacity proof must not depend on sample fixtures happening to contain zeros.
+
+The same operation graph creates these additional scale obligations:
+
+| Formula node | Conservative pre-normalization scale bound |
+|---|---|
+| \(1+g_t\) | \(S_{g_t}\) |
+| Revenue | \(S_{R_{t-1}}+S_{g_t}\) |
+| COGS / Opex / CapEx | \(S_{Revenue}+S_{driver}\) |
+| AR / inventory / AP numerator | \(S_{revenue\ or\ COGS}+S_{day}\) |
+| Gross PP&E | \(\max(S_{opening\ gross\ PPE},S_{CapEx})\) |
+| Average gross PP&E numerator | \(\max(S_{opening\ gross\ PPE},S_{closing\ gross\ PPE})\) |
+| Average debt numerator | \(\max(S_{opening\ debt},S_{closing\ debt})\) |
+| Interest | \(S_{average\ debt}+S_{interest\ rate}\) |
+| Tax before floor | \(S_{EBT}+S_{tax\ rate}\) |
+| Dividends | \(S_{positive\ NI}+S_{payout}\) |
+| NWC / change in NWC | Maximum scale of the participating balances |
+| CFO / CFI / CFF / closing cash / retained earnings | Maximum scale of the participating operands, after upstream division policies |
+
+The current input grammar permits up to 28 fractional digits for Decimal strings. That is a lexical/parser ceiling, **not** proof that every combination of 28-digit inputs can pass five years of multiplication without scale reduction, rounding or failure. A profile must set separate source-scale limits for monetary values, ratios/rates and days, then propagate them through the actual formula order. The selected backend must expose any scale reduction or rounding as a characterized arithmetic event; it must never silently convert it into an unobserved acceptance.
+
+For rust_decimal, the candidate's scale is capped at 28 and the mantissa is capped at 96 bits. For each operation, the exact candidate behavior when the nominal product scale exceeds 28 or the scaled coefficient exceeds the mantissa must be tested: it may fail or require a precision-reducing representation step. The profile must prove the chosen path at each boundary, not merely compare the final numeric magnitude.
+
+For BigDecimal, multiplication preserves all coefficient digits rather than automatically limiting every result to the configured division precision. A finite division context therefore does not by itself bound coefficient growth, scale, memory or CPU. The profile must set maximum coefficient digits and scale at material formula nodes and test resource behaviour under the same five-year recurrence.
+
+The Numeric Profile must consequently approve both a *magnitude envelope* and a *scale/coefficient envelope*. A candidate that fits the former but cannot preserve the latter within the approved arithmetic-error budget is not acceptable.
+
 ## 5. What the current domain does and does not permit us to conclude
 
 | Input / rule | Current V1 convention | Numeric-envelope consequence |
@@ -327,13 +402,24 @@ The POC evaluates `rust_decimal 1.43.0`, whose candidate representation uses a s
 
 The maximum magnitude therefore depends on the chosen scale. It is incorrect to interpret “28 decimal places” as an unrestricted combination of 28 integer and 28 fractional digits.
 
-The POC stress fixtures are selected capacity probes, not business limits. The 10^18 stress input completed the tested five-year path; the 10^22 probe caused checked overflow at the FY2026 AR numerator \(Revenue\times DSO\). These observations do not locate the exact transition boundary or define a supportable company-size limit.
+The POC helper scales every monetary input by a multiplier of \(10^n\); 10^18 and 10^22 are therefore **input scaling factors**, not the exact maximum output or intermediate magnitudes and not business limits. The stress helper also deliberately replaces assumptions with 100% annual growth, 500% COGS / revenue, 500% operating expenses / revenue, 3650 days for DSO/DIO/DPO, 500% CapEx / revenue, and 100% depreciation, interest, tax and dividend rates.
+
+Using the canonical FY2025 revenue of 1,350 model units, the FY2026 stress revenue is \(2\times1,350\times10^n\). The first AR numerator is therefore:
+
+\[
+2\times1,350\times10^n\times3,650
+=9,855,000\times10^n
+\]
+
+That is \(9.855\times10^{24}\) for the \(10^{18}\) monetary-input multiplier and \(9.855\times10^{28}\) for the \(10^{22}\) multiplier. The latter exceeds the rust_decimal 96-bit maximum mantissa \(79,228,162,514,264,337,593,543,950,335\) at scale zero, so the checked multiplication fails at FY2026 AR numerator. This is a reproducible capacity observation for that exact artificial input combination; it does not locate the full transition boundary or define a supportable company-size limit.
 
 ### 6.2 BigDecimal
 
-The POC ran `bigdecimal 0.4.11` with an 80-significant-digit, HalfEven default context supplied through compile-time environment configuration. Its 1/3 test produced 80 fractional digits under that setting.
+The POC ran `bigdecimal 0.4.11` with an 80-digit, HalfEven **compile-time default context**. Its 1/3 test produced 80 fractional digits under that build configuration. The POC arithmetic adapter uses BigDecimal operator implementations and verifies the compile-time configuration; it does not demonstrate a run-scoped context passed through the complete forecast graph.
 
-This demonstrates a finite context in the measured POC; it is not a production per-run context contract. The production design must define who owns the context, how it is immutable and isolated, how it is recorded in ModelRun provenance, and how concurrent runs cannot silently inherit different or mutable process-wide arithmetic settings. Arbitrary precision also requires finite input-length, scale, CPU and memory limits.
+The distinction matters: the crate documentation states that compile-time defaults configure the default Context, while runtime control requires passing explicit Context values to context-aware operations. It also states that multiplication preserves all digits; multiplying two 70-digit operands can produce a 140-digit coefficient, so the default division precision does not cap multiplication growth. See the pinned crate's [BigDecimal 0.4.11 documentation](https://docs.rs/crate/bigdecimal/0.4.11).
+
+This demonstrates a finite division context in the measured POC; it is not a production per-run arithmetic policy. A production adapter must define and test how an immutable run-scoped context reaches **every operation that rounds**, including the exact division path; it must also define a separate maximum coefficient/scale policy for exact multiplication and addition. Context identity, scale policy and rounding mode must be recorded in ModelRun provenance. Arbitrary precision still requires finite input-length, scale, coefficient-digit, CPU and memory limits.
 
 ### 6.3 Exact Rational
 
@@ -405,7 +491,7 @@ The inspected POC evidence includes:
 - BM-002: 160 exact expected outputs across five years for the synthetic Case A.
 - BM-003: 640 exact expected outputs across four five-year edge scenarios.
 - A standard-library Python reference that regenerates the exact rational expected-value files.
-- A 10^18 intermediate stress point and a 10^22 fixed-Decimal capacity probe.
+- Artificial stress fixtures that multiply all monetary inputs by 10^18 and 10^22 respectively; the 10^22 variant produces an FY2026 AR numerator of 9.855 × 10^28 and triggers the fixed-Decimal overflow. These multipliers are not business limits.
 - Non-gating timing observations on a single 4-vCPU hosted runner: BigDecimal approximately 1.50×–2.21× and Exact Rational approximately 7.52×–10.30× the fixed Decimal candidate in the observed cases.
 
 The evidence does **not** establish:
@@ -426,13 +512,13 @@ Do not choose a backend using maximum representable value or a single latency ta
 | Decision dimension | Required evidence |
 |---|---|
 | Input representation | Canonical grammar, source precision, exact parse/format round trip |
-| Supported domain | Every input and intermediate bound fits, with documented capacity headroom |
+| Supported domain | Every input and intermediate magnitude **and scale/coefficient** bound fits, with documented capacity headroom |
 | Arithmetic semantics | Add/subtract/multiply/divide behaviour, exactness and rounding at every operation |
 | Five-year error | Exact-rational comparison across boundaries, edge scenarios and worst-case propagation |
-| Context ownership | Explicit, immutable, run-scoped precision and rounding; context ID in provenance |
+| Context ownership | Explicit, immutable, run-scoped precision and rounding for all rounded operations; separately bound coefficient/scale growth; context ID in provenance |
 | Failure semantics | Typed overflow, scale, zero-division and resource-limit failures; no saturation or silent clamping |
 | Serialization | Canonical decimal strings and deterministic round-trip |
-| Resource use | Controlled latency, allocations, peak memory, tail latency and concurrency under the approved workload |
+| Resource use | Controlled latency, allocations, peak memory, tail latency, scale/coefficient growth and concurrency under the approved workload |
 | Dependency and migration | Exact versions, source, licences/notices, advisories, MSRV/platforms, lockfiles and cost to migrate the current validator |
 | Operational determinism | Repeated clean-process and concurrent-run results with identical canonical input/policy/build |
 
@@ -441,10 +527,10 @@ The production API should hide the chosen arithmetic representation behind a sma
 ## 10. Required next evidence
 
 1. Model Owner supplies a finite intended input domain or a documented distribution plus hard admission limits for every unbounded input class.
-2. Convert that domain into per-field bounds and five-year intermediate bounds using the derivations in Sections 3–4.
+2. Convert that domain into per-field magnitude bounds, source-scale bounds, coefficient-digit bounds and five-year intermediate bounds using the derivations in Sections 3–4. Include historical validator arithmetic as well as forecast calculation paths.
 3. Confirm lower/upper endpoints, sign rules, source integer/fractional digits, minimum material amount and model unit-scale conversion.
 4. Finance/Accounting reviewer confirms formula conventions, materiality and the treatment of negative cash/funding shortfall.
-5. Engineering derives arithmetic error budgets and runs exact-rational boundary tests for every formula chain.
+5. Engineering derives arithmetic and scale-propagation error budgets and runs exact-rational boundary tests for every formula chain, including scale just below, at and above the candidate's representable limit.
 6. Measure candidate CPU, allocation, peak-memory, tail-latency and concurrency behaviour in a controlled environment.
 7. Complete source-level dependency, licence/notice and advisory disposition.
 8. Record the approved Numeric Profile, backend, context, errors, limitations, test commit and reviewer sign-offs in a versioned decision record.
