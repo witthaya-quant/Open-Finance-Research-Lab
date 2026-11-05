@@ -5,22 +5,26 @@
   "title": "Computational Methods & Problem-Solving Case Studies",
   "lifecycle_status": "in_development",
   "project_types": [
-    "research"
+    "research",
+    "quantitative_research"
   ],
   "risk_tier": "R1",
   "owner": "Kenny (Witthaya Maidee)",
   "created_at": "2026-11-05",
   "updated_at": "2026-11-05",
-  "summary": "An independent research programme that formalizes selected mathematical and computational problems, examines appropriate solution methods, and evaluates correctness, limitations, and reproducibility. The first pilot studies the published Jane Street Pressure Points puzzle as a problem-formalization exercise. It is a separate project from OFRL-IB-001 and makes no claim that a puzzle is a financial model or trading strategy.",
+  "summary": "A quantitative problem-solving research programme that develops disciplined hypothesis formation, mathematical formalization, strategic reasoning, mathematics in finance, and reproducible computational analysis through source-grounded case studies and a gated Rust workbench. The initial pilot is Jane Street Pressure Points; it remains independent of OFRL-IB-001 and makes no claim that a puzzle is a financial model or trading strategy.",
   "evidence_maturity": 0,
   "license_profile": "apache-2.0-software_cc-by-4.0-documentation",
   "data_classification": "public_source",
   "validation_profiles": [
     "research",
+    "quantitative",
     "data"
   ],
   "required_documents": [
     "README.md",
+    "PROJECT_CONTROL.md",
+    "PRACTICE_PLAYBOOK.md",
     "DECISION_LOG.md",
     "RESEARCH_SPECIFICATION.md",
     "IMPLEMENTATION_APPROACH.md",
@@ -32,5 +36,5 @@
     "cases/2026-11-pressure-points/PROBLEM_FORMALIZATION.md"
   ],
   "release_status": "not_released",
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

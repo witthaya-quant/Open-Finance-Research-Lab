@@ -3,14 +3,14 @@
 # OFRL-CM-001 — Research Specification
 
 **Research version:** 0.1.0  
-**Project types:** Research  
+**Project types:** Research, Quantitative Research  
 **Owner:** Kenny (Witthaya Maidee)  
 **Evidence maturity:** 0 — Proposed  
 **Last updated:** 2026-11-05
 
 ## 1. Research question
 
-How can selected mathematical and computational problems be formalized and investigated using methods that are appropriate to their actual structure, with correctness and reproducibility assessed independently of whether a candidate method returns an answer?
+How can a disciplined practice programme develop quantitative researchers who can formalize unfamiliar problems, generate and falsify hypotheses, reason strategically, select appropriate mathematical methods, compute reproducible results, and independently verify claims across abstract problem-solving and financial mathematics?
 
 A secondary question is whether a method or insight has a defensible, clearly bounded application to quantitative research or financial engineering.
 
@@ -20,7 +20,7 @@ Jane Street's public puzzle programme states that creative problem-solving is in
 
 OFRL's contribution is independent analysis: state the problem, identify established mathematical foundations, examine suitable methods, validate results, and explain limitations. The work is not intended to reverse-engineer Jane Street's proprietary business or trading methods.
 
-The intended audience is researchers, quantitative practitioners, software engineers, and technically curious readers who benefit from transparent mathematical reasoning and reproducible computational analysis.
+The intended audience is learners progressing toward quantitative research practice, quantitative practitioners, financial-mathematics researchers, and software engineers who benefit from transparent mathematical reasoning and reproducible computational analysis. The learning workflow and progression are specified in [PRACTICE_PLAYBOOK.md](PRACTICE_PLAYBOOK.md); current scope, workstreams, and delivery status are controlled only by [PROJECT_CONTROL.md](PROJECT_CONTROL.md).
 
 ## 3. Shared foundations and prior work
 
@@ -56,11 +56,11 @@ For each admitted case:
 9. Assess financial-engineering relevance without forcing a transfer claim.
 10. Publish methods, evidence, limitations, and reproduction instructions at an evidence level proportionate to what has actually been established.
 
-Expected outputs may include mathematical notes, formal specifications, proofs, hand-worked examples, code, test fixtures created independently, performance results, and a research report. Not every case must produce all output types.
+Expected outputs may include the practice Playbook, mathematical method notes, formal specifications, proofs, hand-worked examples, admitted practice cases, independently created synthetic examples, code where justified, test fixtures, performance results, and research reports. Not every case must produce all output types. The Rust computational workbench is a gated programme deliverable, not a reason to implement cases that are better resolved analytically.
 
 ## 5. Research methodology
 
-The project uses the seven-stage protocol in [CASE_STUDY_PROTOCOL.md](CASE_STUDY_PROTOCOL.md). The protocol requires problem formalization before algorithm selection and separates solver behavior from verification evidence.
+The project uses the seven-stage protocol in [CASE_STUDY_PROTOCOL.md](CASE_STUDY_PROTOCOL.md) and the learner-facing practice loop in [PRACTICE_PLAYBOOK.md](PRACTICE_PLAYBOOK.md). Project scope and tasks are maintained in [PROJECT_CONTROL.md](PROJECT_CONTROL.md). The protocol requires problem formalization before algorithm selection and separates solver behavior from verification evidence.
 
 A candidate algorithm is not evidence that the problem has been correctly understood. A passing example is not proof of completeness, uniqueness, or correctness over the full input domain.
 

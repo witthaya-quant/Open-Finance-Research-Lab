@@ -4,7 +4,7 @@
 
 **Project ID:** OFRL-CM-001  
 **Project owner:** Kenny (Witthaya Maidee)  
-**Baseline version:** 0.1.0  
+**Baseline version:** 0.2.0  
 **Last reviewed:** 2026-11-05
 
 This log records decisions specific to OFRL-CM-001. Lab-wide matters remain governed by the central OFRL policies and Decision Register.
@@ -23,6 +23,10 @@ This log records decisions specific to OFRL-CM-001. Lab-wide matters remain gove
 | D-008 | Assess financial-engineering transferability without forcing a positive conclusion | Approved | Preserves OFRL's finance orientation and research integrity | Research Specification and protocol |
 | D-009 | Adopt Rust as the default implementation language for computational software in OFRL-CM-001 when implementation is justified | Approved | Aligns the project with OFRL's Rust engineering direction while keeping research method-first; pure mathematical work does not require code | IMPLEMENTATION_APPROACH.md; no executable implementation is authorized by this decision |
 | D-010 | Inherit OFRL-wide policies by reference and enforce a project-root / case-directory boundary | Approved | Common governance, data, research, security, dependency, and release policies remain authoritative at the repository root; CM-001 keeps project-specific decisions and case evidence in its own tree, creates case folders only after admission, and avoids duplicated or speculative structure | README.md shared-policy references; CASE_STUDY_PROTOCOL.md §§9.1–9.3; project.json required_documents; HANDOFF.md |
+| D-011 | Expand OFRL-CM-001 into a Quantitative Problem-Solving Research Programme | Approved by Founder on 2026-11-05 | The case-study objective includes a learner-facing practice Playbook, strategic reasoning/game theory, mathematics in finance, quantitative computational methods, and a gated Rust workbench. This does not authorize live trading, an unformalized solver, or indiscriminate software implementation. | PROJECT_CONTROL.md §§2–5; PRACTICE_PLAYBOOK.md; RESEARCH_SPECIFICATION.md |
+| D-012 | Establish PROJECT_CONTROL.md as the sole project-management source of truth | Approved by Founder on 2026-11-05 | Current scope, workstreams, phase status, task register, blockers, and next actions must exist in one canonical register. README and HANDOFF are navigation/procedure; specialist documents own only their domain evidence. | PROJECT_CONTROL.md §1; README.md; HANDOFF.md |
+| D-013 | Classify the programme as Research and Quantitative Research | Approved by Founder on 2026-11-05 | The programme studies quantitative research methods and financial mathematics as well as general mathematical problem-solving. Empirical controls apply when an admitted case uses empirical or market data. | project.json; RESEARCH_SPECIFICATION.md; root PROJECT_STANDARDS.md |
+| D-014 | Defer the Software project type and executable Workbench authorization until the first implementation case is admitted | Approved by Founder on 2026-11-05 | The Rust workbench is an approved target direction, but no executable code, build workflow, Cargo workspace, or dependency is authorized until a case passes formalization and method-selection gates and software architecture/review controls are satisfied. | IMPLEMENTATION_APPROACH.md; PROJECT_CONTROL.md P3; root PROJECT_STANDARDS.md and PROJECT_LIFECYCLE.md |
 
 ## 2. Open decisions
 
@@ -64,3 +68,4 @@ Each deferred item requires a separate scope and evidence gate before work begin
 | 2026-11-05 | D-001–D-008 | Initial approved project baseline | Kenny | Issue #29; PR #29 |
 | 2026-11-05 | D-009 | Project implementation-language default recorded for justified computational software | Kenny | PR #29 |
 | 2026-11-05 | D-010 | Shared-policy inheritance and controlled project/case directory boundaries | Kenny | PR #29 |
+| 2026-11-05 | D-011–D-014 | Quantitative practice programme, single PM source of truth, programme classification, and gated Rust workbench | Founder-authorized; recorded by project aide | PR #29 project-scope documentation update |

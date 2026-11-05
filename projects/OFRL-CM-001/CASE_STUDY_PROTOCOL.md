@@ -11,7 +11,7 @@
 
 This protocol provides one consistent research process for different mathematical and computational case studies. It standardizes the quality of problem definition, reasoning, verification, comparison, and reporting without forcing every problem into the same algorithm, programming language, or software architecture.
 
-A case study must not select an algorithm before the problem has been formalized sufficiently to justify that choice.
+A case study must not select an algorithm before the problem has been formalized sufficiently to justify that choice. The learner-facing workflow, hypothesis register, method-selection questions, and assessment rubric are defined in [PRACTICE_PLAYBOOK.md](PRACTICE_PLAYBOOK.md). Project scope and task status are maintained only in [PROJECT_CONTROL.md](PROJECT_CONTROL.md).
 
 ## 2. Stage 1 — Problem formalization
 

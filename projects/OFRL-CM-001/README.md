@@ -4,7 +4,7 @@
 
 > **Project ID:** OFRL-CM-001  
 > **Lifecycle:** In Development  
-> **Project type:** Research  
+> **Project type:** Research, Quantitative Research  
 > **Risk tier:** R1 — Analytical  
 > **Evidence maturity:** 0 — Proposed  
 > **Project version:** 0.1.0  
@@ -17,6 +17,12 @@
 This project investigates selected mathematical and computational problems as disciplined research case studies. It aims to explain how a problem can be formalized, identify methods that are justified by its actual structure, assess correctness and limitations, and preserve reproducible evidence.
 
 The project is inspired by Jane Street's public puzzle programme. Jane Street describes creative problem-solving as intrinsic to its work, connecting it to identifying new problems in financial markets and developing potentially novel ways to solve them. OFRL uses that statement as context for studying problem-solving methods; it does not infer that an individual puzzle is a financial model, a trading strategy, or a disclosure of Jane Street's internal methods.
+
+## Project management and practice authority
+
+[PROJECT_CONTROL.md](PROJECT_CONTROL.md) is the sole project-management source of truth for scope, status, phases, task register, blockers, and next actions. Every new chat or assisting agent must read it first and follow [HANDOFF.md](HANDOFF.md). This README is navigation only and must not maintain a competing roadmap.
+
+[PRACTICE_PLAYBOOK.md](PRACTICE_PLAYBOOK.md) defines the learner-facing practice methodology, mathematical tracks, hypothesis process, method selection, verification, and assessment rubric.
 
 ## Independence from other OFRL projects
 
@@ -34,7 +40,7 @@ The only portfolio-level relationship is the shared OFRL governance and the cent
 
 How can selected mathematical and computational problems be translated into explicit formal models, investigated using suitable alternative methods, and verified in a reproducible way, while identifying which insights have a defensible connection to quantitative research or financial engineering?
 
-The project does not assume that every case requires software, multiple solvers, or a finance application. Executable software is developed only when it adds research value. The project-specific [Implementation Approach](IMPLEMENTATION_APPROACH.md) defines the engineering, verification, reproducibility, and dependency controls.
+The programme combines mathematical problem-solving, strategic reasoning and game theory, mathematics in finance, and quantitative computational methods. It does not assume that every case requires software, multiple solvers, or a finance application. Executable software is developed only when a formal specification and research objective justify it. The project-specific [Implementation Approach](IMPLEMENTATION_APPROACH.md) defines the engineering, verification, reproducibility, and dependency controls.
 
 ## Scope
 
@@ -112,6 +118,8 @@ Project-specific requirements are recorded only in this project’s own specific
 
 ## Project documents
 
+- [Canonical project control and delivery register](PROJECT_CONTROL.md) — the only project-level status, roadmap, and task register.
+- [Quantitative Problem-Solving Practice Playbook](PRACTICE_PLAYBOOK.md) — practice workflow, learning tracks, hypothesis method, and assessment.
 - [Project manifest](project.json)
 - [Working handoff](HANDOFF.md) — continuation instructions and scope safeguards for future sessions.
 - [Research specification](RESEARCH_SPECIFICATION.md)

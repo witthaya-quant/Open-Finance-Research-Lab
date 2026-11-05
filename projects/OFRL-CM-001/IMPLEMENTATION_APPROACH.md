@@ -86,6 +86,23 @@ The following are conceptual boundaries, not a pre-approved directory or crate l
 
 The physical layout is decided in the implementation proposal for the first case that passes its formalization gate.
 
+## 4.1 Planned workbench capability domains
+
+The Rust workbench is intended to support admitted research cases across the following capability domains. These are logical research capabilities, not an instruction to create one crate or module for every topic.
+
+- **Discrete and combinatorial computation:** finite state spaces, exact counting, graph structures, constraints, and search.
+- **Strategic computation:** payoff matrices, best-response enumeration, finite-game analysis, and equilibrium checks where the model is formally specified.
+- **Probability and stochastic computation:** random-variable transformations, reproducible sampling, Monte Carlo estimates, and stochastic-process experiments.
+- **Financial mathematics:** cash-flow schedules, discounting, derivative payoffs, risk calculations, and portfolio constraints with explicit financial conventions.
+- **Numerical methods:** linear algebra, root finding, optimization, stability, convergence, sensitivity, and error analysis.
+- **Experiment control:** validated inputs, explicit parameters, recorded seeds, deterministic metadata, machine-readable results, and independent verification.
+
+Each capability is admitted through a real case. Shared abstractions are not designed around hypothetical future requirements; at least two distinct use cases must demonstrate a stable common need before generalization.
+
+The workbench must distinguish exact results, numerical approximations, statistical estimates, and heuristic candidates in its domain types and reports. For quantitative-finance cases, units, currency, calendars, day-count, compounding, contract conventions, market-data provenance, and relevant costs must be explicit.
+
+The learner-facing workflow and assessment requirements are defined by [PRACTICE_PLAYBOOK.md](PRACTICE_PLAYBOOK.md). Programme status and implementation authorization are controlled only by [PROJECT_CONTROL.md](PROJECT_CONTROL.md).
+
 ## 5. Toolchain and supply-chain controls
 
 Before the first executable implementation:
@@ -155,6 +172,6 @@ Each is decided only when the formal problem and implementation requirements jus
 
 ## 10. Current implementation status
 
-For the Pressure Points pilot, executable implementation is **BLOCKED** because the complete rule semantics and required output are not yet established.
+For the Pressure Points pilot, executable implementation is **BLOCKED** because the complete rule semantics and required output are not yet established. The wider Rust workbench remains a gated programme deliverable: a different, fully specified and admitted case may justify its first implementation, but it must pass the same research, architecture, numeric-integrity, verification, and repository-policy controls.
 
 No Rust package, Cargo workspace, solver, verifier, CLI, dependency, or project-specific CI workflow is claimed to exist at this stage.
