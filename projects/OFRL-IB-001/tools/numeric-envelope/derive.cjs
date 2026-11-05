@@ -420,7 +420,9 @@ function createDerivation(profile) {
   };
   const div = (name, operand, denominator, exactScale = null) => {
     const value = operand.value.div(new Fraction(BigInt(denominator)));
-    const scale = exactScale === null ? null : operand.scale + exactScale;
+    const scale = exactScale === null
+      ? profile.arithmetic_policy.division_fractional_scale
+      : operand.scale === null ? null : operand.scale + exactScale;
     return record(name, value, scale, "fixed_positive_divisor", exactScale === null);
   };
   const maxOf = (name, items) => {
@@ -447,10 +449,19 @@ function createDerivation(profile) {
       method,
       exact_upper_bound: value.toString(),
       decimal_upper_bound_18dp: roundOutward(value, 18),
-      pre_normalization_scale: scale,
+      pre_normalization_scale: forceDivisionContext ? null : scale,
+      post_rounding_scale: forceDivisionContext ? scale : null,
+      scale_bound_kind: forceDivisionContext && scale !== null
+        ? "post_rounding_scale"
+        : "pre_normalization_scale",
       terminating_decimal_scale_for_bound_value: terminatingScaleForBound,
+      exact_rational_numerator_digits: decimalDigits(value.n),
+      exact_rational_denominator_digits: decimalDigits(value.d),
       coefficient_digits_if_exact: coefficientDigits,
-      division_context_required: divisionContextRequired
+      division_context_required: divisionContextRequired,
+      division_rounding_mode: forceDivisionContext
+        ? profile.arithmetic_policy.division_rounding_mode
+        : null
     };
     nodes.push(node);
     return { value, scale, node };
@@ -828,6 +839,14 @@ function createDerivation(profile) {
       coefficient_digit_limit_status: failedCoefficient.length > 0
         ? "FAIL" : divisionNodes.length > 0 ? "CONDITIONAL_DIVISION_POLICY" : "PASS",
       division_context_required_nodes: divisionNodes,
+      division_policy_status: profile.arithmetic_policy.division_fractional_scale === null ||
+        profile.arithmetic_policy.division_rounding_mode === null
+          ? "UNRESOLVED"
+          : "SPECIFIED__CANDIDATE_BEHAVIOUR_NOT_YET_VALIDATED",
+      reporting_policy_status: profile.arithmetic_policy.reporting_fraction_digits === null ||
+        profile.arithmetic_policy.reporting_rounding_mode === null
+          ? "UNRESOLVED"
+          : "SPECIFIED__XLSX_RECONCILIATION_NOT_YET_VALIDATED",
       unresolved_candidate_capacity_nodes: divisionNodes,
       operational_resource_evidence: "NOT_MEASURED_BY_THIS_DERIVATION_TOOL",
       limit_checks: limitChecks
