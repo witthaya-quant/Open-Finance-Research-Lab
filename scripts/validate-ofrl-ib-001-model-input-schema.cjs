@@ -24,6 +24,21 @@ const corpusPath = path.join(
   "contracts",
   "ofrl-ib-001-shared-corpus.v0.1.0.json"
 );
+const numericProfileSchemaPath = path.join(
+  rootDir,
+  "schemas",
+  "ofrl-ib-001-numeric-profile-0.1.0.schema.json"
+);
+const numericProfileFixturePath = path.join(
+  rootDir,
+  "projects",
+  "OFRL-IB-001",
+  "tools",
+  "numeric-envelope",
+  "test",
+  "fixtures",
+  "synthetic-profile.test-only.json"
+);
 
 function readJson(filePath) {
   try {
@@ -148,7 +163,35 @@ function main() {
   // Schema compilation is a gate: unsupported or malformed schema constructs
   // must stop the job before any payload can be accepted.
   const validate = ajv.compile(schema);
-  console.log("PASS: Draft 2020-12 schema compiled");
+  console.log("PASS: Draft 2020-12 model-input schema compiled");
+
+  const numericProfileSchema = readJson(numericProfileSchemaPath);
+  if (
+    numericProfileSchema.$schema !== "https://json-schema.org/draft/2020-12/schema" ||
+    numericProfileSchema.$id !== "urn:ofrl:schema:ofrl-ib-001-numeric-profile:0.1.0"
+  ) {
+    throw new Error("Numeric Profile schema must declare the expected Draft 2020-12 identity");
+  }
+  const validateNumericProfile = ajv.compile(numericProfileSchema);
+  const numericProfileFixture = readJson(numericProfileFixturePath);
+  if (!validateNumericProfile(numericProfileFixture)) {
+    throw new Error(
+      "Test-only Numeric Profile fixture is invalid:\\n" +
+      JSON.stringify(printErrors(validateNumericProfile.errors), null, 2)
+    );
+  }
+  if (numericProfileFixture.approval_state !== "test_only" ||
+      numericProfileFixture.approvals !== null) {
+    throw new Error("Numeric Profile test fixture must remain explicitly unapproved");
+  }
+  const invalidNumericProfile = {
+    ...numericProfileFixture,
+    accidental_property: "must be rejected"
+  };
+  if (validateNumericProfile(invalidNumericProfile)) {
+    throw new Error("Numeric Profile schema unexpectedly accepted an unknown property");
+  }
+  console.log("PASS: Numeric Profile input schema compiled and test-only fixture validated");
 
   const seenIds = new Set();
   const seenInputs = new Set();
