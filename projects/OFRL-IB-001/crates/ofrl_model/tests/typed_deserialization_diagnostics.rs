@@ -147,6 +147,110 @@ fn decimal_out_of_range_reports_range_code() {
     ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
 
+
+fn value_at_pointer_mut<'a>(root: &'a mut Value, pointer: &str) -> Option<&'a mut Value> {
+    let mut current = root;
+    if pointer.is_empty() {
+        return Some(current);
+    }
+    if !pointer.starts_with('/') {
+        return None;
+    }
+
+    for encoded in pointer[1..].split('/') {
+        let segment = encoded.replace("~1", "/").replace("~0", "~");
+        current = match current {
+            Value::Object(object) => object.get_mut(&segment)?,
+            Value::Array(array) => array.get_mut(segment.parse::<usize>().ok()?)?,
+            _ => return None,
+        };
+    }
+    Some(current)
+}
+
+fn apply_fixture_mutation(root: &mut Value, case: &Value) {
+    let operation = case["operation"].as_str().expect("fixture operation");
+    let parent_pointer = case["parent_pointer"].as_str().expect("fixture parent pointer");
+    let field = case["field"].as_str().expect("fixture field");
+    let parent = value_at_pointer_mut(root, parent_pointer).expect("fixture parent must resolve");
+
+    match (operation, parent) {
+        ("insert", Value::Object(object)) => {
+            assert!(
+                object.insert(field.to_owned(), case["value"].clone()).is_none(),
+                "fixture insert target must not already exist"
+            );
+        }
+        ("remove", Value::Object(object)) => {
+            assert!(object.remove(field).is_some(), "fixture remove target must exist");
+        }
+        ("set", Value::Object(object)) => {
+            *object.get_mut(field).expect("fixture set target must exist") =
+                case["value"].clone();
+        }
+        ("set", Value::Array(array)) => {
+            let index = field.parse::<usize>().expect("array fixture field is an index");
+            *array.get_mut(index).expect("fixture array index must exist") =
+                case["value"].clone();
+        }
+        (other, _) => panic!("unsupported fixture operation or parent type: {other}"),
+    }
+}
+
+#[test]
+fn versioned_deserialization_fixtures_match_expected_diagnostics() {
+    let fixtures: Value = serde_json::from_str(include_str!(
+        "../../../../../fixtures/contracts/ofrl-ib-001-deserialization-diagnostics.v0.1.0.json"
+    ))
+    .expect("typed deserialization fixture manifest must be valid JSON");
+
+    assert_eq!(fixtures["fixture_version"], "0.1.0");
+    assert_eq!(
+        fixtures["base_fixture"],
+        "fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json"
+    );
+
+    let cases = fixtures["cases"]
+        .as_array()
+        .expect("fixture manifest must contain an array of cases");
+    assert_eq!(cases.len(), 9);
+
+    for case in cases {
+        let case_id = case["id"].as_str().expect("fixture case id");
+        let mut input = case_a();
+        apply_fixture_mutation(&mut input, case);
+
+        let report = validate_value(input);
+        let diagnostic = first(&report);
+        let actual_code = serde_json::to_value(diagnostic.code)
+            .expect("diagnostic code serializes")
+            .as_str()
+            .expect("diagnostic code is a string")
+            .to_owned();
+
+        assert_eq!(
+            actual_code,
+            case["expected"]["code"].as_str().expect("expected code"),
+            "{case_id}: diagnostic code mismatch"
+        );
+        assert_eq!(
+            diagnostic.json_pointer.as_deref(),
+            case["expected"]["json_pointer"].as_str(),
+            "{case_id}: JSON Pointer mismatch"
+        );
+        assert_eq!(
+            diagnostic.field.as_deref(),
+            case["expected"]["field"].as_str(),
+            "{case_id}: field context mismatch"
+        );
+        assert_eq!(
+            diagnostic.period_id.as_deref(),
+            case["expected"]["period_id"].as_str(),
+            "{case_id}: period context mismatch"
+        );
+    }
+}
+
 #[test]
 fn malformed_json_has_no_fabricated_pointer() {
     let report = validate_input_json(r#"{"schema_version":"0.1.0""#);
