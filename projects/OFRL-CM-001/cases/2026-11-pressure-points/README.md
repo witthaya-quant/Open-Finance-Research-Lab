@@ -33,7 +33,7 @@ The visible sequences are distinct, internally alphabetically ordered, and displ
 
 The page content reviewed on 2026-11-05 does not expose a complete prose rule specification that resolves the relationship between these elements. Secondary public research suggests a possible one-to-one mapping between the 76 visible marker/sequence entries and four cardinal vertices for each of the 19 emoji clues. A separate solver-status note reports the candidate phrase ANTWERPSCHE DIAMANTKRING. A further solver-status page says a write-up is forthcoming in December, but provides no worked derivation in the reviewed content. The 2026-11-05 review therefore found multiple public solver-status signals, but no complete derivation that OFRL can independently inspect. The phrase remains a hypothesis.
 
-A partial reconstruction now records ten candidate emoji themes: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, and joystick directions. External sources corroborate several category conventions; the Colorado/desert association is explicitly provisional. Each local letter residual is recorded without forcing the groups into a common transformation rule. A separate community discussion reports further candidate readings, including BUSQUETS, INIESTA, VIOLINS, and MERCURY, but does not supply a complete derivation. See H-004 to H-013 in the formalization record.
+A partial reconstruction now records twelve candidate emoji/member clusters: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, joystick directions, Queen's four classic members, and four footballer candidates (Gareth, Iniesta, Busquets, Messi). The Colorado/desert association remains provisional; the Queen and football clusters have identity cross-checks but no verified cardinal orientation. Exact residuals are preserved without forcing a common transformation rule. A separate community discussion reports further ungrouped readings, including VIOLINS and INSTABILITY, but does not supply a complete derivation. See H-004 to H-015 in the formalization record.
 
 The full sequence list, emoji sequence, images, and official solution are intentionally not copied into this repository.
 
@@ -45,7 +45,7 @@ The full sequence list, emoji sequence, images, and official solution are intent
 | Visible structure described without reproducing the puzzle | PASS |
 | Sequence counts and ordering properties checked | PASS |
 | Formal input and output semantics established | BLOCKED |
-| Ten candidate category/position groups documented with independent contextual references | PASS |
+| Twelve candidate category/member clusters documented with contextual identity or convention references; Queen/football cardinal order remains unresolved | PASS |
 | Local letter-count residuals reproduced for the documented candidate groups | PASS |
 | Community-reported anagram readings registered as unverified leads | PASS |
 | Secondary solver-status sources reviewed and correctly classified as leads, not proofs | PASS |
@@ -73,7 +73,7 @@ The full sequence list, emoji sequence, images, and official solution are intent
 10. What is the correct treatment of Ø within the 76-position model?
 11. Which community-reported readings are intended by the emoji clues, and how is ambiguity between valid anagrams resolved?
 
-These are questions, not proposed answers. Hypotheses H-001 to H-013 and blockers U-001 to U-010 are recorded in PROBLEM_FORMALIZATION.md §4 and must not be promoted to facts without a complete derivation.
+These are questions, not proposed answers. Hypotheses H-001 to H-015 and blockers U-001 to U-010 are recorded in PROBLEM_FORMALIZATION.md §4 and must not be promoted to facts without a complete derivation.
 
 ## 6. Next gate
 
@@ -94,7 +94,7 @@ All puzzle content remains attributable to Jane Street. OFRL does not claim owne
 
 **Current disposition: INCOMPLETE / BLOCKED — not solved and not ready for solver implementation.**
 
-The current research round has completed its permitted source and candidate-context review, but it has not closed the mathematical case. Ten of 19 emoji themes have provisional candidate groupings; the remaining groups, the role of Ø, a single global letter-residual rule, the output extraction, and independent verification of the candidate phrase remain unresolved. The Archive search-result text does not verify a solution hyperlink or provide the solution body. Public solver-status pages reviewed on 2026-11-05 do not supply a complete derivation.
+The current research round has completed its permitted source and candidate-context review, but it has not closed the mathematical case. Twelve of 19 emoji/member themes have provisional candidate groupings; the remaining groups, the role of Ø, a single global letter-residual rule, the output extraction, and independent verification of the candidate phrase remain unresolved. The Archive search-result text does not verify a solution hyperlink or provide the solution body. Public solver-status pages reviewed on 2026-11-05 do not supply a complete derivation.
 
 This is a **no-go for solver implementation under the evidence currently available**, not a claim that the puzzle is unsolvable and not a declaration that the case has been solved. Do not create a Cargo workspace, choose dependencies, or implement a solver while the correctness predicate remains undefined.
 

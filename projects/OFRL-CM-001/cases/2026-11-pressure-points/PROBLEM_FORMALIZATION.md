@@ -3,7 +3,7 @@
 # Pressure Points — Initial Problem Formalization
 
 **Case ID:** OFRL-CM-001-CS-001  
-**Formalization version:** 0.6.0  
+**Formalization version:** 0.7.0  
 **Source:** Jane Street, Pressure Points (November 2026)  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
@@ -184,6 +184,22 @@ Colorado also borders Nebraska to the northeast and Oklahoma to the southeast, a
 
 **H-013 — Community-reported candidate readings.** The Puzzling Stack Exchange discussion reports further decoded examples including BUSQUETS, INIESTA, VIOLINS, MERCURY, and INSTABILITY, alongside candidates such as GUJARAT, KANSAS, UTAH, WEST BENGAL, and STARBOARD. It also reports near-matches to place names: WYOMING with an additional N, MONTANA with an additional D, NEW MEXICO missing E, and HIMACHAL PRADESH with an additional G. These are user-generated candidate readings, not an authoritative grouping or a worked derivation. The discussion itself says that the puzzle page gives no written rules and explicitly leaves the meaning of the title, Ø, the emoji clues, and “(11 12)” unresolved. MONTANA + D is currently unassigned to any candidate emoji group.
 
+**H-014 — Music / Queen four-member candidate.** Four source alphagrams admit the candidate surnames DEACON, MERCURY, MAY, and TAYLOR, which are the classic four Queen members listed by the band's official site:
+- DEACON — exact anagram of source `ACDENO`.
+- MERCURY — exact anagram of source `CEMRRUY`.
+- MAY — source `AMNY` contains one additional N.
+- TAYLOR — source `AORTY` is missing L.
+
+The Queen-member identity is independently corroborated by QueenOnline; the letter residuals are preserved exactly. This makes the music-emoji association plausible, but it does not prove Jane Street intended this grouping, establish the four cardinal positions, or explain the residual transfer. H-014 is a candidate semantic cluster only.
+
+**H-015 — Football / four-player candidate.** Four source alphagrams admit the footballer-name candidates GARETH, INIESTA, BUSQUETS, and MESSI:
+- GARETH — exact anagram of source `AEGHRT`; Gareth Bale is the candidate identity.
+- INIESTA — exact anagram of source `AEIINST`.
+- BUSQUETS — exact anagram of source `BEQSSTUU`.
+- MESSI — source `EEIMSS` contains one additional E.
+
+Official Real Madrid and FC Barcelona profiles corroborate the named footballers. The football-emoji association is plausible, but the source data does not identify Gareth's surname, prove the intended four-person set, provide any cardinal orientation, or explain the +E residual. H-015 is a candidate semantic cluster only.
+
 ### Secondary-source status review — 2026-11-05
 
 The additional public sources reviewed in this session do not close a formalization blocker:
@@ -192,6 +208,8 @@ The additional public sources reviewed in this session do not close a formalizat
 - Kaia's current research note states that the author is establishing the exact 76-entry to 19 × 4 cardinal-vertex bijection and names `ANTWERPSCHE DIAMANTKRING` as the candidate output. The page reviewed does not expose the derivation, intermediate mapping, or independent verification.
 - Griffin Pinney's page reports a leaderboard placing and says “Notes to come in December”. It is a solver-status signal, not a mathematical explanation available for verification in this review.
 - The Puzzling Stack Exchange page is a user-generated question that records candidate anagrams and near-place-name residuals and asks what the title, Ø, emoji clues, and terminal notation mean. It is not a complete worked solution.
+- QueenOnline lists Freddie Mercury, Brian May, Roger Taylor, and John Deacon as the classic band members; this corroborates H-014's member identities, not the music-emoji association or cardinal order.
+- Real Madrid's official Gareth Bale profile and FC Barcelona's official profiles for Iniesta, Busquets, and Messi corroborate the player identities in H-015; these references do not establish the candidate grouping or cardinal order.
 - The Jane Street Archive search result displays November “Pressure Points” followed by “Puzzle Solution” text. The search result does not expose an anchor destination; the directly opened Archive HTML is a stale cached representation beginning at August 2026. No direct solution URL or solution body was retrieved.
 
 Accordingly, the candidate phrase remains externally reported but **not independently verified by OFRL**. A correct-submission list, a search-result label, or a solver-status statement cannot replace a complete derivation. No new group is promoted from a lead to an accepted mapping by this source review.
@@ -204,7 +222,7 @@ The exact local character-count residuals are preserved above. They must not be 
 
 
 
-**Evidence required before accepting any of H-001 through H-013:**
+**Evidence required before accepting any of H-001 through H-015:**
 1. Explain the semantic role of the leading marker and account for all 76 entries.
 2. Define the four positions and show why each emoji produces exactly four relevant vertices.
 3. Provide a reproducible mapping from every source entry to exactly one vertex, with no omissions or collisions.
@@ -219,7 +237,7 @@ The exact local character-count residuals are preserved above. They must not be 
 12. Reconcile every local character residual and the leading Ø under one explicit global rule, or document why a proposed group is false.
 13. Independently validate community-reported readings against the primary input, and distinguish those readings from the missing global mapping.
 
-Ten candidate emoji themes have now been recorded across H-004, H-006, and H-007 through H-012, with additional ungrouped community readings in H-013. Their category-level meanings and several positional conventions have supporting references, but Jane Street's intended grouping, the complete 76-entry bijection, Ø's role, the cross-group residual mechanism, and output extraction are not established. U-001 through U-010 remain unresolved. No algorithm family is selected and no solver is authorized by this update.
+Twelve candidate emoji/member clusters have now been recorded across H-004, H-006, and H-007 through H-012, plus H-014 and H-015, with additional ungrouped community readings in H-013. The Queen and football clusters have contextual identity support but no established cardinal orientation. Their candidate category meanings and several positional conventions have supporting references, but Jane Street's intended grouping, the complete 76-entry bijection, Ø's role, the cross-group residual mechanism, and output extraction are not established. U-001 through U-010 remain unresolved. No algorithm family is selected and no solver is authorized by this update.
 
 ## 5. Candidate model structure — intentionally unselected
 
@@ -260,6 +278,8 @@ Secondary research leads, accessed 2026-11-05:
 - [Puzzling Stack Exchange discussion](https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026) — exploratory observations and questions; not an authoritative rule statement.
 - [Kaia's current research notes](https://www.kaiaz.me/now/) — reports work toward a 76-to-(19 × 4) cardinal-vertex bijection and the candidate phrase; the reviewed page does not provide the full derivation.
 - [Griffin Pinney, November 2026 Pressure Points](https://griffinpinney.com/puzzles/jane_street/2026-11/) — reports a leaderboard placing and says notes are forthcoming in December; no worked derivation was present in the reviewed page.
+- [QueenOnline, The Band](https://www.queenonline.com/the_band) — verifies the four classic Queen member names used in H-014.
+- [Real Madrid, Gareth Bale](https://www.realmadrid.com/en-US/the-club/history/football-legends/gareth-bale/) and [FC Barcelona, Iniesta](https://www.fcbarcelona.com/en/football/barca-legends/players/4231989/iniesta), [Busquets](https://www.fcbarcelona.com/en/card/3569210/sergio-busquets), and [Messi](https://www.fcbarcelona.com/en/card/2214377/leo-messi) — corroborate the player identities used in H-015.
 - [Antwerpsche Diamantkring — About](https://diamantkring.be/about/) — confirms the organization is an Antwerp rough-diamond bourse and one of Antwerp's four diamond exchanges; entity corroboration only, not proof of the puzzle answer.
 - [Flemish Government / BELSPO, GARMON Final Report](https://omgeving.vlaanderen.be/sites/default/files/2022-02/ENG_GARMON_final_report_nov_2020.pdf), p. 45 — describes the Flemish Diamond as four agglomerations (Brussels, Ghent, Antwerp, Leuven) at the corners of an abstract diamond; contextual geography only, not puzzle-rule evidence.
 - [European Southern Observatory, Navigating the stars: the stories behind the Southern Cross](https://www.eso.org/public/blog/navigating-the-stars/) — confirms the four main stars of Crux.
@@ -286,3 +306,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.4.0 | 2026-11-05 | Added four explicit candidate cardinal layouts, independently sourced positional conventions, and reproducible letter-residual audits; no complete puzzle rule established |
 | 0.5.0 | 2026-11-05 | Added six further candidate themes, community-reported decoded readings, source cross-checks, and explicit evidence boundaries; no formalization blocker closed |
 | 0.6.0 | 2026-11-05 | Audited current secondary solver-status sources and corrected Archive search-result semantics; no complete derivation retrieved and no formalization blocker closed |
+| 0.7.0 | 2026-11-05 | Added two source-cross-checked candidate clusters (Queen members and footballers) with exact residual audits; no cardinal orientation or global rule established |

@@ -9,7 +9,7 @@
 **Pull request:** [#29](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Working branch:** `research/ofrl-cm-001-admission-and-pilot`  
 **Base branch:** `main`  
-**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this research-status update `abe55b41958756ef17bdc0fc8e82024a74f8f5e8`.  
+**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this candidate-cluster update `04400787062ecc0b84c6d75b5315d382a84979de`.  
 **Important:** These SHAs are historical checkpoints, not current write tokens. A new session MUST retrieve the current PR head SHA and branch state from GitHub before any write.
 
 ## 1. Purpose
@@ -94,7 +94,7 @@ Jane Street's [Puzzles introduction](https://www.janestreet.com/puzzles/) explic
 - The candidate words have lengths 11 and 12, consistent with the displayed `(11 12)`. This agreement alone does not prove the candidate. The official puzzle page lists correct submissions as of 2026-11-02; accepted submissions confirm that answers were submitted, not how the puzzle is derived.
 - The Puzzling question reports candidate readings (BUSQUETS, INIESTA, VIOLINS, MERCURY, INSTABILITY) and near-place-name residuals, but does not supply a complete derivation. The Archive search result displays November puzzle and “Puzzle Solution” text; the search result does not expose an anchor target. The directly opened Archive HTML is an older cached snapshot beginning at August 2026. A direct solution URL and official solution body have NOT been retrieved. Do not describe the search-result text as a verified solution link or inspected derivation.
 
-See hypotheses H-001 to H-013 and open questions O-001, O-004, O-005, O-006, and O-007 in the project documents. Secondary-source status checks are recorded in the 0.6.0 formalization note and DATA_MANIFEST.md SRC-023. Ten candidate theme groups are now recorded: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, and joystick directions. Their contextual conventions are supported by references, with the Colorado/desert interpretation explicitly provisional. The community discussion adds ungrouped candidate readings including BUSQUETS, INIESTA, VIOLINS, MERCURY, and INSTABILITY. Exact residuals and their limits are recorded in PROBLEM_FORMALIZATION.md. This is partial evidence for 10 of 19 themes, not a complete bijection; no global rule or output extraction has been demonstrated.
+See hypotheses H-001 to H-015 and open questions O-001, O-004, O-005, O-006, and O-007 in the project documents. Secondary-source status checks are recorded in the 0.7.0 formalization note and DATA_MANIFEST.md SRC-023–SRC-028. Twelve candidate theme/member groups are now recorded: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, joystick directions, Queen's four classic members, and four footballer candidates (Gareth, Iniesta, Busquets, Messi). The Colorado/desert interpretation remains provisional; the Queen and football clusters have no verified cardinal orientation. Their contextual identities and exact letter residuals are documented, but the emoji-to-group associations remain hypotheses. The community discussion also reports ungrouped candidate readings including VIOLINS and INSTABILITY. This is partial evidence for 12 of 19 themes, not a complete bijection; no global rule or output extraction has been demonstrated.
 
 ### Formalization gate
 
@@ -128,11 +128,11 @@ Only then design the smallest useful implementation and independent verifier. A 
 
 ## 7. CI and release status
 
-Before this research-status update, the following workflows succeeded on head `abe55b41958756ef17bdc0fc8e82024a74f8f5e8`:
+Before this candidate-cluster update, the following workflows succeeded on head `04400787062ecc0b84c6d75b5315d382a84979de`:
 
-- [OFRL Repository Policy run #41973857312](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857312)
-- [OFRL-IB-001 Numeric and Input Contract Checks run #41973857377](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857377)
-- [OFRL-IB-001 Rust Runtime Semantic Validator run #41973857189](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857189)
+- [OFRL Repository Policy run #41975605588](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857312)
+- [OFRL-IB-001 Numeric and Input Contract Checks run #41975605558](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857377)
+- [OFRL-IB-001 Rust Runtime Semantic Validator run #41975605580](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857189)
 
 The two OFRL-IB-001 workflows were triggered by repository event behavior; their execution does not authorize changes to OFRL-IB-001. These results apply only to the checkpoint SHA above and must be rechecked after this handoff commit.
 
