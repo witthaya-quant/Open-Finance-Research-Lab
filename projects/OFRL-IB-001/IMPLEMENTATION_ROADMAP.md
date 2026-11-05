@@ -93,6 +93,8 @@ Exit conditions:
 
 The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. The symbolic formula-chain and scale derivation is `NUMERIC_PROFILE_DERIVATION.md`. It identifies currently unbounded inputs and derives maximum-path formulas once Model Owner bounds are supplied. It deliberately preserves TBD values rather than fabricate limits.
 
+The branch also contains a candidate-neutral exact derivation tool (`tools/numeric-envelope/derive.cjs`), a versioned profile schema and a test-only synthetic fixture. It enumerates historical validator and forecast operation nodes using exact rational bounds, checks declared source precision and resource targets, and marks unresolved division policy as conditional. Its CI test fixture is not a proposed operating domain and does not grant any production approval.
+
 **Current domain finding:** V1 has no finite upper bound for revenue growth, COGS / revenue, Opex / revenue, DSO/DIO/DPO, CapEx / revenue, debt drawdowns or interest rate. The current Decimal parser ceiling of 28 fractional digits is only a source-field grammar limit; it is not proof that five forecast years of multiplications preserve that scale. A finite magnitude, scale and coefficient envelope cannot be certified until the owner approves finite bounds for all relevant drivers and opening/historical amounts.
 
 #### Workstream B — Production backend decision
