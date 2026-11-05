@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Backend Evaluation Protocol
 
-**Document version:** 0.3.0  
+**Document version:** 0.4.0  
 **Status:** Decision protocol — NO BACKEND SELECTED  
 **Scope:** OFRL-IB-001 V1 only  
 **Precondition:** A Model Owner-approved Numeric Profile and Finance/Accounting review  
@@ -37,7 +37,11 @@ The POC compares the complete V1 five-year formula path against exact-rational o
 
 The measured shared-runner timing observations used 5 warm-ups and 9 samples of 40 five-year forecasts for two synthetic inputs. They showed BigDecimal at approximately 1.50×–2.21× the fixed-Decimal median and Exact Rational at approximately 7.52×–10.30× in that single observed environment. The measurements do not include peak memory, allocations, tail latency under load, concurrency, file I/O, JSON decoding, validation, serialization or XLSX costs. They are observational, non-gating evidence.
 
-The POC's BigDecimal division path uses the test build's configured 80-significant-digit / HalfEven behaviour. Its current generic arithmetic adapter invokes the BigDecimal division operator directly; it does not demonstrate an immutable, per-ModelRun arithmetic context or prove that ambient/default context cannot affect production calculations. This gap must be closed before BigDecimal can be accepted.
+The PR #11 workflow sets `RUST_BIGDECIMAL_DEFAULT_PRECISION=80` and `RUST_BIGDECIMAL_DEFAULT_ROUNDING_MODE=HalfEven` at the job/build environment. The POC's `ArbitraryDecimal::div` implementation invokes `&self.0 / &rhs.0` directly; it does not pass a Context argument or demonstrate an immutable, per-ModelRun arithmetic context. Therefore the POC result is evidence for that configured build, not evidence that production can enforce the Numeric Profile's fixed fractional-scale policy per run.
+
+The pinned [BigDecimal 0.4.11 documentation](https://docs.rs/crate/bigdecimal/0.4.11) explains that its compile-time default precision governs operations that may produce infinite digits, while multiplication preserves all coefficient digits; runtime control requires explicit Context-aware operations. The [Context API](https://docs.rs/bigdecimal/0.4.11/bigdecimal/struct.Context.html) must be examined for a version-pinned implementation strategy, and the adapter must test the exact semantics of each operation rather than assume the operator overload shares a run-scoped Context. This gap must be closed before BigDecimal can be accepted.
+
+For comparison, the [rust_decimal 1.43.0 representation documentation](https://docs.rs/crate/rust_decimal/1.43.0) specifies a 96-bit unsigned integer mantissa, a scale from 0 through 28, and a separate sign bit. The candidate screen compares the unsigned coefficient magnitude with (2^{96}-1), not a signed two's-complement integer limit.
 
 The 10^18 and 10^22 monetary scaling probes are capacity probes only. They do not define a company-size limit or an admitted production input domain.
 
