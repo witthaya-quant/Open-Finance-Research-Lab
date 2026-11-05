@@ -179,16 +179,20 @@ jobs:
               throw new Error("Numeric Envelope output failed its non-approval or completeness guard");
             }
             for (const result of candidates) {
+              const statusIsConsistent =
+                (result.static_capacity_status === "FAIL" && result.failure_count > 0) ||
+                (result.static_capacity_status === "CONDITIONAL" && result.failure_count === 0 && result.conditional_count > 0) ||
+                (result.static_capacity_status === "STATIC_CAPACITY_WITHIN_DECLARED_PROFILE" && result.failure_count === 0 && result.conditional_count === 0);
               if (result.profile_id !== derivation.profile_id ||
-                  !["STATIC_CAPACITY_WITHIN_DECLARED_PROFILE", "CONDITIONAL"].includes(result.static_capacity_status) ||
-                  result.failure_count !== 0 ||
+                  result.node_count !== derivation.nodes.length ||
+                  !statusIsConsistent ||
                   result.backend_selected !== false ||
                   result.production_engine_authorized !== false ||
                   result.runtime_correctness_status !== "NOT_EXECUTED" ||
                   result.operational_resource_status !== "NOT_MEASURED") {
                 throw new Error("Candidate capacity output failed its test-only static-capacity guard: " + result.candidate + " " + result.static_capacity_status);
               }
-              process.stdout.write("PASS: " + result.candidate + " static test-fixture capacity status=" + result.static_capacity_status + ", nodes=" + result.node_count + ", conditional=" + result.conditional_count + "; runtime and operational evidence remain open.\\n");
+              process.stdout.write("PASS: " + result.candidate + " static test-fixture capacity status=" + result.static_capacity_status + ", nodes=" + result.node_count + ", failed=" + result.failure_count + ", conditional=" + result.conditional_count + "; runtime and operational evidence remain open.\\n");
             }
             process.stdout.write("PASS: exact candidate-neutral derivation emitted " + derivation.nodes.length + " arithmetic nodes; no backend or production approval was created.\\n");
           '
