@@ -21,6 +21,7 @@ This log records decisions specific to OFRL-CM-001. Lab-wide matters remain gove
 | D-006 | Limit work in progress to one active case study | Approved | Protects project focus and avoids uncontrolled backlog growth | CASE_STUDY_PROTOCOL.md |
 | D-007 | Do not require software or multiple solvers where mathematical analysis or proof is sufficient | Approved | Research output must be justified by the question, not by implementation volume | Research Specification and protocol |
 | D-008 | Assess financial-engineering transferability without forcing a positive conclusion | Approved | Preserves OFRL's finance orientation and research integrity | Research Specification and protocol |
+| D-009 | Adopt Rust as the default implementation language for computational software in OFRL-CM-001 when implementation is justified | Approved | Aligns the project with OFRL's Rust engineering direction while keeping research method-first; pure mathematical work does not require code | IMPLEMENTATION_APPROACH.md; no executable implementation is authorized by this decision |
 
 ## 2. Open decisions
 
@@ -55,4 +56,5 @@ Each deferred item requires a separate scope and evidence gate before work begin
 
 | Date | Decision ID | Change | Author | Pull Request / Issue |
 |---|---|---|---|---|
-| 2026-11-05 | D-001–D-008 | Initial approved project baseline | Kenny | Issue #29; admission PR pending |
+| 2026-11-05 | D-001–D-008 | Initial approved project baseline | Kenny | Issue #29; PR #29 |
+| 2026-11-05 | D-009 | Rust-first implementation direction adopted for justified computational software | Kenny | PR #29 |

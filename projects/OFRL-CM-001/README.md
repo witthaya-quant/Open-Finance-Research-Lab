@@ -34,7 +34,7 @@ The only portfolio-level relationship is the shared OFRL governance and the cent
 
 How can selected mathematical and computational problems be translated into explicit formal models, investigated using suitable alternative methods, and verified in a reproducible way, while identifying which insights have a defensible connection to quantitative research or financial engineering?
 
-The project does not assume that every case requires software, multiple solvers, or a finance application.
+The project does not assume that every case requires software, multiple solvers, or a finance application. When computational software is justified, Rust is the project's default implementation language under the project-specific [Implementation Approach](IMPLEMENTATION_APPROACH.md).
 
 ## Scope
 
@@ -59,7 +59,7 @@ The project does not assume that every case requires software, multiple solvers,
 
 | Deliverable | Status | Evidence |
 |---|---|---|
-| Separate project identity and manifest | Prepared in this branch | project.json; registry CI pending |
+| Separate project identity and manifest | Prepared in this branch | project.json; repository-policy CI passed on PR revision |
 | Project research specification | Prepared | RESEARCH_SPECIFICATION.md |
 | Shared case-study protocol | Prepared | CASE_STUDY_PROTOCOL.md |
 | First-pilot source record | Prepared | DATA_MANIFEST.md |

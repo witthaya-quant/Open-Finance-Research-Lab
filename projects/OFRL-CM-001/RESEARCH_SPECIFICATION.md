@@ -64,6 +64,8 @@ The project uses the seven-stage protocol in [CASE_STUDY_PROTOCOL.md](CASE_STUDY
 
 A candidate algorithm is not evidence that the problem has been correctly understood. A passing example is not proof of completeness, uniqueness, or correctness over the full input domain.
 
+When executable computational work is justified, Rust is the default implementation language for this project. The project-specific [Implementation Approach](IMPLEMENTATION_APPROACH.md) defines the engineering, verification, reproducibility, and supply-chain controls. This does not require code for a case that is better answered through proof or analysis.
+
 ## 6. Evaluation design
 
 Evaluation criteria are selected per case and documented before interpreting comparative results where practicable.

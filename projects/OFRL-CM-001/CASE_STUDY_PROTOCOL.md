@@ -51,6 +51,8 @@ For each selected method, document:
 
 Do not implement multiple methods merely to increase the number of implementations. A comparative study is justified only when the alternatives answer a real research question.
 
+When executable computational work is justified, Rust is the default implementation language for OFRL-CM-001. Follow [IMPLEMENTATION_APPROACH.md](IMPLEMENTATION_APPROACH.md) for typed domain boundaries, deterministic computation, independent verification, dependency controls, and testing. Do not create software merely to satisfy the language preference.
+
 ## 5. Stage 4 — Independent verification
 
 Where a solver or computational method is implemented, separate the candidate generator from the verifier.

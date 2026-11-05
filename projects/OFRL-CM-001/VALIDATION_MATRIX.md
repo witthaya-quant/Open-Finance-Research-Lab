@@ -33,6 +33,7 @@ A green metadata workflow does not prove mathematical correctness. Evidence matu
 | VAL-008 | Financial-engineering transfer | Research interpretation | Explicit mapping and assumption analysis | Any claimed transfer identifies preserved properties, changed assumptions, and further evidence; no transfer is an acceptable conclusion | BLOCKED | Research Specification §10; pilot rule semantics unresolved | Project Owner |
 | VAL-009 | Reproducibility of published findings | Publication | Clean-environment reproduction from versioned inputs and instructions | A competent reader can reproduce every material reported result | NOT RUN | No computational result is claimed | Project Owner |
 | VAL-010 | Research claims and evidence maturity | Publication | Review claims against evidence levels 0–4 | No claim exceeds the evidence actually obtained | PASS | Manifest maturity 0; no solver or solution claim | Project Owner |
+| VAL-011 | Rust implementation architecture and supply-chain controls | Implementation admission | Review against IMPLEMENTATION_APPROACH.md before executable code is added | Rust is used where implementation is justified; toolchain, MSRV, dependency, test, verifier, and reproducibility decisions are documented; no IB-001 components are reused | NOT RUN | No executable code or Cargo workspace exists in this revision | Project Owner |
 
 ## 3. Initial-pilot structural checks
 
@@ -55,6 +56,7 @@ These checks establish representation-level properties only; they do not resolve
 | TEST-003 | Case source attribution review | Manual | DATA_MANIFEST.md | Primary source and purpose correctly attributed | Official URLs and access date recorded | PASS | Manual source review |
 | TEST-004 | Puzzle rule completeness | Research review | Original source and formalization | Every correctness-critical rule traced to source | Source semantics remain incomplete | BLOCKED | Manual research gate |
 | TEST-005 | Visible sequence structural consistency | Structural inspection | Official source representation | Count, uniqueness, internal ordering, overall ordering, and length totals are internally consistent | 75 distinct sequences; 504 letters; observed ordering properties checked | PASS | Structural analysis recorded in PROBLEM_FORMALIZATION.md |
+| TEST-006 | Rust implementation quality gates | Engineering validation | Project-local Cargo workspace and CI, when admitted | Formatting, Clippy, locked tests, documentation, and project-specific validation pass on the declared toolchain | No Rust implementation has been admitted | NOT RUN | Future OFRL-CM-001 workflow |
 
 ## 5. Known gaps and exceptions
 
