@@ -291,10 +291,19 @@ function validateProfile(p) {
     if (key === "revenue_growth_max") continue;
     parseNonNegativeDecimal(value, "forecast_drivers." + key);
     const isDays = ["dso_max", "dio_max", "dpo_max"].includes(key);
+    const isMoney = key === "debt_drawdowns_max_per_period";
     assertFitsSourcePrecision(
       value,
-      isDays ? p.source_precision.days_max_integer_digits : p.source_precision.ratio_max_integer_digits,
-      isDays ? p.source_precision.days_max_fraction_digits : p.source_precision.ratio_max_fraction_digits,
+      isDays
+        ? p.source_precision.days_max_integer_digits
+        : isMoney
+          ? p.source_precision.monetary_max_integer_digits
+          : p.source_precision.ratio_max_integer_digits,
+      isDays
+        ? p.source_precision.days_max_fraction_digits
+        : isMoney
+          ? p.source_precision.monetary_max_fraction_digits
+          : p.source_precision.ratio_max_fraction_digits,
       "forecast_drivers." + key
     );
   }
@@ -427,7 +436,9 @@ function createDerivation(profile) {
   }
   const D = {};
   for (const [key, value] of Object.entries(drivers)) {
-    const scale = ["dso_max", "dio_max", "dpo_max"].includes(key) ? daysScale : ratioScale;
+    const isDays = ["dso_max", "dio_max", "dpo_max"].includes(key);
+    const isMoney = key === "debt_drawdowns_max_per_period";
+    const scale = isDays ? daysScale : isMoney ? monetaryScale : ratioScale;
     D[key] = key === "revenue_growth_max"
       ? { ...parseSignedDecimal(value, "forecast_drivers." + key), scale }
       : amount(value, "forecast_drivers." + key, scale);
