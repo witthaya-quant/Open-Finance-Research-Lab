@@ -77,10 +77,15 @@
     "tax_rate_max": "0.20",
     "dividend_payout_ratio_max": "0.20"
   },
+  "arithmetic_policy": {
+    "division_fractional_scale": null,
+    "division_rounding_mode": null,
+    "reporting_fraction_digits": null,
+    "reporting_rounding_mode": null
+  },
   "resource_limits": {
     "max_intermediate_scale": 28,
     "max_coefficient_digits": 40,
-    "division_precision_digits": 28,
     "max_input_bytes": 1048576,
     "max_cpu_ms": 1000,
     "max_peak_memory_mib": 128,
