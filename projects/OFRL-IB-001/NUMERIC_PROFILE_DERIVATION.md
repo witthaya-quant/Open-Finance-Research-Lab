@@ -644,7 +644,7 @@ The separate `tools/numeric-envelope/candidate-capacity.cjs` evaluates a generat
 
 For `rust_decimal 1.43.0`, the screen checks both:
 - scale no greater than 28; and
-- the exact non-negative coefficient-integer upper bound no greater than the signed 96-bit maximum, `79228162514264337593543950335`.
+- the exact non-negative coefficient-integer upper bound no greater than the 96-bit unsigned mantissa maximum, `79228162514264337593543950335`; the sign is stored separately.
 
 This is deliberately an integer comparison, not a digit-count heuristic: two 29-digit coefficients can lie on opposite sides of the 96-bit maximum. The test suite covers the exact maximum, one integer above it, and a value one integer below it.
 
@@ -674,7 +674,7 @@ A finite numerical envelope cannot be certified until the unbounded fields above
 
 ### 6.1 rust_decimal
 
-The POC evaluates `rust_decimal 1.43.0`, whose candidate representation uses a signed 96-bit mantissa with scale from 0 through 28. For a stored scale \(s\), exact representation requires the magnitude to fit the mantissa after scaling:
+The POC evaluates `rust_decimal 1.43.0`, whose candidate representation uses a 96-bit unsigned mantissa with a separate sign bit and scale from 0 through 28. For a stored scale \(s\), exact representation requires the magnitude to fit the mantissa after scaling:
 
 \[
 |x|\,10^s \le 2^{96}-1
