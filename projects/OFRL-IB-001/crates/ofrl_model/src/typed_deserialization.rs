@@ -114,7 +114,7 @@ fn validate_value(value:&Value,shape:&Shape,path:&mut Vec<String>)->Result<(),Fa
   },
   Shape::Enum(variants)=>{
    let Some(actual)=value.as_str() else{return Err(fail(DiagnosticCode::JsonTypeMismatch,DiagnosticCategory::InputSyntax,"An enumeration field has the wrong JSON type.",Some("string"),Some(json_type(value)),path));};
-   if variants.contains(&actual){Ok(())}else{Err(fail(DiagnosticCode::InvalidEnumValue,DiagnosticCategory::Schema,"The input contains a value outside the declared enumeration.",Some(variants.join(", ")),Some(actual),path))}
+   if variants.contains(&actual){Ok(())}else{Err(Failure{code:DiagnosticCode::InvalidEnumValue,category:DiagnosticCategory::Schema,message:"The input contains a value outside the declared enumeration.",expected:Some(variants.join(", ")),actual:Some(actual.to_owned()),path:path.to_vec()})}
   },
   Shape::Object(fields)=>{
    let Some(object)=value.as_object() else{return Err(fail(DiagnosticCode::JsonTypeMismatch,DiagnosticCategory::InputSyntax,"An object field has the wrong JSON type.",Some("object"),Some(json_type(value)),path));};
