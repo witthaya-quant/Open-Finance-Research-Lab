@@ -516,6 +516,7 @@ function createDerivation(profile) {
   let priorAccumDep = O.accumulated_depreciation_max;
   let priorRetainedEarnings = O.retained_earnings_absolute_max;
   let priorShareCapital = O.share_capital_max;
+  let priorCash = O.cash_max;
 
   const openingNetPpe = record(
     "history.opening.net_ppe_absolute_bound", O.gross_ppe_max.value, monetaryScale,
@@ -677,6 +678,7 @@ function createDerivation(profile) {
     priorAccumDep = b.accumulated_depreciation_max;
     priorRetainedEarnings = b.retained_earnings_absolute_max;
     priorShareCapital = b.share_capital_max;
+    priorCash = b.cash_max;
   }
 
   // Forecast engine bounds, five periods. Repayment is limited by available
