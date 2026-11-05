@@ -105,7 +105,11 @@ The first reproducible case will use synthetic data created specifically for thi
 
 The current `main` branch contains the input contract, historical semantic validator, repository governance controls, project registry/data controls, unfiltered Rust validation workflows, the isolated Decimal Contract POC lockfile, and a preview-only SBOM/checksum workflow for the existing Linux CLI input validator. The preview workflow does not represent a released forecast model.
 
-PR #13 remains an open Draft. It contains the bounded CLI input reader, shared Schema/Rust contract corpus, engineering audit, system design, roadmap, Numeric Profile schema/worksheet, exact candidate-neutral derivation tool, division-error propagation and Numeric Backend Evaluation Protocol. The code-tested implementation head emitted 332 formula nodes and passed 17/17 Numeric Envelope tests; the latest documentation head passed all six required contexts and the additional Numeric Envelope Derivation check. These changes remain branch-local and are not merged production capability. PR #13 remains Draft and unmerged pending review.
+PR #13 remains an open Draft. It contains the bounded CLI input reader, shared Schema/Rust contract corpus, engineering audit, system design, roadmap, Numeric Profile schema/worksheet, exact candidate-neutral derivation tool, division-error propagation, a candidate-specific static capacity evaluator and the Numeric Backend Evaluation Protocol.
+
+The latest code-tested candidate-capacity increment passed all six required Ruleset contexts and 30/30 Numeric Envelope tests on the branch. The test-only fixture emits 287 arithmetic nodes. Static screening reports `rust_decimal 1.43.0` FAIL on 37 nodes (96-bit coefficient and/or scale 0–28 limits) and `bigdecimal 0.4.11` CONDITIONAL on 50 nodes because the fixture leaves division scale unresolved. These are test-only static-capacity observations, not a production-domain or backend decision. The BigDecimal POC's 80-significant-digit compile-time context is not equivalent to the current fixed-fractional-scale Numeric Profile policy.
+
+The implementation, tests and new tools remain branch-local and are not merged production capability. PR #13 remains Draft pending review.
 
 The Ruleset on `main` is active with six exact required contexts. Documentation-only and project-code smoke PRs (#24 and #27) each passed all six contexts and were closed without merging.
 
