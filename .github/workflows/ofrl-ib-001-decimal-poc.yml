@@ -204,6 +204,11 @@ jobs:
 
       - name: Package and checksum Numeric Envelope evidence
         shell: bash
+        env:
+          SOURCE_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          SOURCE_REF: ${{ github.head_ref || github.ref_name }}
+          WORKFLOW_CHECKOUT_SHA: ${{ github.sha }}
+          WORKFLOW_EVENT: ${{ github.event_name }}
         run: |
           set -euo pipefail
           evidence_dir="$RUNNER_TEMP/ofrl-numeric-envelope-evidence"
@@ -217,7 +222,11 @@ jobs:
           cat > "$evidence_dir/EVIDENCE.md" <<EOF
           # OFRL-IB-001 Numeric Envelope CI Evidence
 
-          - Commit: $GITHUB_SHA
+          - Source head commit: $SOURCE_HEAD_SHA
+          - Source ref: $SOURCE_REF
+          - Workflow event: $WORKFLOW_EVENT
+          - Workflow checkout SHA (pull_request merge ref when applicable): $WORKFLOW_CHECKOUT_SHA
+          - Checked-out Git tree SHA: $(git rev-parse HEAD)
           - Profile approval state: test_only
           - Candidate backend selected: false
           - Production engine authorized: false
@@ -242,7 +251,7 @@ jobs:
       - name: Upload Numeric Envelope evidence bundle
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0 (Node.js 24)
         with:
-          name: ofrl-ib-001-numeric-envelope-test-only-${{ github.sha }}
+          name: ofrl-ib-001-numeric-envelope-test-only-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/ofrl-numeric-envelope-evidence/
           if-no-files-found: error
           compression-level: 9
