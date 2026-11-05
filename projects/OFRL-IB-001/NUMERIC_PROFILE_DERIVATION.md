@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Profile Derivation and Backend Decision Basis
 
-**Document version:** 0.3.0  
+**Document version:** 0.4.0  
 **Status:** Engineering derivation — NOT AN APPROVED NUMERIC PROFILE  
 **Scope:** V1 generic non-financial operating company; three historical periods; five forecast periods  
 **Reference implementation:** Numeric Envelope POC, branch `research/ofrl-ib-001-numeric-envelope`  
@@ -549,6 +549,73 @@ RE_t=RE_{t-1}+NI_t-Dividends_t
 For the arithmetic path, derive the addition intermediate first and then the subtraction intermediate. The domain rule (Repayments_t le DebtAvailable_t) and the PP&E domain rule (AccumDep_t le GrossPPE_t) constrain valid inputs/results, but they do not remove the need to bound the intermediate additions.
 
 A single historical profile section is applied to each of the three historical periods, while opening-balance bounds are kept separate. This is a conservative repeated-period envelope. If the intended historical data domain differs by period, the profile schema should be versioned to express period-specific bounds rather than silently reusing a common limit.
+
+### Division-rounding error propagation
+
+The current V1 forecast path has three non-terminating day-basis divisions per period:
+
+\[
+AR_t = \frac{Revenue_t \times DSO_t}{365},\quad
+Inventory_t = \frac{COGS_t \times DIO_t}{365},\quad
+AP_t = \frac{COGS_t \times DPO_t}{365}
+\]
+
+Let \(s_d\) be the selected maximum fractional scale after these divisions, and let \(q=10^{-s_d}\) be one output quantum. Under a nearest rounding mode (\`half_even\` or \`half_up\`), the per-division absolute rounding error is bounded by:
+
+\[
+\varepsilon_d \le \frac{q}{2}
+\]
+
+Under directed rounding (\`toward_zero\` or \`away_from_zero\`), use the conservative bound:
+
+\[
+\varepsilon_d \le q
+\]
+
+The candidate-neutral propagation implemented in the tool uses the absolute-value triangle inequality:
+
+\[
+E_{NWC,t} \le 3\varepsilon_d
+\]
+
+\[
+E_{\Delta NWC,1} \le 3\varepsilon_d
+\]
+
+\[
+E_{\Delta NWC,t} \le E_{NWC,t}+E_{NWC,t-1}
+\le 6\varepsilon_d,\quad t\ge 2
+\]
+
+Because V1 has no circular cash sweep or cash-dependent operating driver, the conservative closing-cash error accumulates these period CFO errors:
+
+| Forecast period | Closing-cash absolute error bound |
+|---|---:|
+| Year 1 | \(3\varepsilon_d\) |
+| Year 2 | \(9\varepsilon_d\) |
+| Year 3 | \(15\varepsilon_d\) |
+| Year 4 | \(21\varepsilon_d\) |
+| Year 5 | \(27\varepsilon_d\) |
+
+For the Balance Sheet identity, rounded cash, AR, inventory and AP may all contribute. Without assuming error cancellation:
+
+\[
+E_{BS,t}
+\le
+E_{Cash,t}+E_{AR,t}+E_{Inventory,t}+E_{AP,t}
+\le 30\varepsilon_d
+\]
+
+The derivation compares four separate budgets:
+
+- **Arithmetic approximation:** maximum material forecast-line error, conservatively the five-year closing-cash bound.
+- **Accounting identity:** maximum Balance Sheet residual bound.
+- **Schedule roll-forward:** maximum NWC/cash schedule value error.
+- **Display/export:** decimal-formatting round-off implied by reporting fractional digits and reporting rounding mode.
+
+The derivation assumes non-division additions, subtractions and multiplications are exact within the approved representation envelope, divisions by two use an exact terminating decimal representation, and no circular/feedback dependency causes rounded values to re-enter upstream drivers. A candidate that rounds multiplication results, reduces scale silently, or uses a different division policy requires additional terms or a revised propagation graph.
+
+The display bound covers decimal rounding only. It does **not** cover IEEE-754 conversion into XLSX numeric cells, spreadsheet recalculation, or Excel's 15-significant-digit behavior; those require exporter-specific tests and independent reconciliation. A budget PASS under this formula is conditional on the declared policy and assumptions, not proof that a candidate backend implements them correctly.
 
 ### Machine-generated derivation
 
