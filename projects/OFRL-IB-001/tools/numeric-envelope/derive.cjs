@@ -485,27 +485,28 @@ function createDerivation(profile) {
       : amount(value, "forecast_drivers." + key, scale);
   }
 
-  // Historical validator arithmetic: opening Balance Sheet and three
-  // independently bounded historical periods. Historical input fields are
-  // bounded separately from forecast assumptions; no ratio inference is used.
-  let priorNwc = add("history.opening.nwc", [
-    O.accounts_receivable_max, O.inventory_max, O.accounts_payable_max
+  // Historical validator arithmetic: opening Balance Sheet plus each of the
+  // three historical periods. These are independent input bounds; historical
+  // amounts are not inferred from forecast operating ratios.
+  let priorNwc = add("history.opening.nwc.ar_plus_inventory_bound", [
+    O.accounts_receivable_max, O.inventory_max
+  ]);
+  priorNwc = add("history.opening.nwc_absolute_bound", [
+    priorNwc, O.accounts_payable_max
   ]);
   let priorDebt = O.interest_bearing_debt_max;
   let priorGrossPpe = O.gross_ppe_max;
   let priorAccumDep = O.accumulated_depreciation_max;
   let priorRetainedEarnings = O.retained_earnings_absolute_max;
-  let priorCash = O.cash_max;
-  const hist = H;
 
   const openingNetPpe = record(
-    "history.opening.net_ppe_bound", O.gross_ppe_max.value, monetaryScale,
+    "history.opening.net_ppe_absolute_bound", O.gross_ppe_max.value, monetaryScale,
     "net_ppe_is_bounded_by_gross_ppe_under_input_domain"
   );
-  const openingAssets = add("history.opening.total_assets_bound", [
+  add("history.opening.balance_sheet.total_assets_bound", [
     O.cash_max, O.accounts_receivable_max, O.inventory_max, openingNetPpe
   ]);
-  const openingLe = add("history.opening.total_liabilities_equity_bound", [
+  add("history.opening.balance_sheet.total_liabilities_equity_bound", [
     O.accounts_payable_max, O.interest_bearing_debt_max,
     O.share_capital_max, O.retained_earnings_absolute_max
   ]);
@@ -516,63 +517,138 @@ function createDerivation(profile) {
     const b = hist.balance_sheet;
     const c = hist.cash_flow_statement;
 
-    const historicalNetIncome = add(prefix + ".income_statement.recomputed_net_income_bound", [
-      i.revenue_absolute_max, i.cogs_absolute_max, i.operating_expenses_absolute_max,
-      i.depreciation_absolute_max, i.interest_expense_absolute_max,
-      i.income_tax_expense_absolute_max
+    // Historical Income Statement: preserve the implementation's sequential
+    // subtraction path with conservative absolute-value triangle bounds.
+    let incomeSubtotal = add(prefix + ".income_statement.after_revenue_minus_cogs", [
+      i.revenue_absolute_max, i.cogs_absolute_max
     ]);
-    const netPpe = record(prefix + ".balance_sheet.net_ppe_bound",
+    incomeSubtotal = add(prefix + ".income_statement.after_operating_expenses", [
+      incomeSubtotal, i.operating_expenses_absolute_max
+    ]);
+    incomeSubtotal = add(prefix + ".income_statement.after_depreciation", [
+      incomeSubtotal, i.depreciation_absolute_max
+    ]);
+    incomeSubtotal = add(prefix + ".income_statement.after_interest", [
+      incomeSubtotal, i.interest_expense_absolute_max
+    ]);
+    const recomputedNetIncome = add(prefix + ".income_statement.recomputed_net_income", [
+      incomeSubtotal, i.income_tax_expense_absolute_max
+    ]);
+    add(prefix + ".income_statement.net_income_comparison_bound", [
+      recomputedNetIncome, i.net_income_absolute_max
+    ]);
+
+    // Historical Balance Sheet identity and NWC arithmetic.
+    const netPpe = record(prefix + ".balance_sheet.net_ppe_absolute_bound",
       b.gross_ppe_max.value, monetaryScale,
       "net_ppe_is_bounded_by_gross_ppe_under_input_domain");
-    const totalAssets = add(prefix + ".balance_sheet.total_assets_bound", [
+    add(prefix + ".balance_sheet.total_assets_bound", [
       b.cash_max, b.accounts_receivable_max, b.inventory_max, netPpe
     ]);
-    const totalLe = add(prefix + ".balance_sheet.total_liabilities_equity_bound", [
+    add(prefix + ".balance_sheet.total_liabilities_equity_bound", [
       b.accounts_payable_max, b.interest_bearing_debt_max,
       b.share_capital_max, b.retained_earnings_absolute_max
     ]);
-    const currentNwc = add(prefix + ".balance_sheet.nwc_bound", [
-      b.accounts_receivable_max, b.inventory_max, b.accounts_payable_max
+    const currentNwcSubtotal = add(prefix + ".balance_sheet.nwc_ar_plus_inventory", [
+      b.accounts_receivable_max, b.inventory_max
     ]);
-    const deltaNwc = add(prefix + ".cash_flow.change_nwc_calculation_bound", [
+    const currentNwc = add(prefix + ".balance_sheet.nwc_absolute_bound", [
+      currentNwcSubtotal, b.accounts_payable_max
+    ]);
+    const deltaNwc = add(prefix + ".cash_flow.nwc_change_subtraction_bound", [
       currentNwc, priorNwc
     ]);
-    const cfo = add(prefix + ".cash_flow.cfo_calculation_bound", [
-      c.net_income_absolute_max, c.depreciation_addback_absolute_max, deltaNwc
+    add(prefix + ".cash_flow.nwc_reported_comparison_bound", [
+      deltaNwc, c.change_in_operating_nwc_absolute_max
     ]);
-    const cfi = c.capex_absolute_max;
-    const cff = add(prefix + ".cash_flow.cff_calculation_bound", [
-      c.debt_drawdowns_absolute_max, c.principal_repayments_absolute_max,
-      c.dividends_absolute_max
+
+    // Historical Cash Flow Statement: match each checked operation in order.
+    const cfoSubtotal = add(prefix + ".cash_flow.cfo_net_income_plus_depreciation", [
+      c.net_income_absolute_max, c.depreciation_addback_absolute_max
     ]);
-    const netCash = add(prefix + ".cash_flow.net_change_calculation_bound", [cfo, cfi, cff]);
-    const closingCash = add(prefix + ".cash_flow.closing_cash_calculation_bound", [
+    const cfo = add(prefix + ".cash_flow.cfo_after_nwc_subtraction", [
+      cfoSubtotal, c.change_in_operating_nwc_absolute_max
+    ]);
+    add(prefix + ".cash_flow.cfo_comparison_bound", [
+      cfo, c.cash_from_operations_absolute_max
+    ]);
+    const cfi = c.capex_absolute_max; // checked 0 - CapEx
+    add(prefix + ".cash_flow.cfi_comparison_bound", [
+      cfi, c.cash_from_investing_absolute_max
+    ]);
+    const cffAfterRepayment = add(prefix + ".cash_flow.cff_drawdown_less_repayment", [
+      c.debt_drawdowns_absolute_max, c.principal_repayments_absolute_max
+    ]);
+    const cff = add(prefix + ".cash_flow.cff_after_dividends", [
+      cffAfterRepayment, c.dividends_absolute_max
+    ]);
+    add(prefix + ".cash_flow.cff_comparison_bound", [
+      cff, c.cash_from_financing_absolute_max
+    ]);
+    const operatingAndInvesting = add(prefix + ".cash_flow.cfo_plus_cfi", [cfo, cfi]);
+    const netCash = add(prefix + ".cash_flow.net_change_after_cff", [
+      operatingAndInvesting, cff
+    ]);
+    add(prefix + ".cash_flow.net_change_comparison_bound", [
+      netCash, c.net_change_in_cash_absolute_max
+    ]);
+    const closingCash = add(prefix + ".cash_flow.closing_cash_rollforward", [
       c.opening_cash_absolute_max, netCash
     ]);
-    const grossPpeExpected = add(prefix + ".rollforward.gross_ppe_expected_bound", [
+    add(prefix + ".cash_flow.closing_cash_comparison_bound", [
+      closingCash, c.closing_cash_absolute_max
+    ]);
+    add(prefix + ".cash_flow.balance_sheet_cash_tieout_bound", [
+      c.closing_cash_absolute_max, b.cash_max
+    ]);
+
+    // Historical PP&E, debt and retained-earnings roll-forwards.
+    const grossPpeExpected = add(prefix + ".rollforward.gross_ppe_opening_plus_capex", [
       priorGrossPpe, c.capex_absolute_max
     ]);
-    const accumDepExpected = add(prefix + ".rollforward.accumulated_depreciation_expected_bound", [
+    add(prefix + ".rollforward.gross_ppe_comparison_bound", [
+      grossPpeExpected, b.gross_ppe_max
+    ]);
+    const accumDepExpected = add(prefix + ".rollforward.accumulated_depreciation_opening_plus_depreciation", [
       priorAccumDep, i.depreciation_absolute_max
     ]);
-    const debtAvailable = add(prefix + ".rollforward.debt_available_bound", [
+    add(prefix + ".rollforward.accumulated_depreciation_comparison_bound", [
+      accumDepExpected, b.accumulated_depreciation_max
+    ]);
+    const debtAvailable = add(prefix + ".rollforward.debt_opening_plus_drawdowns", [
       priorDebt, c.debt_drawdowns_absolute_max
     ]);
-    const retainedEarningsExpected = add(
-      prefix + ".rollforward.retained_earnings_expected_bound", [
-        priorRetainedEarnings, i.net_income_absolute_max, c.dividends_absolute_max
+    const closingDebt = add(prefix + ".rollforward.debt_after_repayment_subtraction", [
+      debtAvailable, c.principal_repayments_absolute_max
+    ]);
+    add(prefix + ".rollforward.debt_comparison_bound", [
+      closingDebt, b.interest_bearing_debt_max
+    ]);
+    const retainedEarningsBeforeDividends = add(
+      prefix + ".rollforward.retained_earnings_opening_plus_net_income", [
+        priorRetainedEarnings, i.net_income_absolute_max
       ]
     );
+    const retainedEarningsExpected = add(
+      prefix + ".rollforward.retained_earnings_after_dividend_subtraction", [
+        retainedEarningsBeforeDividends, c.dividends_absolute_max
+      ]
+    );
+    add(prefix + ".rollforward.retained_earnings_comparison_bound", [
+      retainedEarningsExpected, b.retained_earnings_absolute_max
+    ]);
 
-    // Each historical year can independently attain the declared input maxima.
+    // A comparison between two already-computed values performs no arithmetic;
+    // share-capital constancy is likewise a direct comparison only.
+    add(prefix + ".rollforward.share_capital_comparison_bound", [
+      priorRetainedEarnings, b.share_capital_max
+    ]);
+
     priorNwc = currentNwc;
     priorDebt = b.interest_bearing_debt_max;
     priorGrossPpe = b.gross_ppe_max;
     priorAccumDep = b.accumulated_depreciation_max;
     priorRetainedEarnings = b.retained_earnings_absolute_max;
-    priorCash = b.cash_max;
-    void totalAssets; void totalLe; void historicalNetIncome; void grossPpeExpected;
-    void accumDepExpected; void debtAvailable; void retainedEarningsExpected; void priorCash;
   }
 
   // Forecast engine bounds, five periods. Repayment is limited by available
