@@ -254,8 +254,8 @@ function validateProfile(p) {
   const roundingModes = ["half_even", "half_up", "toward_zero", "away_from_zero"];
   const divisionScale = p.arithmetic_policy.division_fractional_scale;
   if (divisionScale !== null &&
-      (!Number.isSafeInteger(divisionScale) || divisionScale < 1 || divisionScale > 10000)) {
-    throw new Error("arithmetic_policy.division_fractional_scale must be null or an integer from 1 to 10000");
+      (!Number.isSafeInteger(divisionScale) || divisionScale < 0 || divisionScale > 10000)) {
+    throw new Error("arithmetic_policy.division_fractional_scale must be null or an integer from 0 to 10000");
   }
   const reportingDigits = p.arithmetic_policy.reporting_fraction_digits;
   if (reportingDigits !== null &&
@@ -275,7 +275,7 @@ function validateProfile(p) {
   ];
   assertObject(p.resource_limits, "resource_limits", resourceKeys);
   for (const key of resourceKeys) {
-    if (!Number.isSafeInteger(p.resource_limits[key]) || p.resource_limits[key] <= 0) {
+    if (!Number.isSafeInteger(p.resource_limits[key]) || (key === "max_intermediate_scale" ? p.resource_limits[key] < 0 : p.resource_limits[key] <= 0)) {
       throw new Error("resource_limits." + key + " must be a positive safe integer");
     }
   }
