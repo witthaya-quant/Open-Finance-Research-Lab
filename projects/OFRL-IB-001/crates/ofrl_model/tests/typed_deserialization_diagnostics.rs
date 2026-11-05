@@ -147,7 +147,6 @@ fn decimal_out_of_range_reports_range_code() {
     ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
 
-
 fn value_at_pointer_mut<'a>(root: &'a mut Value, pointer: &str) -> Option<&'a mut Value> {
     let mut current = root;
     if pointer.is_empty() {
@@ -170,28 +169,39 @@ fn value_at_pointer_mut<'a>(root: &'a mut Value, pointer: &str) -> Option<&'a mu
 
 fn apply_fixture_mutation(root: &mut Value, case: &Value) {
     let operation = case["operation"].as_str().expect("fixture operation");
-    let parent_pointer = case["parent_pointer"].as_str().expect("fixture parent pointer");
+    let parent_pointer = case["parent_pointer"]
+        .as_str()
+        .expect("fixture parent pointer");
     let field = case["field"].as_str().expect("fixture field");
     let parent = value_at_pointer_mut(root, parent_pointer).expect("fixture parent must resolve");
 
     match (operation, parent) {
         ("insert", Value::Object(object)) => {
             assert!(
-                object.insert(field.to_owned(), case["value"].clone()).is_none(),
+                object
+                    .insert(field.to_owned(), case["value"].clone())
+                    .is_none(),
                 "fixture insert target must not already exist"
             );
         }
         ("remove", Value::Object(object)) => {
-            assert!(object.remove(field).is_some(), "fixture remove target must exist");
+            assert!(
+                object.remove(field).is_some(),
+                "fixture remove target must exist"
+            );
         }
         ("set", Value::Object(object)) => {
-            *object.get_mut(field).expect("fixture set target must exist") =
-                case["value"].clone();
+            *object
+                .get_mut(field)
+                .expect("fixture set target must exist") = case["value"].clone();
         }
         ("set", Value::Array(array)) => {
-            let index = field.parse::<usize>().expect("array fixture field is an index");
-            *array.get_mut(index).expect("fixture array index must exist") =
-                case["value"].clone();
+            let index = field
+                .parse::<usize>()
+                .expect("array fixture field is an index");
+            *array
+                .get_mut(index)
+                .expect("fixture array index must exist") = case["value"].clone();
         }
         (other, _) => panic!("unsupported fixture operation or parent type: {other}"),
     }
