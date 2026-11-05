@@ -84,6 +84,35 @@ function parseNonNegativeDecimal(value, label) {
   };
 }
 
+function parseSignedDecimal(value, label) {
+  if (typeof value !== "string" ||
+      !/^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(value)) {
+    throw new Error(label + " must be a canonical base-10 decimal string");
+  }
+  const negative = value.startsWith("-");
+  const unsigned = negative ? value.slice(1) : value;
+  const parsed = parseNonNegativeDecimal(unsigned, label);
+  if (negative && parsed.value.n === 0n) {
+    throw new Error(label + " must not use a negative-zero representation");
+  }
+  return {
+    value: negative ? new Fraction(-parsed.value.n, parsed.value.d) : parsed.value,
+    scale: parsed.scale,
+    text: value
+  };
+}
+
+function assertFitsSourcePrecision(value, integerDigits, fractionalDigits, label) {
+  const text = value.startsWith("-") ? value.slice(1) : value;
+  const [whole, fractional = ""] = text.split(".");
+  if (whole.length > integerDigits || fractional.length > fractionalDigits) {
+    throw new Error(
+      label + " exceeds its declared source precision (" +
+      integerDigits + " integer / " + fractionalDigits + " fractional digits)"
+    );
+  }
+}
+
 function decimalDigits(value) {
   const n = abs(BigInt(value));
   return n === 0n ? 1 : n.toString().length;
@@ -233,25 +262,68 @@ function validateProfile(p) {
   ];
   assertObject(p.error_budgets, "error_budgets", errorKeys);
 
-  const allAmounts = [
+  const monetaryGroups = [
     ["opening_balance_sheet", p.opening_balance_sheet],
     ["historical_period.income_statement", p.historical_period.income_statement],
     ["historical_period.balance_sheet", p.historical_period.balance_sheet],
-    ["historical_period.cash_flow_statement", p.historical_period.cash_flow_statement],
-    ["forecast_drivers", p.forecast_drivers],
-    ["error_budgets", p.error_budgets]
+    ["historical_period.cash_flow_statement", p.historical_period.cash_flow_statement]
   ];
-  for (const [group, object] of allAmounts) {
+  for (const [group, object] of monetaryGroups) {
     for (const [key, value] of Object.entries(object)) {
       parseNonNegativeDecimal(value, group + "." + key);
+      assertFitsSourcePrecision(
+        value,
+        p.source_precision.monetary_max_integer_digits,
+        p.source_precision.monetary_max_fraction_digits,
+        group + "." + key
+      );
     }
   }
 
-  const growth = parseNonNegativeDecimal(
+  const growth = parseSignedDecimal(
     p.forecast_drivers.revenue_growth_max, "forecast_drivers.revenue_growth_max"
   );
-  if (growth.value.compare(new Fraction(1n)) < 0) {
-    // The upper bound may be zero; the lower bound -100% is fixed by convention.
+  if (growth.value.compare(new Fraction(-1n)) < 0) {
+    throw new Error("forecast_drivers.revenue_growth_max cannot be below the V1 floor of -1");
+  }
+
+  for (const [key, value] of Object.entries(p.forecast_drivers)) {
+    if (key === "revenue_growth_max") continue;
+    parseNonNegativeDecimal(value, "forecast_drivers." + key);
+    const isDays = ["dso_max", "dio_max", "dpo_max"].includes(key);
+    assertFitsSourcePrecision(
+      value,
+      isDays ? p.source_precision.days_max_integer_digits : p.source_precision.ratio_max_integer_digits,
+      isDays ? p.source_precision.days_max_fraction_digits : p.source_precision.ratio_max_fraction_digits,
+      "forecast_drivers." + key
+    );
+  }
+
+  for (const [key, value] of Object.entries(p.error_budgets)) {
+    parseNonNegativeDecimal(value, "error_budgets." + key);
+  }
+
+  const openingAccumDep = parseNonNegativeDecimal(
+    p.opening_balance_sheet.accumulated_depreciation_max,
+    "opening_balance_sheet.accumulated_depreciation_max"
+  );
+  const openingGrossPpe = parseNonNegativeDecimal(
+    p.opening_balance_sheet.gross_ppe_max,
+    "opening_balance_sheet.gross_ppe_max"
+  );
+  if (openingAccumDep.value.compare(openingGrossPpe.value) > 0) {
+    throw new Error("opening accumulated-depreciation maximum cannot exceed gross PP&E maximum");
+  }
+  const histAccumDep = parseNonNegativeDecimal(
+    p.historical_period.balance_sheet.accumulated_depreciation_max,
+    "historical_period.balance_sheet.accumulated_depreciation_max"
+  );
+  const histGrossPpe = parseNonNegativeDecimal(
+    p.historical_period.balance_sheet.gross_ppe_max,
+    "historical_period.balance_sheet.gross_ppe_max"
+  );
+  if (histAccumDep.value.compare(histGrossPpe.value) > 0) {
+    throw new Error("historical accumulated-depreciation maximum cannot exceed gross PP&E maximum");
   }
   for (const key of [
     "depreciation_rate_max", "tax_rate_max", "dividend_payout_ratio_max"
@@ -356,7 +428,9 @@ function createDerivation(profile) {
   const D = {};
   for (const [key, value] of Object.entries(drivers)) {
     const scale = ["dso_max", "dio_max", "dpo_max"].includes(key) ? daysScale : ratioScale;
-    D[key] = amount(value, "forecast_drivers." + key, scale);
+    D[key] = key === "revenue_growth_max"
+      ? { ...parseSignedDecimal(value, "forecast_drivers." + key), scale }
+      : amount(value, "forecast_drivers." + key, scale);
   }
 
   // Historical validator arithmetic: opening Balance Sheet and three
