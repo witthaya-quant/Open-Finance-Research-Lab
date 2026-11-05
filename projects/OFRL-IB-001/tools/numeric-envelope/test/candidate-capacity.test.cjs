@@ -167,3 +167,12 @@ test("candidate evaluator rejects malformed coefficient integers", () => {
     /invalid coefficient integer bound/
   );
 });
+
+test("candidate evaluator rejects a coefficient digit count inconsistent with its exact integer", () => {
+  const input = derivation({ coefficient: "12345", coefficientDigits: 4 });
+  assert.throws(
+    () => evaluateCandidateCapacity(input, RUST_DECIMAL.id),
+    /digit count does not match/
+  );
+});
+
