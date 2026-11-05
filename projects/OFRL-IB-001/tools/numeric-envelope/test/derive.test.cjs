@@ -10,6 +10,7 @@ const {
   Fraction,
   createDerivation,
   parseNonNegativeDecimal,
+  parseSignedDecimal,
   roundOutward,
   validateProfile
 } = require("../derive.cjs");
@@ -43,6 +44,35 @@ test("decimal bound parser rejects non-canonical or signed inputs", () => {
   for (const value of ["-1", "+1", "01", "1.", ".1", "1e3", " 1", "NaN"]) {
     assert.throws(() => parseNonNegativeDecimal(value, "test"));
   }
+});
+test("revenue growth accepts a signed upper bound but rejects values below -100% and negative zero", () => {
+  assert.equal(parseSignedDecimal("-0.05", "growth").value.toString(), "-1/20");
+  assert.equal(parseSignedDecimal("-1", "growth").value.toString(), "-1");
+  assert.throws(() => parseSignedDecimal("-0.0", "growth"));
+  assert.throws(() => parseSignedDecimal("-1.01", "growth"));
+  const profile = readFixture();
+  profile.forecast_drivers.revenue_growth_max = "-0.05";
+  validateProfile(profile);
+  assert.equal(
+    node(createDerivation(profile), "forecast.year_1.revenue").exact_upper_bound,
+    "2565/2"
+  );
+});
+ 
+test("profile rejects bounds that exceed declared source precision", () => {
+  const profile = readFixture();
+  profile.forecast_drivers.cogs_pct_revenue_max = "0.40000";
+  assert.throws(() => validateProfile(profile), /source precision/);
+
+  const monetary = readFixture();
+  monetary.forecast_drivers.debt_drawdowns_max_per_period = "1000000000";
+  assert.throws(() => validateProfile(monetary), /source precision/);
+});
+
+test("profile rejects impossible PP&E bound relationships", () => {
+  const profile = readFixture();
+  profile.opening_balance_sheet.accumulated_depreciation_max = "601.0";
+  assert.throws(() => validateProfile(profile), /cannot exceed gross PP&E/);
 });
 
 test("synthetic fixture is explicitly test-only and contains no approval claim", () => {
