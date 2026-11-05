@@ -2,12 +2,12 @@
 
 # OFRL-IB-001 — Engineering Audit
 
-**Audit version:** 0.7.0  
+**Audit version:** 0.8.0  
 **Audit date:** 2026-11-05  
 **Production baseline:** `main` at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design, CLI hardening and Numeric Profile tooling:** PR #13 remains open Draft; code-tested baseline `044f0224fbeda4b3ef305a0f66aeb52e9ac92d8a` passed all six required contexts and the 17-test exact Numeric Envelope job; latest head `c2f5cf3ee286eb2b17ef3d086ad074cebfefd765` passed all six required contexts plus the additional Numeric Envelope Derivation check  
+**System-design, CLI hardening and Numeric Profile tooling:** PR #13 remains open Draft; head `daac2fc472ddabac09114399ecdaedc5e6bd46c4` passed all six required contexts, 30/30 Numeric Envelope tests, candidate-capacity reason checks and the preview-only Release Candidate Preview workflow  
 **Status:** Evidence-based audit at main `cc2d01b`; merged governance and supply-chain controls are distinguished from branch-local OFRL-IB-001 implementation evidence
 
 ## 1. Executive assessment
@@ -34,7 +34,7 @@ This audit covers only OFRL-IB-001 in `witthaya-quant/Open-Finance-Research-Lab`
 | PR #27 project-code smoke test | Closed without merge | All six required contexts passed on a project-code PR targeting current main |
 | PR #11 — numeric research | Open, Draft; head `120ccd3414` | 800 independent exact-rational expected outputs, candidate arithmetic comparison, point-in-time SBOM/RustSec and non-gating timing; no production backend approval |
 | PR #12 — schema tooling | Open, Draft; head `c38f9ad50` | Pinned Node/AJV toolchain and package lockfile; tooling change remains branch-local |
-| PR #13 — audit/design/CLI/numeric derivation | Open, Draft; synchronized with current main | Engineering audit, system design, roadmap, bounded CLI reader, shared corpus and symbolic Numeric Profile derivation; all six required contexts passed on the synchronized code branch; changes remain unmerged |
+| PR #13 — audit/design/CLI/numeric derivation | Open, Draft; head `daac2fc` | Audit, design, roadmap, bounded CLI reader, shared contract corpus, exact BigInt derivation and candidate-specific static capacity screen; six required contexts plus 30/30 numeric tests and preview workflow passed; branch-local and unmerged |
 | Finance/accounting review | Not evidenced | No independent sign-off is claimed |
 | Production Forecast Engine | Not implemented | Must remain gated |
 
@@ -143,11 +143,24 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Blocker for Numeric Profile / backend acceptance
 
-**Evidence:** The input grammar permits up to 28 fractional digits per Decimal field, but the formula graph can compound scale and coefficient digits beyond the source limit. PR #13 now has a machine-readable profile contract, exact-rational node derivation and independent scale/coefficient-limit tests. The synthetic test-only fixture demonstrates that the five-year path can reach pre-normalization scale 39 and coefficient counts up to 44 under its illustrative source assumptions; those are tool-validation observations, not production limits. The tool returns explicit FAIL/CONDITIONAL/CANDIDATE-VALIDATION-REQUIRED states rather than silently treating the parser's 28-digit lexical ceiling as a calculation guarantee. BigDecimal's 80-digit POC division setting still does not cap exact multiplication coefficient growth.
+**Evidence:** The input grammar permits up to 28 fractional digits per Decimal field, but the formula graph can compound scale and coefficient digits beyond the source limit. PR #13 now emits exact outward-rounded coefficient-integer upper bounds and digit counts per arithmetic node, then runs a candidate-specific static capacity evaluator. On its explicitly test-only synthetic fixture, the latest CI derives 287 arithmetic nodes. The `rust_decimal 1.43.0` screen returns FAIL on 37 nodes: 37 coefficient upper bounds exceed the exact 96-bit mantissa and 19 nodes exceed scale 28 (these reason counts overlap). Fifty nodes remain CONDITIONAL because division scale/coefficient bounds are unresolved. The `bigdecimal 0.4.11` screen has no static profile-limit failure but remains CONDITIONAL on the same 50 unresolved division-dependent nodes. These are test-fixture observations, not evidence about the intended V1 company domain or an approved candidate decision. The 30/30 Numeric Envelope test suite includes the exact 96-bit maximum, one integer above/below it, coefficient metadata consistency and the comparison-only-node regression.
 
-**Risk:** A value may remain well below the 96-bit magnitude limit and still exceed the supported scale or require precision reduction. Conversely, BigDecimal may preserve every multiplication digit and grow coefficient size, memory and runtime even when its division context is finite. A magnitude-only Numeric Profile would miss both failure modes.
+**Risk:** A value may remain within an apparent digit-count range yet exceed the exact 96-bit mantissa. A formula path can also exceed scale 28 before the final value is produced. Conversely, a BigDecimal result that remains below the profile's illustrative ceilings is not accepted until division semantics, coefficient growth, CPU and memory are bounded. A magnitude-only or digit-count-only Numeric Profile would miss these failure modes.
 
-**Disposition:** Approve separate source-scale limits for monetary values, rates/ratios and days. Derive pre-normalization scale and coefficient-digit bounds at every formula node across all five periods. Test representability and error behaviour just below, at and above scale/mantissa/coefficient boundaries. For BigDecimal, bound coefficient growth independently from division precision and prove resource limits under repeated and concurrent runs. No scale reduction or rounding may be silently treated as exact.
+**Disposition:** Obtain Model Owner-approved source precision and finite input bounds for monetary values, rates/ratios and days. Derive pre-normalization scale and exact coefficient-integer bounds at every formula node across all five periods. Test representability and error behaviour just below, at and above scale/mantissa/coefficient boundaries. For BigDecimal, resolve fixed-fractional-scale versus significant-digit context semantics, bound coefficient growth independently from division precision and prove resource limits under repeated and concurrent runs. No scale reduction or rounding may be silently treated as exact.
+
+### EA-17 — Numeric envelope arithmetic graph previously counted comparisons as additions
+
+**Severity:** Major for numeric-envelope evidence  
+**Status:** RESOLVED IN PR #13 BRANCH; merge/review pending
+
+**Evidence:** The previous derivation represented several validator comparisons and statement tie-outs using the same `add(...)` operation used for real arithmetic. This could create artificial intermediate sums and overstate representability requirements. It also reported coefficient digit counts without an exact coefficient-integer bound that could be compared to a fixed-width mantissa.
+
+**Correction on PR #13:** Comparison-only nodes were removed from the arithmetic graph. Actual calculations remain represented as arithmetic nodes; the zero-minus-CapEx cash-outflow bound is explicitly represented, and historical closing debt is bounded by opening debt plus drawdowns under the V1 constraint that repayment cannot exceed available debt. Each decimal-capable node now emits an outward-rounded exact coefficient-integer upper bound at its declared scale. The candidate evaluator compares that integer directly with the exact Rust Decimal maximum, `79228162514264337593543950335`, and separately checks scale 0–28. The test suite asserts that comparison/tie-out nodes are not counted as arithmetic operations.
+
+**Risk addressed:** An envelope may be falsely conservative if comparison checks are treated as arithmetic, or falsely permissive if a 29-digit coefficient is assumed safe solely because it has 29 digits. The exact mantissa value, not digit count alone, determines this fixed-width limit.
+
+**Disposition:** Implementation and 30/30 numeric-tool tests pass on PR #13 head `daac2fc`. This closes the identified derivation-tool defect for the current V1 formula graph only; it does not approve model bounds, division policy, candidate semantics or operational resources. Keep the finding branch-local until PR review/merge and rerun the suite whenever formulas or profile schema change.
 
 ### EA-03 — Independent accounting/formula sign-off remains open
 
@@ -295,9 +308,9 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 
 | Gate | Evidence required | Status |
 |---|---|---|
-| Numeric Profile | Approved finite magnitude, source-scale, intermediate-scale/coefficient and resource bounds; formula-chain headroom; precision, rounding and separate error budgets | OPEN — schema and candidate-neutral derivation tooling implemented; Model Owner limits, source-scale decisions and reviewer approvals remain TBD |
-| Scale / coefficient propagation | Five-year operation-scale graph and candidate coefficient/resource limits | TOOLING PASS — 332 formula nodes and division-error propagation; test-only fixture is not an approved domain; candidate-specific boundary evidence remains OPEN |
-| Production arithmetic backend | Profile-based comparison, explicit run-scoped context, serialization and controlled resource evidence | OPEN — evaluation protocol added; no backend selected; resource measurements and approved profile are still required |
+| Numeric Profile | Approved finite magnitude, source-scale, intermediate-scale/coefficient and resource bounds; formula-chain headroom; precision, rounding and separate error budgets | OPEN — schema and derivation path implemented; Issue #28 Model Owner limits and Finance/Engineering approvals remain unresolved |
+| Scale / coefficient propagation | Five-year operation-scale graph, exact coefficient bounds and candidate representability | TOOLING PASS — 287 arithmetic nodes, 30/30 tests; test-only fixture: rust_decimal FAIL (37 nodes), BigDecimal CONDITIONAL (50 nodes); no business-domain conclusion |
+| Production arithmetic backend | Profile-based comparison, explicit run-scoped context, serialization and controlled resource evidence | OPEN — rust_decimal's static test-fixture bounds fail; BigDecimal division context remains unresolved; no backend selected; runtime/resource evidence not measured |
 | Independent finance/accounting review | Written independent review and disposition of equations, conventions and edge cases | OPEN — not evidenced |
 | Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — lockfile and preview SBOM workflow are on main; source-level licence/security and official release review remain open |
 | Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR — research evidence only |
@@ -326,4 +339,4 @@ The next implementation increment should not be a speculative production forecas
 10. Generate XLSX solely from canonical outputs and reconcile it.
 11. Complete clean-checkout reproduction and release review.
 
-The exact Numeric Profile tool and backend evaluation protocol improve decision readiness, but they do not supply missing business-domain inputs or reviewer approvals. The 17/17 tool tests and 6/6 required checks apply to the code-tested PR #13 head 044f0224; the current documentation-only head bd99fc44 is undergoing its own CI rerun. No research POC, SBOM preview or green CI run is to be represented as production financial-model approval. Governance controls are merged; Numeric Profile, backend selection and independent Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
+The exact Numeric Profile derivation and candidate-capacity tools improve decision readiness, but they do not supply missing business-domain inputs or reviewer approvals. PR #13 head `daac2fc` passed all six required contexts, 30/30 Numeric Envelope tests, the candidate-capacity summary checks and the preview-only Release Candidate Preview workflow. The synthetic fixture's rust_decimal FAIL and BigDecimal CONDITIONAL results are not an approved V1 operating domain. No research POC, SBOM preview or green CI run is to be represented as production financial-model approval. Governance controls are merged; Numeric Profile, backend selection and independent Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
