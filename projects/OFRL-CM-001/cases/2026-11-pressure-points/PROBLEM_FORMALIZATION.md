@@ -3,7 +3,7 @@
 # Pressure Points — Initial Problem Formalization
 
 **Case ID:** OFRL-CM-001-CS-001  
-**Formalization version:** 0.1.1  
+**Formalization version:** 0.2.0  
 **Source:** Jane Street, Pressure Points (November 2026)  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
@@ -85,7 +85,35 @@ This is not yet a mathematical model of the puzzle. No mapping function, objecti
 | U-007 | Required output and its schema | Needed to define success and test correctness | Explicit answer format and acceptance condition |
 | U-008 | Completeness or uniqueness requirement | Determines whether one solution or all solutions must be found | Source statement or authoritative solution context |
 
-All eight items are unresolved in version 0.1.1.
+All eight items remain unresolved in version 0.2.0.
+
+### 4.1 External research leads — hypotheses, not established rules
+
+A review of public discussion and solver-status material adds a potentially useful structural lead. These sources are secondary and do not constitute Jane Street's authoritative rule specification or a worked proof.
+
+**H-001 — Four cardinal vertices per emoji.** A public solver-status note describes a one-to-one correspondence between 76 visible marker/sequence entries and the 19 emoji clues interpreted as four cardinal vertices each. The count is suggestive:
+
+- Let `M = {m}` be the leading marker and `L = {L_1, ..., L_75}` the letter-sequence entries.
+- The visible entry collection is `X = M ∪ L`, so `|X| = 76` if the marker is treated as an entry.
+- Let `I` be the 19 emoji clues and `D = {N, E, S, W}` the four cardinal directions.
+- The proposed vertex collection is `V = I × D`, with `|V| = 19 × 4 = 76`.
+
+The equality `|X| = |V|` is a cardinality match only. It does not prove that the marker belongs in the mapping, that every emoji denotes a four-point diamond, or that the mapping is bijective. Those are the exact properties that need to be derived and verified.
+
+**H-002 — Terminal notation as output lengths.** The notation “(11 12)” may specify two output-token lengths. This is consistent with the externally reported candidate below, but the source does not define the notation in prose. It must not be treated as an established output schema.
+
+**H-003 — Candidate final phrase.** A secondary solver-status page reports the candidate `ANTWERPSCHE DIAMANTKRING` and associates it with the Flemish Diamond. The words have lengths 11 and 12 respectively, matching the displayed terminal numbers. The page does not expose the complete derivation in the material reviewed. This is a candidate to test, not an OFRL-verified solution and not an official Jane Street solution.
+
+**Evidence required before accepting any of H-001 through H-003:**
+1. Explain the semantic role of the leading marker and account for all 76 entries.
+2. Define the four positions and show why each emoji produces exactly four relevant vertices.
+3. Provide a reproducible mapping from every source entry to exactly one vertex, with no omissions or collisions.
+4. Explain the relation between the letter multiset of each entry and its assigned vertex.
+5. Derive the terminal notation and output format from the puzzle rather than from answer-length coincidence alone.
+6. Establish whether the output is unique; if so, prove or independently verify uniqueness.
+7. Check the complete construction against the source and independently verify the final phrase.
+
+The external leads narrow the research questions but do not close U-001 through U-008. No algorithm family is selected and no solver is authorized by this update.
 
 ## 5. Candidate model structure — intentionally unselected
 
@@ -122,6 +150,10 @@ The team must not invent missing rules to make a solver feasible.
 
 Original source: Jane Street, [Pressure Points — November 2026](https://www.janestreet.com/puzzles/pressure-points-index/).
 
+Secondary research leads, accessed 2026-11-05:
+- [Puzzling Stack Exchange discussion](https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026) — exploratory observations and questions; not an authoritative rule statement.
+- [Kaia's current research notes](https://www.kaiaz.me/now/) — reports a 76-to-(19 × 4) cardinal-vertex hypothesis and the candidate phrase; the reviewed page does not provide the full derivation.
+
 Programme rationale: Jane Street, [Puzzles](https://www.janestreet.com/puzzles/).
 
 This note contains OFRL-authored analysis and limited structural observations. It intentionally excludes the full puzzle payload, images, and official solution. No redistribution rights for those materials are assumed.
@@ -132,3 +164,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 |---|---|---|
 | 0.1.0 | 2026-11-05 | Initial source-grounded structural inventory and formalization blockers |
 | 0.1.1 | 2026-11-05 | Added independently checked structural invariants and sequence-length distribution |
+| 0.2.0 | 2026-11-05 | Added secondary research leads and explicitly unverified cardinal-vertex/output hypotheses; no formalization blockers closed |

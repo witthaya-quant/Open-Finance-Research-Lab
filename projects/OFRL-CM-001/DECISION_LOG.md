@@ -30,6 +30,8 @@ This log records decisions specific to OFRL-CM-001. Lab-wide matters remain gove
 | O-001 | What are the complete semantics and expected output of Pressure Points? | Obtain an authoritative rule explanation or solution reference; otherwise pause the pilot | Project Owner | Before method selection | Open |
 | O-002 | Is there a well-defined mathematical model that supports a meaningful computational comparison? | Formal proof, one implementation, multiple methods, or no implementation | Project Owner | After O-001 | Open |
 | O-003 | Is there a defensible financial-engineering transfer? | Specific bounded mapping, indirect methodological relevance, or no transfer | Project Owner | After formalization | Open |
+| O-004 | Does each emoji define four cardinal vertices, creating a bijection with the 76 visible marker/sequence entries? | Reconstruct and verify all 76 assignments; reject the hypothesis if the evidence does not support it | Project Owner | Before method selection | Open |
+| O-005 | Does “(11 12)” define the lengths of a two-word output, and is ANTWERPSCHE DIAMANTKRING the valid output? | Derive the output schema from the puzzle and independently verify the candidate phrase; length agreement alone is insufficient | Project Owner | Before any solution claim | Open |
 
 ## 3. Deferred scope
 
@@ -57,4 +59,4 @@ Each deferred item requires a separate scope and evidence gate before work begin
 | Date | Decision ID | Change | Author | Pull Request / Issue |
 |---|---|---|---|---|
 | 2026-11-05 | D-001–D-008 | Initial approved project baseline | Kenny | Issue #29; PR #29 |
-| 2026-11-05 | D-009 | Rust-first implementation direction adopted for justified computational software | Kenny | PR #29 |
+| 2026-11-05 | D-009 | Project implementation-language default recorded for justified computational software | Kenny | PR #29 |

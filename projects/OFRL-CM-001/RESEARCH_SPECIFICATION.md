@@ -53,7 +53,7 @@ For each admitted case:
 6. Develop an implementation only where it adds research value.
 7. Verify candidate outputs independently of the method that generated them.
 8. Compare alternatives only under documented, comparable conditions.
-9. assess financial-engineering relevance without forcing a transfer claim.
+9. Assess financial-engineering relevance without forcing a transfer claim.
 10. Publish methods, evidence, limitations, and reproduction instructions at an evidence level proportionate to what has actually been established.
 
 Expected outputs may include mathematical notes, formal specifications, proofs, hand-worked examples, code, test fixtures created independently, performance results, and a research report. Not every case must produce all output types.
@@ -64,7 +64,7 @@ The project uses the seven-stage protocol in [CASE_STUDY_PROTOCOL.md](CASE_STUDY
 
 A candidate algorithm is not evidence that the problem has been correctly understood. A passing example is not proof of completeness, uniqueness, or correctness over the full input domain.
 
-When executable computational work is justified, Rust is the default implementation language for this project. The project-specific [Implementation Approach](IMPLEMENTATION_APPROACH.md) defines the engineering, verification, reproducibility, and supply-chain controls. This does not require code for a case that is better answered through proof or analysis.
+When executable computational work is justified, the project-specific [Implementation Approach](IMPLEMENTATION_APPROACH.md) defines the engineering, verification, reproducibility, and supply-chain controls. A case that is better answered through proof or analysis does not require code.
 
 ## 6. Evaluation design
 

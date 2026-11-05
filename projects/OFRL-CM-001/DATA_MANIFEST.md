@@ -23,10 +23,12 @@ The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The re
 | SRC-002 | Jane Street | https://www.janestreet.com/puzzles/pressure-points-index/ | 2026-11-05 | Original source of the November 2026 Pressure Points puzzle | Third-party puzzle content; redistribution permission not established; URL reference only |
 | SRC-003 | Jane Street | https://www.janestreet.com/puzzles/archive/ | 2026-11-05 | Verify puzzle archive and identify the source context | Third-party website; no archive content copied |
 | SRC-004 | Jane Street Blog | https://blog.janestreet.com/asic-puzzle-results/ | 2026-11-05 | Methodological context on diverse solution methods and verification in a separate ASIC challenge | Third-party article; citation and link only; not a first-pilot input |
+| SRC-005 | Puzzling Stack Exchange | https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026 | 2026-11-05 | Community discussion identifying exploratory anagram/geographic interpretations and unresolved questions | User-generated secondary discussion; not authoritative rules or a verified solution |
+| SRC-006 | Kaia | https://www.kaiaz.me/now/ | 2026-11-05 | Secondary solver-status lead reporting a 76-entry / 19-by-4 cardinal-vertex hypothesis and candidate phrase ANTWERPSCHE DIAMANTKRING | Personal research notes; the reviewed page does not provide a complete derivation; hypothesis only, not an official or OFRL-verified solution |
 
 Jane Street's Puzzles page states that puzzles are published every month or two and explains the firm's own rationale for using puzzles: creative problem-solving is relevant to identifying new problems in financial markets and developing potentially novel ways to solve them. This is recorded as the source's stated motivation, not as an OFRL claim that every puzzle represents a financial problem.
 
-The ASIC article was published on 2026-10-02 and concerns a separate hardware reverse-engineering challenge. It is contextual material only; it is not described here as an item in the monthly puzzle archive.
+The ASIC article was published on 2026-10-02 and concerns a separate hardware reverse-engineering challenge. It is contextual material only; it is not described here as an item in the monthly puzzle archive. The Puzzling Stack Exchange and Kaia references are exploratory secondary sources only; neither is treated as an authoritative rule source or as proof of a solution.
 
 ## 3. Classification and privacy
 

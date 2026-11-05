@@ -8,7 +8,7 @@
 **Source publication label:** November 2026  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
-**Case status:** Formalization in progress; rule semantics BLOCKED  
+**Case status:** Formalization in progress; external structural hypothesis identified, rule semantics still BLOCKED  
 **Evidence maturity:** 0 — Proposed
 
 ## 1. Why this case was selected
@@ -31,7 +31,7 @@ The official source page, accessed on 2026-11-05, visibly presents:
 
 The visible sequences are distinct, internally alphabetically ordered, and displayed in lexicographical order. Their total length is 504 letters. This is a structural observation only; it does not establish the intended semantic role of the sequences.
 
-The page content retrieved for this initial review does not expose a complete prose rule specification that resolves the relationship between these elements. The formalization note records observed properties and unresolved semantics separately.
+The page content reviewed on 2026-11-05 does not expose a complete prose rule specification that resolves the relationship between these elements. Secondary public research suggests a possible one-to-one mapping between the 76 visible marker/sequence entries and four cardinal vertices for each of the 19 emoji clues. A separate solver-status note reports the candidate phrase ANTWERPSCHE DIAMANTKRING. Neither claim includes a complete derivation in the material reviewed; both remain hypotheses in the formalization record.
 
 The full sequence list, emoji sequence, images, and official solution are intentionally not copied into this repository.
 
@@ -43,6 +43,8 @@ The full sequence list, emoji sequence, images, and official solution are intent
 | Visible structure described without reproducing the puzzle | PASS |
 | Sequence counts and ordering properties checked | PASS |
 | Formal input and output semantics established | BLOCKED |
+| Cardinal-vertex mapping hypothesis independently reconstructed | NOT RUN |
+| Candidate output phrase independently verified | NOT RUN |
 | Candidate mathematical model selected | NOT RUN |
 | Solver implementation | NOT STARTED / DEFERRED |
 | Independent verifier | NOT STARTED / DEFERRED |
@@ -59,7 +61,7 @@ The full sequence list, emoji sequence, images, and official solution are intent
 6. What output is required: a word, sequence, assignment, path, set, or another object?
 7. What establishes a valid answer, and is uniqueness part of the task?
 
-These are questions, not proposed answers.
+These are questions, not proposed answers. Additional hypotheses H-001 to H-003 are recorded in PROBLEM_FORMALIZATION.md §4.1 and must not be promoted to facts without a complete derivation.
 
 ## 6. Next gate
 
