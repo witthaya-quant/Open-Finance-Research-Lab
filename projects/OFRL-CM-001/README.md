@@ -89,6 +89,18 @@ All case studies follow [CASE_STUDY_PROTOCOL.md](CASE_STUDY_PROTOCOL.md):
 
 The protocol is a set of research gates, not a requirement to implement every method in every case.
 
+## Shared OFRL policies
+
+OFRL-CM-001 inherits the repository-wide policies as its common governance baseline. The authoritative versions remain at the repository root; this project references them and does not create local copies or amend them.
+
+- [Governance](../../GOVERNANCE.md) — authority, decision rights, review, and change control.
+- [Project Lifecycle](../../PROJECT_LIFECYCLE.md) and [Project Standards](../../PROJECT_STANDARDS.md) — project admission, required controls, and lifecycle.
+- [Research Standards](../../RESEARCH_STANDARDS.md) — evidence, mathematical integrity, reproducibility, and research claims.
+- [Data Policy](../../DATA_POLICY.md), [License Policy](../../LICENSE_POLICY.md), and [Publication and IP Boundary](../../PUBLICATION_AND_IP_BOUNDARY.md) — provenance, third-party rights, licensing, and disclosure.
+- [Dependency Policy](../../DEPENDENCY_POLICY.md), [Security Policy](../../SECURITY.md), and [Release Policy](../../RELEASE_POLICY.md) — supply-chain controls, security, and publication authorization.
+
+Project-specific requirements are recorded only in this project’s own specification, protocol, decision log, validation matrix, and implementation approach. They may strengthen the common baseline but must not silently waive or contradict it.
+
 ## Project controls
 
 - One active case study at a time.
