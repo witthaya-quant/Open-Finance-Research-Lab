@@ -170,9 +170,14 @@ function validateProfile(p) {
   ]);
 
   if (p.schema_id !== PROFILE_SCHEMA_ID) throw new Error("unsupported numeric profile schema_id");
-  for (const key of ["profile_id", "profile_version", "convention_version"]) {
-    if (typeof p[key] !== "string" || p[key].trim() === "") {
-      throw new Error(key + " must be a non-empty string");
+  if (typeof p.profile_id !== "string" ||
+      !/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(p.profile_id)) {
+    throw new Error("profile_id must match the stable identifier grammar");
+  }
+  const semverPattern = /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/;
+  for (const key of ["profile_version", "convention_version"]) {
+    if (typeof p[key] !== "string" || !semverPattern.test(p[key])) {
+      throw new Error(key + " must be a numeric major.minor.patch version");
     }
   }
   if (!/^[A-Z]{3}$/.test(p.reporting_currency)) {
@@ -389,11 +394,22 @@ function validateProfile(p) {
     for (const role of ["model_owner", "finance_accounting", "engineering"]) {
       const a = p.approvals[role];
       assertObject(a, "approvals." + role, ["reviewer", "decision", "date", "evidence_ref"]);
+      const validDateSyntax = typeof a.date === "string" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(a.date);
+      let validCalendarDate = false;
+      if (validDateSyntax) {
+        const [year, month, day] = a.date.split("-").map(part => Number.parseInt(part, 10));
+        const date = new Date(Date.UTC(year, month - 1, day));
+        validCalendarDate =
+          date.getUTCFullYear() === year &&
+          date.getUTCMonth() === month - 1 &&
+          date.getUTCDate() === day;
+      }
       if (typeof a.reviewer !== "string" || a.reviewer.trim() === "" ||
           a.decision !== "approved" ||
-          !/^\d{4}-\d{2}-\d{2}$/.test(a.date) ||
+          !validCalendarDate ||
           typeof a.evidence_ref !== "string" || a.evidence_ref.trim() === "") {
-        throw new Error("approvals." + role + " must contain a completed approved record");
+        throw new Error("approvals." + role + " must contain a completed approved record with a valid calendar date");
       }
     }
   }
