@@ -2,7 +2,7 @@
 
 # OFRL-CM-001 — Case-Study Protocol
 
-**Protocol version:** 0.1.0  
+**Protocol version:** 0.2.0  
 **Applies to:** All case studies admitted to OFRL-CM-001  
 **Owner:** Project Owner  
 **Status:** Approved baseline for the initial pilot
@@ -144,6 +144,10 @@ PR #29 is the project-admission and first-pilot documentation PR. It must not be
 After the project admission PR is merged, each separately authorized material implementation or research change should use a new topic branch and PR under the same `OFRL-CM-001` project. A new case does not automatically require a new OFRL project ID. A new project ID is considered only when the research objective, ownership, risk, or independently managed deliverable is materially different.
 
 Before PR #29 is merged, do not create follow-on branches based on `main` that assume the project files already exist there. Do not merge, close, or retarget PR #29 without the owner's explicit instruction.
+
+### 9.3 Shared policy inheritance
+
+OFRL-CM-001 adopts the repository-root policies as the single authoritative common baseline. The project links to those policies rather than copying them into its directory. Project-specific specifications, decisions, and controls may strengthen the common baseline but must not silently waive or contradict it. The README identifies the applicable policy set; the handoff instructs future sessions to re-read the live root policy when scope or policy changes are material. The project manifest and repository validation continue to enforce the required project and case documents.
 
 ## 10. Required status vocabulary
 

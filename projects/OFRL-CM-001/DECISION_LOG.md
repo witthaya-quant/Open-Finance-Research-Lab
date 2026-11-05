@@ -22,6 +22,7 @@ This log records decisions specific to OFRL-CM-001. Lab-wide matters remain gove
 | D-007 | Do not require software or multiple solvers where mathematical analysis or proof is sufficient | Approved | Research output must be justified by the question, not by implementation volume | Research Specification and protocol |
 | D-008 | Assess financial-engineering transferability without forcing a positive conclusion | Approved | Preserves OFRL's finance orientation and research integrity | Research Specification and protocol |
 | D-009 | Adopt Rust as the default implementation language for computational software in OFRL-CM-001 when implementation is justified | Approved | Aligns the project with OFRL's Rust engineering direction while keeping research method-first; pure mathematical work does not require code | IMPLEMENTATION_APPROACH.md; no executable implementation is authorized by this decision |
+| D-010 | Inherit OFRL-wide policies by reference and enforce a project-root / case-directory boundary | Approved | Common governance, data, research, security, dependency, and release policies remain authoritative at the repository root; CM-001 keeps project-specific decisions and case evidence in its own tree, creates case folders only after admission, and avoids duplicated or speculative structure | README.md shared-policy references; CASE_STUDY_PROTOCOL.md §§9.1–9.3; project.json required_documents; HANDOFF.md |
 
 ## 2. Open decisions
 
@@ -32,6 +33,8 @@ This log records decisions specific to OFRL-CM-001. Lab-wide matters remain gove
 | O-003 | Is there a defensible financial-engineering transfer? | Specific bounded mapping, indirect methodological relevance, or no transfer | Project Owner | After formalization | Open |
 | O-004 | Does each emoji define four cardinal vertices, creating a bijection with the 76 visible marker/sequence entries? | Reconstruct and verify all 76 assignments; reject the hypothesis if the evidence does not support it | Project Owner | Before method selection | Open |
 | O-005 | Does “(11 12)” define the lengths of a two-word output, and is ANTWERPSCHE DIAMANTKRING the valid output? | Derive the output schema from the puzzle and independently verify the candidate phrase; length agreement alone is insufficient | Project Owner | Before any solution claim | Open |
+| O-006 | Can the 19 emoji clues be assigned to 19 complete four-member semantic groups and cardinal orientations? | Establish all groups, account for all 76 entries including Ø, and derive the orientation rule | Project Owner | Before method selection | Open |
+| O-007 | Do candidate word-set residuals encode a consistent letter-reallocation operation? | Test one rule against all groups; reject it if exceptions or hand-selected substitutions remain | Project Owner | Before method selection | Open |
 
 ## 3. Deferred scope
 
@@ -60,3 +63,4 @@ Each deferred item requires a separate scope and evidence gate before work begin
 |---|---|---|---|---|
 | 2026-11-05 | D-001–D-008 | Initial approved project baseline | Kenny | Issue #29; PR #29 |
 | 2026-11-05 | D-009 | Project implementation-language default recorded for justified computational software | Kenny | PR #29 |
+| 2026-11-05 | D-010 | Shared-policy inheritance and controlled project/case directory boundaries | Kenny | PR #29 |

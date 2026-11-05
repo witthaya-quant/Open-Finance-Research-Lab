@@ -9,7 +9,7 @@
 **Pull request:** [#29](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Working branch:** `research/ofrl-cm-001-admission-and-pilot`  
 **Base branch:** `main`  
-**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this handoff update `d6dff48397df2f1d8ed03d193b787713da9f7161`.  
+**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this handoff update `e1fe028fbe0741677746c328b179bb5302a9509a`.  
 **Important:** These SHAs are historical checkpoints, not current write tokens. A new session MUST retrieve the current PR head SHA and branch state from GitHub before any write.
 
 ## 1. Purpose
@@ -74,6 +74,8 @@ The current admitted pilot is stored only in:
 
 No additional case directories, empty scaffolds, duplicate root documents, or speculative implementation trees should be created. A future case must first pass the candidate-intake, source/rights, and owner admission decision. Add its date-prefixed directory under `cases/` only then, starting with its own README and problem formalization. Shared protocol and project-wide controls remain at the project root.
 
+Project-wide policy inheritance and the project/case directory rules are recorded in D-010. Repository-root policies remain the single source of truth; do not copy them into the project or case folders.
+
 PR #29 is only the admission and first-pilot documentation PR. It remains Draft and unmerged. After it is merged by explicit owner decision, follow-on changes to this project should use a separate topic branch and PR under the same project ID. Do not create a new OFRL project ID for another case unless its research objective, ownership, risk, or independently managed deliverable is materially different. Before PR #29 is merged, do not create follow-on branches based on a main branch that does not yet contain this project.
 
 ## 4. Current research state — Pressure Points
@@ -89,13 +91,13 @@ Jane Street's [Puzzles introduction](https://www.janestreet.com/puzzles/) explic
 - A [Puzzling Stack Exchange discussion](https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026) records exploratory anagram/geographic interpretations and unresolved questions.
 - [Kaia's research notes](https://www.kaiaz.me/now/) (last updated 2026-11-04) report a possible one-to-one mapping between 76 marker/sequence entries and 19 emoji clues × 4 cardinal vertices, plus the candidate `ANTWERPSCHE DIAMANTKRING`.
 - The candidate words have lengths 11 and 12, consistent with the displayed `(11 12)`. This agreement alone does not prove the candidate.
-- The retrieved secondary note does not contain the complete derivation. No authoritative rule derivation or official solution has been validated in the current case record.
+- The retrieved secondary note does not contain the complete derivation. The official Archive search-index representation displayed a November 2026 “Puzzle Solution” label, but the opened Archive snapshot was stale and did not expose the November entry or a direct solution page. The official solution has therefore NOT been retrieved or validated. Recheck the Archive and inspect the actual solution page before treating it as authoritative evidence.
 
-See hypotheses H-001 to H-003 and open questions O-001, O-004, and O-005 in the project documents. Treat the candidate mapping and answer as unverified until every entry is assigned with a reproducible derivation and the output condition is independently established.
+See hypotheses H-001 to H-005 and open questions O-001, O-004, O-005, O-006, and O-007 in the project documents. Four candidate theme groups have been partially reconstructed (compass, controller, baseball, sailing). Only the compass group passes an aggregate letter-multiset equality check; the other candidate groupings still have residuals. This is partial evidence, not a complete mapping. Treat the candidate mapping and answer as unverified until every entry is assigned with a reproducible derivation and the output condition is independently established.
 
 ### Formalization gate
 
-U-001 through U-008 remain unresolved. Method selection remains BLOCKED. Do not select SAT/SMT, CSP, graph, search, string, optimization, or any other solver family merely because the cardinalities match. Do not write solver code, create a Cargo workspace, choose dependencies, or build CI until the rules and acceptance predicate justify those actions.
+U-001 through U-010 remain unresolved. Method selection remains BLOCKED. Do not select SAT/SMT, CSP, graph, search, string, optimization, or any other solver family merely because the cardinalities match. Do not write solver code, create a Cargo workspace, choose dependencies, or build CI until the rules and acceptance predicate justify those actions.
 
 A no-go or an explicitly incomplete research case is preferable to fabricated semantics. Financial-engineering transfer is not presumed and may conclude that no useful transfer exists.
 
@@ -123,11 +125,11 @@ Only then design the smallest useful implementation and independent verifier. A 
 
 ## 7. CI and release status
 
-Before this handoff update, the following workflows succeeded on head `d6dff48397df2f1d8ed03d193b787713da9f7161`:
+Before this handoff update, the following workflows succeeded on head `e1fe028fbe0741677746c328b179bb5302a9509a`:
 
-- [OFRL Repository Policy run #41964090401](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41964090401)
-- [OFRL-IB-001 Numeric and Input Contract Checks run #41964090408](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41964090408)
-- [OFRL-IB-001 Rust Runtime Semantic Validator run #41964090466](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41964090466)
+- [OFRL Repository Policy run #41966750685](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41966750685)
+- [OFRL-IB-001 Numeric and Input Contract Checks run #41966750679](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41966750679)
+- [OFRL-IB-001 Rust Runtime Semantic Validator run #41966750674](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41966750674)
 
 The two OFRL-IB-001 workflows were triggered by repository event behavior; their execution does not authorize changes to OFRL-IB-001. These results apply only to the checkpoint SHA above and must be rechecked after this handoff commit.
 

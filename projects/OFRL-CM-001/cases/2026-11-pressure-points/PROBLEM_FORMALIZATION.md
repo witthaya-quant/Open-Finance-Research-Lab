@@ -3,7 +3,7 @@
 # Pressure Points — Initial Problem Formalization
 
 **Case ID:** OFRL-CM-001-CS-001  
-**Formalization version:** 0.2.0  
+**Formalization version:** 0.3.0  
 **Source:** Jane Street, Pressure Points (November 2026)  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
@@ -84,8 +84,10 @@ This is not yet a mathematical model of the puzzle. No mapping function, objecti
 | U-006 | Meaning of terminal notation “(11 12)” | May define a parameter, index, coordinate, or another condition | Authoritative explanation |
 | U-007 | Required output and its schema | Needed to define success and test correctness | Explicit answer format and acceptance condition |
 | U-008 | Completeness or uniqueness requirement | Determines whether one solution or all solutions must be found | Source statement or authoritative solution context |
+| U-009 | How the 19 emoji clues partition and orient the 76 candidate entries | Determines whether four-member theme groups and cardinal positions are valid | Complete source-grounded grouping and a reproducible orientation rule |
+| U-010 | Whether letter-count residuals between candidate words are intentional | Determines whether the title implies a defined letter-transfer or transformation operation | A rule that explains every residual across all groups and independently reproduces the output |
 
-All eight items remain unresolved in version 0.2.0.
+All ten items remain unresolved in version 0.3.0.
 
 ### 4.1 External research leads — hypotheses, not established rules
 
@@ -104,7 +106,22 @@ The equality `|X| = |V|` is a cardinality match only. It does not prove that the
 
 **H-003 — Candidate final phrase.** A secondary solver-status page reports the candidate `ANTWERPSCHE DIAMANTKRING` and associates it with the Flemish Diamond. The words have lengths 11 and 12 respectively, matching the displayed terminal numbers. The page does not expose the complete derivation in the material reviewed. This is a candidate to test, not an OFRL-verified solution and not an official Jane Street solution.
 
-**Evidence required before accepting any of H-001 through H-003:**
+**H-004 — Partial four-member semantic clusters.** Independent inspection of decoded candidate terms produces four plausible groups associated with four emoji themes:
+
+| Emoji theme | Candidate four-member set | Letter-multiset audit |
+|---|---|---|
+| Compass | NORTH, EAST, SOUTH, WEST | The four source entries, taken together, contain exactly the same letter multiset as these four direction names (18 letters). The individual entries are not all exact one-to-one anagrams: one candidate has an additional E while another lacks E. |
+| Game controller | TRIANGLE, SQUARE, CROSS, CIRCLE | The combined candidate entries have one additional S and one missing E relative to the four singular button names. |
+| Baseball | FIRST, SECOND, THIRD, HOME | The combined candidate entries have one additional O and one missing H relative to the four base names. |
+| Sailing | STARBOARD, BOW, STERN, PORT | The combined candidate entries have one additional A and one missing S relative to the four nautical terms. |
+
+The emoji associations are plausible, but they are not an authoritative mapping. The compass cluster's aggregate equality is a useful exact invariant; the other three residual pairs are observations against the stated candidate words, not proof of a shared transformation. No original sequence list is reproduced here.
+
+**H-005 — Letter-pressure / reallocation mechanism.** The residuals above may indicate a deliberate letter movement or substitution among four related terms, potentially connected to the title “Pressure Points”. This is only a hypothesis. It is equally possible that one or more candidate words or groupings are wrong. The hypothesis cannot be accepted unless one rule explains all 19 groups, including any empty or exceptional entry, and yields a reproducible output without hand-selected exceptions.
+
+**What this partial reconstruction establishes:** a few emoji themes may be recoverable from four related terms; it does not establish all 19 groups, the assignment of every entry, the orientation of each four-point diamond, the role of Ø, or the final answer.
+
+**Evidence required before accepting any of H-001 through H-005:**
 1. Explain the semantic role of the leading marker and account for all 76 entries.
 2. Define the four positions and show why each emoji produces exactly four relevant vertices.
 3. Provide a reproducible mapping from every source entry to exactly one vertex, with no omissions or collisions.
@@ -112,8 +129,11 @@ The equality `|X| = |V|` is a cardinality match only. It does not prove that the
 5. Derive the terminal notation and output format from the puzzle rather than from answer-length coincidence alone.
 6. Establish whether the output is unique; if so, prove or independently verify uniqueness.
 7. Check the complete construction against the source and independently verify the final phrase.
+8. Identify all 19 emoji groups, including the status and meaning of Ø, without leaving unmatched entries.
+9. Derive one consistent letter-transformation rule that accounts for all observed residuals across every group, or reject H-005.
+10. Derive the cardinal orientation of each group and show how those positions lead to the output.
 
-The external leads narrow the research questions but do not close U-001 through U-008. No algorithm family is selected and no solver is authorized by this update.
+The external leads and partial category reconstruction narrow the research questions but do not close U-001 through U-010. The compass multiset check is a local invariant only; the other category clusters remain tentative. No algorithm family is selected and no solver is authorized by this update.
 
 ## 5. Candidate model structure — intentionally unselected
 
@@ -138,7 +158,7 @@ No candidate family is selected yet. SAT/SMT, constraint programming, graph meth
 
 ## 7. Method-selection gate
 
-Method selection is BLOCKED until U-001 through U-007 are resolved sufficiently to define a correctness predicate. U-008 must also be resolved before any completeness or uniqueness claim is made.
+Method selection is BLOCKED until U-001 through U-007 and U-009 through U-010 are resolved sufficiently to define a correctness predicate. U-008 must also be resolved before any completeness or uniqueness claim is made.
 
 If source clarification is unavailable, the project must either:
 - Keep the case as an explicitly incomplete formalization exercise; or
@@ -153,6 +173,8 @@ Original source: Jane Street, [Pressure Points — November 2026](https://www.ja
 Secondary research leads, accessed 2026-11-05:
 - [Puzzling Stack Exchange discussion](https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026) — exploratory observations and questions; not an authoritative rule statement.
 - [Kaia's current research notes](https://www.kaiaz.me/now/) — reports a 76-to-(19 × 4) cardinal-vertex hypothesis and the candidate phrase; the reviewed page does not provide the full derivation.
+- [Antwerpsche Diamantkring — About](https://diamantkring.be/about/) — confirms the organization is an Antwerp rough-diamond bourse and one of Antwerp's four diamond exchanges; entity corroboration only, not proof of the puzzle answer.
+- [Flemish Government / BELSPO, GARMON Final Report](https://omgeving.vlaanderen.be/sites/default/files/2022-02/ENG_GARMON_final_report_nov_2020.pdf), p. 45 — describes the Flemish Diamond as four agglomerations (Brussels, Ghent, Antwerp, Leuven) at the corners of an abstract diamond; contextual geography only, not puzzle-rule evidence.
 
 Programme rationale: Jane Street, [Puzzles](https://www.janestreet.com/puzzles/).
 
@@ -165,3 +187,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.1.0 | 2026-11-05 | Initial source-grounded structural inventory and formalization blockers |
 | 0.1.1 | 2026-11-05 | Added independently checked structural invariants and sequence-length distribution |
 | 0.2.0 | 2026-11-05 | Added secondary research leads and explicitly unverified cardinal-vertex/output hypotheses; no formalization blockers closed |
+| 0.3.0 | 2026-11-05 | Added partial four-member category hypotheses, letter-multiset audits, contextual entity corroboration, and two additional formalization blockers |
