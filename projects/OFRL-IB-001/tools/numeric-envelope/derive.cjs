@@ -736,6 +736,7 @@ module.exports = {
   Fraction,
   createDerivation,
   parseNonNegativeDecimal,
+  parseSignedDecimal,
   roundOutward,
   validateProfile
 };
