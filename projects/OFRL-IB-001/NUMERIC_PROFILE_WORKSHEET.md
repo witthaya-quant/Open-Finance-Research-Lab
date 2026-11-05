@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Profile Decision Worksheet
 
-**Worksheet version:** 0.3.0  
+**Worksheet version:** 0.4.0  
 **Status:** Working paper — NOT APPROVED  
 **Purpose:** Capture the evidence and decisions required before selecting a production arithmetic backend or implementing forecast calculations.
 
@@ -66,6 +66,22 @@ A formula-level review of `MODEL_CONVENTIONS.md` found that the following curren
 Tax, depreciation and dividend payout ratios already have proposed 0-to-1 intervals. Principal repayment is constrained by opening debt plus drawdown, but that does not bound debt if drawdowns are unbounded.
 
 The complete symbolic formula-chain derivation is in [NUMERIC_PROFILE_DERIVATION.md](NUMERIC_PROFILE_DERIVATION.md). Do not populate the TBD cells from the 10^18 or 10^22 POC stress points; those are candidate capacity probes, not Model Owner-approved operating limits.
+
+### 2.2 Versioned profile input and exact derivation
+
+The machine-readable profile input contract is [`ofrl-ib-001-numeric-profile-0.1.0.schema.json`](../../schemas/ofrl-ib-001-numeric-profile-0.1.0.schema.json). It requires finite field-specific magnitude bounds, source precision by monetary / ratio / day class, resource targets, separate error-budget inputs, and an explicit approval state.
+
+The candidate-neutral derivation tool is [`tools/numeric-envelope/derive.cjs`](tools/numeric-envelope/derive.cjs). It uses exact `BigInt` rational arithmetic and enumerates the opening Balance Sheet, three historical validation periods, and all five forecast formula periods. It emits formula-node bounds, scale/coefficient evidence, error-budget unit conversion and explicit conditional states for division policies that are not yet specified.
+
+The committed [synthetic test fixture](tools/numeric-envelope/test/fixtures/synthetic-profile.test-only.json) is deliberately marked `test_only`; its values are used only to prove the tool and CI contract. It is not a model-domain recommendation, approved tolerance, or production profile. Do not copy its values into an approval record.
+
+For a real profile, use the following command with a complete profile file:
+
+```bash
+node projects/OFRL-IB-001/tools/numeric-envelope/derive.cjs path/to/numeric-profile.json
+```
+
+The `--require-approved` flag rejects test-only profiles. Even a profile marked approved only produces an engineering derivation; backend adoption and Production Forecast Engine authorization remain separate decisions. Null division/reporting policy fields mean unresolved, not zero or implicitly accepted.
 
 
 ## 3. Formula-chain intermediate envelope
