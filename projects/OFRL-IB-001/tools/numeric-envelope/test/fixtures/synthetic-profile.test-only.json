@@ -78,7 +78,7 @@
     "dividend_payout_ratio_max": "0.20"
   },
   "resource_limits": {
-    "max_intermediate_scale": 20,
+    "max_intermediate_scale": 28,
     "max_coefficient_digits": 40,
     "division_precision_digits": 28,
     "max_input_bytes": 1048576,
