@@ -875,7 +875,127 @@ function createDerivation(profile) {
     },
     arithmetic_policy: profile.arithmetic_policy,
     error_budgets: errorBudgets,
+    error_propagation: deriveErrorPropagation(profile),
     nodes
+  };
+}
+
+function deriveErrorPropagation(profile) {
+  const policy = profile.arithmetic_policy;
+  if (policy.division_fractional_scale === null ||
+      policy.division_rounding_mode === null) {
+    return {
+      status: "UNRESOLVED",
+      reason: "Division fractional scale and rounding mode are required before finite rounding-error propagation can be calculated.",
+      assumptions: [
+        "Each forecast period contains three non-terminating day-basis divisions: AR, inventory and AP.",
+        "Non-division arithmetic and divisions by two are exact while all representation/resource limits pass.",
+        "No circular or feedback formula feeds rounded cash or working capital into subsequent operating drivers.",
+        "Display conversion to Excel numeric cells is not included in this arithmetic bound."
+      ],
+      per_year: [],
+      budget_checks: null
+    };
+  }
+
+  const scale = policy.division_fractional_scale;
+  const quantum = new Fraction(1n, pow10(scale));
+  const nearestModes = ["half_even", "half_up"];
+  const perDivisionError = nearestModes.includes(policy.division_rounding_mode)
+    ? quantum.div(new Fraction(2n))
+    : quantum;
+
+  const threeDivisionErrors = perDivisionError.mul(new Fraction(3n));
+  let previousNwcError = new Fraction(0n);
+  let closingCashError = new Fraction(0n);
+  let maximumLineError = new Fraction(0n);
+  let maximumScheduleError = new Fraction(0n);
+  let maximumBalanceSheetResidual = new Fraction(0n);
+  const perYear = [];
+
+  for (let year = 1; year <= 5; year += 1) {
+    const nwcError = threeDivisionErrors;
+    const changeNwcError = nwcError.add(previousNwcError);
+    const cfoError = changeNwcError;
+    const netCashChangeError = cfoError;
+    closingCashError = closingCashError.add(netCashChangeError);
+
+    // Total Assets contains rounded cash, AR and inventory. Liabilities and
+    // Equity contains rounded AP. This is a conservative absolute residual:
+    // |cash error| + |AR error| + |inventory error| + |AP error|.
+    const balanceSheetResidual = closingCashError.add(threeDivisionErrors);
+
+    if (closingCashError.compare(maximumLineError) > 0) {
+      maximumLineError = closingCashError;
+    }
+    if (closingCashError.compare(maximumScheduleError) > 0) {
+      maximumScheduleError = closingCashError;
+    }
+    if (changeNwcError.compare(maximumScheduleError) > 0) {
+      maximumScheduleError = changeNwcError;
+    }
+    if (balanceSheetResidual.compare(maximumBalanceSheetResidual) > 0) {
+      maximumBalanceSheetResidual = balanceSheetResidual;
+    }
+
+    perYear.push({
+      forecast_year: year,
+      each_day_basis_division_absolute_error_bound: perDivisionError.toString(),
+      accounts_receivable_inventory_payable_combined_error_bound: nwcError.toString(),
+      change_in_nwc_absolute_error_bound: changeNwcError.toString(),
+      cfo_absolute_error_bound: cfoError.toString(),
+      closing_cash_absolute_error_bound: closingCashError.toString(),
+      balance_sheet_identity_residual_absolute_error_bound: balanceSheetResidual.toString()
+    });
+    previousNwcError = nwcError;
+  }
+
+  const displayQuantum = new Fraction(1n, pow10(policy.reporting_fraction_digits));
+  const displayRoundingError = nearestModes.includes(policy.reporting_rounding_mode)
+    ? displayQuantum.div(new Fraction(2n))
+    : displayQuantum;
+
+  const comparisons = [
+    ["arithmetic_approximation_absolute", maximumLineError],
+    ["accounting_identity_absolute", maximumBalanceSheetResidual],
+    ["schedule_rollforward_absolute", maximumScheduleError],
+    ["display_export_absolute", displayRoundingError]
+  ];
+  const budgetChecks = {};
+  for (const [key, derivedBound] of comparisons) {
+    const budget = parseNonNegativeDecimal(profile.error_budgets[key], "error_budgets." + key).value;
+    budgetChecks[key] = {
+      derived_bound_model_units: derivedBound.toString(),
+      approved_budget_model_units: budget.toString(),
+      status: derivedBound.compare(budget) <= 0 ? "PASS" : "FAIL",
+      reporting_currency_derived_bound: derivedBound.mul(new Fraction(UNIT_FACTORS[profile.unit_scale])).toString(),
+      reporting_currency_budget: budget.mul(new Fraction(UNIT_FACTORS[profile.unit_scale])).toString()
+    };
+  }
+
+  return {
+    status: "DERIVED_UNDER_DECLARED_DIVISION_POLICY",
+    assumptions: [
+      "Each forecast period contains three non-terminating day-basis divisions: AR, inventory and AP.",
+      "For half_even and half_up, each division error is bounded by half of one output quantum; for toward_zero and away_from_zero, it is bounded by one output quantum.",
+      "Non-division arithmetic and divisions by two are exact while all representation/resource limits pass.",
+      "No circular or feedback formula feeds rounded cash or working capital into subsequent operating drivers.",
+      "The balance-sheet residual uses a conservative sum of absolute errors and does not assume cancellation.",
+      "Display rounding is included; Excel binary floating-point cell conversion is not included and requires separate exporter testing."
+    ],
+    division_fractional_scale: scale,
+    division_rounding_mode: policy.division_rounding_mode,
+    output_quantum_model_units: quantum.toString(),
+    per_division_error_bound_model_units: perDivisionError.toString(),
+    maximum_forecast_line_error_bound_model_units: maximumLineError.toString(),
+    maximum_schedule_error_bound_model_units: maximumScheduleError.toString(),
+    maximum_balance_sheet_identity_residual_model_units: maximumBalanceSheetResidual.toString(),
+    display_fraction_digits: policy.reporting_fraction_digits,
+    display_rounding_mode: policy.reporting_rounding_mode,
+    display_rounding_error_bound_model_units: displayRoundingError.toString(),
+    xlsx_binary_float_conversion: "NOT_INCLUDED__REQUIRES_EXPORTER_MEASUREMENT",
+    per_year: perYear,
+    budget_checks: budgetChecks
   };
 }
 
@@ -908,6 +1028,7 @@ if (require.main === module) {
 module.exports = {
   Fraction,
   createDerivation,
+  deriveErrorPropagation,
   parseNonNegativeDecimal,
   parseSignedDecimal,
   roundOutward,
