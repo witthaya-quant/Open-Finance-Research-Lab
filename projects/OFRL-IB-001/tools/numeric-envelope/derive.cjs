@@ -280,8 +280,13 @@ function validateProfile(p) {
   ];
   assertObject(p.resource_limits, "resource_limits", resourceKeys);
   for (const key of resourceKeys) {
-    if (!Number.isSafeInteger(p.resource_limits[key]) || (key === "max_intermediate_scale" ? p.resource_limits[key] < 0 : p.resource_limits[key] <= 0)) {
-      throw new Error("resource_limits." + key + " must be a positive safe integer");
+    const value = p.resource_limits[key];
+    const isScale = key === "max_intermediate_scale";
+    if (!Number.isSafeInteger(value) || (isScale ? value < 0 : value <= 0)) {
+      throw new Error(
+        "resource_limits." + key + " must be a " +
+        (isScale ? "non-negative" : "positive") + " safe integer"
+      );
     }
   }
   if (p.resource_limits.max_input_bytes > 1_048_576) {
