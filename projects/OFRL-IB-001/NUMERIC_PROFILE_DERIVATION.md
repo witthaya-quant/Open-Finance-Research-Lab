@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Profile Derivation and Backend Decision Basis
 
-**Document version:** 0.4.0  
+**Document version:** 0.5.0  
 **Status:** Engineering derivation — NOT AN APPROVED NUMERIC PROFILE  
 **Scope:** V1 generic non-financial operating company; three historical periods; five forecast periods  
 **Reference implementation:** Numeric Envelope POC, branch `research/ofrl-ib-001-numeric-envelope`  
@@ -626,7 +626,7 @@ The candidate-neutral analysis tool is:
 - CI-only fixture: `tools/numeric-envelope/test/fixtures/synthetic-profile.test-only.json`
 - Unit tests: `tools/numeric-envelope/test/derive.test.cjs`
 
-The tool uses JavaScript `BigInt` fractions for exact rational bound arithmetic; it does not use binary floating point, add a runtime dependency to the Rust workspace, choose a backend or implement forecast calculations. It enumerates opening/historical validator nodes and the five-year forecast formula graph, records exact rational upper bounds, source/intermediate scale metadata, coefficient-digit evidence where a finite decimal representation is defined, and translates the four separate error-budget inputs to reporting-currency amounts using the declared unit scale.
+The tool uses JavaScript `BigInt` fractions for exact rational bound arithmetic; it does not use binary floating point, add a runtime dependency to the Rust workspace, choose a backend or implement forecast calculations. It enumerates opening/historical validator arithmetic nodes and the five-year forecast formula graph, records exact rational upper bounds, source/intermediate scale metadata, an outward-rounded **exact coefficient-integer upper bound** at each declared scale, and the matching coefficient digit count. Identity, tie-out and other comparison-only checks are not represented as fictitious arithmetic additions. The four separate error-budget inputs are translated to reporting-currency amounts using the declared unit scale.
 
 Division by 365 is always marked context-dependent even when a particular reduced test value happens to cancel factors. If the profile leaves division scale or rounding unresolved, downstream scale/resource checks remain conditional. CPU, allocation, peak-memory, tail-latency and concurrency fields are recorded as target limits only; this derivation tool does not claim to measure them.
 
@@ -637,6 +637,20 @@ node projects/OFRL-IB-001/tools/numeric-envelope/derive.cjs path/to/numeric-prof
 ```
 
 The `--require-approved` option rejects a `test_only` profile. An `approved` input still produces an engineering derivation only; backend adoption and production-engine authorization are separate decisions. The committed synthetic fixture is explicitly test-only and must never be copied into a production approval record or treated as an approved operating domain.
+
+### Candidate-specific static representation screen
+
+The separate `tools/numeric-envelope/candidate-capacity.cjs` evaluates a generated derivation against candidate-specific static representation limits. Its CI tests are in `tools/numeric-envelope/test/candidate-capacity.test.cjs`.
+
+For `rust_decimal 1.43.0`, the screen checks both:
+- scale no greater than 28; and
+- the exact non-negative coefficient-integer upper bound no greater than the signed 96-bit maximum, `79228162514264337593543950335`.
+
+This is deliberately an integer comparison, not a digit-count heuristic: two 29-digit coefficients can lie on opposite sides of the 96-bit maximum. The test suite covers the exact maximum, one integer above it, and a value one integer below it.
+
+For `bigdecimal 0.4.11`, the screen checks the profile's declared scale and coefficient ceilings. It does not claim an intrinsic crate capacity limit or operational resource proof. It flags the POC-to-profile context mismatch: the POC uses an 80-significant-digit compile-time default, whereas the Numeric Profile contract expresses a fixed fractional division scale and expects a deterministic run-scoped policy. A production adapter must prove that mapping explicitly.
+
+The evaluator reports `FAIL`, `CONDITIONAL`, or `STATIC_CAPACITY_WITHIN_DECLARED_PROFILE`. A missing division scale/coefficient bound remains `CONDITIONAL`; an exact fixed-width capacity breach is `FAIL`. It never marks a backend selected, runs candidate arithmetic, measures operational resources, or authorizes the production engine. Static capacity is only one input to the full backend acceptance matrix.
 
 ## 5. What the current domain does and does not permit us to conclude
 
