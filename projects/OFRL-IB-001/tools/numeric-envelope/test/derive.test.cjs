@@ -350,7 +350,7 @@ test("approved state requires three explicit review records and still does not s
 
 test("coefficient integer upper bound is exact at the declared intermediate scale", () => {
   const result = createDerivation(readFixture());
-  const ar = node(result, "forecast.year_1.accounts_receivable");
+  const ar = node(result, "forecast.year_1.accounts_receivable_numerator");
   assert.equal(typeof ar.coefficient_integer_upper_bound, "string");
   assert.match(ar.coefficient_integer_upper_bound, /^(0|[1-9][0-9]*)$/);
   assert.equal(
