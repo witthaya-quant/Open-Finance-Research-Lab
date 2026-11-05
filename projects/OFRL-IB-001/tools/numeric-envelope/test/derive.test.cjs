@@ -110,11 +110,11 @@ test("synthetic fixture is explicitly test-only and contains no approval claim",
   assert.equal(result.decision, "TEST_ONLY__NOT_A_MODEL_OWNER_APPROVAL");
   assert.equal(result.derivation.candidate_backend_selected, false);
   assert.equal(result.derivation.production_engine_authorized, false);
-  assert.equal(result.derivation.division_policy_status, "SPECIFIED__CANDIDATE_BEHAVIOUR_NOT_YET_VALIDATED");
-  assert.equal(result.derivation.reporting_policy_status, "SPECIFIED__XLSX_RECONCILIATION_NOT_YET_VALIDATED");
+  assert.equal(result.derivation.division_policy_status, "UNRESOLVED");
+  assert.equal(result.derivation.reporting_policy_status, "UNRESOLVED");
   assert.equal(
     node(result, "forecast.year_1.accounts_receivable").post_rounding_scale,
-    18
+    null
   );
 });
 
@@ -138,7 +138,7 @@ test("five-year magnitude and scale recurrences use exact operation order", () =
   );
   assert.equal(
     node(result, "forecast.year_1.accounts_receivable").exact_upper_bound,
-    "62370/365"
+    "12474/73"
   );
   assert.equal(
     node(result, "forecast.year_1.accounts_receivable").division_context_required,
@@ -239,6 +239,18 @@ test("approved state requires three explicit review records and still does not s
   );
   assert.equal(result.derivation.candidate_backend_selected, false);
   assert.equal(result.derivation.production_engine_authorized, false);
+  assert.equal(
+    result.derivation.division_policy_status,
+    "SPECIFIED__CANDIDATE_BEHAVIOUR_NOT_YET_VALIDATED"
+  );
+  assert.equal(
+    result.derivation.reporting_policy_status,
+    "SPECIFIED__XLSX_RECONCILIATION_NOT_YET_VALIDATED"
+  );
+  assert.equal(
+    node(result, "forecast.year_1.accounts_receivable").post_rounding_scale,
+    18
+  );
 });
 
 test("CLI cannot silently treat a test-only profile as approved", () => {
