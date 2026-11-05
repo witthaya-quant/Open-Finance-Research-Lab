@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ofrl:schema:ofrl-ib-001-numeric-profile:0.1.0",
+  "title": "OFRL-IB-001 Numeric Profile Input",
+  "description": "Finite, field-specific numerical-domain and resource-policy input for the candidate-neutral Numeric Profile derivation tool. Test-only profiles are not approvals.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "profile_id",
+    "profile_version",
+    "convention_version",
+    "approval_state",
+    "reporting_currency",
+    "unit_scale",
+    "day_count_basis",
+    "source_precision",
+    "opening_balance_sheet",
+    "historical_period",
+    "forecast_drivers",
+    "resource_limits",
+    "error_budgets",
+    "approvals"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "urn:ofrl:schema:ofrl-ib-001-numeric-profile:0.1.0"
+    },
+    "profile_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "profile_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "convention_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "approval_state": {
+      "enum": ["test_only", "approved"]
+    },
+    "reporting_currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "unit_scale": {
+      "enum": ["units", "thousands", "millions"]
+    },
+    "day_count_basis": {
+      "const": 365
+    },
+    "source_precision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "monetary_max_integer_digits",
+        "monetary_max_fraction_digits",
+        "ratio_max_integer_digits",
+        "ratio_max_fraction_digits",
+        "days_max_integer_digits",
+        "days_max_fraction_digits"
+      ],
+      "properties": {
+        "monetary_max_integer_digits": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "monetary_max_fraction_digits": { "type": "integer", "minimum": 0, "maximum": 28 },
+        "ratio_max_integer_digits": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "ratio_max_fraction_digits": { "type": "integer", "minimum": 0, "maximum": 28 },
+        "days_max_integer_digits": { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "days_max_fraction_digits": { "type": "integer", "minimum": 0, "maximum": 28 }
+      }
+    },
+    "opening_balance_sheet": {
+      "$ref": "#/$defs/balanceSheetBounds"
+    },
+    "historical_period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["income_statement", "balance_sheet", "cash_flow_statement"],
+      "properties": {
+        "income_statement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "revenue_absolute_max",
+            "cogs_absolute_max",
+            "operating_expenses_absolute_max",
+            "depreciation_absolute_max",
+            "interest_expense_absolute_max",
+            "income_tax_expense_absolute_max",
+            "net_income_absolute_max"
+          ],
+          "properties": {
+            "revenue_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "cogs_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "operating_expenses_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "depreciation_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "interest_expense_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "income_tax_expense_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "net_income_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" }
+          }
+        },
+        "balance_sheet": {
+          "$ref": "#/$defs/balanceSheetBounds"
+        },
+        "cash_flow_statement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "net_income_absolute_max",
+            "depreciation_addback_absolute_max",
+            "change_in_operating_nwc_absolute_max",
+            "cash_from_operations_absolute_max",
+            "capex_absolute_max",
+            "cash_from_investing_absolute_max",
+            "debt_drawdowns_absolute_max",
+            "principal_repayments_absolute_max",
+            "dividends_absolute_max",
+            "cash_from_financing_absolute_max",
+            "net_change_in_cash_absolute_max",
+            "opening_cash_absolute_max",
+            "closing_cash_absolute_max"
+          ],
+          "properties": {
+            "net_income_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "depreciation_addback_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "change_in_operating_nwc_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "cash_from_operations_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "capex_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "cash_from_investing_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "debt_drawdowns_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "principal_repayments_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "dividends_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "cash_from_financing_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "net_change_in_cash_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "opening_cash_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+            "closing_cash_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" }
+          }
+        }
+      }
+    },
+    "forecast_drivers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revenue_growth_max",
+        "cogs_pct_revenue_max",
+        "operating_expenses_pct_revenue_max",
+        "dso_max",
+        "dio_max",
+        "dpo_max",
+        "capex_pct_revenue_max",
+        "depreciation_rate_max",
+        "debt_drawdowns_max_per_period",
+        "interest_rate_max",
+        "tax_rate_max",
+        "dividend_payout_ratio_max"
+      ],
+      "properties": {
+        "revenue_growth_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "cogs_pct_revenue_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "operating_expenses_pct_revenue_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "dso_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "dio_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "dpo_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "capex_pct_revenue_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "depreciation_rate_max": { "$ref": "#/$defs/unitIntervalDecimal" },
+        "debt_drawdowns_max_per_period": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "interest_rate_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "tax_rate_max": { "$ref": "#/$defs/unitIntervalDecimal" },
+        "dividend_payout_ratio_max": { "$ref": "#/$defs/unitIntervalDecimal" }
+      }
+    },
+    "resource_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_intermediate_scale",
+        "max_coefficient_digits",
+        "division_precision_digits",
+        "max_input_bytes",
+        "max_cpu_ms",
+        "max_peak_memory_mib",
+        "max_concurrent_runs"
+      ],
+      "properties": {
+        "max_intermediate_scale": { "type": "integer", "minimum": 1, "maximum": 10000 },
+        "max_coefficient_digits": { "type": "integer", "minimum": 1, "maximum": 10000 },
+        "division_precision_digits": { "type": "integer", "minimum": 1, "maximum": 10000 },
+        "max_input_bytes": { "type": "integer", "minimum": 1, "maximum": 1048576 },
+        "max_cpu_ms": { "type": "integer", "minimum": 1 },
+        "max_peak_memory_mib": { "type": "integer", "minimum": 1 },
+        "max_concurrent_runs": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "error_budgets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minimum_material_amount",
+        "arithmetic_approximation_absolute",
+        "accounting_identity_absolute",
+        "schedule_rollforward_absolute",
+        "display_export_absolute"
+      ],
+      "properties": {
+        "minimum_material_amount": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "arithmetic_approximation_absolute": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "accounting_identity_absolute": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "schedule_rollforward_absolute": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "display_export_absolute": { "$ref": "#/$defs/nonNegativeDecimal" }
+      }
+    },
+    "approvals": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/approvalSet" }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "approval_state": { "const": "approved" } } },
+      "then": { "properties": { "approvals": { "$ref": "#/$defs/approvalSet" } } },
+      "else": { "properties": { "approvals": { "type": "null" } } }
+    }
+  ],
+  "$defs": {
+    "nonNegativeDecimal": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
+    },
+    "unitIntervalDecimal": {
+      "type": "string",
+      "pattern": "^(?:0(?:\\.[0-9]+)?|1(?:\\.0+)?)$"
+    },
+    "balanceSheetBounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cash_max",
+        "accounts_receivable_max",
+        "inventory_max",
+        "gross_ppe_max",
+        "accumulated_depreciation_max",
+        "accounts_payable_max",
+        "interest_bearing_debt_max",
+        "share_capital_max",
+        "retained_earnings_absolute_max"
+      ],
+      "properties": {
+        "cash_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "accounts_receivable_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "inventory_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "gross_ppe_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "accumulated_depreciation_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "accounts_payable_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "interest_bearing_debt_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "share_capital_max": { "$ref": "#/$defs/nonNegativeDecimal" },
+        "retained_earnings_absolute_max": { "$ref": "#/$defs/nonNegativeDecimal" }
+      }
+    },
+    "approvalRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "decision", "date", "evidence_ref"],
+      "properties": {
+        "reviewer": { "type": "string", "minLength": 1 },
+        "decision": { "const": "approved" },
+        "date": { "type": "string", "format": "date" },
+        "evidence_ref": { "type": "string", "minLength": 1 }
+      }
+    },
+    "approvalSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_owner", "finance_accounting", "engineering"],
+      "properties": {
+        "model_owner": { "$ref": "#/$defs/approvalRecord" },
+        "finance_accounting": { "$ref": "#/$defs/approvalRecord" },
+        "engineering": { "$ref": "#/$defs/approvalRecord" }
+      }
+    }
+  }
+}
