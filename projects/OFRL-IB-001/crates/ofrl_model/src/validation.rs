@@ -6,7 +6,6 @@ use serde_json::Value;
 use crate::diagnostics::{Diagnostic, DiagnosticCategory, DiagnosticCode, ValidationReport};
 use crate::domain::{BalanceSheet, CalendarDate, CashFlowStatement, IncomeStatement, ModelInput};
 use crate::typed_deserialization::validate_model_input_shape;
-use crate::typed_deserialization::validate_model_input_shape;
 
 const V1_SCHEMA_VERSION: &str = "0.1.0";
 const V1_DAY_COUNT_BASIS: u16 = 365;
