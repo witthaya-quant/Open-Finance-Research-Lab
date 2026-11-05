@@ -180,9 +180,9 @@ jobs:
             }
             for (const result of candidates) {
               const statusIsConsistent =
-                (result.static_capacity_status === "FAIL" && result.failure_count > 0) ||
-                (result.static_capacity_status === "CONDITIONAL" && result.failure_count === 0 && result.conditional_count > 0) ||
-                (result.static_capacity_status === "STATIC_CAPACITY_WITHIN_DECLARED_PROFILE" && result.failure_count === 0 && result.conditional_count === 0);
+                (result.static_capacity_status === "STATIC_BOUND_EXCEEDS_LIMIT" && result.bound_exceeds_limit_count > 0) ||
+                (result.static_capacity_status === "CONDITIONAL" && result.bound_exceeds_limit_count === 0 && result.conditional_count > 0) ||
+                (result.static_capacity_status === "STATIC_CAPACITY_WITHIN_DECLARED_PROFILE" && result.bound_exceeds_limit_count === 0 && result.conditional_count === 0);
               if (result.profile_id !== derivation.profile_id ||
                   result.node_count !== derivation.nodes.length ||
                   !statusIsConsistent ||
@@ -190,13 +190,13 @@ jobs:
                   result.production_engine_authorized !== false ||
                   result.runtime_correctness_status !== "NOT_EXECUTED" ||
                   result.operational_resource_status !== "NOT_MEASURED") {
-                throw new Error("Candidate capacity output failed its test-only static-capacity guard: " + result.candidate + " " + result.static_capacity_status);
+                throw new Error("Candidate capacity output failed its test-only static-bound guard: " + result.candidate + " " + result.static_capacity_status);
               }
-              process.stdout.write("PASS: " + result.candidate + " static test-fixture capacity status=" + result.static_capacity_status + ", nodes=" + result.node_count + ", failed=" + result.failure_count + ", conditional=" + result.conditional_count + "; runtime and operational evidence remain open.\\n");
-              process.stdout.write("  failure_reason_counts=" + JSON.stringify(result.failure_reason_counts) + "\\n");
+              process.stdout.write("PASS: " + result.candidate + " static test-fixture bound status=" + result.static_capacity_status + ", nodes=" + result.node_count + ", bound_exceeds_limit=" + result.bound_exceeds_limit_count + ", conditional=" + result.conditional_count + "; this is not an observed runtime failure and runtime/resource evidence remains open.\\n");
+              process.stdout.write("  bound_exceedance_reason_counts=" + JSON.stringify(result.bound_exceedance_reason_counts) + "\\n");
               process.stdout.write("  conditional_reason_counts=" + JSON.stringify(result.conditional_reason_counts) + "\\n");
-              if (result.failure_examples.length > 0) {
-                process.stdout.write("  failure_examples=" + JSON.stringify(result.failure_examples) + "\\n");
+              if (result.bound_exceedance_examples.length > 0) {
+                process.stdout.write("  bound_exceedance_examples=" + JSON.stringify(result.bound_exceedance_examples) + "\\n");
               }
             }
             process.stdout.write("PASS: exact candidate-neutral derivation emitted " + derivation.nodes.length + " arithmetic nodes; no backend or production approval was created.\\n");
