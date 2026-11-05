@@ -314,6 +314,12 @@ function validateProfile(p) {
   if (growth.value.compare(new Fraction(-1n)) < 0) {
     throw new Error("forecast_drivers.revenue_growth_max cannot be below the V1 floor of -1");
   }
+  assertFitsSourcePrecision(
+    p.forecast_drivers.revenue_growth_max,
+    p.source_precision.ratio_max_integer_digits,
+    p.source_precision.ratio_max_fraction_digits,
+    "forecast_drivers.revenue_growth_max"
+  );
 
   for (const [key, value] of Object.entries(p.forecast_drivers)) {
     if (key === "revenue_growth_max") continue;
