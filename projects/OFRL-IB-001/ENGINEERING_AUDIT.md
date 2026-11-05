@@ -50,13 +50,13 @@ A CI pass applies only to the exact commit and workflow scope that ran. It does 
 | Period validation | Three historical and five forecast periods, Gregorian dates, sequence, contiguity, annual duration and hand-offs |
 | Historical accounting | Opening/historical Balance Sheet, Income Statement, Cash Flow Statement and selected NWC, PP&E, debt and retained-earnings roll-forwards |
 | CLI baseline | `validate <input.json>` with 1 MiB max-plus-one input bound and invalid UTF-8 rejection; no production forecast or export command |
-| Deserialization diagnostics | Contract-owned diagnostic codes, shared Decimal parser, RFC 6901 JSON Pointers and nine versioned mutation fixtures; merged and CI-verified |
+| Build reproducibility | Production Cargo.lock and two-toolchain CI |\n| Deserialization diagnostics | Contract-owned diagnostic codes, shared Decimal parser, RFC 6901 JSON Pointers and nine versioned mutation fixtures; merged and CI-verified |
 | Repository governance | Active main Ruleset, PR requirement, no bypass actors, required conversation resolution and six exact required contexts |
 | Repository policy | Always-running `repository-policy` workflow validates local Markdown links, JSON/YAML, project manifests/registry and policy contracts |
 | Portfolio/data controls | Project lifecycle/standards, project manifest schema, repository registry checks and OFRL-IB-001 data manifest |
 | OFRL validation CI | Decimal and semantic validation workflows execute for all Pull Requests on Rust 1.85.0 and 1.99.1 |
 | Decimal POC supply chain | Isolated POC Cargo.lock and locked metadata/tree/Clippy/test/docs commands |
-| Schema/Rust contract corpus | Versioned positive/negative corpus consumed by AJV and Rust, with fixture path-safety checks; merged and CI-verified |
+| CLI SBOM preview | Preview-only CycloneDX 1.5 SBOM and checksum bundle for the current Linux CLI input validator; not a forecast-model release |\n| Schema/Rust contract corpus | Versioned positive/negative corpus consumed by AJV and Rust, with fixture path-safety checks; merged and CI-verified |
 | Calculation engine | Not implemented |
 | Canonical ModelRun / provenance | Not implemented |
 | Forecast integrity / feasibility | Not implemented |
