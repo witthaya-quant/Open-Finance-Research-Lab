@@ -193,6 +193,11 @@ jobs:
                 throw new Error("Candidate capacity output failed its test-only static-capacity guard: " + result.candidate + " " + result.static_capacity_status);
               }
               process.stdout.write("PASS: " + result.candidate + " static test-fixture capacity status=" + result.static_capacity_status + ", nodes=" + result.node_count + ", failed=" + result.failure_count + ", conditional=" + result.conditional_count + "; runtime and operational evidence remain open.\\n");
+              process.stdout.write("  failure_reason_counts=" + JSON.stringify(result.failure_reason_counts) + "\\n");
+              process.stdout.write("  conditional_reason_counts=" + JSON.stringify(result.conditional_reason_counts) + "\\n");
+              if (result.failure_examples.length > 0) {
+                process.stdout.write("  failure_examples=" + JSON.stringify(result.failure_examples) + "\\n");
+              }
             }
             process.stdout.write("PASS: exact candidate-neutral derivation emitted " + derivation.nodes.length + " arithmetic nodes; no backend or production approval was created.\\n");
           '
