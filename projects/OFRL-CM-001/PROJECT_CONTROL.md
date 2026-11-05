@@ -145,25 +145,30 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 | CM-T0014 | P4 | Admit the next practice case after first-case lessons are reviewed | **NOT STARTED** | Candidate intake, source/rights review, owner admission |
 | CM-T0015 | P5 | Prepare release assessment for Playbook, research case(s), and software separately | **NOT STARTED** | Each deliverable meets its own evidence and release gates |
 
-## 7. Verified GitHub baseline
+## 7. Recorded GitHub verification snapshot
 
-**Latest verified snapshot:** 2026-11-05  
+**Snapshot date:** 2026-11-05  
+**Snapshot commit:** [`fbec781b1929ff670bfccbeedb982ab2bd2abb75`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/fbec781b1929ff670bfccbeedb982ab2bd2abb75)  
 **Repository:** `witthaya-quant/Open-Finance-Research-Lab`  
-**Active PR:** [#29 — Project admission and Pressure Points research pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
-**Authorized branch:** `research/ofrl-cm-001-admission-and-pilot`
+**PR:** [#29 — Project admission and Pressure Points research pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
+**Branch observed:** `research/ofrl-cm-001-admission-and-pilot`
 
-- Current branch / PR head: [`9234590afee1b4b9cdc5019fbd5bbc4bb3ffef57`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/9234590afee1b4b9cdc5019fbd5bbc4bb3ffef57).
-- Base branch: `main`; observed main head `5f8f578c387150214a1f438c3d67da48652eb4cb`; PR base / merge-base checkpoint `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`.
+At this snapshot:
+- PR / branch head: `fbec781b1929ff670bfccbeedb982ab2bd2abb75`.
 - PR state: Open / Draft / Not merged; GitHub reports mergeable.
-- Compare: branch ahead 18 / behind 212; the base branch has advanced substantially and integration remains on hold.
+- Base branch: `main`; observed main head `5f8f578c387150214a1f438c3d67da48652eb4cb`; merge base / PR base checkpoint `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`.
+- Compare: branch ahead 19 / behind 212.
 - PR changed files: 14. Exact paths are `PROJECT_CATALOG.md` and files under `projects/OFRL-CM-001/**`; no path under `projects/OFRL-IB-001/**`, `.github/**`, `schemas/**`, `scripts/**`, or `fixtures/**` is changed.
 - PR comments: none; reviews: none; review threads: none.
-- Repository policy, numeric/input contract, and runtime semantic workflows all succeeded on this exact head:
-  - [OFRL Repository Policy #42017737205](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42017737205)
-  - [OFRL-IB-001 Numeric and Input Contract Checks #42017737208](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42017737208)
-  - [OFRL-IB-001 Rust Runtime Semantic Validator #42017737045](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42017737045)
+- All three workflows succeeded on this exact snapshot:
+  - [OFRL Repository Policy #42017974726](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42017974726)
+  - [OFRL-IB-001 Numeric and Input Contract Checks #42017974594](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42017974594)
+  - [OFRL-IB-001 Rust Runtime Semantic Validator #42017974516](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42017974516)
 
-The two IB-001 workflows ran because of repository PR-event behavior; their success is not evidence of changes to IB-001 or mathematical correctness for CM-001. This is a timestamped snapshot, not a future write token. Re-fetch all GitHub state before continuing.
+The two IB-001 workflows ran because of repository PR-event behavior. Their success is not evidence of changes to IB-001 or mathematical correctness for CM-001.
+
+**Live-state rule:** This section is a frozen, auditable checkpoint, not a dynamic GitHub view and not a write token. At every new chat or task, agents MUST re-fetch PR #29, branch `HEAD`, `main`, compare counts, changed paths, comments/reviews, and exact-head workflows before taking action. A later metadata-only commit may advance the branch without changing the research conclusions; such a commit does not make this snapshot authoritative for future operations.
+
 
 ## 8. Project document ownership map
 
