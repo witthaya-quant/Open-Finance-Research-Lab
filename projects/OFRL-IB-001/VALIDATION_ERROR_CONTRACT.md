@@ -45,7 +45,8 @@ Diagnostics must not include secrets, access tokens, personal financial data bey
 
 | Code | Meaning |
 |---|---|
-| JSON_PARSE_FAILED | Input is not valid JSON |
+| JSON_PARSE_FAILED | Input is not valid JSON; syntax errors without an unambiguous field path have no JSON Pointer |
+| INPUT_DESERIALIZATION_FAILED | Defensive fail-closed code if typed Serde decoding disagrees with the preceding contract preflight |
 | JSON_TYPE_MISMATCH | A field has the wrong JSON type |
 | DECIMAL_STRING_REQUIRED | Decimal field was supplied as a JSON number or non-string token |
 | DECIMAL_TEXT_NON_CANONICAL | Decimal text violates the canonical lexical grammar |
@@ -166,4 +167,8 @@ The validator returns an \`input_status\` and a deterministic list of diagnostic
 
 The Rust runtime uses strict typed Serde deserialization and semantic rules. The separate Draft 2020-12 JSON Schema and its Ajv CI validation remain an independent contract gate; the Rust runtime does not embed an arbitrary JSON Schema execution engine.
 
-A missing \`json_pointer\` on a parse/deserialization diagnostic means the current Serde boundary could not reliably expose the field path. Semantic diagnostics include the field pointer where available.
+Before constructing `ModelInput`, the runtime performs a typed structural preflight against the closed Rust domain shape. It classifies unknown and missing properties, JSON type mismatches, enum values, Decimal string-token requirements, canonical Decimal text, scale, and representational range through contract-owned error variants. Public diagnostic codes are not selected by inspecting Serde display text.
+
+The preflight constructs RFC 6901 JSON Pointers from path segments, escaping `~` as `~0` and `/` as `~1`; array indices are decimal path segments. The empty pointer `""` identifies a root-document type error. When the affected historical or forecast row has a valid `period_id`, it is included as context.
+
+Malformed JSON syntax is classified before structural preflight. When the parser cannot identify an unambiguous field path, `json_pointer`, `field`, and `period_id` remain absent rather than fabricated. Typed Serde decoding runs only after preflight passes. If it nevertheless rejects the value, the validator emits `INPUT_DESERIALIZATION_FAILED` without leaking dependency error text. Semantic diagnostics continue to include field pointers where available.
