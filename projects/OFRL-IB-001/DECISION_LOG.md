@@ -37,6 +37,7 @@ This log records the baseline decisions and changes that govern the first releas
 | N-004 | Preserve canonical Decimal strings separately from XLSX numeric cells | Design policy; workbook gate open | Canonical string boundary tested; XLSX output and reconciliation have not yet been implemented |
 | N-005 | Treat Decimal as fixed precision, not arbitrary precision or exact rational arithmetic | POC passed; policy confirmed | Scale-28 division outputs recorded; repeating division does not reconstruct exact rational values |
 | N-006 | Use Rust 1.85.0 as the effective minimum toolchain for the current POC dependency graph | CI passed | Rust 1.85.0 and 1.99.1 passed formatting, Clippy, 9 tests, and docs; re-evaluate if the dependency graph changes |
+| N-007 | Do not select a production numeric backend until a finite, approved Numeric Profile and candidate-specific runtime/resource evidence exist | OPEN — no backend selected | Static capacity checks are pre-screening evidence only; no candidate has passed the complete correctness, arithmetic-context, serialization, resource and Finance/Accounting gates |
 
 ## 2.1 Numeric POC results and remaining gates
 
@@ -47,6 +48,18 @@ The Decimal/string-interchange POC passed on 2026-11-04 at PR #6 head commit 88e
 - Division observations: 1/365 = 0.0027397260273972602739726027; 1/3 = 0.3333333333333333333333333333; (1/3)×3 = 0.9999999999999999999999999999.
 - A 29-fractional-digit raw parser case was observed to lose precision; the POC input adapter now rejects the over-scale value and checks exact parse-to-string round-trip.
 - Direct package metadata and the effective MSRV are documented in [DEPENDENCY_REVIEW.md](poc/decimal-contract/DEPENDENCY_REVIEW.md).
+
+### 2.1.1 Numeric Profile derivation and candidate screen — 2026-11-05
+
+PR #13 adds a closed Numeric Profile input schema, exact BigInt-rational derivation for opening/historical/forecast arithmetic, separate division-error propagation, and a static candidate-capacity evaluator. The derivation graph now contains arithmetic nodes only; comparison/tie-out checks do not create fictitious sum nodes. Each node reports an exact outward-rounded coefficient-integer upper bound at its declared scale.
+
+The code-tested branch head `daac2fc472ddabac09114399ecdaedc5e6bd46c4` passed all six required Ruleset contexts and 30/30 Numeric Envelope tests. The test-only fixture produced 287 arithmetic nodes:
+- `rust_decimal 1.43.0`: static FAIL on 37 nodes; all 37 exceed the exact 96-bit coefficient maximum and 19 exceed scale 28 (overlapping reasons); 50 additional nodes remain conditional because the division policy is unresolved.
+- `bigdecimal 0.4.11`: static CONDITIONAL on 50 division-dependent nodes; no profile static-ceiling failure was reported, but this is not a runtime or operational pass.
+
+The fixture is illustrative only. It is not the intended V1 operating domain. BigDecimal's POC uses an 80-significant-digit compile-time default context, while the current Numeric Profile schema specifies a fixed fractional division scale; a production adapter or a deliberate versioned policy change is required to prove equivalence. The static evaluator does not execute candidate arithmetic, measure CPU/memory/allocations/concurrency, or authorize production use.
+
+**Disposition:** N-007 remains OPEN. The Model Owner must supply finite input-domain and source-precision decisions in Issue #28. Finance/Accounting and Engineering must then approve separate error budgets and arithmetic semantics before a production backend can be selected. The Forecast Engine remains NOT AUTHORIZED.
 
 The Decimal POC does not close the complete dependency/source/licence review. PR #11 remains open and contains a separate numeric POC lockfile, candidate CycloneDX inventories and RustSec workflow. The isolated Decimal Contract POC lockfile and locked CI commands are now on main through PR #20; the preview-only CLI SBOM/checksum workflow is on main through PR #22. The preview covers the existing Linux CLI input validator only. Point-in-time advisory scans are not a permanent guarantee; licence texts, notices, source provenance and distribution obligations remain open. Neither POC is the production calculation engine.
 
