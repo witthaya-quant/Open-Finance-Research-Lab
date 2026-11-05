@@ -72,6 +72,8 @@ test("rust_decimal rejects a 29-digit coefficient one unit above the 96-bit maxi
 
   assert.equal(result.static_capacity_status, "FAIL");
   assert.ok(result.checks[0].reasons.includes("rust_decimal_96_bit_mantissa_exceeded"));
+  assert.equal(result.failure_reason_counts.rust_decimal_96_bit_mantissa_exceeded, 1);
+  assert.equal(result.failure_examples[0].node, "test.node");
 });
 
 test("rust_decimal does not use digit count as a substitute for exact mantissa comparison", () => {
