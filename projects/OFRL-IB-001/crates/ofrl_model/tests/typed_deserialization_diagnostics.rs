@@ -37,7 +37,8 @@ fn nested_unknown_field_escapes_pointer_and_keeps_period_context() {
         .unwrap()
         .insert("bad/key~".into(), json!("x"));
 
-    let diagnostic = first(&validate_value(value));
+    let report = validate_value(value);
+    let diagnostic = first(&report);
     assert_eq!(diagnostic.code, DiagnosticCode::UnknownField);
     ptr(
         diagnostic,
@@ -55,7 +56,8 @@ fn nested_missing_field_has_exact_pointer() {
         .unwrap()
         .remove("revenue");
 
-    let diagnostic = first(&validate_value(value));
+    let report = validate_value(value);
+    let diagnostic = first(&report);
     assert_eq!(diagnostic.code, DiagnosticCode::RequiredFieldMissing);
     ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
     assert_eq!(diagnostic.period_id.as_deref(), Some("FY2023"));
@@ -69,7 +71,8 @@ fn numeric_object_key_is_not_treated_as_array_index() {
         .unwrap()
         .insert("123".into(), json!("x"));
 
-    let diagnostic = first(&validate_value(value));
+    let report = validate_value(value);
+    let diagnostic = first(&report);
     assert_eq!(diagnostic.code, DiagnosticCode::UnknownField);
     ptr(diagnostic, "/model/123");
     assert_eq!(diagnostic.field.as_deref(), Some("123"));
@@ -80,7 +83,8 @@ fn invalid_enum_reports_pointer() {
     let mut value = case_a();
     value["model"]["unit_scale"] = json!("billions");
 
-    let diagnostic = first(&validate_value(value));
+    let report = validate_value(value);
+    let diagnostic = first(&report);
     assert_eq!(diagnostic.code, DiagnosticCode::InvalidEnumValue);
     ptr(diagnostic, "/model/unit_scale");
 }
@@ -90,7 +94,8 @@ fn array_element_type_error_reports_index() {
     let mut value = case_a();
     value["forecast_periods"][2] = json!("not an object");
 
-    let diagnostic = first(&validate_value(value));
+    let report = validate_value(value);
+    let diagnostic = first(&report);
     assert_eq!(diagnostic.code, DiagnosticCode::JsonTypeMismatch);
     ptr(diagnostic, "/forecast_periods/2");
     assert_eq!(diagnostic.field.as_deref(), Some("forecast_periods"));
@@ -101,7 +106,8 @@ fn decimal_number_token_reports_exact_field() {
     let mut value = case_a();
     value["historical_periods"][0]["income_statement"]["revenue"] = json!(1000.0);
 
-    let diagnostic = first(&validate_value(value));
+    let report = validate_value(value);
+    let diagnostic = first(&report);
     assert_eq!(diagnostic.code, DiagnosticCode::DecimalStringRequired);
     ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
@@ -111,7 +117,8 @@ fn malformed_decimal_text_reports_noncanonical_code() {
     let mut value = case_a();
     value["historical_periods"][0]["income_statement"]["revenue"] = json!("01.0");
 
-    let diagnostic = first(&validate_value(value));
+    let report = validate_value(value);
+    let diagnostic = first(&report);
     assert_eq!(diagnostic.code, DiagnosticCode::DecimalTextNonCanonical);
     ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
@@ -122,7 +129,8 @@ fn decimal_scale_excess_reports_scale_code() {
     value["historical_periods"][0]["income_statement"]["revenue"] =
         json!(format!("0.{}", "1".repeat(29)));
 
-    let diagnostic = first(&validate_value(value));
+    let report = validate_value(value);
+    let diagnostic = first(&report);
     assert_eq!(diagnostic.code, DiagnosticCode::DecimalScaleExceeded);
     ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
@@ -133,7 +141,8 @@ fn decimal_out_of_range_reports_range_code() {
     value["historical_periods"][0]["income_statement"]["revenue"] =
         json!("79228162514264337593543950336");
 
-    let diagnostic = first(&validate_value(value));
+    let report = validate_value(value);
+    let diagnostic = first(&report);
     assert_eq!(diagnostic.code, DiagnosticCode::DecimalOutOfRange);
     ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
