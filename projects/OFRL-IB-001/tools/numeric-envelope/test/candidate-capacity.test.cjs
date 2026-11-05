@@ -59,21 +59,22 @@ test("rust_decimal accepts the exact maximum 96-bit coefficient at scale zero", 
   );
 
   assert.equal(result.static_capacity_status, "STATIC_CAPACITY_WITHIN_DECLARED_PROFILE");
-  assert.equal(result.failure_count, 0);
+  assert.equal(result.bound_exceeds_limit_count, 0);
   assert.equal(result.checks[0].status, "WITHIN_STATIC_LIMITS");
 });
 
-test("rust_decimal rejects a 29-digit coefficient one unit above the 96-bit maximum", () => {
+test("rust_decimal reports an exact coefficient upper bound above the 96-bit maximum", () => {
   const oneAbove = (BigInt(MAX_RUST_DECIMAL_COEFFICIENT) + 1n).toString();
   const result = evaluateCandidateCapacity(
     derivation({ coefficient: oneAbove, coefficientDigits: 29 }),
     RUST_DECIMAL.id
   );
 
-  assert.equal(result.static_capacity_status, "FAIL");
-  assert.ok(result.checks[0].reasons.includes("rust_decimal_96_bit_mantissa_exceeded"));
-  assert.equal(result.failure_reason_counts.rust_decimal_96_bit_mantissa_exceeded, 1);
-  assert.equal(result.failure_examples[0].node, "test.node");
+  assert.equal(result.static_capacity_status, "STATIC_BOUND_EXCEEDS_LIMIT");
+  assert.equal(result.bound_exceeds_limit_count, 1);
+  assert.ok(result.checks[0].reasons.includes("rust_decimal_coefficient_upper_bound_exceeds_96_bit_maximum"));
+  assert.equal(result.bound_exceedance_reason_counts.rust_decimal_coefficient_upper_bound_exceeds_96_bit_maximum, 1);
+  assert.equal(result.bound_exceedance_examples[0].node, "test.node");
 });
 
 test("rust_decimal does not use digit count as a substitute for exact mantissa comparison", () => {
@@ -87,17 +88,17 @@ test("rust_decimal does not use digit count as a substitute for exact mantissa c
   assert.equal(result.static_capacity_status, "STATIC_CAPACITY_WITHIN_DECLARED_PROFILE");
 });
 
-test("rust_decimal rejects an intermediate scale above 28 even when the coefficient is small", () => {
+test("rust_decimal marks an upper-bound scale above 28 as not proven representable", () => {
   const result = evaluateCandidateCapacity(
     derivation({ scale: 29, coefficient: "1", coefficientDigits: 1 }),
     RUST_DECIMAL.id
   );
 
-  assert.equal(result.static_capacity_status, "FAIL");
-  assert.ok(result.checks[0].reasons.includes("rust_decimal_scale_exceeds_28"));
+  assert.equal(result.static_capacity_status, "STATIC_BOUND_EXCEEDS_LIMIT");
+  assert.ok(result.checks[0].reasons.includes("rust_decimal_scale_bound_exceeds_28"));
 });
 
-test("candidate checks fail closed when the profile coefficient-digit ceiling is exceeded", () => {
+test("candidate marks an upper coefficient bound above the profile ceiling as unproven", () => {
   const result = evaluateCandidateCapacity(
     derivation({
       coefficient: "100000",
@@ -107,8 +108,8 @@ test("candidate checks fail closed when the profile coefficient-digit ceiling is
     BIGDECIMAL.id
   );
 
-  assert.equal(result.static_capacity_status, "FAIL");
-  assert.ok(result.checks[0].reasons.includes("profile_coefficient_digit_limit_exceeded"));
+  assert.equal(result.static_capacity_status, "STATIC_BOUND_EXCEEDS_LIMIT");
+  assert.ok(result.checks[0].reasons.includes("derived_coefficient_bound_exceeds_profile_limit"));
 });
 
 test("unresolved scale and coefficient bounds remain conditional, not pass", () => {
