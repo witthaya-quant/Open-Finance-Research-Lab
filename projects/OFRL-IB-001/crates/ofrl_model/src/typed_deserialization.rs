@@ -347,7 +347,7 @@ struct Failure {
 
 pub(crate) fn validate_model_input_shape(value: &Value) -> Result<(), Diagnostic> {
     let mut path = Vec::new();
-    validate_value(value, &ROOT, &mut path).map_err(|failure| failure.into_diagnostic(value))
+    validate_value(value, &ROOT, &mut path).map_err(|failure| (*failure).into_diagnostic(value))
 }
 
 impl Failure {
@@ -365,7 +365,7 @@ impl Failure {
     }
 }
 
-fn validate_value(value: &Value, shape: &Shape, path: &mut Vec<String>) -> Result<(), Failure> {
+fn validate_value(value: &Value, shape: &Shape, path: &mut Vec<String>) -> Result<(), Box<Failure>> {
     match shape {
         Shape::String => {
             if value.is_string() {
@@ -457,14 +457,14 @@ fn validate_value(value: &Value, shape: &Shape, path: &mut Vec<String>) -> Resul
             if variants.contains(&actual) {
                 Ok(())
             } else {
-                Err(Failure {
+                Err(Box::new(Failure {
                     code: DiagnosticCode::InvalidEnumValue,
                     category: DiagnosticCategory::Schema,
                     message: "The input contains a value outside the declared enumeration.",
                     expected: Some(variants.join(", ")),
                     actual: Some(actual.to_owned()),
                     path: path.to_vec(),
-                })
+                }))
             }
         }
         Shape::Object(fields) => {
@@ -557,15 +557,15 @@ fn fail(
     expected: Option<&str>,
     actual: Option<&str>,
     path: &[String],
-) -> Failure {
-    Failure {
+) -> Box<Failure> {
+    Box::new(Failure {
         code,
         category,
         message,
         expected: expected.map(str::to_owned),
         actual: actual.map(str::to_owned),
         path: path.to_vec(),
-    }
+    })
 }
 
 fn json_type(value: &Value) -> &'static str {
