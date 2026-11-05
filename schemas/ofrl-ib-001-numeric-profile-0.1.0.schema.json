@@ -261,6 +261,7 @@
         "properties": {
           "approvals": { "$ref": "#/$defs/approvalSet" },
           "arithmetic_policy": {
+            "type": "object",
             "properties": {
               "division_fractional_scale": { "type": "integer", "minimum": 1 },
               "division_rounding_mode": { "$ref": "#/$defs/roundingMode" },
