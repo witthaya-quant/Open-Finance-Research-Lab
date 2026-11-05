@@ -50,10 +50,12 @@ test("zero fractional source digits are a valid explicit precision limit", () =>
     profile.historical_period.balance_sheet,
     profile.historical_period.cash_flow_statement
   ]) {
-    for (const key of Object.keys(group)) group[key] = String(Math.trunc(Number(group[key])));
+    for (const key of Object.keys(group)) {
+      group[key] = BigInt(group[key].split(".")[0]).toString();
+    }
   }
   for (const key of Object.keys(profile.forecast_drivers)) {
-    profile.forecast_drivers[key] = String(Math.trunc(Number(profile.forecast_drivers[key])));
+    profile.forecast_drivers[key] = BigInt(profile.forecast_drivers[key].split(".")[0]).toString();
   }
   validateProfile(profile);
 });
