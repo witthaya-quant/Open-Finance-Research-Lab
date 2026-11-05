@@ -38,7 +38,7 @@ pub fn validate_input_json(input: &str) -> ValidationReport {
     };
 
     if let Err(diagnostic) = validate_model_input_shape(&value) {
-        return ValidationReport::rejected(diagnostic);
+        return ValidationReport::rejected(*diagnostic);
     }
 
     let model = match serde_json::from_value::<ModelInput>(value) {
