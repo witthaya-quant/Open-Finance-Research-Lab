@@ -2,9 +2,9 @@
 
 # OFRL-IB-001 — Numeric Envelope and Precision Policy
 
-**Policy version:** 0.1.0  
+**Policy version:** 0.2.0  
 **Status:** Proposed for V1; candidate-specific evidence recorded  
-**Candidate assessed:** rust_decimal 1.43.0  
+**Candidate evidence:** rust_decimal 1.43.0 and bigdecimal 0.4.11 POC comparison; no production backend selected  
 **Effective POC toolchain floor:** Rust 1.85.0
 
 ## 1. Purpose
@@ -136,16 +136,48 @@ The Decimal type defines a representation envelope, but the financial model stil
 
 - Maximum expected revenue, expense, debt, cash, and balance-sheet amounts in the selected model unit.
 - Minimum material monetary amount for the chosen unit scale.
-- Maximum number of significant digits and fractional digits expected from source data.
-- Maximum supported rate and day values.
-- Maximum intermediate value in every schedule and formula chain.
-- Headroom required for additions, multiplications, and division scaling.
+- Maximum integer and fractional digits expected from source data, by field class.
+- Maximum supported rate and day values and their independent source scales.
+- Maximum intermediate magnitude in every schedule and formula chain.
+- Maximum pre-normalization scale and coefficient digits at every arithmetic node across all five forecast periods.
+- Headroom required for additions, multiplications, division scaling and candidate-specific precision behaviour.
 - Error tolerance for statement identities and schedule roll-forwards.
 - Maximum acceptable accumulated numerical difference across the five forecast periods.
 - Final reporting precision and explicit rounding mode.
 - XLSX conversion/display tolerance relative to canonical Decimal outputs.
 
 Do not invent a universal maximum company size before the model's unit conventions and intended data envelope are agreed. The implementation must reject inputs outside its declared envelope and report the violated bound.
+
+## 9.1 Magnitude, scale and coefficient are separate limits
+
+A Decimal input accepted by the parser is not automatically representable through the full forecast formula graph. A Numeric Profile must specify three independent envelopes:
+
+- **Magnitude envelope:** maximum absolute numeric value at every input, intermediate and output.
+- **Scale envelope:** maximum fractional digits before explicit normalization or rounding.
+- **Coefficient envelope:** maximum integer coefficient/significant digits and resource consumption, especially for arbitrary-precision implementations.
+
+For exact decimal operations before backend normalization:
+
+| Operation | Conservative scale rule |
+|---|---|
+| Addition / subtraction | Maximum of operand scales |
+| Multiplication | Sum of operand scales |
+| Minimum / maximum | No more than the maximum operand scale, before implementation-specific normalization |
+| Division | Result scale/rounding depends on the selected arithmetic backend and context; repeating decimals must be characterized |
+
+For five revenue periods, a conservative pre-normalization scale recurrence is:
+
+\[
+S_{R_5} \le S_{R_0} + \sum_{t=1}^{5}S_{g_t}
+\]
+
+Other products add operand scales too. For example, the pre-division AR numerator scale is bounded by revenue scale plus DSO scale; inventory and AP numerator scales combine COGS scale with DIO and DPO scale respectively. A final division by 365 does not erase the need to represent the multiplication result that is evaluated first.
+
+The current contract's 28-fractional-digit ceiling is a per-field lexical limit. It does not prove that a five-year calculation remains within a 28-digit intermediate scale. The profile must approve source scales separately for monetary values, ratios/rates and days, then derive the cumulative formula-node scale.
+
+For rust_decimal, the 96-bit mantissa and 0–28 scale constrain magnitude and scale jointly. Tests must characterize every operation that could require scale reduction or checked failure; no implicit reduction may be treated as exact. For BigDecimal, a finite division precision does not cap exact multiplication coefficient growth. Its maximum coefficient digits and scale, as well as CPU/memory limits, must be defined separately from its division context.
+
+Do not infer the profile from observed trailing zeros in Case A. Test values immediately below, at and above each approved scale, mantissa and coefficient boundary.
 
 ## 10. Excel and binary floating-point boundary
 
@@ -166,12 +198,13 @@ No financial calculation may be delegated to spreadsheet formulas as a parallel 
 
 The numeric foundation cannot be declared approved for the full model until:
 
-1. The model-specific input and intermediate numeric envelope is documented.
-2. The synthetic reference case runs without arithmetic overflow or silent value changes.
-3. Property and boundary tests cover the approved numeric range.
-4. Division and rounding behaviour is explicitly characterized for the schedule formulas.
-5. Model-level error accumulation remains within the approved tolerance.
-6. The canonical output and XLSX reporting layer reconcile within documented display tolerance.
-7. Direct/transitive dependency, lockfile, licence, and security reviews are completed.
+1. The model-specific input and intermediate magnitude, scale and coefficient envelopes are documented.
+2. The synthetic reference case runs without arithmetic overflow, silent scale reduction or value changes.
+3. Property and boundary tests cover the approved magnitude and scale domain, including just-inside/at/just-outside cases.
+4. Division, scale reduction and rounding behaviour are explicitly characterized at every material schedule formula.
+5. Model-level arithmetic-error accumulation remains within a separately approved budget.
+6. CPU, memory, allocation, coefficient-growth and concurrency resource limits are demonstrated under the approved workload.
+7. The canonical output and XLSX reporting layer reconcile within documented display tolerance.
+8. Direct/transitive dependency, lockfile, source, licence and security reviews are completed.
 
 The Decimal POC passed its own test scope. These model-level acceptance gates remain open.
