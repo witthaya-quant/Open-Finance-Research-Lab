@@ -60,6 +60,11 @@ function validateDerivation(derivation) {
     if (digits !== null && digits !== undefined && (!Number.isSafeInteger(digits) || digits < 1)) {
       throw new Error("node " + node.id + " has an invalid coefficient digit bound");
     }
+    if (coefficient !== null && coefficient !== undefined &&
+        digits !== null && digits !== undefined &&
+        digits !== coefficient.length) {
+      throw new Error("node " + node.id + " coefficient digit count does not match its exact integer bound");
+    }
   }
 
   for (const key of ["max_intermediate_scale", "max_coefficient_digits"]) {
@@ -164,7 +169,9 @@ function evaluateCandidateCapacity(derivation, candidateId) {
         representation: "arbitrary-precision decimal coefficient",
         coefficient_ceiling: derivation.resource_limits.max_coefficient_digits + " decimal digits (profile target)",
         scale_ceiling: derivation.resource_limits.max_intermediate_scale + " fractional digits (profile target)",
-        exact_package_capacity: "not fixed by this static profile check"
+        exact_package_capacity: "not fixed by this static profile check",
+        division_context_compatibility:
+          "POC 80-significant-digit compile-time context is not equivalent to a fixed fractional-scale, immutable per-run context; a production adapter must prove the mapping"
       };
 
   return {
