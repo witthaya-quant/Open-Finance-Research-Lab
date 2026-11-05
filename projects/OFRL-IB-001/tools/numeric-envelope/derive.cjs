@@ -498,6 +498,7 @@ function createDerivation(profile) {
   let priorGrossPpe = O.gross_ppe_max;
   let priorAccumDep = O.accumulated_depreciation_max;
   let priorRetainedEarnings = O.retained_earnings_absolute_max;
+  let priorShareCapital = O.share_capital_max;
 
   const openingNetPpe = record(
     "history.opening.net_ppe_absolute_bound", O.gross_ppe_max.value, monetaryScale,
@@ -601,6 +602,15 @@ function createDerivation(profile) {
     add(prefix + ".cash_flow.balance_sheet_cash_tieout_bound", [
       c.closing_cash_absolute_max, b.cash_max
     ]);
+    add(prefix + ".cash_flow.opening_cash_tieout_bound", [
+      priorCash, c.opening_cash_absolute_max
+    ]);
+    add(prefix + ".cash_flow.net_income_link_comparison_bound", [
+      i.net_income_absolute_max, c.net_income_absolute_max
+    ]);
+    add(prefix + ".cash_flow.depreciation_addback_link_comparison_bound", [
+      i.depreciation_absolute_max, c.depreciation_addback_absolute_max
+    ]);
 
     // Historical PP&E, debt and retained-earnings roll-forwards.
     const grossPpeExpected = add(prefix + ".rollforward.gross_ppe_opening_plus_capex", [
@@ -641,7 +651,7 @@ function createDerivation(profile) {
     // A comparison between two already-computed values performs no arithmetic;
     // share-capital constancy is likewise a direct comparison only.
     add(prefix + ".rollforward.share_capital_comparison_bound", [
-      priorRetainedEarnings, b.share_capital_max
+      priorShareCapital, b.share_capital_max
     ]);
 
     priorNwc = currentNwc;
@@ -649,6 +659,7 @@ function createDerivation(profile) {
     priorGrossPpe = b.gross_ppe_max;
     priorAccumDep = b.accumulated_depreciation_max;
     priorRetainedEarnings = b.retained_earnings_absolute_max;
+    priorShareCapital = b.share_capital_max;
   }
 
   // Forecast engine bounds, five periods. Repayment is limited by available
