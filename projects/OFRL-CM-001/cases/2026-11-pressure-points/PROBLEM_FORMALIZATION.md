@@ -3,7 +3,7 @@
 # Pressure Points — Initial Problem Formalization
 
 **Case ID:** OFRL-CM-001-CS-001  
-**Formalization version:** 0.3.0  
+**Formalization version:** 0.4.0  
 **Source:** Jane Street, Pressure Points (November 2026)  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
@@ -119,9 +119,35 @@ The emoji associations are plausible, but they are not an authoritative mapping.
 
 **H-005 — Letter-pressure / reallocation mechanism.** The residuals above may indicate a deliberate letter movement or substitution among four related terms, potentially connected to the title “Pressure Points”. This is only a hypothesis. It is equally possible that one or more candidate words or groupings are wrong. The hypothesis cannot be accepted unless one rule explains all 19 groups, including any empty or exceptional entry, and yields a reproducible output without hand-selected exceptions.
 
-**What this partial reconstruction establishes:** a few emoji themes may be recoverable from four related terms; it does not establish all 19 groups, the assignment of every entry, the orientation of each four-point diamond, the role of Ø, or the final answer.
+**What this partial reconstruction establishes:** four candidate emoji themes can be associated with recognizable four-position sets, and their positional conventions can be checked independently. It does not establish that these are Jane Street's intended groups, does not explain the residual letters, and does not establish the remaining 15 groups, the role of Ø, or the final answer.
 
-**Evidence required before accepting any of H-001 through H-005:**
+**H-006 — Four candidate groups admit independently corroborated cardinal layouts.** The following four emoji themes each have a plausible four-term interpretation that fits a north/east/south/west diamond. The positional conventions are corroborated by external reference material, but the association of each emoji with a group and the role of these groups in Jane Street's intended extraction remain hypotheses.
+
+| Emoji candidate | North | East | South | West | Candidate letter residuals |
+|---|---|---|---|---|---|
+| Compass | NORTH | EAST | SOUTH | WEST | Candidate source for NORTH contains one extra E; candidate source for EAST lacks one E; SOUTH and WEST are exact anagrams. Aggregate multiset equality holds over all four entries. |
+| Game controller | TRIANGLE | CIRCLE | CROSS | SQUARE | Candidate source for TRIANGLE is the plural TRIANGLES (+S); candidate source for CIRCLE lacks E; CROSS and SQUARE are exact anagrams. |
+| Baseball | SECOND BASE | FIRST BASE | HOME | THIRD BASE | Candidate source for SECOND contains one extra O; candidate source for THIRD lacks H; FIRST and HOME are exact anagrams. |
+| Sailing vessel | BOW | STARBOARD | STERN | PORT | Candidate source for BOW contains one extra A; candidate source for STERN lacks S; STARBOARD and PORT are exact anagrams. |
+
+**Independent positional conventions:**
+- Compass: the four cardinal directions are north, east, south, and west.
+- Controller: the Sony DualSense manual's front-view diagram places Triangle at the top, Circle at the right, Cross at the bottom, and Square at the left. This is specific to the PlayStation-style face-button arrangement; the puzzle emoji itself is a generic game-controller symbol.
+- Baseball: MLB's official field diagram places second base at the top of the diamond, first base at the right, home plate at the bottom, and third base at the left.
+- Sailing: bow is the front, stern is the back, and when facing the bow, starboard is right and port is left. Mapping these relative vessel directions to N/E/S/W requires choosing the bow as the forward/North reference; it does not establish a geographic heading.
+
+**Reproducible letter-count residual audit:** compare the candidate alphagram with the target term using character multisets, not edit distance or visual similarity. The observed residuals are:
+- Compass: +E on NORTH and −E on EAST.
+- Controller: +S on TRIANGLE(S) and −E on CIRCLE.
+- Baseball: +O on SECOND and −H on THIRD.
+- Sailing: +A on BOW and −S on STERN.
+
+Across these four partial groups, the residuals do not establish a common letter-transfer rule. Their net multiset is not zero. The fact that the positional categories form recognizable diamonds is a separate observation from the unexplained residual letters. Do not infer the remaining 15 groups or an extraction rule from these four examples.
+
+The source alphagrams themselves are not copied into this document. A researcher can reproduce each comparison from the official puzzle source URL and the candidate terms stated above.
+
+
+**Evidence required before accepting any of H-001 through H-006:**
 1. Explain the semantic role of the leading marker and account for all 76 entries.
 2. Define the four positions and show why each emoji produces exactly four relevant vertices.
 3. Provide a reproducible mapping from every source entry to exactly one vertex, with no omissions or collisions.
@@ -133,7 +159,7 @@ The emoji associations are plausible, but they are not an authoritative mapping.
 9. Derive one consistent letter-transformation rule that accounts for all observed residuals across every group, or reject H-005.
 10. Derive the cardinal orientation of each group and show how those positions lead to the output.
 
-The external leads and partial category reconstruction narrow the research questions but do not close U-001 through U-010. The compass multiset check is a local invariant only; the other category clusters remain tentative. No algorithm family is selected and no solver is authorized by this update.
+The external leads and four partial category reconstructions narrow the research questions but do not close U-001 through U-010. Positional conventions for these four categories are independently corroborated; their puzzle-specific grouping and the letter residual mechanism are not. No algorithm family is selected and no solver is authorized by this update.
 
 ## 5. Candidate model structure — intentionally unselected
 
@@ -188,3 +214,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.1.1 | 2026-11-05 | Added independently checked structural invariants and sequence-length distribution |
 | 0.2.0 | 2026-11-05 | Added secondary research leads and explicitly unverified cardinal-vertex/output hypotheses; no formalization blockers closed |
 | 0.3.0 | 2026-11-05 | Added partial four-member category hypotheses, letter-multiset audits, contextual entity corroboration, and two additional formalization blockers |
+| 0.4.0 | 2026-11-05 | Added four explicit candidate cardinal layouts, independently sourced positional conventions, and reproducible letter-residual audits; no complete puzzle rule established |

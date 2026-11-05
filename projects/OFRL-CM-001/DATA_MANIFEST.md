@@ -3,7 +3,7 @@
 # OFRL-CM-001 — Data Manifest
 
 **Dataset ID:** OFRL-CM-001-SOURCE-REGISTER  
-**Dataset version:** 0.2.0  
+**Dataset version:** 0.3.0  
 **Data classification:** Public Source (reference-only; no source puzzle payload stored)  
 **Data owner / steward:** Project Owner  
 **Created or retrieved:** 2026-11-05  
@@ -27,10 +27,15 @@ The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The re
 | SRC-006 | Kaia | https://www.kaiaz.me/now/ | 2026-11-05 | Secondary solver-status lead reporting a 76-entry / 19-by-4 cardinal-vertex hypothesis and candidate phrase ANTWERPSCHE DIAMANTKRING | Personal research notes; the reviewed page does not provide a complete derivation; hypothesis only, not an official or OFRL-verified solution |
 | SRC-007 | Antwerpsche Diamantkring | https://diamantkring.be/about/ | 2026-11-05 | Verify the existence and nature of the candidate entity named in H-003 | Official organization website; citation only; no content reproduced; does not verify the puzzle answer |
 | SRC-008 | Flemish Government / BELSPO | https://omgeving.vlaanderen.be/sites/default/files/2022-02/ENG_GARMON_final_report_nov_2020.pdf | 2026-11-05 | Contextual corroboration that the Flemish Diamond is a four-agglomeration urban region (Brussels, Ghent, Antwerp, Leuven) | Public government report; citation only; contextual geography, not evidence of puzzle rules or answer |
+| SRC-009 | Sony Interactive Entertainment | https://www.playstation.com/content/dam/global_pdc/en/corporate/support/manuals/accessories/ps5-accessories/dualsense-wireless-controller-cfi-zct1w/EN_DualSense_Wireless_Controller_CFI-ZCT1W_Instruction_Man_Web.pdf | 2026-11-05 | Verify the names and physical positions of the four PlayStation DualSense face buttons used in H-006 | Official hardware manual; cited and linked only; controller layout context, not puzzle-rule evidence |
+| SRC-010 | Major League Baseball | https://img.mlbstatic.com/mlb-images/image/upload/mlb/hhvryxqioipb87os1puw.pdf | 2026-11-05 | Verify the standard top/right/bottom/left placement of second base, first base, home plate, and third base on a baseball diamond | Official Baseball Rules, Appendix 2, Diagram 2; cited and linked only; field-layout context, not puzzle-rule evidence |
+| SRC-011 | National Oceanic and Atmospheric Administration | https://oceanservice.noaa.gov/facts/port-starboard.html | 2026-11-05 | Verify port/starboard as left/right when facing the bow | Official NOAA fact page; citation and link only; nautical convention context |
+| SRC-012 | U.S. Naval History and Heritage Command | https://www.history.navy.mil/content/history/museums/nmusn/education/educational-resources/ships-to-the-sea-1/nautical-vocabulary-list.html | 2026-11-05 | Verify bow/front and stern/back terminology | Official naval educational reference; citation and link only; nautical convention context |
+| SRC-013 | National Geographic Society | https://education.nationalgeographic.org/resource/cardinal-directions-and-maps/ | 2026-11-05 | Verify the standard four compass directions used as N/E/S/W labels | Educational reference; citation and link only; general directional convention |
 
 Jane Street's Puzzles page states that puzzles are published every month or two and explains the firm's own rationale for using puzzles: creative problem-solving is relevant to identifying new problems in financial markets and developing potentially novel ways to solve them. This is recorded as the source's stated motivation, not as an OFRL claim that every puzzle represents a financial problem.
 
-The ASIC article was published on 2026-10-02 and concerns a separate hardware reverse-engineering challenge. It is contextual material only; it is not described here as an item in the monthly puzzle archive. The Puzzling Stack Exchange and Kaia references are exploratory secondary sources only; neither is treated as an authoritative rule source or as proof of a solution. SRC-007 confirms the candidate organization's existence and role as an Antwerp rough-diamond bourse; SRC-008 describes the Flemish Diamond's four-city geometry. Neither source establishes that H-003 is the puzzle answer.
+The ASIC article was published on 2026-10-02 and concerns a separate hardware reverse-engineering challenge. It is contextual material only; it is not described here as an item in the monthly puzzle archive. The Puzzling Stack Exchange and Kaia references are exploratory secondary sources only; neither is treated as an authoritative rule source or as proof of a solution. SRC-007 confirms the candidate organization's existence and role as an Antwerp rough-diamond bourse; SRC-008 describes the Flemish Diamond's four-city geometry. Neither source establishes that H-003 is the puzzle answer. SRC-009 through SRC-013 corroborate the conventional positions and vocabulary used in the four candidate layouts in H-006; they do not verify that Jane Street intended those groupings.
 
 ## 3. Classification and privacy
 
@@ -51,7 +56,7 @@ No personal or confidential data is intentionally collected for this pilot.
 
 The retrieved Pressure Points page visibly presents a leading symbol, a block of uppercase-letter sequences, a separate emoji-clue block, and a terminal notation. The formal meaning of these elements has not been established.
 
-No normalized puzzle dataset or redistribution-ready fixture is created in version 0.2.0.
+No normalized puzzle dataset or redistribution-ready fixture is created in version 0.3.0.
 
 ### Official-solution retrieval status
 

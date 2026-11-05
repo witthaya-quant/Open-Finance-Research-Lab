@@ -9,7 +9,7 @@
 **Pull request:** [#29](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Working branch:** `research/ofrl-cm-001-admission-and-pilot`  
 **Base branch:** `main`  
-**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this handoff update `e1fe028fbe0741677746c328b179bb5302a9509a`.  
+**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this handoff update `b2b91beb51b82400c40751dbb7400f0a1e9a3039`.  
 **Important:** These SHAs are historical checkpoints, not current write tokens. A new session MUST retrieve the current PR head SHA and branch state from GitHub before any write.
 
 ## 1. Purpose
@@ -93,11 +93,11 @@ Jane Street's [Puzzles introduction](https://www.janestreet.com/puzzles/) explic
 - The candidate words have lengths 11 and 12, consistent with the displayed `(11 12)`. This agreement alone does not prove the candidate.
 - The retrieved secondary note does not contain the complete derivation. The official Archive search-index representation displayed a November 2026 “Puzzle Solution” label, but the opened Archive snapshot was stale and did not expose the November entry or a direct solution page. The official solution has therefore NOT been retrieved or validated. Recheck the Archive and inspect the actual solution page before treating it as authoritative evidence.
 
-See hypotheses H-001 to H-005 and open questions O-001, O-004, O-005, O-006, and O-007 in the project documents. Four candidate theme groups have been partially reconstructed (compass, controller, baseball, sailing). Only the compass group passes an aggregate letter-multiset equality check; the other candidate groupings still have residuals. This is partial evidence, not a complete mapping. Treat the candidate mapping and answer as unverified until every entry is assigned with a reproducible derivation and the output condition is independently established.
+See hypotheses H-001 to H-006 and open questions O-001, O-004, O-005, O-006, and O-007 in the project documents. Four candidate theme groups have been partially reconstructed (compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions). Their standard N/E/S/W conventions are independently corroborated by National Geographic, Sony, MLB, NOAA, and the U.S. Naval History and Heritage Command. Candidate residuals are explicitly recorded: compass +E/−E, controller +S/−E, baseball +O/−H, sailing +A/−S. The residuals do not yet yield a common rule. This is partial evidence for 4 of 19 themes, not a complete bijection. Treat the candidate mapping and answer as unverified until all 76 entries are assigned with a reproducible derivation and the output condition is independently established.
 
 ### Formalization gate
 
-U-001 through U-010 remain unresolved. Method selection remains BLOCKED. Do not select SAT/SMT, CSP, graph, search, string, optimization, or any other solver family merely because the cardinalities match. Do not write solver code, create a Cargo workspace, choose dependencies, or build CI until the rules and acceptance predicate justify those actions.
+U-001 through U-010 remain unresolved. The four partial groups do not close the full mapping or letter-residual rule. Method selection remains BLOCKED. Do not select SAT/SMT, CSP, graph, search, string, optimization, or any other solver family merely because the cardinalities match. Do not write solver code, create a Cargo workspace, choose dependencies, or build CI until the rules and acceptance predicate justify those actions.
 
 A no-go or an explicitly incomplete research case is preferable to fabricated semantics. Financial-engineering transfer is not presumed and may conclude that no useful transfer exists.
 
@@ -125,11 +125,11 @@ Only then design the smallest useful implementation and independent verifier. A 
 
 ## 7. CI and release status
 
-Before this handoff update, the following workflows succeeded on head `e1fe028fbe0741677746c328b179bb5302a9509a`:
+Before this handoff update, the following workflows succeeded on head `b2b91beb51b82400c40751dbb7400f0a1e9a3039`:
 
-- [OFRL Repository Policy run #41966750685](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41966750685)
-- [OFRL-IB-001 Numeric and Input Contract Checks run #41966750679](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41966750679)
-- [OFRL-IB-001 Rust Runtime Semantic Validator run #41966750674](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41966750674)
+- [OFRL Repository Policy run #41967780452](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41967780452)
+- [OFRL-IB-001 Numeric and Input Contract Checks run #41967780319](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41967780319)
+- [OFRL-IB-001 Rust Runtime Semantic Validator run #41967780312](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41967780312)
 
 The two OFRL-IB-001 workflows were triggered by repository event behavior; their execution does not authorize changes to OFRL-IB-001. These results apply only to the checkpoint SHA above and must be rechecked after this handoff commit.
 
