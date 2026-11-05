@@ -1,0 +1,123 @@
+{
+  "fixture_version": "0.1.0",
+  "base_fixture": "fixtures/synthetic/ofrl-ib-001-case-a.input.v0.1.0.json",
+  "purpose": "Versioned mutation cases for the V1 typed-deserialization diagnostic contract. Each mutation is applied to the canonical synthetic Case A input.",
+  "cases": [
+    {
+      "id": "nested_unknown_field_pointer_escape",
+      "operation": "insert",
+      "parent_pointer": "/historical_periods/1/income_statement",
+      "field": "bad/key~",
+      "value": "unexpected",
+      "expected": {
+        "code": "UNKNOWN_FIELD",
+        "json_pointer": "/historical_periods/1/income_statement/bad~1key~0",
+        "field": "bad/key~",
+        "period_id": "FY2024"
+      }
+    },
+    {
+      "id": "nested_missing_field",
+      "operation": "remove",
+      "parent_pointer": "/historical_periods/0/income_statement",
+      "field": "revenue",
+      "expected": {
+        "code": "REQUIRED_FIELD_MISSING",
+        "json_pointer": "/historical_periods/0/income_statement/revenue",
+        "field": "revenue",
+        "period_id": "FY2023"
+      }
+    },
+    {
+      "id": "invalid_enum_value",
+      "operation": "set",
+      "parent_pointer": "/model",
+      "field": "unit_scale",
+      "value": "billions",
+      "expected": {
+        "code": "INVALID_ENUM_VALUE",
+        "json_pointer": "/model/unit_scale",
+        "field": "unit_scale",
+        "period_id": null
+      }
+    },
+    {
+      "id": "array_element_type_mismatch",
+      "operation": "set",
+      "parent_pointer": "/forecast_periods",
+      "field": "2",
+      "value": "not an object",
+      "expected": {
+        "code": "JSON_TYPE_MISMATCH",
+        "json_pointer": "/forecast_periods/2",
+        "field": "forecast_periods",
+        "period_id": null
+      }
+    },
+    {
+      "id": "decimal_json_number_token",
+      "operation": "set",
+      "parent_pointer": "/historical_periods/0/income_statement",
+      "field": "revenue",
+      "value": 1000,
+      "expected": {
+        "code": "DECIMAL_STRING_REQUIRED",
+        "json_pointer": "/historical_periods/0/income_statement/revenue",
+        "field": "revenue",
+        "period_id": "FY2023"
+      }
+    },
+    {
+      "id": "decimal_noncanonical_text",
+      "operation": "set",
+      "parent_pointer": "/historical_periods/0/income_statement",
+      "field": "revenue",
+      "value": "01.0",
+      "expected": {
+        "code": "DECIMAL_TEXT_NON_CANONICAL",
+        "json_pointer": "/historical_periods/0/income_statement/revenue",
+        "field": "revenue",
+        "period_id": "FY2023"
+      }
+    },
+    {
+      "id": "decimal_fractional_scale_exceeded",
+      "operation": "set",
+      "parent_pointer": "/historical_periods/0/income_statement",
+      "field": "revenue",
+      "value": "0.11111111111111111111111111111",
+      "expected": {
+        "code": "DECIMAL_SCALE_EXCEEDED",
+        "json_pointer": "/historical_periods/0/income_statement/revenue",
+        "field": "revenue",
+        "period_id": "FY2023"
+      }
+    },
+    {
+      "id": "decimal_representation_out_of_range",
+      "operation": "set",
+      "parent_pointer": "/historical_periods/0/income_statement",
+      "field": "revenue",
+      "value": "79228162514264337593543950336",
+      "expected": {
+        "code": "DECIMAL_OUT_OF_RANGE",
+        "json_pointer": "/historical_periods/0/income_statement/revenue",
+        "field": "revenue",
+        "period_id": "FY2023"
+      }
+    },
+    {
+      "id": "numeric_object_key_not_array_index",
+      "operation": "insert",
+      "parent_pointer": "/model",
+      "field": "123",
+      "value": "unexpected",
+      "expected": {
+        "code": "UNKNOWN_FIELD",
+        "json_pointer": "/model/123",
+        "field": "123",
+        "period_id": null
+      }
+    }
+  ]
+}
