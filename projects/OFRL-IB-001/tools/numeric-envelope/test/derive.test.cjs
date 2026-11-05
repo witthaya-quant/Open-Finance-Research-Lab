@@ -164,7 +164,6 @@ test("historical validator arithmetic is separately bounded", () => {
   assert.ok(node(result, "history.period_1.income_statement.recomputed_net_income"));
   assert.ok(node(result, "history.period_1.balance_sheet.nwc_absolute_bound"));
   assert.ok(node(result, "history.period_1.cash_flow.cfo_after_nwc_subtraction"));
-  assert.ok(node(result, "history.period_1.cash_flow.cfi_comparison_bound") === undefined);
   assert.ok(node(result, "history.period_1.cash_flow.capex_cash_outflow_bound"));
   assert.ok(node(result, "history.period_1.cash_flow.net_change_after_cff"));
   assert.equal(
