@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Profile Decision Worksheet
 
-**Worksheet version:** 0.2.0  
+**Worksheet version:** 0.3.0  
 **Status:** Working paper — NOT APPROVED  
 **Purpose:** Capture the evidence and decisions required before selecting a production arithmetic backend or implementing forecast calculations.
 
@@ -93,6 +93,35 @@ The maximum permitted input is not necessarily the maximum intermediate value. M
 
 The derivation must account for compounding across all five forecast periods, not just one year's maximum.
 
+### 3.1 Source-scale and cumulative-scale envelope
+
+Magnitude limits and scale limits must be approved separately. The current model input Decimal grammar permits up to 28 fractional digits per field, but that parser ceiling does not guarantee that five years of chained multiplications preserve every accepted scale.
+
+Record source fractional-digit limits by field class, then propagate the maximum scale through each operation in the actual formula order:
+
+| Field / node | Source scale or operation | Required profile value / derivation |
+|---|---|---|
+| Monetary source fields | Decimal text | Maximum fractional digits by field class; maximum integer digits |
+| Rates / ratios | Decimal text | Maximum fractional digits by driver class |
+| Days (DSO/DIO/DPO) | Decimal text | Maximum fractional digits and maximum day magnitude |
+| Revenue | Prior revenue × (1 + growth) | Prior revenue scale + growth scale per year; propagate through all five years |
+| COGS / Opex / CapEx | Revenue × ratio | Revenue scale + relevant ratio scale |
+| AR / inventory / AP numerators | Revenue or COGS × days | Monetary scale + day scale before division by 365 |
+| Average PP&E / debt | (opening + closing) / 2 | Addition scale and exact/rounded division behaviour |
+| Interest / tax / dividends | Balance or earnings × rate | Operand scale + rate scale |
+| Closing cash / retained earnings | Multi-line additions and subtractions | Maximum participating scale plus any upstream division policy |
+
+For each node, document whether the candidate preserves scale exactly, normalizes trailing zeros, reduces scale with rounding, or rejects the operation. A test must cover just below, at and just above the declared scale boundary. Do not infer the boundary from Case A's observed trailing-zero pattern.
+
+The profile must also distinguish:
+- **Source scale:** what the input contract accepts.
+- **Intermediate scale:** what the formula graph can produce before explicit rounding.
+- **Arithmetic precision:** how repeating division and other inexact operations are evaluated.
+- **Canonical output scale:** how exact model results are serialized.
+- **Display scale:** what JSON/CSV presentation or XLSX can show without implying false precision.
+
+
+
 ## 4. Arithmetic representation and context
 
 | Decision | Required specification | Status |
@@ -142,20 +171,21 @@ Convert each value using the model's unit scale before deciding whether it is im
 
 | Dimension | rust_decimal | BigDecimal | Other candidate | Evidence / decision |
 |---|---|---|---|---|
-| Supported range | Finite mantissa/scale | Arbitrary-size integer coefficient with configured division precision | TBD | OPEN |
-| Exact input round-trip | Tested strict parser | Must be tested | TBD | OPEN |
-| Division semantics | Finite Decimal scale | Context-dependent significant precision | TBD | OPEN |
-| Five-year exact error | POC evidence | POC evidence | TBD | OPEN |
-| Boundary/overflow behaviour | POC evidence | Must bound resource use | TBD | OPEN |
-| Runtime latency | 42.117/43.032 µs on Rust 1.85; 37.235/38.158 µs on Rust 1.99 | 87.877/64.566 µs on Rust 1.85; 82.277/63.559 µs on Rust 1.99 | 316.808/367.050 µs on Rust 1.85; 324.448/392.920 µs on Rust 1.99 | Observational only; one 4-vCPU CI runner; memory/resource review OPEN |
-| Peak memory / allocations | Not measured | Not measured | TBD | OPEN |
-| Serialization stability | Production input parser exists | Production adapter not implemented | TBD | OPEN |
-| Error typing | Checked arithmetic available | Must map context/scale failures | TBD | OPEN |
+| Supported range | 96-bit mantissa; scale 0–28; magnitude depends on retained scale | Arbitrary-size coefficient and scale; resource growth must be bounded | TBD | OPEN |
+| Source-scale propagation | Product scale may grow as operand scales add; five-year recurrence must be bounded | Multiplication preserves all coefficient digits; scale/coefficient growth must be explicitly capped | TBD | OPEN |
+| Exact input round-trip | Tested strict parser for current Decimal grammar | Production adapter and canonical format must be tested | TBD | OPEN |
+| Division semantics | Finite Decimal result; scale and rounding behaviour must be characterized at every formula node | POC uses an 80-digit compile-time default context; explicit run-scoped division policy not yet demonstrated | TBD | OPEN |
+| Five-year exact error | POC evidence on selected fixtures; no approved max-error budget | POC evidence on selected fixtures; no approved max-error budget | TBD | OPEN |
+| Boundary/overflow behaviour | Checked failure at the 10^22 monetary-input multiplier stress case; exact profile boundary not known | Completes the same selected stress case; coefficient and resource limits remain open | TBD | OPEN |
+| Runtime latency | 42.117/43.032 µs on Rust 1.85; 37.235/38.158 µs on Rust 1.99 | 87.877/64.566 µs on Rust 1.85; 82.277/63.559 µs on Rust 1.99 | 316.808/367.050 µs on Rust 1.85; 324.448/392.920 µs on Rust 1.99 | Observational only; one 4-vCPU CI runner; no memory/resource measurement |
+| Peak memory / allocations / tail latency | Not measured | Not measured; multiplication can preserve all digits | Not measured | OPEN |
+| Serialization stability | Production input parser exists | Production adapter not implemented; exponent/trailing-zero/canonical policy must be tested | TBD | OPEN |
+| Error typing | Checked arithmetic available; production typed error surface required | Must map context, scale, coefficient and resource failures | TBD | OPEN |
 | MSRV / target support | Reviewed in POC | Reviewed in POC | TBD | OPEN |
 | Dependency source / licence | Review required | Review required | TBD | OPEN |
-| Migration cost from current validator | Existing type | Requires boundary migration | TBD | OPEN |
+| Migration cost from current validator | Existing type | Requires boundary migration from current rust_decimal-based validator | TBD | OPEN |
 
-Performance observations are from one CI runner and are not a controlled workload benchmark. They compare only the measured synthetic five-year forecast routine; they do not measure memory, allocations or concurrency. See `BENCHMARKS_PERFORMANCE.md` on PR #11 for artifact hashes and exact sample protocol.
+Performance observations are from one CI runner and are not a controlled workload benchmark. They compare only the measured synthetic five-year forecast routine; they do not measure memory, allocations, tail latency or concurrency. BigDecimal's 80-digit precision in this POC is a compile-time default for rounded operations, not a cap on exact multiplication coefficient growth. See `BENCHMARKS_PERFORMANCE.md` on PR #11 for artifact hashes and exact sample protocol.
 
 No candidate wins by having the largest representable number alone. The selected representation must fit the approved operating domain, have deterministic arithmetic semantics, expose failure clearly and satisfy resource constraints.
 
@@ -165,8 +195,10 @@ For each approved numeric input/intermediate boundary, include:
 - Exact lower and upper values.
 - One representable value immediately inside each bound.
 - One value outside each bound, expected to fail with a stable typed diagnostic.
-- Maximum multiplication before division.
+- Maximum multiplication before division, including AR / inventory / AP numerators.
 - Repeating divisions and five-year propagation.
+- Source-scale and intermediate-scale boundaries, including scale growth through the revenue recurrence and all rate/day multiplications.
+- Candidate coefficient-digit growth and resource limits, especially for arbitrary-precision multiplication.
 - Negative, zero and very small positive amounts where domain-valid.
 - Large balances combined with maximum rates/days.
 - Checked add/subtract/multiply/divide overflow.
