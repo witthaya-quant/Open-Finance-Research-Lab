@@ -66,11 +66,12 @@ test("decimal bound parser rejects non-canonical or signed inputs", () => {
     assert.throws(() => parseNonNegativeDecimal(value, "test"));
   }
 });
-test("revenue growth accepts a signed upper bound but rejects values below -100% and negative zero", () => {
+test("revenue growth syntax is signed while the V1 -100% floor is enforced by profile validation", () => {
   assert.equal(parseSignedDecimal("-0.05", "growth").value.toString(), "-1/20");
   assert.equal(parseSignedDecimal("-1", "growth").value.toString(), "-1");
+  assert.equal(parseSignedDecimal("-1.01", "growth").value.toString(), "-101/100");
   assert.throws(() => parseSignedDecimal("-0.0", "growth"));
-  assert.throws(() => parseSignedDecimal("-1.01", "growth"));
+
   const profile = readFixture();
   profile.forecast_drivers.revenue_growth_max = "-0.05";
   validateProfile(profile);
@@ -78,6 +79,10 @@ test("revenue growth accepts a signed upper bound but rejects values below -100%
     node(createDerivation(profile), "forecast.year_1.revenue").exact_upper_bound,
     "2565/2"
   );
+
+  const belowFloor = readFixture();
+  belowFloor.forecast_drivers.revenue_growth_max = "-1.01";
+  assert.throws(() => validateProfile(belowFloor), /cannot be below the V1 floor/);
 });
  
 test("profile rejects bounds that exceed declared source precision", () => {
