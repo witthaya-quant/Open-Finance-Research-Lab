@@ -1,0 +1,73 @@
+<!-- Copyright 2026 Kenny and contributors. SPDX-License-Identifier: CC-BY-4.0 -->
+
+# Case Study — Pressure Points (November 2026)
+
+**Case ID:** OFRL-CM-001-CS-001  
+**Parent project:** OFRL-CM-001  
+**Original source:** Jane Street — Pressure Points  
+**Source publication label:** November 2026  
+**Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
+**Access date:** 2026-11-05  
+**Case status:** Formalization in progress; rule semantics BLOCKED  
+**Evidence maturity:** 0 — Proposed
+
+## 1. Why this case was selected
+
+Pressure Points is used as the first pilot for the project's case-study protocol because it presents a compact, structured puzzle with multiple visible clue types. It provides an opportunity to test whether OFRL can distinguish source observations from assumptions before selecting a mathematical model or solver.
+
+The case is not selected as a financial model or a representation of Jane Street's internal trading methods.
+
+## 2. Research objective
+
+Establish a precise, source-traceable problem definition for Pressure Points. Determine the meaning and relationship of its visible elements, the required output, and the correctness conditions before choosing any algorithm.
+
+## 3. Source and observed structure
+
+The official source page, accessed on 2026-11-05, visibly presents:
+- A leading symbol.
+- A block of uppercase-letter sequences.
+- A separate block of emoji clues.
+- A terminal notation rendered as “(11 12)”.
+
+The page content retrieved for this initial review does not expose a complete prose rule specification that resolves the relationship between these elements. The structural observations are documented in [PROBLEM_FORMALIZATION.md](PROBLEM_FORMALIZATION.md).
+
+The full sequence list, emoji sequence, images, and official solution are intentionally not copied into this repository.
+
+## 4. Current research status
+
+| Work item | Status |
+|---|---|
+| Original source and access date recorded | PASS |
+| Visible structure described without reproducing the puzzle | PASS |
+| Formal input and output semantics established | BLOCKED |
+| Candidate mathematical model selected | NOT RUN |
+| Solver implementation | NOT STARTED / DEFERRED |
+| Independent verifier | NOT STARTED / DEFERRED |
+| Comparative method evaluation | NOT STARTED / DEFERRED |
+| Financial-engineering transfer | BLOCKED pending formalization |
+
+## 5. Questions to resolve
+
+1. What does the leading symbol represent?
+2. What does each uppercase-letter sequence represent, and does list order carry meaning?
+3. How are the emoji clues related to the letter sequences?
+4. Does each clue correspond to one sequence, multiple sequences, or another structure?
+5. What is the role of the terminal notation “(11 12)”?
+6. What output is required: a word, sequence, assignment, path, set, or another object?
+7. What establishes a valid answer, and is uniqueness part of the task?
+
+These are questions, not proposed answers.
+
+## 6. Next gate
+
+Do not select SAT, CSP, graph search, string matching, anagram search, or another method until the rules support that representation.
+
+The next permitted activity is source-grounded clarification and formal problem analysis. If authoritative rule semantics cannot be established, record the blocker and recommend pausing or replacing the pilot rather than inventing missing rules.
+
+## 7. Attribution
+
+Original puzzle source: Jane Street, [Pressure Points — November 2026](https://www.janestreet.com/puzzles/pressure-points-index/).
+
+Programme context: Jane Street, [Puzzles](https://www.janestreet.com/puzzles/).
+
+All puzzle content remains attributable to Jane Street. OFRL does not claim ownership or redistribution rights over the original puzzle.
