@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Engineering Audit
 
-**Audit version:** 0.5.0  
+**Audit version:** 0.6.0  
 **Audit date:** 2026-11-04  
 **Production baseline:** `main` at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
@@ -84,14 +84,14 @@ The combined BM-002/BM-003 reference check reports **800 exact expected outputs 
 
 ### 4.2 Numeric candidate evidence
 
-The isolated POC compares `rust_decimal 1.43.0`, `bigdecimal 0.4.11` and Exact Rational across the same five-year formula path. It records division behaviour, checked overflow and output differences.
+The isolated POC compares `rust_decimal 1.43.0`, `bigdecimal 0.4.11` and Exact Rational across the same five-year formula path. It records division behaviour, checked overflow and output differences. The current comparison covers selected value magnitudes more strongly than source-scale propagation and arbitrary-precision coefficient growth; these are now explicit Numeric Profile requirements.
 
 Observed stress evidence:
 
-- At the selected (10^{18}) monetary scaling point, both Decimal candidates completed the tested path and matched the exact-rational reference for the compared outputs.
-- At the selected (10^{22}) capacity point, `rust_decimal` raised a checked multiplication overflow in the FY2026 accounts-receivable numerator; BigDecimal completed the tested path under the POC's 80-significant-digit HalfEven context.
-- The values (10^{18}) and (10^{22}) are two chosen test points, not the exact transition boundary, a supported company-size envelope or approved production limits.
-- The provisional two-decimal comparison is a POC observation, not the approved reporting or reconciliation policy.
+- The POC stress helper multiplies every monetary input field by (10^n); the (10^{18}) and (10^{22}) values are **input scaling multipliers**, not exact intermediate magnitudes or approved company-size limits.
+- It also replaces assumptions with deliberately aggressive values: 100% annual growth, 500% COGS / revenue, 500% operating expenses / revenue, 3650 days for DSO/DIO/DPO, 500% CapEx / revenue, and 100% depreciation, interest, tax and dividend rates.
+- With FY2025 revenue of 1,350 model units, the FY2026 AR numerator is (2 × 1,350 × 3,650 × 10^n) = (9,855,000 × 10^n): (9.855 × 10^24) at the (10^{18}) multiplier and (9.855 × 10^28) at the (10^{22}) multiplier. The latter exceeds rust_decimal's 96-bit maximum mantissa and triggers checked multiplication overflow at the FY2026 AR numerator; BigDecimal completes the tested path.
+- These exact fixture points do not locate the full transition boundary or define a supported business domain. The provisional two-decimal comparison is a POC observation, not the approved reporting or reconciliation policy.
 
 A dependency-free release-mode timing executable has completed for Case A and the (10^{18}) stress input. Workflow run [41784590895](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41784590895) passed on Rust 1.85.0 and 1.99.1 and uploaded two artifacts. Median time per five-year forecast was: Rust 1.85.0 — Case A 42.117 µs / stress 43.032 µs for rust_decimal, 87.877 µs / 64.566 µs for BigDecimal, and 316.808 µs / 367.050 µs for Exact Rational; Rust 1.99.1 — Case A 37.235 µs / stress 38.158 µs, 82.277 µs / 63.559 µs, and 324.448 µs / 392.920 µs respectively. BigDecimal was 1.50×–2.21× the fixed Decimal median in this run; Exact Rational was 7.52×–10.30×. This is one 4-vCPU AMD EPYC 7763 runner environment using 5 warm-ups, 9 samples and 40 forecasts per sample. The result is non-gating and does not measure memory, allocations, tail latency, concurrency, file I/O, validation, serialization or workbook costs. CSV and runner metadata checksums are recorded in [BENCHMARKS_PERFORMANCE.md](https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/research/ofrl-ib-001-numeric-envelope/projects/OFRL-IB-001/poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md) on PR #11.
 
@@ -123,21 +123,31 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Blocker
 
-**Evidence:** `NUMERIC_ENVELOPE.md` remains Proposed and the Numeric Profile worksheet remains unapproved. The formula-level review in `NUMERIC_PROFILE_DERIVATION.md` establishes that the current conventions do not define a finite upper bound for revenue growth, COGS ratio, operating-expense ratio, DSO/DIO/DPO, CapEx ratio, debt drawdowns or interest rate. The five-year revenue bound therefore cannot be derived, and neither can the downstream intermediate bounds. The derivation documents the symbolic path from bounded inputs through revenue, AR / inventory / AP numerators, PP&E, debt, interest, NWC, CFO, cash, retained earnings and statement totals without inventing parameter values.
+**Evidence:** `NUMERIC_ENVELOPE.md` remains Proposed and the Numeric Profile worksheet remains unapproved. The current conventions do not define finite upper bounds for revenue growth, COGS ratio, operating-expense ratio, DSO/DIO/DPO, CapEx ratio, debt drawdowns or interest rate. The derivation distinguishes absolute-value limits from source-scale and coefficient-growth limits. The input grammar's 28-fractional-digit parser ceiling does not guarantee that chained multiplication over five forecast periods preserves that scale. The derivation records the symbolic path through revenue, working capital, PP&E, debt, interest, cash, retained earnings and statement totals without inventing owner limits.
 
 **Risk:** A candidate may pass selected fixtures and still overflow or lose material precision elsewhere in the admitted domain. An arbitrary-precision type does not solve an unbounded input domain or remove the need for finite CPU, memory, scale and output limits.
 
-**Disposition:** Obtain Model Owner decisions for every unbounded input and opening-balance class. Use the symbolic derivation to calculate formula-chain bounds and capacity headroom, then complete the versioned worksheet and reviewer sign-offs. The 10^18 and 10^22 probes are candidate stress points only and must not become business limits by inference.
+**Disposition:** Obtain Model Owner decisions for every unbounded input and opening/historical amount class. Approve source-scale limits separately for monetary values, rates/ratios and days. Derive five-year magnitude, scale and coefficient bounds for every formula node, then complete exact boundary tests and reviewer sign-offs. The 10^18 and 10^22 monetary-input multipliers are artificial capacity probes and must not become business limits by inference.
 
 ### EA-02 — Production numeric backend remains undecided
 
 **Severity:** Blocker
 
-**Evidence:** The POC remains isolated and production input/history types use `rust_decimal::Decimal`. In the POC, BigDecimal 0.4.11 is run under an 80-significant-digit / HalfEven environment-configured default context; the test proves this setting is effective for the tested 1/3 division, but it is not a run-scoped production arithmetic context. The 10^22 stress fixture fails rust_decimal's checked multiplication at the FY2026 AR numerator; the 10^18 fixture passes. Those points do not establish the transition boundary. The timing evidence is from one shared 4-vCPU runner and does not measure allocations, peak memory, tail latency or concurrency.
+**Evidence:** The POC remains isolated and production input/history types use `rust_decimal::Decimal`. BigDecimal 0.4.11 is tested with an 80-digit / HalfEven compile-time default context; this is not a run-scoped production arithmetic policy. BigDecimal's documentation states that multiplication preserves all coefficient digits, so its default division precision does not cap coefficient growth; explicit Context values are required for runtime control of context-aware operations. The current POC operator path does not demonstrate a per-run context across the complete forecast graph. The 10^22 monetary-input multiplier fails rust_decimal's checked multiplication at FY2026 AR numerator, while the 10^18 multiplier passes. These points do not establish the transition boundary. Timing evidence is from one shared 4-vCPU runner and does not measure allocations, peak memory, tail latency or concurrency.
 
-**Risk:** Selecting rust_decimal without an approved envelope risks checked overflow in a permitted input. Selecting BigDecimal without explicit context ownership, scale/resource limits and deterministic serialization risks hidden environment dependence and unbounded operational cost. Replacing the existing Decimal type also has a migration cost in the production validator.
+**Risk:** Selecting rust_decimal without approved magnitude and scale envelopes risks checked overflow or precision reduction in a permitted input. Selecting BigDecimal without explicit context ownership, coefficient-digit/scale limits and deterministic serialization risks uncontrolled CPU and memory growth even when division precision is finite. Replacing the existing Decimal type also has a migration cost in the production validator.
 
-**Disposition:** Do not select a production backend yet. After EA-01 is closed, compare candidates against the frozen domain using exact-rational error propagation, operation-specific failure/rounding tests, per-run context and provenance, controlled memory/allocation/concurrency measurements, serialization fidelity, dependency acceptance and a reviewed migration design. The POC's generic JSON-value forecast routine and string error surface must not be ported directly into production.
+**Disposition:** Do not select a production backend yet. After EA-01 and scale propagation are closed, compare candidates against the frozen domain using exact-rational error propagation, operation-specific failure/rounding/scale tests, explicit run-scoped context where applicable, coefficient/resource bounds, controlled memory/allocation/concurrency measurements, serialization fidelity, dependency acceptance and a reviewed migration design. The POC's generic JSON-value forecast routine and string error surface must not be ported directly into production.
+
+### EA-16 — Decimal scale and arbitrary-precision coefficient growth are not bounded
+
+**Severity:** Blocker for Numeric Profile / backend acceptance
+
+**Evidence:** The current input parser permits up to 28 fractional digits per Decimal field. That is a lexical limit, not a five-year operation-graph guarantee. Exact decimal multiplication has a pre-normalization scale bound equal to the sum of operand scales; the revenue recurrence can grow from \(S_{R_0}\) to as much as \(S_{R_0}+\sum_{t=1}^{5}S_{g_t}\) before backend-specific normalization. The updated Numeric Profile derivation and worksheet now record the scale graph and require separate magnitude, scale and coefficient-digit envelopes. BigDecimal's 80-digit default division context does not cap exact multiplication coefficient growth.
+
+**Risk:** A value may remain well below the 96-bit magnitude limit and still exceed the supported scale or require precision reduction. Conversely, BigDecimal may preserve every multiplication digit and grow coefficient size, memory and runtime even when its division context is finite. A magnitude-only Numeric Profile would miss both failure modes.
+
+**Disposition:** Approve separate source-scale limits for monetary values, rates/ratios and days. Derive pre-normalization scale and coefficient-digit bounds at every formula node across all five periods. Test representability and error behaviour just below, at and above scale/mantissa/coefficient boundaries. For BigDecimal, bound coefficient growth independently from division precision and prove resource limits under repeated and concurrent runs. No scale reduction or rounding may be silently treated as exact.
 
 ### EA-03 — Independent accounting/formula sign-off remains open
 
@@ -285,7 +295,8 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 
 | Gate | Evidence required | Status |
 |---|---|---|
-| Numeric Profile | Approved finite bounds, formula-chain headroom, source scale, precision, rounding and separate error budgets | OPEN — symbolic derivation complete; all unbounded Model Owner inputs remain TBD |
+| Numeric Profile | Approved finite magnitude, source-scale, intermediate-scale/coefficient and resource bounds; formula-chain headroom; precision, rounding and separate error budgets | OPEN — symbolic derivation complete; Model Owner limits and source-scale decisions remain TBD |
+| Scale / coefficient propagation | Five-year operation-scale graph and candidate coefficient/resource limits | OPEN — derivation added; owner-approved source-scale limits and boundary evidence remain outstanding |
 | Production arithmetic backend | Profile-based comparison, explicit run-scoped context, serialization and controlled resource evidence | OPEN — no backend selected; POC observations are insufficient |
 | Independent finance/accounting review | Written independent review and disposition of equations, conventions and edge cases | OPEN — not evidenced |
 | Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — lockfile and preview SBOM workflow are on main; source-level licence/security and official release review remain open |
@@ -303,15 +314,16 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 
 The next implementation increment should not be a speculative production forecast engine. First close the evidence and contract gaps that would otherwise dictate a second rewrite:
 
-1. Obtain Model Owner input-domain decisions for every currently unbounded driver and opening-balance class; use the symbolic derivation to compute formula-chain bounds.
-2. Complete arithmetic error propagation and controlled CPU/memory/allocation/concurrency evidence, then make the backend decision only against the approved profile.
-3. Close lockfile, source, licence and advisory dispositions for dependencies intended to remain.
-4. Obtain independent finance/accounting review of V1 conventions and formulas.
-5. Complete and maintain the shared Schema/Rust contract corpus in PR #13; separately replace message-substring deserialization classification with typed error/path mapping.
-6. Freeze the production calculation/result contracts only after all Phase 2 gates, then implement the Rust schedules and statements.
-7. Add SI/SF/reportability checks and property/boundary tests.
-8. Implement canonical ModelRun, deterministic fingerprints and formula lineage.
-9. Generate XLSX solely from canonical outputs and reconcile it.
-10. Complete clean-checkout reproduction and release review.
+1. Obtain Model Owner input-domain decisions for every currently unbounded driver and opening/historical amount class; approve source-scale limits separately for monetary values, rates/ratios and days.
+2. Calculate the five-year magnitude, scale and coefficient envelope at every formula node, including multiplication-before-division intermediates.
+3. Complete arithmetic error propagation and controlled CPU/memory/allocation/concurrency evidence, then make the backend decision only against the approved profile.
+4. Close lockfile, source, licence and advisory dispositions for dependencies intended to remain.
+5. Obtain independent finance/accounting review of V1 conventions and formulas.
+6. Complete and maintain the shared Schema/Rust contract corpus in PR #13; separately replace message-substring deserialization classification with typed error/path mapping.
+7. Freeze the production calculation/result contracts only after all Phase 2 gates, then implement the Rust schedules and statements.
+8. Add SI/SF/reportability checks and property/boundary tests.
+9. Implement canonical ModelRun, deterministic fingerprints and formula lineage.
+10. Generate XLSX solely from canonical outputs and reconcile it.
+11. Complete clean-checkout reproduction and release review.
 
 No research POC, SBOM preview or green CI run is to be represented as production financial-model approval. Governance controls are merged; Numeric Profile, backend selection and independent Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
