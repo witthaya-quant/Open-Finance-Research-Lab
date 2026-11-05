@@ -9,6 +9,7 @@ const test = require("node:test");
 const {
   Fraction,
   createDerivation,
+  deriveErrorPropagation,
   parseNonNegativeDecimal,
   parseSignedDecimal,
   roundOutward,
@@ -116,6 +117,7 @@ test("synthetic fixture is explicitly test-only and contains no approval claim",
     node(result, "forecast.year_1.accounts_receivable").post_rounding_scale,
     null
   );
+  assert.equal(result.error_propagation.status, "UNRESOLVED");
 });
 
 test("five-year magnitude and scale recurrences use exact operation order", () => {
@@ -251,6 +253,24 @@ test("approved state requires three explicit review records and still does not s
     node(result, "forecast.year_1.accounts_receivable").post_rounding_scale,
     18
   );
+  assert.equal(
+    result.error_propagation.maximum_forecast_line_error_bound_model_units,
+    "27/2000000000000000000"
+  );
+  assert.equal(
+    result.error_propagation.maximum_balance_sheet_identity_residual_model_units,
+    "3/200000000000000000"
+  );
+  assert.equal(
+    result.error_propagation.display_rounding_error_bound_model_units,
+    "1/200"
+  );
+  assert.equal(
+    result.error_propagation.budget_checks.accounting_identity_absolute.status,
+    "PASS"
+  );
+  assert.equal(result.error_propagation.xlsx_binary_float_conversion,
+    "NOT_INCLUDED__REQUIRES_EXPORTER_MEASUREMENT");
 });
 
 test("CLI cannot silently treat a test-only profile as approved", () => {
