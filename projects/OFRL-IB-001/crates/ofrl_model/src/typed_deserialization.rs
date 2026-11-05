@@ -365,7 +365,11 @@ impl Failure {
     }
 }
 
-fn validate_value(value: &Value, shape: &Shape, path: &mut Vec<String>) -> Result<(), Box<Failure>> {
+fn validate_value(
+    value: &Value,
+    shape: &Shape,
+    path: &mut Vec<String>,
+) -> Result<(), Box<Failure>> {
     match shape {
         Shape::String => {
             if value.is_string() {
