@@ -126,3 +126,40 @@ jobs:
 
       - name: Validate Draft 2020-12 schema and fixtures
         run: bash scripts/validate-ofrl-ib-001-model-input-schema.sh
+
+  numeric-envelope:
+    name: Numeric envelope derivation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22.23.4"
+          package-manager-cache: false
+
+      - name: Run exact numeric-envelope unit tests
+        run: node --test projects/OFRL-IB-001/tools/numeric-envelope/test/derive.test.cjs
+
+      - name: Derive the test-only synthetic envelope
+        run: |
+          node projects/OFRL-IB-001/tools/numeric-envelope/derive.cjs \
+            projects/OFRL-IB-001/tools/numeric-envelope/test/fixtures/synthetic-profile.test-only.json \
+            > "$RUNNER_TEMP/ofrl-numeric-envelope-test-only.json"
+          node -e '
+            const fs = require("node:fs");
+            const result = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/ofrl-numeric-envelope-test-only.json", "utf8"));
+            if (result.approval_state !== "test_only" ||
+                result.derivation.candidate_backend_selected !== false ||
+                result.derivation.production_engine_authorized !== false ||
+                result.nodes.length < 100) {
+              throw new Error("Numeric Envelope output failed its non-approval or completeness guard");
+            }
+            process.stdout.write("PASS: exact candidate-neutral derivation emitted " + result.nodes.length + " formula nodes; no backend or production approval was created.\\n");
+          '
