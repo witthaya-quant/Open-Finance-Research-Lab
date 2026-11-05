@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Envelope and Precision Policy
 
-**Policy version:** 0.2.0  
+**Policy version:** 0.3.0  
 **Status:** Proposed for V1; candidate-specific evidence recorded  
 **Candidate evidence:** rust_decimal 1.43.0 and bigdecimal 0.4.11 POC comparison; no production backend selected  
 **Effective POC toolchain floor:** Rust 1.85.0
@@ -178,6 +178,14 @@ The current contract's 28-fractional-digit ceiling is a per-field lexical limit.
 For rust_decimal, the 96-bit mantissa and 0–28 scale constrain magnitude and scale jointly. Tests must characterize every operation that could require scale reduction or checked failure; no implicit reduction may be treated as exact. For BigDecimal, a finite division precision does not cap exact multiplication coefficient growth. Its maximum coefficient digits and scale, as well as CPU/memory limits, must be defined separately from its division context.
 
 Do not infer the profile from observed trailing zeros in Case A. Test values immediately below, at and above each approved scale, mantissa and coefficient boundary.
+
+## 9.2 Exact profile derivation and conditional arithmetic policy
+
+The candidate-neutral derivation tool is `tools/numeric-envelope/derive.cjs`. Its input schema is [`ofrl-ib-001-numeric-profile-0.1.0.schema.json`](../../schemas/ofrl-ib-001-numeric-profile-0.1.0.schema.json). It uses exact `BigInt` rational arithmetic and reports formula-node magnitude, source/intermediate scale, coefficient digit and unit-conversion evidence for the opening Balance Sheet, all three historical validator periods and five forecast periods.
+
+The tool does not choose a numeric backend, run a forecast, measure CPU/memory/concurrency, or approve limits. The CI fixture is explicitly `test_only`. It must not be treated as a proposed or approved operating domain.
+
+For divisions by 365, the derivation reports a conditional context requirement. A finite division fractional scale and rounding mode must be specified and then verified against each candidate. When those fields remain null, downstream scale and coefficient checks are conditional. Reporting fraction digits and rounding mode are separate from the internal division policy. A profile approval requires these decisions and reviewer records, but it still does not independently approve a production arithmetic backend.
 
 ## 10. Excel and binary floating-point boundary
 
