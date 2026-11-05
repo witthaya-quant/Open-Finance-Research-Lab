@@ -174,6 +174,16 @@ function evaluateCandidateCapacity(derivation, candidateId) {
           "POC 80-significant-digit compile-time context is not equivalent to a fixed fractional-scale, immutable per-run context; a production adapter must prove the mapping"
       };
 
+  function reasonCounts(status) {
+    const counts = {};
+    for (const item of checks.filter(check => check.status === status)) {
+      for (const reason of item.reasons) {
+        counts[reason] = (counts[reason] || 0) + 1;
+      }
+    }
+    return Object.fromEntries(Object.entries(counts).sort(([a], [b]) => a.localeCompare(b)));
+  }
+
   return {
     profile_id: derivation.profile_id,
     profile_version: derivation.profile_version,
@@ -191,6 +201,17 @@ function evaluateCandidateCapacity(derivation, candidateId) {
     node_count: checks.length,
     failure_count: checks.filter(item => item.status === "FAIL").length,
     conditional_count: checks.filter(item => item.status === "CONDITIONAL").length,
+    failure_reason_counts: reasonCounts("FAIL"),
+    conditional_reason_counts: reasonCounts("CONDITIONAL"),
+    failure_examples: checks
+      .filter(item => item.status === "FAIL")
+      .map(item => ({
+        node: item.node,
+        effective_scale_bound: item.effective_scale_bound,
+        coefficient_integer_upper_bound: item.coefficient_integer_upper_bound,
+        coefficient_digits_upper_bound: item.coefficient_digits_upper_bound,
+        reasons: item.reasons
+      })),
     checks
   };
 }
