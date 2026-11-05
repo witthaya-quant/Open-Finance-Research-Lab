@@ -3,7 +3,7 @@
 # Pressure Points — Initial Problem Formalization
 
 **Case ID:** OFRL-CM-001-CS-001  
-**Formalization version:** 0.5.0  
+**Formalization version:** 0.6.0  
 **Source:** Jane Street, Pressure Points (November 2026)  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
@@ -184,6 +184,18 @@ Colorado also borders Nebraska to the northeast and Oklahoma to the southeast, a
 
 **H-013 — Community-reported candidate readings.** The Puzzling Stack Exchange discussion reports further decoded examples including BUSQUETS, INIESTA, VIOLINS, MERCURY, and INSTABILITY, alongside candidates such as GUJARAT, KANSAS, UTAH, WEST BENGAL, and STARBOARD. It also reports near-matches to place names: WYOMING with an additional N, MONTANA with an additional D, NEW MEXICO missing E, and HIMACHAL PRADESH with an additional G. These are user-generated candidate readings, not an authoritative grouping or a worked derivation. The discussion itself says that the puzzle page gives no written rules and explicitly leaves the meaning of the title, Ø, the emoji clues, and “(11 12)” unresolved. MONTANA + D is currently unassigned to any candidate emoji group.
 
+### Secondary-source status review — 2026-11-05
+
+The additional public sources reviewed in this session do not close a formalization blocker:
+
+- Jane Street's current puzzle page lists correct submissions as of 2026-11-02. This confirms submitted answers were accepted, but the reviewed puzzle page does not provide a worked derivation.
+- Kaia's current research note states that the author is establishing the exact 76-entry to 19 × 4 cardinal-vertex bijection and names `ANTWERPSCHE DIAMANTKRING` as the candidate output. The page reviewed does not expose the derivation, intermediate mapping, or independent verification.
+- Griffin Pinney's page reports a leaderboard placing and says “Notes to come in December”. It is a solver-status signal, not a mathematical explanation available for verification in this review.
+- The Puzzling Stack Exchange page is a user-generated question that records candidate anagrams and near-place-name residuals and asks what the title, Ø, emoji clues, and terminal notation mean. It is not a complete worked solution.
+- The Jane Street Archive search result displays November “Pressure Points” followed by “Puzzle Solution” text. The search result does not expose an anchor destination; the directly opened Archive HTML is a stale cached representation beginning at August 2026. No direct solution URL or solution body was retrieved.
+
+Accordingly, the candidate phrase remains externally reported but **not independently verified by OFRL**. A correct-submission list, a search-result label, or a solver-status statement cannot replace a complete derivation. No new group is promoted from a lead to an accepted mapping by this source review.
+
 ### Cross-group evidence boundary
 
 H-007 through H-012 expand the partial candidate inventory from four to ten emoji themes. The external sources independently corroborate the named star system, conventional clock positions, India's national flower and state geography, the NFPA quadrant layout, and the Colorado/Four Corners geography. They do **not** establish that Jane Street intended these exact groups, that their proposed orientations are the puzzle's orientations, or that the remaining nine emojis follow the same construction.
@@ -246,7 +258,8 @@ Original source: Jane Street, [Pressure Points — November 2026](https://www.ja
 
 Secondary research leads, accessed 2026-11-05:
 - [Puzzling Stack Exchange discussion](https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026) — exploratory observations and questions; not an authoritative rule statement.
-- [Kaia's current research notes](https://www.kaiaz.me/now/) — reports a 76-to-(19 × 4) cardinal-vertex hypothesis and the candidate phrase; the reviewed page does not provide the full derivation.
+- [Kaia's current research notes](https://www.kaiaz.me/now/) — reports work toward a 76-to-(19 × 4) cardinal-vertex bijection and the candidate phrase; the reviewed page does not provide the full derivation.
+- [Griffin Pinney, November 2026 Pressure Points](https://griffinpinney.com/puzzles/jane_street/2026-11/) — reports a leaderboard placing and says notes are forthcoming in December; no worked derivation was present in the reviewed page.
 - [Antwerpsche Diamantkring — About](https://diamantkring.be/about/) — confirms the organization is an Antwerp rough-diamond bourse and one of Antwerp's four diamond exchanges; entity corroboration only, not proof of the puzzle answer.
 - [Flemish Government / BELSPO, GARMON Final Report](https://omgeving.vlaanderen.be/sites/default/files/2022-02/ENG_GARMON_final_report_nov_2020.pdf), p. 45 — describes the Flemish Diamond as four agglomerations (Brussels, Ghent, Antwerp, Leuven) at the corners of an abstract diamond; contextual geography only, not puzzle-rule evidence.
 - [European Southern Observatory, Navigating the stars: the stories behind the Southern Cross](https://www.eso.org/public/blog/navigating-the-stars/) — confirms the four main stars of Crux.
@@ -272,3 +285,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.3.0 | 2026-11-05 | Added partial four-member category hypotheses, letter-multiset audits, contextual entity corroboration, and two additional formalization blockers |
 | 0.4.0 | 2026-11-05 | Added four explicit candidate cardinal layouts, independently sourced positional conventions, and reproducible letter-residual audits; no complete puzzle rule established |
 | 0.5.0 | 2026-11-05 | Added six further candidate themes, community-reported decoded readings, source cross-checks, and explicit evidence boundaries; no formalization blocker closed |
+| 0.6.0 | 2026-11-05 | Audited current secondary solver-status sources and corrected Archive search-result semantics; no complete derivation retrieved and no formalization blocker closed |

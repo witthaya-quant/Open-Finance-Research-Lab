@@ -8,7 +8,7 @@
 **Source publication label:** November 2026  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
-**Case status:** Formalization in progress; external structural hypothesis identified, rule semantics still BLOCKED  
+**Case status:** INCOMPLETE — secondary leads reviewed; complete rule semantics and derivation remain BLOCKED  
 **Evidence maturity:** 0 — Proposed
 
 ## 1. Why this case was selected
@@ -31,7 +31,7 @@ The official source page, accessed on 2026-11-05, visibly presents:
 
 The visible sequences are distinct, internally alphabetically ordered, and displayed in lexicographical order. Their total length is 504 letters. This is a structural observation only; it does not establish the intended semantic role of the sequences.
 
-The page content reviewed on 2026-11-05 does not expose a complete prose rule specification that resolves the relationship between these elements. Secondary public research suggests a possible one-to-one mapping between the 76 visible marker/sequence entries and four cardinal vertices for each of the 19 emoji clues. A separate solver-status note reports the candidate phrase ANTWERPSCHE DIAMANTKRING. Neither claim includes a complete derivation in the material reviewed; both remain hypotheses.
+The page content reviewed on 2026-11-05 does not expose a complete prose rule specification that resolves the relationship between these elements. Secondary public research suggests a possible one-to-one mapping between the 76 visible marker/sequence entries and four cardinal vertices for each of the 19 emoji clues. A separate solver-status note reports the candidate phrase ANTWERPSCHE DIAMANTKRING. A further solver-status page says a write-up is forthcoming in December, but provides no worked derivation in the reviewed content. The 2026-11-05 review therefore found multiple public solver-status signals, but no complete derivation that OFRL can independently inspect. The phrase remains a hypothesis.
 
 A partial reconstruction now records ten candidate emoji themes: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, and joystick directions. External sources corroborate several category conventions; the Colorado/desert association is explicitly provisional. Each local letter residual is recorded without forcing the groups into a common transformation rule. A separate community discussion reports further candidate readings, including BUSQUETS, INIESTA, VIOLINS, and MERCURY, but does not supply a complete derivation. See H-004 to H-013 in the formalization record.
 
@@ -48,6 +48,8 @@ The full sequence list, emoji sequence, images, and official solution are intent
 | Ten candidate category/position groups documented with independent contextual references | PASS |
 | Local letter-count residuals reproduced for the documented candidate groups | PASS |
 | Community-reported anagram readings registered as unverified leads | PASS |
+| Secondary solver-status sources reviewed and correctly classified as leads, not proofs | PASS |
+| Direct official solution URL and worked derivation retrieved | BLOCKED |
 | All 19 emoji groups and 76 cardinal assignments reconstructed | BLOCKED |
 | One global letter-reallocation / extraction rule explained across all 19 groups | BLOCKED |
 | Candidate output phrase independently verified | BLOCKED |
@@ -86,3 +88,21 @@ Original puzzle source: Jane Street, [Pressure Points — November 2026](https:/
 Programme context: Jane Street, [Puzzles](https://www.janestreet.com/puzzles/).
 
 All puzzle content remains attributable to Jane Street. OFRL does not claim ownership or redistribution rights over the original puzzle.
+
+
+## 8. Research disposition and closure gate
+
+**Current disposition: INCOMPLETE / BLOCKED — not solved and not ready for solver implementation.**
+
+The current research round has completed its permitted source and candidate-context review, but it has not closed the mathematical case. Ten of 19 emoji themes have provisional candidate groupings; the remaining groups, the role of Ø, a single global letter-residual rule, the output extraction, and independent verification of the candidate phrase remain unresolved. The Archive search-result text does not verify a solution hyperlink or provide the solution body. Public solver-status pages reviewed on 2026-11-05 do not supply a complete derivation.
+
+This is a **no-go for solver implementation under the evidence currently available**, not a claim that the puzzle is unsolvable and not a declaration that the case has been solved. Do not create a Cargo workspace, choose dependencies, or implement a solver while the correctness predicate remains undefined.
+
+A solved-case closure requires, at minimum:
+1. A documented 76-entry assignment with no omissions or duplicate assignments, including an explicit treatment of Ø.
+2. A source-grounded interpretation of all 19 emoji clues and all four positions for each.
+3. One consistent letter-transfer or transformation rule accounting for every residual, or a justified rejection of that proposed mechanism.
+4. A derivation of the output and the meaning of “(11 12)” that does not rely on answer-length coincidence.
+5. An independent check of the candidate output and any uniqueness/completeness claim.
+
+Until these conditions are met, retain this case as an explicitly incomplete formalization record. An administrative decision to close it as a no-go would need to preserve these limitations and must not be described as a solved research result.

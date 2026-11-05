@@ -3,7 +3,7 @@
 # OFRL-CM-001 — Data Manifest
 
 **Dataset ID:** OFRL-CM-001-SOURCE-REGISTER  
-**Dataset version:** 0.4.0  
+**Dataset version:** 0.5.0  
 **Data classification:** Public Source (reference-only; no source puzzle payload stored)  
 **Data owner / steward:** Project Owner  
 **Created or retrieved:** 2026-11-05  
@@ -41,10 +41,11 @@ The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The re
 | SRC-020 | State Maps | https://www.state-maps.org/colorado-map/ | 2026-11-05 | Cross-check Colorado's north/east/south/west neighbouring states for the provisional H-011 hypothesis | Secondary map reference; notes additional northeast/southeast neighbours; candidate geography only |
 | SRC-021 | U.S. Department of Energy | https://www.energy.gov/lm/atomic-legacy-discovery-guide-colorado-plateau | 2026-11-05 | Contextual corroboration that the Four Corners region is a high-desert area | U.S. Government geography reference; contextual only; not proof that the desert emoji denotes Colorado |
 | SRC-022 | MehdiSmr / JaneStreetPuzzles | https://github.com/MehdiSmr/JaneStreetPuzzles | 2026-11-05 | Inspect a public third-party mirror that labels the November puzzle “Sorted-Letter Anagrams” and includes a raw CSV plus a script that prints UTF-8 bytes | Third-party mirror; its MIT licence is not assumed to cover Jane Street puzzle data; no CSV or puzzle payload copied into OFRL |
+| SRC-023 | Griffin Pinney | https://griffinpinney.com/puzzles/jane_street/2026-11/ | 2026-11-05 | Check a listed correct solver's public status note for Pressure Points | Personal solver page; reports leaderboard placing and says approach notes are due in December; no worked derivation is included in the reviewed page |
 
 Jane Street's Puzzles page states that puzzles are published every month or two and explains the firm's own rationale for using puzzles: creative problem-solving is relevant to identifying new problems in financial markets and developing potentially novel ways to solve them. This is recorded as the source's stated motivation, not as an OFRL claim that every puzzle represents a financial problem.
 
-The ASIC article was published on 2026-10-02 and concerns a separate hardware reverse-engineering challenge. It is contextual material only; it is not described here as an item in the monthly puzzle archive. The Puzzling Stack Exchange and Kaia references are exploratory secondary sources only; neither is treated as an authoritative rule source or as proof of a solution. SRC-007 confirms the candidate organization's existence and role as an Antwerp rough-diamond bourse; SRC-008 describes the Flemish Diamond's four-city geometry. Neither source establishes that H-003 is the puzzle answer. SRC-009 through SRC-013 corroborate the conventional positions and vocabulary used in the first four candidate layouts. SRC-014 through SRC-021 support category facts and positional conventions behind H-007 through H-012. These sources establish background facts only; none proves that Jane Street intended a particular emoji-to-group mapping. SRC-005 is user-generated research and explicitly leaves the rule semantics unresolved. SRC-022 is a third-party raw-data mirror; its repository README attributes puzzle data to Jane Street, and the only script reviewed reads the CSV and prints UTF-8 byte arrays. It supplies no solver or derivation; no puzzle data has been copied.
+The ASIC article was published on 2026-10-02 and concerns a separate hardware reverse-engineering challenge. It is contextual material only; it is not described here as an item in the monthly puzzle archive. The Puzzling Stack Exchange and Kaia references are exploratory secondary sources only; neither is treated as an authoritative rule source or as proof of a solution. SRC-007 confirms the candidate organization's existence and role as an Antwerp rough-diamond bourse; SRC-008 describes the Flemish Diamond's four-city geometry. Neither source establishes that H-003 is the puzzle answer. SRC-009 through SRC-013 corroborate the conventional positions and vocabulary used in the first four candidate layouts. SRC-014 through SRC-021 support category facts and positional conventions behind H-007 through H-012. These sources establish background facts only; none proves that Jane Street intended a particular emoji-to-group mapping. SRC-005 is user-generated research and explicitly leaves the rule semantics unresolved. SRC-022 is a third-party raw-data mirror; its repository README attributes puzzle data to Jane Street, and the only script reviewed reads the CSV and prints UTF-8 byte arrays. It supplies no solver or derivation; no puzzle data has been copied. SRC-023 is a solver-status page only: its author reports a leaderboard placing and says notes will follow in December; it does not provide a derivation for OFRL to inspect.
 
 ## 3. Classification and privacy
 
@@ -65,20 +66,19 @@ No personal or confidential data is intentionally collected for this pilot.
 
 The retrieved Pressure Points page visibly presents a leading symbol, a block of uppercase-letter sequences, a separate emoji-clue block, and a terminal notation. The formal meaning of these elements has not been established.
 
-No normalized puzzle dataset or redistribution-ready fixture is created in version 0.3.0.
+No normalized puzzle dataset or redistribution-ready fixture is created in this manifest revision.
 
-### Official-solution retrieval status
+### Official-archive and solution retrieval status
 
-The Jane Street Archive search-index representation returned during the 2026-11-05 review displayed “November 2026: Pressure Points — Puzzle Solution”. However, the directly opened Archive representation was an older cached snapshot beginning at August 2026 and did not contain the November entry. Attempts to open likely solution-page paths did not retrieve solution content. The live puzzle page still exposes the puzzle and correct-submission list, but no complete official solution text was retrieved in this review. Therefore official-solution availability is **UNCONFIRMED**; do not treat the search-index label as proof that an accessible solution page has been inspected. Recheck the Archive and obtain the actual link/content before relying on an official solution.
+The 2026-11-05 Jane Street Archive search result displays the text “November 2026: Pressure Points” followed by “Puzzle Solution”. The search result does not expose the anchor target or establish that the word “Solution” is a live link. The directly opened Archive HTML is a stale cached representation beginning at August 2026 and does not expose the November entry. No November solution URL or solution body was retrieved. The official puzzle page exposes the puzzle and a list of correct submissions dated 2026-11-02, but the reviewed page does not provide a worked derivation.
 
-### Official-archive index and solution retrieval status
-
-On 2026-11-05, the Jane Street Archive search-index representation displayed “November 2026: Pressure Points” followed by “Puzzle Solution”. The directly opened Archive HTML returned in the same review is an older cached snapshot beginning at August 2026 and does not show the November entry. No direct November solution URL or solution body was retrieved. The evidence status is therefore:
-- Archive search-index entry for a November “Puzzle Solution”: **OBSERVED**.
-- Directly retrievable November solution link: **NOT VERIFIED**.
+Evidence states:
+- Archive search-result text for a November “Puzzle Solution”: **OBSERVED (text only)**.
+- November solution anchor/href target: **NOT VERIFIED**.
+- Direct solution URL: **NOT VERIFIED / NOT RETRIEVED**.
 - Official solution text and worked derivation: **NOT RETRIEVED**.
 
-Do not treat the search-index label as if the official solution itself has been read. Obtain the actual link and inspect the content before using it to close any formalization blocker.
+Do not treat the search-result label as proof that a solution page is linked, accessible, or inspected. Do not use it to close a formalization blocker. Recheck the Archive and inspect the actual destination if a direct link becomes available.
 
 ## 5. Collection or generation method
 
@@ -104,7 +104,7 @@ No third-party source file is stored, so no source-file checksum is claimed. If 
 
 - The live source may change after the access date.
 - The page's visible content does not, by itself, establish all problem rules.
-- The Archive search index now displays a November “Puzzle Solution” entry, but the directly opened page remains an older cached snapshot; the direct solution URL and solution content have not been retrieved.
+- The Archive search result displays November puzzle and “Puzzle Solution” text, but does not expose the solution anchor target; the directly opened HTML is a stale cached snapshot. The direct solution URL and solution content have not been retrieved.
 - No right to reproduce the puzzle text, images, or official solution is assumed.
 - The separate ASIC article provides context on methods and verification but is not evidence about the Pressure Points puzzle's underlying structure.
 

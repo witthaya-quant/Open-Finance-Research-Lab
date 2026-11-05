@@ -9,7 +9,7 @@
 **Pull request:** [#29](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Working branch:** `research/ofrl-cm-001-admission-and-pilot`  
 **Base branch:** `main`  
-**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this handoff update `5343cbddf039c2178e2b79ec062b249d8ab2c4f2`.  
+**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this research-status update `abe55b41958756ef17bdc0fc8e82024a74f8f5e8`.  
 **Important:** These SHAs are historical checkpoints, not current write tokens. A new session MUST retrieve the current PR head SHA and branch state from GitHub before any write.
 
 ## 1. Purpose
@@ -88,12 +88,13 @@ Jane Street's [Puzzles introduction](https://www.janestreet.com/puzzles/) explic
 
 ### Newly discovered secondary leads — not verified solutions
 
-- A [Puzzling Stack Exchange discussion](https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026) records exploratory anagram/geographic interpretations and unresolved questions.
-- [Kaia's research notes](https://www.kaiaz.me/now/) (last updated 2026-11-04) report a possible one-to-one mapping between 76 marker/sequence entries and 19 emoji clues × 4 cardinal vertices, plus the candidate `ANTWERPSCHE DIAMANTKRING`.
-- The candidate words have lengths 11 and 12, consistent with the displayed `(11 12)`. This agreement alone does not prove the candidate.
-- The Puzzling Stack Exchange discussion adds candidate readings (BUSQUETS, INIESTA, VIOLINS, MERCURY, INSTABILITY) and near-place-name residuals, while explicitly leaving the rule semantics unresolved. The official Archive search-index representation displays a November 2026 “Puzzle Solution” entry, but the directly opened Archive HTML is an older cached snapshot and does not expose the November link. The direct solution URL and solution body have NOT been retrieved. Do not treat the index entry as an inspected official derivation.
+- A [Puzzling Stack Exchange question](https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026) records exploratory anagram/geographic interpretations and explicitly asks about the title, Ø, emoji clues, and “(11 12)”; it is user-generated research, not a rule specification.
+- [Kaia's research notes](https://www.kaiaz.me/now/) (reviewed 2026-11-05; page notes updated 2026-11-04) report work toward a one-to-one mapping between 76 marker/sequence entries and 19 emoji clues × 4 cardinal vertices, and state the candidate `ANTWERPSCHE DIAMANTKRING`. The reviewed page does not expose the complete derivation.
+- [Griffin Pinney's Pressure Points page](https://griffinpinney.com/puzzles/jane_street/2026-11/) reports a leaderboard placing and says “Notes to come in December”; no worked derivation is present in the page reviewed on 2026-11-05.
+- The candidate words have lengths 11 and 12, consistent with the displayed `(11 12)`. This agreement alone does not prove the candidate. The official puzzle page lists correct submissions as of 2026-11-02; accepted submissions confirm that answers were submitted, not how the puzzle is derived.
+- The Puzzling question reports candidate readings (BUSQUETS, INIESTA, VIOLINS, MERCURY, INSTABILITY) and near-place-name residuals, but does not supply a complete derivation. The Archive search result displays November puzzle and “Puzzle Solution” text; the search result does not expose an anchor target. The directly opened Archive HTML is an older cached snapshot beginning at August 2026. A direct solution URL and official solution body have NOT been retrieved. Do not describe the search-result text as a verified solution link or inspected derivation.
 
-See hypotheses H-001 to H-013 and open questions O-001, O-004, O-005, O-006, and O-007 in the project documents. Ten candidate theme groups are now recorded: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, and joystick directions. Their contextual conventions are supported by references, with the Colorado/desert interpretation explicitly provisional. The community discussion adds ungrouped candidate readings including BUSQUETS, INIESTA, VIOLINS, MERCURY, and INSTABILITY. Exact residuals and their limits are recorded in PROBLEM_FORMALIZATION.md. This is partial evidence for 10 of 19 themes, not a complete bijection; no global rule or output extraction has been demonstrated.
+See hypotheses H-001 to H-013 and open questions O-001, O-004, O-005, O-006, and O-007 in the project documents. Secondary-source status checks are recorded in the 0.6.0 formalization note and DATA_MANIFEST.md SRC-023. Ten candidate theme groups are now recorded: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, and joystick directions. Their contextual conventions are supported by references, with the Colorado/desert interpretation explicitly provisional. The community discussion adds ungrouped candidate readings including BUSQUETS, INIESTA, VIOLINS, MERCURY, and INSTABILITY. Exact residuals and their limits are recorded in PROBLEM_FORMALIZATION.md. This is partial evidence for 10 of 19 themes, not a complete bijection; no global rule or output extraction has been demonstrated.
 
 ### Formalization gate
 
@@ -101,7 +102,7 @@ U-001 through U-010 remain unresolved. Ten candidate themes and further ungroupe
 
 A no-go or an explicitly incomplete research case is preferable to fabricated semantics. Financial-engineering transfer is not presumed and may conclude that no useful transfer exists.
 
-Official-source retrieval status: the Archive search index shows a November “Puzzle Solution” entry, but the directly opened page is a stale cache and the direct solution link/body remain unverified. See DATA_MANIFEST.md §5 and GAP-004.
+Official-source retrieval status: the Archive search result displays November “Pressure Points” and “Puzzle Solution” text but does not expose the anchor target; the directly opened HTML is a stale cache. The direct solution URL and body remain unverified. See DATA_MANIFEST.md §4 and GAP-004 in VALIDATION_MATRIX.md.
 
 ## 5. Implementation approach
 
@@ -127,11 +128,11 @@ Only then design the smallest useful implementation and independent verifier. A 
 
 ## 7. CI and release status
 
-Before this handoff update, the following workflows succeeded on head `5343cbddf039c2178e2b79ec062b249d8ab2c4f2`:
+Before this research-status update, the following workflows succeeded on head `abe55b41958756ef17bdc0fc8e82024a74f8f5e8`:
 
-- [OFRL Repository Policy run #41973717223](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973717223)
-- [OFRL-IB-001 Numeric and Input Contract Checks run #41973717157](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973717157)
-- [OFRL-IB-001 Rust Runtime Semantic Validator run #41973717253](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973717253)
+- [OFRL Repository Policy run #41973857312](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857312)
+- [OFRL-IB-001 Numeric and Input Contract Checks run #41973857377](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857377)
+- [OFRL-IB-001 Rust Runtime Semantic Validator run #41973857189](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857189)
 
 The two OFRL-IB-001 workflows were triggered by repository event behavior; their execution does not authorize changes to OFRL-IB-001. These results apply only to the checkpoint SHA above and must be rechecked after this handoff commit.
 
