@@ -31,7 +31,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Rust SBOM/RustSec research | Open PR #11, Draft | Candidate/POC inventories and point-in-time advisory evidence |
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
 | Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
-| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; synchronized branch passed both Rust toolchains and all six required contexts; unmerged |
+| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; earlier synchronized checkpoint passed all six contexts; latest PR head is being rechecked after typed-diagnostic changes; unmerged |
 | Typed deserialization diagnostics | Implemented on PR #13 branch | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and regression tests; semantic CI passed on Rust 1.85.0 / 1.99.1; remaining required contexts and independent review pending |
 | Numeric Profile schema, worksheet and exact derivation tool | Open PR #13 branch | Closed profile schema, exact BigInt-rational bounds and division-error propagation; current test fixture emits 287 arithmetic nodes; 30/30 Numeric Envelope tests pass; no owner-approved profile values |\n| Candidate-specific capacity evaluator | Open PR #13 branch | Exact rust_decimal 96-bit coefficient / scale 0–28 screen and BigDecimal profile-ceiling screen; test-only fixture yields rust_decimal `STATIC_BOUND_EXCEEDS_LIMIT` (37 nodes), BigDecimal CONDITIONAL (50 nodes); not a runtime verdict or production decision |
 | Model-specific Numeric Profile | Not approved | Finite input bounds, headroom, error budgets, tolerance and rounding remain open |
@@ -56,7 +56,7 @@ Exit condition: malformed and historically inconsistent input is rejected before
 
 ### Phase 1 — Audit, architecture and input-bound hardening
 
-**Status:** Implemented on the PR #13 branch and synchronized with current `main`. The refreshed code branch passed all six required contexts, including repository policy and both Rust toolchains. PR #13 remains Draft pending review and merge.
+**Status:** Implemented on the PR #13 branch and synchronized with current `main`. On head `deb66ec6f1b75d086ebcc5a64befffa1312b3e89`, repository-policy and semantic-validator checks on Rust 1.85.0 / 1.99.1 are PASS; the Numeric/Input Contract workflow is still pending. The latest head is not yet claimed to have passed all six required contexts. PR #13 remains Draft pending full CI and independent review.
 
 Deliverables:
 - Engineering Audit with severity-ranked findings.
