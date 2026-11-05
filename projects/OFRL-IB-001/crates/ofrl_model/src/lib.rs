@@ -9,6 +9,7 @@
 mod diagnostics;
 mod domain;
 mod validation;
+mod typed_deserialization;
 
 pub use diagnostics::{
     Diagnostic, DiagnosticCategory, DiagnosticCode, InputStatus, Severity, ValidationReport,

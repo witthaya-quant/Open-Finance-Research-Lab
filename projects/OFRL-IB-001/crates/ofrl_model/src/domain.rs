@@ -179,41 +179,46 @@ pub(crate) struct ForecastAssumptions {
 // Strict decimal-string deserialization is repeated here intentionally: the
 // isolated POC remains self-contained, while the production model owns its
 // application boundary and its own regression tests.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum DecimalTextError {
+    NonCanonical,
+    ScaleExceeded,
+    OutOfRange,
+}
+
+impl core::fmt::Display for DecimalTextError {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        formatter.write_str(match self {
+            Self::NonCanonical => "Decimal text is not canonical",
+            Self::ScaleExceeded => "Decimal fractional scale exceeds the supported maximum",
+            Self::OutOfRange => "Decimal text is outside the supported representation or loses information when parsed",
+        })
+    }
+}
+
+pub(crate) fn parse_decimal_text(text: &str) -> Result<Decimal, DecimalTextError> {
+    if !is_plain_decimal_text(text) {
+        return Err(DecimalTextError::NonCanonical);
+    }
+    if let Some((_, fractional)) = text.split_once('.') {
+        if fractional.len() > Decimal::MAX_SCALE as usize {
+            return Err(DecimalTextError::ScaleExceeded);
+        }
+    }
+    let parsed = Decimal::from_str(text).map_err(|_| DecimalTextError::OutOfRange)?;
+    if parsed.to_string() != text {
+        return Err(DecimalTextError::OutOfRange);
+    }
+    Ok(parsed)
+}
+
 pub(crate) fn deserialize_decimal<'de, D>(deserializer: D) -> Result<Decimal, D::Error>
 where
     D: Deserializer<'de>,
 {
-    let text = String::deserialize(deserializer).map_err(|_| {
-        serde::de::Error::custom(
-            "DECIMAL_STRING_REQUIRED: Decimal values must be JSON string tokens",
-        )
-    })?;
-
-    if !is_plain_decimal_text(&text) {
-        return Err(serde::de::Error::custom(
-            "DECIMAL_TEXT_NON_CANONICAL: amount must use canonical base-10 notation",
-        ));
-    }
-
-    if let Some((_, fractional)) = text.split_once('.') {
-        if fractional.len() > Decimal::MAX_SCALE as usize {
-            return Err(serde::de::Error::custom(
-                "DECIMAL_SCALE_EXCEEDED: fractional scale exceeds the selected Decimal maximum",
-            ));
-        }
-    }
-
-    let parsed = Decimal::from_str(&text).map_err(|_| {
-        serde::de::Error::custom("DECIMAL_OUT_OF_RANGE: amount is outside the Decimal range")
-    })?;
-
-    if parsed.to_string() != text {
-        return Err(serde::de::Error::custom(
-            "DECIMAL_OUT_OF_RANGE: amount is not exactly representable by the selected Decimal type",
-        ));
-    }
-
-    Ok(parsed)
+    let text = String::deserialize(deserializer)
+        .map_err(|_| serde::de::Error::custom("Decimal values must be JSON string tokens"))?;
+    parse_decimal_text(&text).map_err(serde::de::Error::custom)
 }
 
 fn is_plain_decimal_text(text: &str) -> bool {
