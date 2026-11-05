@@ -724,9 +724,14 @@ function createDerivation(profile) {
       // minimum of their independent upper bounds.
       depreciationByRate, depreciationCapacity
     ]);
-    const closingAccumulatedDepreciation = add(
-      prefix + ".accumulated_depreciation_closing", [
+    const accumulatedDepreciationRollforward = add(
+      prefix + ".accumulated_depreciation_opening_plus_depreciation", [
         accumulatedDepreciation, depreciation
+      ]
+    );
+    const closingAccumulatedDepreciation = minOf(
+      prefix + ".accumulated_depreciation_closing", [
+        accumulatedDepreciationRollforward, closingGrossPpe
       ]
     );
     const closingNetPpe = record(prefix + ".net_ppe_closing_bound",
