@@ -160,7 +160,7 @@ function evaluateCandidateCapacity(derivation, candidateId) {
 
   const candidateSpecific = candidateId === RUST_DECIMAL.id
     ? {
-        representation: "signed 96-bit coefficient; scale 0..28",
+        representation: "96-bit unsigned coefficient magnitude; separate sign bit; scale 0..28",
         maximum_coefficient_integer: RUST_DECIMAL.max_coefficient.toString(),
         maximum_scale: RUST_DECIMAL.max_scale,
         exact_mantissa_comparison: "performed per derivation node"
