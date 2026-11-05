@@ -196,11 +196,15 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Major
 
-**Evidence:** `validation.rs` maps Serde failures by substring inspection (for example, `unknown field`, `missing field` and custom Decimal markers); failures do not consistently expose JSON Pointer paths.
+**Status:** Remediated on PR #13 branch; not merged to `main`.
 
-**Risk:** Dependency wording changes can silently alter public diagnostic codes. Callers cannot locate nested fields and array indices reliably.
+**Finding:** The former validator mapped Serde failures by substring inspection and omitted reliable JSON Pointer paths for nested structural/deserialization failures.
 
-**Disposition:** Tracked for a separate implementation increment in [Issue #23](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/23). Introduce a typed deserialization/error-path boundary with stable code mapping and RFC 6901 JSON Pointer capture. Review any additional dependency and lockfile/SBOM impact before adoption. Add regression tests for nested values, missing/unknown fields, invalid enums, array indices, pointer escaping and malformed Decimal values.
+**Remediation:** A typed structural preflight now classifies closed-object shape, required/unknown properties, JSON type mismatches, enum values, and Decimal token/text/scale/range errors using contract-owned error kinds. It builds RFC 6901 pointers with `~` and `/` escaping, array indices, root-document pointers and period context where available. The preflight and Serde adapter share the same Decimal parser. Public diagnostic selection does not inspect Serde display text; malformed JSON remains pathless when no unambiguous field location exists. No new dependency was added.
+
+**Evidence:** `crates/ofrl_model/src/typed_deserialization.rs`, `src/domain.rs`, `src/validation.rs`, and `tests/typed_deserialization_diagnostics.rs`. The semantic-validator workflow passed formatting, Clippy, tests, docs, Case A CLI acceptance and unsupported-schema CLI rejection on Rust 1.85.0 and 1.99.1 at PR #13 head `59880aa1b032a2f5c5072f64c1dda7a39dba99f6`.
+
+**Disposition:** The implementation is branch-local until PR #13 passes all six Ruleset-required contexts, receives independent review and is merged. Issue #23 remains open until that merge.
 
 ### EA-07 — JSON Schema and Rust contract parity is not enforced
 
