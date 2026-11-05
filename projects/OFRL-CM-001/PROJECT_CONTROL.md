@@ -108,7 +108,7 @@ A phase may close only when its exit criteria are met. Work may proceed in paral
 | Phase | Outcome | Exit criteria | Status |
 |---|---|---|---|
 | P0 — Repository baseline and PR hygiene | Safe, current GitHub working baseline | Live refs checked; changed paths isolated; divergence/integration strategy explicitly resolved; handoff and validation references fresh; exact-head CI reviewed | **PARTIAL — audit complete; integration decision remains open** |
-| P1 — Scope and Playbook design | Approved project mandate and initial practice methodology | Project types/profiles match mandate; canonical control register exists; practice workflow, tracks, hypothesis record, method selection, verification, assessment, and learning progression documented; manifest and links validate | **DOCUMENTED — CI validation pending for this revision** |
+| P1 — Scope and Playbook design | Approved project mandate and initial practice methodology | Project types/profiles match mandate; canonical control register exists; practice workflow, tracks, hypothesis record, method selection, verification, assessment, and learning progression documented; manifest and links validate | **COMPLETE — exact-head repository policy validation passed; software remains gated** |
 | P2 — Pressure Points mathematical research | Solved case or defensible no-go/incomplete disposition | All source-observed elements accounted for; hypotheses tested/rejected; semantics, output condition, derivation, and verification established—or explicit evidence-based no-go recorded | **BLOCKED — see WS-01** |
 | P3 — First Rust computational prototype | Smallest justified executable implementation | A case passes formalization and method-selection gates; architecture, numeric policy, solver/verifier boundary, tests, dependencies, reproducibility, and project CI are approved | **NOT STARTED — gated** |
 | P4 — Multi-domain practice cases | Demonstrate methodology on different mathematical domains | Each case admitted; at least two real use cases before reusable abstractions; evidence and validation recorded per case | **NOT STARTED** |
@@ -129,12 +129,12 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 
 | Task ID | Phase | Task / required result | Status | Dependency / exit evidence |
 |---|---|---|---|---|
-| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — audit snapshot recorded** | Live GitHub inspection on 2026-11-05; see §7 |
+| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — current audit snapshot recorded** | Exact current head, changed paths, review state, divergence, and 3/3 workflow conclusions recorded in §7 |
 | CM-T0002 | P0 | Resolve branch integration and PR #29 merge readiness | **HOLD — owner decision required** | Main is 212 commits ahead of the merge base; no overlapping paths found in the 42 main-side changed paths; do not rebase/merge or retarget without explicit instruction |
-| CM-T0003 | P0/P1 | Establish one canonical project-management register and remove duplicate handoff/roadmap authority | **IMPLEMENTED IN THIS REVISION — CI pending** | PROJECT_CONTROL.md; HANDOFF.md points to this file |
-| CM-T0004 | P1 | Define project mandate, workstreams, phase gates, and delivery acceptance | **DOCUMENTED IN THIS REVISION — CI pending** | This file; DECISION_LOG.md D-011–D-014 |
-| CM-T0005 | P1 | Establish the initial Quantitative Practice Playbook | **DOCUMENTED IN THIS REVISION — CI pending** | PRACTICE_PLAYBOOK.md |
-| CM-T0006 | P1 | Align manifest, README, research specification, implementation approach, protocol, and validation links with the approved scope | **DOCUMENTED IN THIS REVISION — CI pending** | project.json and project-local documents |
+| CM-T0003 | P0/P1 | Establish one canonical project-management register and remove duplicate handoff/roadmap authority | **PASS** | PROJECT_CONTROL.md is canonical; HANDOFF.md is procedure-only; exact-head Repository Policy run #42017737205 passed |
+| CM-T0004 | P1 | Define project mandate, workstreams, phase gates, and delivery acceptance | **PASS** | PROJECT_CONTROL.md §§2–6 and DECISION_LOG.md D-011–D-014; exact-head Repository Policy run #42017737205 passed |
+| CM-T0005 | P1 | Establish the initial Quantitative Practice Playbook | **PASS — initial v0.1.0 baseline** | PRACTICE_PLAYBOOK.md content audit; exact-head Repository Policy run #42017737205 passed |
+| CM-T0006 | P1 | Align manifest, README, research specification, implementation approach, protocol, and validation links with the approved scope | **PASS** | project.json v0.2.0, PROJECT_CATALOG.md type row, README and specialist cross-links; Repository Policy run #42017737205 passed |
 | CM-T0007 | P2 | Independently audit all 12 current Pressure Points candidate clusters and their residuals | **OPEN — research task** | Candidate identity/context checks are not proof of puzzle intent; record accepted/rejected hypotheses with explicit falsifiers |
 | CM-T0008 | P2 | Account for the remaining seven emoji clues and all 76 proposed positions without assuming the 19×4 model | **BLOCKED** | Requires source-grounded semantics and a total, duplicate-free mapping if that model survives testing |
 | CM-T0009 | P2 | Determine the role of Ø, sequence ordering, residual transformation, and terminal notation | **BLOCKED** | Must derive one consistent interpretation or reject the current model |
@@ -147,25 +147,23 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 
 ## 7. Verified GitHub baseline
 
-**Snapshot date:** 2026-11-05  
+**Latest verified snapshot:** 2026-11-05  
 **Repository:** `witthaya-quant/Open-Finance-Research-Lab`  
 **Active PR:** [#29 — Project admission and Pressure Points research pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Authorized branch:** `research/ofrl-cm-001-admission-and-pilot`
 
-Last inspected checkpoint before this control-register revision:
-- Branch head: `f9536bc8adf4220a741fa8acfbf29c7f42b88c51` (historical checkpoint only; not a write token).
-- Main head observed: `5f8f578c387150214a1f438c3d67da48652eb4cb`.
-- PR: Open / Draft / Not merged; GitHub reported mergeable.
-- PR changed files: 12, all limited to `PROJECT_CATALOG.md` and `projects/OFRL-CM-001/**`.
-- Compare result: branch ahead 16 / behind 212 from merge base `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`.
-- Main-side changes since that merge base: 42 paths; no path overlapped the 12 PR paths in the inspected comparison.
+- Current branch / PR head: [`9234590afee1b4b9cdc5019fbd5bbc4bb3ffef57`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/9234590afee1b4b9cdc5019fbd5bbc4bb3ffef57).
+- Base branch: `main`; observed main head `5f8f578c387150214a1f438c3d67da48652eb4cb`; PR base / merge-base checkpoint `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`.
+- PR state: Open / Draft / Not merged; GitHub reports mergeable.
+- Compare: branch ahead 18 / behind 212; the base branch has advanced substantially and integration remains on hold.
+- PR changed files: 14. Exact paths are `PROJECT_CATALOG.md` and files under `projects/OFRL-CM-001/**`; no path under `projects/OFRL-IB-001/**`, `.github/**`, `schemas/**`, `scripts/**`, or `fixtures/**` is changed.
 - PR comments: none; reviews: none; review threads: none.
-- Last verified exact-head workflows at the inspected checkpoint:
-  - [OFRL Repository Policy #41976641537](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41976641537)
-  - [OFRL-IB-001 Numeric and Input Contract Checks #41976641404](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41976641404)
-  - [OFRL-IB-001 Rust Runtime Semantic Validator #41976641492](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41976641492)
+- Repository policy, numeric/input contract, and runtime semantic workflows all succeeded on this exact head:
+  - [OFRL Repository Policy #42017737205](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42017737205)
+  - [OFRL-IB-001 Numeric and Input Contract Checks #42017737208](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42017737208)
+  - [OFRL-IB-001 Rust Runtime Semantic Validator #42017737045](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42017737045)
 
-The two IB-001 workflows are repository-event-triggered checks, not evidence of changes to IB-001 or mathematical correctness for CM-001. Re-fetch PR, branch, main, changed paths, comments/reviews, and exact-head CI at every continuation. Do not copy this snapshot forward as if it were live state.
+The two IB-001 workflows ran because of repository PR-event behavior; their success is not evidence of changes to IB-001 or mathematical correctness for CM-001. This is a timestamped snapshot, not a future write token. Re-fetch all GitHub state before continuing.
 
 ## 8. Project document ownership map
 
