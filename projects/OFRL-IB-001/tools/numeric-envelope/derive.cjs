@@ -966,18 +966,12 @@ function deriveErrorPropagation(profile) {
     previousNwcError = nwcError;
   }
 
-  const displayQuantum = new Fraction(1n, pow10(policy.reporting_fraction_digits));
-  const displayRoundingError = nearestModes.includes(policy.reporting_rounding_mode)
-    ? displayQuantum.div(new Fraction(2n))
-    : displayQuantum;
-
+  const budgetChecks = {};
   const comparisons = [
     ["arithmetic_approximation_absolute", maximumLineError],
     ["accounting_identity_absolute", maximumBalanceSheetResidual],
-    ["schedule_rollforward_absolute", maximumScheduleError],
-    ["display_export_absolute", displayRoundingError]
+    ["schedule_rollforward_absolute", maximumScheduleError]
   ];
-  const budgetChecks = {};
   for (const [key, derivedBound] of comparisons) {
     const budget = parseNonNegativeDecimal(profile.error_budgets[key], "error_budgets." + key).value;
     budgetChecks[key] = {
@@ -989,8 +983,37 @@ function deriveErrorPropagation(profile) {
     };
   }
 
+  let displayQuantum = null;
+  let displayRoundingError = null;
+  if (policy.reporting_fraction_digits !== null &&
+      policy.reporting_rounding_mode !== null) {
+    displayQuantum = new Fraction(1n, pow10(policy.reporting_fraction_digits));
+    displayRoundingError = nearestModes.includes(policy.reporting_rounding_mode)
+      ? displayQuantum.div(new Fraction(2n))
+      : displayQuantum;
+    const budget = parseNonNegativeDecimal(
+      profile.error_budgets.display_export_absolute,
+      "error_budgets.display_export_absolute"
+    ).value;
+    budgetChecks.display_export_absolute = {
+      derived_bound_model_units: displayRoundingError.toString(),
+      approved_budget_model_units: budget.toString(),
+      status: displayRoundingError.compare(budget) <= 0 ? "PASS" : "FAIL",
+      reporting_currency_derived_bound: displayRoundingError.mul(new Fraction(UNIT_FACTORS[profile.unit_scale])).toString(),
+      reporting_currency_budget: budget.mul(new Fraction(UNIT_FACTORS[profile.unit_scale])).toString()
+    };
+  } else {
+    budgetChecks.display_export_absolute = {
+      status: "UNRESOLVED",
+      reason: "Reporting digits and reporting rounding mode have not both been specified."
+    };
+  }
+
+  const reportingPolicyUnresolved = displayRoundingError === null;
   return {
-    status: "DERIVED_UNDER_DECLARED_DIVISION_POLICY",
+    status: reportingPolicyUnresolved
+      ? "DERIVED_UNDER_DIVISION_POLICY__REPORTING_POLICY_UNRESOLVED"
+      : "DERIVED_UNDER_DECLARED_DIVISION_POLICY",
     assumptions: [
       "Each forecast period contains three non-terminating day-basis divisions: AR, inventory and AP.",
       "For half_even and half_up, each division error is bounded by half of one output quantum; for toward_zero and away_from_zero, it is bounded by one output quantum.",
@@ -1008,7 +1031,8 @@ function deriveErrorPropagation(profile) {
     maximum_balance_sheet_identity_residual_model_units: maximumBalanceSheetResidual.toString(),
     display_fraction_digits: policy.reporting_fraction_digits,
     display_rounding_mode: policy.reporting_rounding_mode,
-    display_rounding_error_bound_model_units: displayRoundingError.toString(),
+    display_rounding_error_bound_model_units: displayRoundingError === null
+      ? null : displayRoundingError.toString(),
     xlsx_binary_float_conversion: "NOT_INCLUDED__REQUIRES_EXPORTER_MEASUREMENT",
     per_year: perYear,
     budget_checks: budgetChecks
