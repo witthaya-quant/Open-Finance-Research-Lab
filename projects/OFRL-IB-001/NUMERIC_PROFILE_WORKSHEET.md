@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Profile Decision Worksheet
 
-**Worksheet version:** 0.4.0  
+**Worksheet version:** 0.5.0  
 **Status:** Working paper — NOT APPROVED  
 **Purpose:** Capture the evidence and decisions required before selecting a production arithmetic backend or implementing forecast calculations.
 
@@ -71,7 +71,9 @@ The complete symbolic formula-chain derivation is in [NUMERIC_PROFILE_DERIVATION
 
 The machine-readable profile input contract is [`ofrl-ib-001-numeric-profile-0.1.0.schema.json`](../../schemas/ofrl-ib-001-numeric-profile-0.1.0.schema.json). It requires finite field-specific magnitude bounds, source precision by monetary / ratio / day class, resource targets, separate error-budget inputs, and an explicit approval state.
 
-The candidate-neutral derivation tool is [`tools/numeric-envelope/derive.cjs`](tools/numeric-envelope/derive.cjs). It uses exact `BigInt` rational arithmetic and enumerates the opening Balance Sheet, three historical validation periods, and all five forecast formula periods. It emits formula-node bounds, scale/coefficient evidence, error-budget unit conversion and explicit conditional states for division policies that are not yet specified.
+The candidate-neutral derivation tool is [`tools/numeric-envelope/derive.cjs`](tools/numeric-envelope/derive.cjs). It uses exact `BigInt` rational arithmetic and enumerates the opening Balance Sheet, three historical validation periods, and all five forecast formula periods. It emits formula-node bounds, source/intermediate scale evidence, exact outward-rounded coefficient-integer upper bounds at each declared scale, coefficient digit counts, error-budget unit conversion and explicit conditional states for division policies that are not yet specified. Comparison-only validations are not counted as arithmetic operations.
+
+The separate [candidate-capacity evaluator](tools/numeric-envelope/candidate-capacity.cjs) compares every derived node with the exact `rust_decimal 1.43.0` 96-bit coefficient ceiling and scale 0–28, and with the profile's declared BigDecimal scale/coefficient ceilings. Its output is static evidence only. A missing division scale or coefficient bound remains CONDITIONAL; it never chooses a backend or authorizes production calculations.
 
 The committed [synthetic test fixture](tools/numeric-envelope/test/fixtures/synthetic-profile.test-only.json) is deliberately marked `test_only`; its values are used only to prove the tool and CI contract. It is not a model-domain recommendation, approved tolerance, or production profile. Do not copy its values into an approval record.
 
