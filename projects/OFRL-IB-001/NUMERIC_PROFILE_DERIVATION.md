@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Profile Derivation and Backend Decision Basis
 
-**Document version:** 0.2.0  
+**Document version:** 0.3.0  
 **Status:** Engineering derivation — NOT AN APPROVED NUMERIC PROFILE  
 **Scope:** V1 generic non-financial operating company; three historical periods; five forecast periods  
 **Reference implementation:** Numeric Envelope POC, branch `research/ofrl-ib-001-numeric-envelope`  
@@ -371,6 +371,205 @@ For rust_decimal, the candidate's scale is capped at 28 and the mantissa is capp
 For BigDecimal, multiplication preserves all coefficient digits rather than automatically limiting every result to the configured division precision. A finite division context therefore does not by itself bound coefficient growth, scale, memory or CPU. The profile must set maximum coefficient digits and scale at material formula nodes and test resource behaviour under the same five-year recurrence.
 
 The Numeric Profile must consequently approve both a *magnitude envelope* and a *scale/coefficient envelope*. A candidate that fits the former but cannot preserve the latter within the approved arithmetic-error budget is not acceptable.
+
+## 4.6 Historical validator arithmetic envelope
+
+The production validator performs arithmetic on the opening Balance Sheet and all three historical periods before a forecast could begin. A finite profile therefore needs separate per-field bounds for historical inputs; forecast driver ratios must not be used to infer them.
+
+Let an overbar denote the approved maximum absolute value of an input or calculated node. These are conservative triangle-inequality bounds, not expected values.
+
+### Opening and historical Balance Sheet
+
+For each opening or historical Balance Sheet:
+
+[
+NetPPE = GrossPPE - AccumulatedDepreciation
+]
+
+Under the domain condition (0 le AccumulatedDepreciation le GrossPPE):
+
+[
+|NetPPE| le overline{GrossPPE}
+]
+
+The total-assets calculation is evaluated as the sum of cash, receivables, inventory and net PP&E:
+
+[
+overline{TotalAssets}
+le
+overline{Cash}+
+overline{AR}+
+overline{Inventory}+
+overline{GrossPPE}
+]
+
+The liabilities-and-equity calculation is bounded separately:
+
+[
+overline{LiabilitiesAndEquity}
+le
+overline{AP}+
+overline{Debt}+
+overline{ShareCapital}+
+overline{|RetainedEarnings|}
+]
+
+Both calculations must fit before their equality comparison. The comparison itself does not add or multiply values, but the two independently calculated totals remain separate evidence nodes.
+
+### Historical Income Statement
+
+The validator evaluates net income sequentially:
+
+[
+egin{aligned}
+z_1 &= Revenue-COGS\
+z_2 &= z_1-Opex\
+z_3 &= z_2-Depreciation\
+z_4 &= z_3-Interest\
+NetIncome &= z_4-Tax
+end{aligned}
+]
+
+For each subtraction, the conservative intermediate bound is the sum of the absolute bounds of its two operands:
+
+[
+overline{|z_1|}leoverline{Revenue}+overline{COGS}
+]
+
+[
+overline{|z_2|}leoverline{|z_1|}+overline{Opex}
+]
+
+The same recurrence applies through depreciation, interest and tax. The final computed bound must be compared with an independently approved absolute bound for reported historical net income. A negative historical net income remains valid; the profile field is a magnitude bound, not a non-negative sign restriction on the actual value.
+
+### Historical NWC and Cash Flow Statement
+
+The NWC formula is evaluated as:
+
+[
+NWC = AR+Inventory-AP
+]
+
+[
+overline{|NWC|}
+le
+overline{AR}+overline{Inventory}+overline{AP}
+]
+
+The period movement is:
+
+[
+Delta NWC_t=NWC_t-NWC_{t-1}
+]
+
+[
+overline{|Delta NWC_t|}
+le
+overline{|NWC_t|}+overline{|NWC_{t-1}|}
+]
+
+The validator then evaluates the Cash Flow Statement in this order:
+
+[
+CFO=NI+DepreciationAddback-Delta NWC
+]
+
+[
+CFI=0-CapEx
+]
+
+[
+CFF=DebtDrawdowns-PrincipalRepayments-Dividends
+]
+
+[
+NetChangeCash=CFO+CFI+CFF
+]
+
+[
+ClosingCash=OpeningCash+NetChangeCash
+]
+
+Each sequential addition or subtraction must be assigned an intermediate bound before continuing to the next operation. For example:
+
+[
+overline{|CFO|}
+le
+overline{|NI|}+
+overline{|DepreciationAddback|}+
+overline{|Delta NWC|}
+]
+
+[
+overline{|CFF|}
+le
+overline{DebtDrawdowns}+
+overline{PrincipalRepayments}+
+overline{Dividends}
+]
+
+[
+overline{|NetChangeCash|}
+le
+overline{|CFO|}+overline{|CFI|}+overline{|CFF|}
+]
+
+[
+overline{|ClosingCash|}
+le
+overline{|OpeningCash|}+overline{|NetChangeCash|}
+]
+
+The opening-cash tie-out, net-income link, depreciation-addback link and closing-cash Balance Sheet tie-out are direct comparisons, not additional arithmetic operations.
+
+### Historical roll-forwards
+
+The remaining checked formulas are:
+
+[
+GrossPPE_t=GrossPPE_{t-1}+CapEx_t
+]
+
+[
+AccumDep_t=AccumDep_{t-1}+Depreciation_t
+]
+
+[
+DebtAvailable_t=Debt_{t-1}+Drawdowns_t
+]
+
+[
+Debt_t=DebtAvailable_t-Repayments_t
+]
+
+[
+RE_t=RE_{t-1}+NI_t-Dividends_t
+]
+
+For the arithmetic path, derive the addition intermediate first and then the subtraction intermediate. The domain rule (Repayments_t le DebtAvailable_t) and the PP&E domain rule (AccumDep_t le GrossPPE_t) constrain valid inputs/results, but they do not remove the need to bound the intermediate additions.
+
+A single historical profile section is applied to each of the three historical periods, while opening-balance bounds are kept separate. This is a conservative repeated-period envelope. If the intended historical data domain differs by period, the profile schema should be versioned to express period-specific bounds rather than silently reusing a common limit.
+
+### Machine-generated derivation
+
+The candidate-neutral analysis tool is:
+
+- `tools/numeric-envelope/derive.cjs`
+- Input contract: [Numeric Profile schema](../../schemas/ofrl-ib-001-numeric-profile-0.1.0.schema.json)
+- CI-only fixture: `tools/numeric-envelope/test/fixtures/synthetic-profile.test-only.json`
+- Unit tests: `tools/numeric-envelope/test/derive.test.cjs`
+
+The tool uses JavaScript `BigInt` fractions for exact rational bound arithmetic; it does not use binary floating point, add a runtime dependency to the Rust workspace, choose a backend or implement forecast calculations. It enumerates opening/historical validator nodes and the five-year forecast formula graph, records exact rational upper bounds, source/intermediate scale metadata, coefficient-digit evidence where a finite decimal representation is defined, and translates the four separate error-budget inputs to reporting-currency amounts using the declared unit scale.
+
+Division by 365 is always marked context-dependent even when a particular reduced test value happens to cancel factors. If the profile leaves division scale or rounding unresolved, downstream scale/resource checks remain conditional. CPU, allocation, peak-memory, tail-latency and concurrency fields are recorded as target limits only; this derivation tool does not claim to measure them.
+
+Run the derivation with a complete profile JSON:
+
+```bash
+node projects/OFRL-IB-001/tools/numeric-envelope/derive.cjs path/to/numeric-profile.json
+```
+
+The `--require-approved` option rejects a `test_only` profile. An `approved` input still produces an engineering derivation only; backend adoption and production-engine authorization are separate decisions. The committed synthetic fixture is explicitly test-only and must never be copied into a production approval record or treated as an approved operating domain.
 
 ## 5. What the current domain does and does not permit us to conclude
 
