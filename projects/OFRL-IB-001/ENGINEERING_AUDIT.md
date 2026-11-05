@@ -2,12 +2,12 @@
 
 # OFRL-IB-001 — Engineering Audit
 
-**Audit version:** 0.9.0  
+**Audit version:** 1.0.0  
 **Audit date:** 2026-11-05  
 **Production baseline:** `main` at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design, CLI hardening and Numeric Profile tooling:** PR #13 remains open Draft; head `daac2fc472ddabac09114399ecdaedc5e6bd46c4` passed all six required contexts, 30/30 Numeric Envelope tests, candidate-capacity reason checks and the preview-only Release Candidate Preview workflow  
+**System-design, CLI hardening and Numeric Profile tooling:** PR #13 remains open Draft; head `1acb543377c944152568dce3a22ae9d58b116f24` passed all six required contexts and 30/30 Numeric Envelope tests; the additional preview-only Release Candidate Preview workflow is still running  
 **Status:** Evidence-based audit at main `cc2d01b`; merged governance and supply-chain controls are distinguished from branch-local OFRL-IB-001 implementation evidence
 
 ## 1. Executive assessment
@@ -160,7 +160,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Risk addressed:** An envelope may be falsely conservative if comparison checks are treated as arithmetic, or falsely permissive if a 29-digit coefficient is assumed safe solely because it has 29 digits. The exact mantissa value, not digit count alone, determines this fixed-width limit.
 
-**Disposition:** Implementation and 30/30 numeric-tool tests pass on PR #13 head `daac2fc`. This closes the identified derivation-tool defect for the current V1 formula graph only; it does not approve model bounds, division policy, candidate semantics or operational resources. Keep the finding branch-local until PR review/merge and rerun the suite whenever formulas or profile schema change.
+**Disposition:** The implementation and 30/30 numeric-tool tests pass on PR #13 head `1acb543`; all six required Ruleset contexts also pass on that head. This closes the identified derivation-tool defect for the current V1 formula graph only; it does not approve model bounds, division policy, candidate semantics or operational resources. Keep the finding branch-local until PR review/merge and rerun the suite whenever formulas or profile schema change.
 
 ### EA-03 — Independent accounting/formula sign-off remains open
 
@@ -339,4 +339,4 @@ The next implementation increment should not be a speculative production forecas
 10. Generate XLSX solely from canonical outputs and reconcile it.
 11. Complete clean-checkout reproduction and release review.
 
-The exact Numeric Profile derivation and candidate-capacity tools improve decision readiness, but they do not supply missing business-domain inputs or reviewer approvals. PR #13 head `daac2fc` passed all six required contexts, 30/30 Numeric Envelope tests, the candidate-capacity summary checks and the preview-only Release Candidate Preview workflow. The synthetic fixture's rust_decimal `STATIC_BOUND_EXCEEDS_LIMIT` and BigDecimal CONDITIONAL results are not runtime verdicts or an approved V1 operating domain. No research POC, SBOM preview or green CI run is to be represented as production financial-model approval. Governance controls are merged; Numeric Profile, backend selection and independent Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
+The exact Numeric Profile derivation and candidate-capacity tools improve decision readiness, but they do not supply missing business-domain inputs or reviewer approvals. PR #13 head `1acb543` passed all six required contexts and 30/30 Numeric Envelope tests, including the corrected `STATIC_BOUND_EXCEEDS_LIMIT` semantics. The additional preview-only Release Candidate Preview workflow remains in progress at the time of this audit update. The synthetic fixture's rust_decimal `STATIC_BOUND_EXCEEDS_LIMIT` and BigDecimal CONDITIONAL results are not runtime verdicts or an approved V1 operating domain. No research POC, SBOM preview or green CI run is to be represented as production financial-model approval. Governance controls are merged; Numeric Profile, backend selection and independent Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
