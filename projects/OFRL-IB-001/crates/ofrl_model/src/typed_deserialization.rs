@@ -607,9 +607,7 @@ fn field_for_path(path: &[String]) -> Option<String> {
 
 fn period_id_for_path(root: &Value, path: &[String]) -> Option<String> {
     for pair in path.windows(2) {
-        if pair[0].as_str() != "historical_periods"
-            && pair[0].as_str() != "forecast_periods"
-        {
+        if pair[0].as_str() != "historical_periods" && pair[0].as_str() != "forecast_periods" {
             continue;
         }
 
