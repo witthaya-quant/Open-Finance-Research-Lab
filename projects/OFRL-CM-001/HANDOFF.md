@@ -65,6 +65,17 @@ Before every write batch, fetch the live PR head SHA again. Prefer one atomic Gi
 
 After a write, fetch PR metadata, changed-file names, compare metadata, and CI for the exact new head. Confirm no prohibited paths were added.
 
+### Project layout and future case admission
+
+The project shares OFRL's root governance and technical policies by reference; it does not copy or fork those policies. Project-local project specifications, protocol, decision log, validation matrix, data manifest, implementation approach, and handoff remain under `projects/OFRL-CM-001/`.
+
+The current admitted pilot is stored only in:
+`projects/OFRL-CM-001/cases/2026-11-pressure-points/`
+
+No additional case directories, empty scaffolds, duplicate root documents, or speculative implementation trees should be created. A future case must first pass the candidate-intake, source/rights, and owner admission decision. Add its date-prefixed directory under `cases/` only then, starting with its own README and problem formalization. Shared protocol and project-wide controls remain at the project root.
+
+PR #29 is only the admission and first-pilot documentation PR. It remains Draft and unmerged. After it is merged by explicit owner decision, follow-on changes to this project should use a separate topic branch and PR under the same project ID. Do not create a new OFRL project ID for another case unless its research objective, ownership, risk, or independently managed deliverable is materially different. Before PR #29 is merged, do not create follow-on branches based on a main branch that does not yet contain this project.
+
 ## 4. Current research state — Pressure Points
 
 ### Verified source observations

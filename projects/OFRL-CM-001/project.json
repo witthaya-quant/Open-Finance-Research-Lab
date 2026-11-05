@@ -26,7 +26,10 @@
     "IMPLEMENTATION_APPROACH.md",
     "CASE_STUDY_PROTOCOL.md",
     "VALIDATION_MATRIX.md",
-    "DATA_MANIFEST.md"
+    "DATA_MANIFEST.md",
+    "HANDOFF.md",
+    "cases/2026-11-pressure-points/README.md",
+    "cases/2026-11-pressure-points/PROBLEM_FORMALIZATION.md"
   ],
   "release_status": "not_released",
   "version": "0.1.0"

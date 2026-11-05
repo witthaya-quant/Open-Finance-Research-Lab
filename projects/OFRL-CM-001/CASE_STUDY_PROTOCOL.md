@@ -123,6 +123,28 @@ Each case moves through:
 
 Only one case study may be in active implementation at a time. Other cases remain in a candidate backlog and do not receive branches or implementation issues until admitted.
 
+### 9.1 Project and case directory boundaries
+
+The project root contains project-wide documents and controls. Case-specific material belongs under `cases/<YYYY-MM>-<short-slug>/` and must not be placed in the repository root or in another OFRL project.
+
+For every admitted case:
+- Create its case directory only after the case passes the candidate-intake, source/rights, and project-owner admission decision.
+- Start with a case `README.md` and `PROBLEM_FORMALIZATION.md` (or an equivalently named formal specification when the problem is already fully defined).
+- Add derivations, data manifests, implementation, tests, or result reports only when the case requires them and the corresponding evidence gate authorizes them.
+- Keep shared case-study protocol, project-level research specification, decision log, validation matrix, and handoff at the project root. Do not copy these documents into each case directory.
+- Record case-specific material decisions in the project Decision Log using the case ID; create a separate case-level decision record only when a distinct lifecycle or ownership boundary demonstrably requires it.
+- Keep the project manifest's `required_documents` synchronized with the documents that are mandatory for the admitted project and its active case.
+
+Do not create empty case folders, speculative backlog folders, placeholder source trees, or duplicate templates. A future case receives a directory only after admission. The project may have many completed case directories over time, but only one case may be in active implementation at a time.
+
+### 9.2 Follow-on branches and pull requests
+
+PR #29 is the project-admission and first-pilot documentation PR. It must not be used to smuggle unrelated projects, shared infrastructure changes, or implementation work that is outside its reviewed scope.
+
+After the project admission PR is merged, each separately authorized material implementation or research change should use a new topic branch and PR under the same `OFRL-CM-001` project. A new case does not automatically require a new OFRL project ID. A new project ID is considered only when the research objective, ownership, risk, or independently managed deliverable is materially different.
+
+Before PR #29 is merged, do not create follow-on branches based on `main` that assume the project files already exist there. Do not merge, close, or retarget PR #29 without the owner's explicit instruction.
+
 ## 10. Required status vocabulary
 
 Use the repository's validation states:
