@@ -8,8 +8,8 @@
 
 mod diagnostics;
 mod domain;
-mod validation;
 mod typed_deserialization;
+mod validation;
 
 pub use diagnostics::{
     Diagnostic, DiagnosticCategory, DiagnosticCode, InputStatus, Severity, ValidationReport,

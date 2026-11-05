@@ -6,6 +6,7 @@ use serde_json::Value;
 use crate::diagnostics::{Diagnostic, DiagnosticCategory, DiagnosticCode, ValidationReport};
 use crate::domain::{BalanceSheet, CalendarDate, CashFlowStatement, IncomeStatement, ModelInput};
 use crate::typed_deserialization::validate_model_input_shape;
+use crate::typed_deserialization::validate_model_input_shape;
 
 const V1_SCHEMA_VERSION: &str = "0.1.0";
 const V1_DAY_COUNT_BASIS: u16 = 365;
@@ -23,11 +24,18 @@ struct PeriodWindow {
 pub fn validate_input_json(input: &str) -> ValidationReport {
     let value = match serde_json::from_str::<Value>(input) {
         Ok(value) => value,
-        Err(error) => return ValidationReport::rejected(Diagnostic::error(
-            DiagnosticCode::JsonParseFailed, DiagnosticCategory::InputSyntax,
-            format!("Input is not valid JSON: {error}"), None, None, None,
-            Some("valid JSON document".to_owned()), Some(error.to_string()),
-        )),
+        Err(error) => {
+            return ValidationReport::rejected(Diagnostic::error(
+                DiagnosticCode::JsonParseFailed,
+                DiagnosticCategory::InputSyntax,
+                format!("Input is not valid JSON: {error}"),
+                None,
+                None,
+                None,
+                Some("valid JSON document".to_owned()),
+                Some(error.to_string()),
+            ));
+        }
     };
 
     if let Err(diagnostic) = validate_model_input_shape(&value) {
@@ -36,19 +44,30 @@ pub fn validate_input_json(input: &str) -> ValidationReport {
 
     let model = match serde_json::from_value::<ModelInput>(value) {
         Ok(model) => model,
-        Err(_) => return ValidationReport::rejected(Diagnostic::error(
-            DiagnosticCode::InputDeserializationFailed, DiagnosticCategory::InputSyntax,
-            "The typed V1 decoder rejected a value after contract preflight.",
-            None, None, None, None, None,
-        )),
+        Err(_) => {
+            return ValidationReport::rejected(Diagnostic::error(
+                DiagnosticCode::InputDeserializationFailed,
+                DiagnosticCategory::InputSyntax,
+                "The typed V1 decoder rejected a value after contract preflight.",
+                None,
+                None,
+                None,
+                None,
+                None,
+            ));
+        }
     };
 
     if model.schema_version != V1_SCHEMA_VERSION {
         return ValidationReport::rejected(Diagnostic::error(
-            DiagnosticCode::SchemaVersionUnsupported, DiagnosticCategory::Schema,
+            DiagnosticCode::SchemaVersionUnsupported,
+            DiagnosticCategory::Schema,
             "The supplied schema version is not supported by this validator.",
-            Some("/schema_version".to_owned()), None, Some("schema_version".to_owned()),
-            Some(V1_SCHEMA_VERSION.to_owned()), Some(model.schema_version),
+            Some("/schema_version".to_owned()),
+            None,
+            Some("schema_version".to_owned()),
+            Some(V1_SCHEMA_VERSION.to_owned()),
+            Some(model.schema_version),
         ));
     }
 
@@ -58,6 +77,7 @@ pub fn validate_input_json(input: &str) -> ValidationReport {
     validate_opening_balance_sheet(&model, &mut diagnostics);
     validate_historical_periods(&model, &mut diagnostics);
     validate_forecast_assumptions(&model, &mut diagnostics);
+
     ValidationReport::from_diagnostics(diagnostics)
 }
 
