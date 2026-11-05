@@ -2,12 +2,12 @@
 
 # OFRL-IB-001 — Engineering Audit
 
-**Audit version:** 0.6.0  
-**Audit date:** 2026-11-04  
+**Audit version:** 0.7.0  
+**Audit date:** 2026-11-05  
 **Production baseline:** `main` at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design, CLI hardening and Numeric Profile derivation:** PR #13, open Draft; code baseline `6941b1f1e2d4b6270fd8cf6d62327b4417d0486b` passed five project contexts; after synchronization with current main, all six required contexts passed on the integrated branch  
+**System-design, CLI hardening and Numeric Profile tooling:** PR #13 remains open Draft; implementation/test baseline `044f0224fbeda4b3ef305a0f66aeb52e9ac92d8a` passed all six required contexts, including the 17-test exact Numeric Envelope job; documentation-only updates are now on head `bd99fc44b9c61ed6fa5c051edec4f077a7eaa7fd` and their fresh CI run is in progress  
 **Status:** Evidence-based audit at main `cc2d01b`; merged governance and supply-chain controls are distinguished from branch-local OFRL-IB-001 implementation evidence
 
 ## 1. Executive assessment
@@ -123,7 +123,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Blocker
 
-**Evidence:** `NUMERIC_ENVELOPE.md` remains Proposed and the Numeric Profile worksheet remains unapproved. The current conventions do not define finite upper bounds for revenue growth, COGS ratio, operating-expense ratio, DSO/DIO/DPO, CapEx ratio, debt drawdowns or interest rate. The derivation distinguishes absolute-value limits from source-scale and coefficient-growth limits. The input grammar's 28-fractional-digit parser ceiling does not guarantee that chained multiplication over five forecast periods preserves that scale. The derivation records the symbolic path through revenue, working capital, PP&E, debt, interest, cash, retained earnings and statement totals without inventing owner limits.
+**Evidence:** The Numeric Profile remains unapproved and Issue #28 remains open. The current conventions still do not define finite upper bounds for revenue growth, COGS ratio, operating-expense ratio, DSO/DIO/DPO, CapEx ratio, debt drawdowns or interest rate. PR #13 now contains a versioned closed input schema and a candidate-neutral exact-rational derivation tool. Its latest code-tested head emitted 332 opening/historical/forecast formula nodes, translated separate error budgets to reporting currency and derived the /365 error-propagation path; the Numeric Envelope CI job passed 17/17 tests. The committed fixture is explicitly test-only and is not an approved domain.
 
 **Risk:** A candidate may pass selected fixtures and still overflow or lose material precision elsewhere in the admitted domain. An arbitrary-precision type does not solve an unbounded input domain or remove the need for finite CPU, memory, scale and output limits.
 
@@ -143,7 +143,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Severity:** Blocker for Numeric Profile / backend acceptance
 
-**Evidence:** The current input parser permits up to 28 fractional digits per Decimal field. That is a lexical limit, not a five-year operation-graph guarantee. Exact decimal multiplication has a pre-normalization scale bound equal to the sum of operand scales; the revenue recurrence can grow from \(S_{R_0}\) to as much as \(S_{R_0}+\sum_{t=1}^{5}S_{g_t}\) before backend-specific normalization. The updated Numeric Profile derivation and worksheet now record the scale graph and require separate magnitude, scale and coefficient-digit envelopes. BigDecimal's 80-digit default division context does not cap exact multiplication coefficient growth.
+**Evidence:** The input grammar permits up to 28 fractional digits per Decimal field, but the formula graph can compound scale and coefficient digits beyond the source limit. PR #13 now has a machine-readable profile contract, exact-rational node derivation and independent scale/coefficient-limit tests. The synthetic test-only fixture demonstrates that the five-year path can reach pre-normalization scale 39 and coefficient counts up to 44 under its illustrative source assumptions; those are tool-validation observations, not production limits. The tool returns explicit FAIL/CONDITIONAL/CANDIDATE-VALIDATION-REQUIRED states rather than silently treating the parser's 28-digit lexical ceiling as a calculation guarantee. BigDecimal's 80-digit POC division setting still does not cap exact multiplication coefficient growth.
 
 **Risk:** A value may remain well below the 96-bit magnitude limit and still exceed the supported scale or require precision reduction. Conversely, BigDecimal may preserve every multiplication digit and grow coefficient size, memory and runtime even when its division context is finite. A magnitude-only Numeric Profile would miss both failure modes.
 
@@ -295,13 +295,13 @@ The currency meaning then scales with `unit_scale`. The accepted policy should b
 
 | Gate | Evidence required | Status |
 |---|---|---|
-| Numeric Profile | Approved finite magnitude, source-scale, intermediate-scale/coefficient and resource bounds; formula-chain headroom; precision, rounding and separate error budgets | OPEN — symbolic derivation complete; Model Owner limits and source-scale decisions remain TBD |
-| Scale / coefficient propagation | Five-year operation-scale graph and candidate coefficient/resource limits | OPEN — derivation added; owner-approved source-scale limits and boundary evidence remain outstanding |
-| Production arithmetic backend | Profile-based comparison, explicit run-scoped context, serialization and controlled resource evidence | OPEN — no backend selected; POC observations are insufficient |
+| Numeric Profile | Approved finite magnitude, source-scale, intermediate-scale/coefficient and resource bounds; formula-chain headroom; precision, rounding and separate error budgets | OPEN — schema and candidate-neutral derivation tooling implemented; Model Owner limits, source-scale decisions and reviewer approvals remain TBD |
+| Scale / coefficient propagation | Five-year operation-scale graph and candidate coefficient/resource limits | TOOLING PASS — 332 formula nodes and division-error propagation; test-only fixture is not an approved domain; candidate-specific boundary evidence remains OPEN |
+| Production arithmetic backend | Profile-based comparison, explicit run-scoped context, serialization and controlled resource evidence | OPEN — evaluation protocol added; no backend selected; resource measurements and approved profile are still required |
 | Independent finance/accounting review | Written independent review and disposition of equations, conventions and edge cases | OPEN — not evidenced |
 | Rust dependencies | Locked graphs, target-scoped SBOM, source/licence/notice review and advisory disposition | PARTIAL — lockfile and preview SBOM workflow are on main; source-level licence/security and official release review remain open |
 | Independent arithmetic goldens | BM-002/BM-003: 800 exact outputs in open PR #11 | IMPLEMENTED IN OPEN PR — research evidence only |
-| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | PASS ON PR #13 BRANCH — shared corpus and path-safety tests passed both Rust toolchains; refreshed branch passed all six required contexts; unmerged |
+| Schema/Rust parity | Shared versioned corpus consumed by AJV and Rust | PASS ON PR #13 CODE-TESTED HEAD — shared corpus and path-safety tests passed both Rust toolchains; latest code-tested head passed all six required contexts; unmerged |
 | Typed diagnostics | Stable error variants and JSON Pointer for deserialization failures | OPEN — message-substring mapping remains |
 | Repository required checks | All six Ruleset contexts available on main and reported on fresh PRs | PASS — post-merge read-back plus documentation-only PR #24 and project-code PR #27 both passed 6/6 |
 | Production forecast engine | Typed Rust schedules and three statements | NOT STARTED — gated |
@@ -326,4 +326,4 @@ The next implementation increment should not be a speculative production forecas
 10. Generate XLSX solely from canonical outputs and reconcile it.
 11. Complete clean-checkout reproduction and release review.
 
-No research POC, SBOM preview or green CI run is to be represented as production financial-model approval. Governance controls are merged; Numeric Profile, backend selection and independent Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
+The exact Numeric Profile tool and backend evaluation protocol improve decision readiness, but they do not supply missing business-domain inputs or reviewer approvals. The 17/17 tool tests and 6/6 required checks apply to the code-tested PR #13 head 044f0224; the current documentation-only head bd99fc44 is undergoing its own CI rerun. No research POC, SBOM preview or green CI run is to be represented as production financial-model approval. Governance controls are merged; Numeric Profile, backend selection and independent Finance/Accounting approval remain open. This audit authorizes work only within OFRL-IB-001.
