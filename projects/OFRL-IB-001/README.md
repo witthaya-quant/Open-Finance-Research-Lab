@@ -62,6 +62,7 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Numeric envelope](NUMERIC_ENVELOPE.md)
 - [Numeric Profile worksheet](NUMERIC_PROFILE_WORKSHEET.md)
 - [Numeric Profile derivation](NUMERIC_PROFILE_DERIVATION.md)
+- [Numeric backend evaluation protocol](NUMERIC_BACKEND_EVALUATION.md)
 - [Numeric Profile input schema](../../schemas/ofrl-ib-001-numeric-profile-0.1.0.schema.json)
 - [Numeric envelope derivation tool](tools/numeric-envelope/derive.cjs) (analysis tooling only; not part of the Rust runtime)
 - [Validation and error contract](VALIDATION_ERROR_CONTRACT.md)
