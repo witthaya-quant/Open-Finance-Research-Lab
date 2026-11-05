@@ -837,6 +837,19 @@ function createDerivation(profile) {
   );
   const failedLimits = limitChecks.filter(item => item.status === "FAIL");
   const divisionNodes = nodes.filter(item => item.division_context_required).map(item => item.id);
+  const divisionPolicyUnresolved =
+    profile.arithmetic_policy.division_fractional_scale === null ||
+    profile.arithmetic_policy.division_rounding_mode === null;
+  const scaleLimitStatus = failedScale.length > 0
+    ? "FAIL"
+    : divisionPolicyUnresolved && divisionNodes.length > 0
+      ? "CONDITIONAL_DIVISION_POLICY"
+      : "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED";
+  const coefficientLimitStatus = failedCoefficient.length > 0
+    ? "FAIL"
+    : divisionPolicyUnresolved && divisionNodes.length > 0
+      ? "CONDITIONAL_DIVISION_POLICY"
+      : "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED";
   const unitFactor = UNIT_FACTORS[profile.unit_scale];
   const errorBudgets = {};
   for (const [key, value] of Object.entries(profile.error_budgets)) {
@@ -868,10 +881,8 @@ function createDerivation(profile) {
       formula_node_count: nodes.length,
       candidate_backend_selected: false,
       production_engine_authorized: false,
-      pre_normalization_scale_limit_status: failedScale.length > 0
-        ? "FAIL" : divisionNodes.length > 0 ? "CONDITIONAL_DIVISION_POLICY" : "PASS",
-      coefficient_digit_limit_status: failedCoefficient.length > 0
-        ? "FAIL" : divisionNodes.length > 0 ? "CONDITIONAL_DIVISION_POLICY" : "PASS",
+      intermediate_scale_limit_status: scaleLimitStatus,
+      coefficient_digit_limit_status: coefficientLimitStatus,
       division_context_required_nodes: divisionNodes,
       division_policy_status: profile.arithmetic_policy.division_fractional_scale === null ||
         profile.arithmetic_policy.division_rounding_mode === null
