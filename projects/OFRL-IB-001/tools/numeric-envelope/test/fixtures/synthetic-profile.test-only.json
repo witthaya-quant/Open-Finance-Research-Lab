@@ -84,8 +84,8 @@
     "reporting_rounding_mode": null
   },
   "resource_limits": {
-    "max_intermediate_scale": 28,
-    "max_coefficient_digits": 40,
+    "max_intermediate_scale": 48,
+    "max_coefficient_digits": 48,
     "max_input_bytes": 1048576,
     "max_cpu_ms": 1000,
     "max_peak_memory_mib": 128,
