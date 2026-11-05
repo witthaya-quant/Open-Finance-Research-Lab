@@ -144,22 +144,50 @@ jobs:
           node-version: "22.23.4"
           package-manager-cache: false
 
-      - name: Run exact numeric-envelope unit tests
-        run: node --test projects/OFRL-IB-001/tools/numeric-envelope/test/derive.test.cjs
-
-      - name: Derive the test-only synthetic envelope
+      - name: Run exact numeric-envelope and candidate-capacity tests
         run: |
-          node projects/OFRL-IB-001/tools/numeric-envelope/derive.cjs \
-            projects/OFRL-IB-001/tools/numeric-envelope/test/fixtures/synthetic-profile.test-only.json \
-            > "$RUNNER_TEMP/ofrl-numeric-envelope-test-only.json"
+          node --test \
+            projects/OFRL-IB-001/tools/numeric-envelope/test/derive.test.cjs \
+            projects/OFRL-IB-001/tools/numeric-envelope/test/candidate-capacity.test.cjs
+
+      - name: Derive and check the test-only synthetic envelope
+        run: |
+          set -euo pipefail
+          profile="projects/OFRL-IB-001/tools/numeric-envelope/test/fixtures/synthetic-profile.test-only.json"
+          derivation="$RUNNER_TEMP/ofrl-numeric-envelope-test-only.json"
+          rust_capacity="$RUNNER_TEMP/ofrl-numeric-envelope-rust-decimal-test-only.json"
+          bigdecimal_capacity="$RUNNER_TEMP/ofrl-numeric-envelope-bigdecimal-test-only.json"
+
+          node projects/OFRL-IB-001/tools/numeric-envelope/derive.cjs "$profile" > "$derivation"
+          node projects/OFRL-IB-001/tools/numeric-envelope/candidate-capacity.cjs \
+            "$derivation" --candidate rust_decimal_1_43_0 > "$rust_capacity"
+          node projects/OFRL-IB-001/tools/numeric-envelope/candidate-capacity.cjs \
+            "$derivation" --candidate bigdecimal_0_4_11 > "$bigdecimal_capacity"
+
           node -e '
             const fs = require("node:fs");
-            const result = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/ofrl-numeric-envelope-test-only.json", "utf8"));
-            if (result.approval_state !== "test_only" ||
-                result.derivation.candidate_backend_selected !== false ||
-                result.derivation.production_engine_authorized !== false ||
-                result.nodes.length < 100) {
+            const read = path => JSON.parse(fs.readFileSync(path, "utf8"));
+            const derivation = read(process.env.RUNNER_TEMP + "/ofrl-numeric-envelope-test-only.json");
+            const candidates = [
+              read(process.env.RUNNER_TEMP + "/ofrl-numeric-envelope-rust-decimal-test-only.json"),
+              read(process.env.RUNNER_TEMP + "/ofrl-numeric-envelope-bigdecimal-test-only.json")
+            ];
+            if (derivation.approval_state !== "test_only" ||
+                derivation.derivation.candidate_backend_selected !== false ||
+                derivation.derivation.production_engine_authorized !== false ||
+                derivation.nodes.length < 100) {
               throw new Error("Numeric Envelope output failed its non-approval or completeness guard");
             }
-            process.stdout.write("PASS: exact candidate-neutral derivation emitted " + result.nodes.length + " formula nodes; no backend or production approval was created.\\n");
+            for (const result of candidates) {
+              if (result.profile_id !== derivation.profile_id ||
+                  result.static_capacity_status !== "STATIC_CAPACITY_WITHIN_DECLARED_PROFILE" ||
+                  result.backend_selected !== false ||
+                  result.production_engine_authorized !== false ||
+                  result.runtime_correctness_status !== "NOT_EXECUTED" ||
+                  result.operational_resource_status !== "NOT_MEASURED") {
+                throw new Error("Candidate capacity output failed its test-only static-capacity guard: " + result.candidate + " " + result.static_capacity_status);
+              }
+              process.stdout.write("PASS: " + result.candidate + " static test-fixture capacity across " + result.node_count + " nodes; runtime and operational evidence remain open.\\n");
+            }
+            process.stdout.write("PASS: exact candidate-neutral derivation emitted " + derivation.nodes.length + " arithmetic nodes; no backend or production approval was created.\\n");
           '
