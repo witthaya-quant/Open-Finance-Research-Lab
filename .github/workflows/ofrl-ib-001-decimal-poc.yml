@@ -201,3 +201,49 @@ jobs:
             }
             process.stdout.write("PASS: exact candidate-neutral derivation emitted " + derivation.nodes.length + " arithmetic nodes; no backend or production approval was created.\\n");
           '
+
+      - name: Package and checksum Numeric Envelope evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          evidence_dir="$RUNNER_TEMP/ofrl-numeric-envelope-evidence"
+          mkdir -p "$evidence_dir"
+
+          cp "$RUNNER_TEMP/ofrl-numeric-envelope-test-only.json" "$evidence_dir/derivation.json"
+          cp "$RUNNER_TEMP/ofrl-numeric-envelope-rust-decimal-test-only.json" "$evidence_dir/rust-decimal-capacity.json"
+          cp "$RUNNER_TEMP/ofrl-numeric-envelope-bigdecimal-test-only.json" "$evidence_dir/bigdecimal-capacity.json"
+          cp projects/OFRL-IB-001/tools/numeric-envelope/test/fixtures/synthetic-profile.test-only.json "$evidence_dir/profile.test-only.json"
+
+          cat > "$evidence_dir/EVIDENCE.md" <<EOF
+          # OFRL-IB-001 Numeric Envelope CI Evidence
+
+          - Commit: $GITHUB_SHA
+          - Profile approval state: test_only
+          - Candidate backend selected: false
+          - Production engine authorized: false
+          - Numeric Envelope tests: passed in the preceding workflow step
+          - Runtime candidate arithmetic: not executed by the static capacity evaluator
+          - Operational resource limits: not measured by the static capacity evaluator
+
+          The candidate results are conservative static-bound screens, not observed runtime outcomes or a production Numeric Profile approval.
+          EOF
+
+          (
+            cd "$evidence_dir"
+            sha256sum \
+              EVIDENCE.md \
+              bigdecimal-capacity.json \
+              derivation.json \
+              profile.test-only.json \
+              rust-decimal-capacity.json > SHA256SUMS
+            sha256sum -c SHA256SUMS
+          )
+
+      - name: Upload Numeric Envelope evidence bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ofrl-ib-001-numeric-envelope-test-only-${{ github.sha }}
+          path: ${{ runner.temp }}/ofrl-numeric-envelope-evidence/
+          if-no-files-found: error
+          compression-level: 9
+          retention-days: 14
