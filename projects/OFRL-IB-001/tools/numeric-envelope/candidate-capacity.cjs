@@ -83,7 +83,7 @@ function evaluateCandidateCapacity(derivation, candidateId) {
   }
 
   const checks = [];
-  let hasFailure = false;
+  let hasBoundExceedance = false;
   let hasConditional = false;
 
   for (const node of derivation.nodes) {
@@ -91,39 +91,39 @@ function evaluateCandidateCapacity(derivation, candidateId) {
     const coefficientText = node.coefficient_integer_upper_bound ?? null;
     const coefficientDigits = node.coefficient_digits_upper_bound ?? null;
     const reasons = [];
-    let nodeFailed = false;
+    let nodeExceeds = false;
 
     if (scale === null) {
       hasConditional = true;
       reasons.push("scale_bound_unresolved");
     } else if (scale > derivation.resource_limits.max_intermediate_scale) {
-      hasFailure = true;
-      nodeFailed = true;
-      reasons.push("profile_intermediate_scale_limit_exceeded");
+      hasBoundExceedance = true;
+      nodeExceeds = true;
+      reasons.push("derived_scale_bound_exceeds_profile_limit");
     }
 
     if (coefficientDigits === null) {
       hasConditional = true;
       reasons.push("coefficient_bound_unresolved");
     } else if (coefficientDigits > derivation.resource_limits.max_coefficient_digits) {
-      hasFailure = true;
-      nodeFailed = true;
-      reasons.push("profile_coefficient_digit_limit_exceeded");
+      hasBoundExceedance = true;
+      nodeExceeds = true;
+      reasons.push("derived_coefficient_bound_exceeds_profile_limit");
     }
 
     if (candidateId === RUST_DECIMAL.id) {
       if (scale !== null && scale > RUST_DECIMAL.max_scale) {
-        hasFailure = true;
-        nodeFailed = true;
-        reasons.push("rust_decimal_scale_exceeds_28");
+        hasBoundExceedance = true;
+        nodeExceeds = true;
+        reasons.push("rust_decimal_scale_bound_exceeds_28");
       }
       if (coefficientText === null) {
         hasConditional = true;
         reasons.push("rust_decimal_mantissa_bound_unresolved");
       } else if (BigInt(coefficientText) > RUST_DECIMAL.max_coefficient) {
-        hasFailure = true;
-        nodeFailed = true;
-        reasons.push("rust_decimal_96_bit_mantissa_exceeded");
+        hasBoundExceedance = true;
+        nodeExceeds = true;
+        reasons.push("rust_decimal_coefficient_upper_bound_exceeds_96_bit_maximum");
       }
     }
 
@@ -132,8 +132,8 @@ function evaluateCandidateCapacity(derivation, candidateId) {
       effective_scale_bound: scale,
       coefficient_integer_upper_bound: coefficientText,
       coefficient_digits_upper_bound: coefficientDigits,
-      status: nodeFailed
-        ? "FAIL"
+      status: nodeExceeds
+        ? "BOUND_EXCEEDS_LIMIT"
         : reasons.length > 0
           ? "CONDITIONAL"
           : "WITHIN_STATIC_LIMITS",
@@ -150,8 +150,8 @@ function evaluateCandidateCapacity(derivation, candidateId) {
     typeof derivation.arithmetic_policy?.division_rounding_mode === "string";
 
   let staticCapacityStatus;
-  if (hasFailure) {
-    staticCapacityStatus = "FAIL";
+  if (hasBoundExceedance) {
+    staticCapacityStatus = "STATIC_BOUND_EXCEEDS_LIMIT";
   } else if (hasConditional || !divisionPolicySpecified) {
     staticCapacityStatus = "CONDITIONAL";
   } else {
@@ -199,12 +199,12 @@ function evaluateCandidateCapacity(derivation, candidateId) {
     backend_selected: false,
     production_engine_authorized: false,
     node_count: checks.length,
-    failure_count: checks.filter(item => item.status === "FAIL").length,
+    bound_exceeds_limit_count: checks.filter(item => item.status === "BOUND_EXCEEDS_LIMIT").length,
     conditional_count: checks.filter(item => item.status === "CONDITIONAL").length,
-    failure_reason_counts: reasonCounts("FAIL"),
+    bound_exceedance_reason_counts: reasonCounts("BOUND_EXCEEDS_LIMIT"),
     conditional_reason_counts: reasonCounts("CONDITIONAL"),
-    failure_examples: checks
-      .filter(item => item.status === "FAIL")
+    bound_exceedance_examples: checks
+      .filter(item => item.status === "BOUND_EXCEEDS_LIMIT")
       .map(item => ({
         node: item.node,
         effective_scale_bound: item.effective_scale_bound,
