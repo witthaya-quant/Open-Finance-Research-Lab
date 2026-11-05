@@ -86,12 +86,14 @@ function evaluateCandidateCapacity(derivation, candidateId) {
     const coefficientText = node.coefficient_integer_upper_bound ?? null;
     const coefficientDigits = node.coefficient_digits_upper_bound ?? null;
     const reasons = [];
+    let nodeFailed = false;
 
     if (scale === null) {
       hasConditional = true;
       reasons.push("scale_bound_unresolved");
     } else if (scale > derivation.resource_limits.max_intermediate_scale) {
       hasFailure = true;
+      nodeFailed = true;
       reasons.push("profile_intermediate_scale_limit_exceeded");
     }
 
@@ -100,12 +102,14 @@ function evaluateCandidateCapacity(derivation, candidateId) {
       reasons.push("coefficient_bound_unresolved");
     } else if (coefficientDigits > derivation.resource_limits.max_coefficient_digits) {
       hasFailure = true;
+      nodeFailed = true;
       reasons.push("profile_coefficient_digit_limit_exceeded");
     }
 
     if (candidateId === RUST_DECIMAL.id) {
       if (scale !== null && scale > RUST_DECIMAL.max_scale) {
         hasFailure = true;
+        nodeFailed = true;
         reasons.push("rust_decimal_scale_exceeds_28");
       }
       if (coefficientText === null) {
@@ -113,6 +117,7 @@ function evaluateCandidateCapacity(derivation, candidateId) {
         reasons.push("rust_decimal_mantissa_bound_unresolved");
       } else if (BigInt(coefficientText) > RUST_DECIMAL.max_coefficient) {
         hasFailure = true;
+        nodeFailed = true;
         reasons.push("rust_decimal_96_bit_mantissa_exceeded");
       }
     }
@@ -122,7 +127,7 @@ function evaluateCandidateCapacity(derivation, candidateId) {
       effective_scale_bound: scale,
       coefficient_integer_upper_bound: coefficientText,
       coefficient_digits_upper_bound: coefficientDigits,
-      status: reasons.some(reason => reason.includes("exceeded"))
+      status: nodeFailed
         ? "FAIL"
         : reasons.length > 0
           ? "CONDITIONAL"
@@ -186,7 +191,7 @@ function evaluateCandidateCapacity(derivation, candidateId) {
 function main(argv) {
   const args = argv.slice(2);
   const candidateIndex = args.indexOf("--candidate");
-  if (args.length !== 2 || candidateIndex < 0 || candidateIndex === args.length - 1) {
+  if (args.length !== 3 || candidateIndex !== 1 || candidateIndex === args.length - 1) {
     throw new Error(
       "Usage: node candidate-capacity.cjs <derivation.json> --candidate " +
       RUST_DECIMAL.id + "|" + BIGDECIMAL.id
