@@ -7,7 +7,7 @@
 **Production baseline:** `main` at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design, CLI hardening and Numeric Profile tooling:** PR #13 remains open Draft; implementation/test baseline `044f0224fbeda4b3ef305a0f66aeb52e9ac92d8a` passed all six required contexts, including the 17-test exact Numeric Envelope job; documentation-only updates are now on head `bd99fc44b9c61ed6fa5c051edec4f077a7eaa7fd` and their fresh CI run is in progress  
+**System-design, CLI hardening and Numeric Profile tooling:** PR #13 remains open Draft; code-tested baseline `044f0224fbeda4b3ef305a0f66aeb52e9ac92d8a` passed all six required contexts and the 17-test exact Numeric Envelope job; latest head `c2f5cf3ee286eb2b17ef3d086ad074cebfefd765` passed all six required contexts plus the additional Numeric Envelope Derivation check  
 **Status:** Evidence-based audit at main `cc2d01b`; merged governance and supply-chain controls are distinguished from branch-local OFRL-IB-001 implementation evidence
 
 ## 1. Executive assessment
