@@ -255,6 +255,20 @@ test("zero division scale is valid input but fails the declared error budgets", 
   assert.equal(result.error_propagation.budget_checks.display_export_absolute.status, "FAIL");
 });
 
+test("coefficient digit ceiling fails independently of intermediate scale", () => {
+  const profile = readFixture();
+  profile.resource_limits.max_coefficient_digits = 20;
+  const result = createDerivation(profile);
+  assert.equal(
+    result.derivation.intermediate_scale_limit_status,
+    "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED"
+  );
+  assert.equal(result.derivation.coefficient_digit_limit_status, "FAIL");
+  assert.ok(result.derivation.limit_checks.some(item =>
+    item.limit === "max_coefficient_digits" && item.status === "FAIL"
+  ));
+});
+
 test("approved state requires three explicit review records and still does not select a backend", () => {
   const profile = readFixture();
   profile.approval_state = "approved";
