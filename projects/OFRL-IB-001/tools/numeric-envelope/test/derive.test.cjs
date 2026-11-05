@@ -110,6 +110,8 @@ test("synthetic fixture is explicitly test-only and contains no approval claim",
   assert.equal(result.decision, "TEST_ONLY__NOT_A_MODEL_OWNER_APPROVAL");
   assert.equal(result.derivation.candidate_backend_selected, false);
   assert.equal(result.derivation.production_engine_authorized, false);
+  assert.equal(result.derivation.intermediate_scale_limit_status, "CONDITIONAL_DIVISION_POLICY");
+  assert.equal(result.derivation.coefficient_digit_limit_status, "CONDITIONAL_DIVISION_POLICY");
   assert.equal(result.derivation.division_policy_status, "UNRESOLVED");
   assert.equal(result.derivation.reporting_policy_status, "UNRESOLVED");
   assert.equal(
@@ -197,7 +199,7 @@ test("configured magnitude-scale constraints fail closed when a test bound is to
   const profile = readFixture();
   profile.resource_limits.max_intermediate_scale = 8;
   const result = createDerivation(profile);
-  assert.equal(result.derivation.pre_normalization_scale_limit_status, "FAIL");
+  assert.equal(result.derivation.intermediate_scale_limit_status, "FAIL");
   assert.ok(result.derivation.limit_checks.some(
     item => item.limit === "max_intermediate_scale" && item.status === "FAIL"
   ));
@@ -282,6 +284,14 @@ test("approved state requires three explicit review records and still does not s
   );
   assert.equal(result.derivation.candidate_backend_selected, false);
   assert.equal(result.derivation.production_engine_authorized, false);
+  assert.equal(
+    result.derivation.intermediate_scale_limit_status,
+    "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED"
+  );
+  assert.equal(
+    result.derivation.coefficient_digit_limit_status,
+    "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED"
+  );
   assert.equal(
     result.derivation.division_policy_status,
     "SPECIFIED__CANDIDATE_BEHAVIOUR_NOT_YET_VALIDATED"
