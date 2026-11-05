@@ -196,8 +196,10 @@ function validateProfile(p) {
   assertObject(p.source_precision, "source_precision", precisionKeys);
   for (const key of precisionKeys) {
     const value = p.source_precision[key];
-    if (!Number.isInteger(value) || value < 1 ||
-        value > (key.endsWith("fraction_digits") ? MAX_DECIMAL_SCALE : 1000)) {
+    const isFraction = key.endsWith("fraction_digits");
+    const minimum = isFraction ? 0 : 1;
+    const maximum = isFraction ? MAX_DECIMAL_SCALE : 1000;
+    if (!Number.isInteger(value) || value < minimum || value > maximum) {
       throw new Error("source_precision." + key + " is outside its allowed integer range");
     }
   }
@@ -240,6 +242,32 @@ function validateProfile(p) {
     "dividend_payout_ratio_max"
   ];
   assertObject(p.forecast_drivers, "forecast_drivers", driverKeys);
+
+  const arithmeticKeys = [
+    "division_fractional_scale",
+    "division_rounding_mode",
+    "reporting_fraction_digits",
+    "reporting_rounding_mode"
+  ];
+  assertObject(p.arithmetic_policy, "arithmetic_policy", arithmeticKeys);
+
+  const roundingModes = ["half_even", "half_up", "toward_zero", "away_from_zero"];
+  const divisionScale = p.arithmetic_policy.division_fractional_scale;
+  if (divisionScale !== null &&
+      (!Number.isSafeInteger(divisionScale) || divisionScale < 1 || divisionScale > 10000)) {
+    throw new Error("arithmetic_policy.division_fractional_scale must be null or an integer from 1 to 10000");
+  }
+  const reportingDigits = p.arithmetic_policy.reporting_fraction_digits;
+  if (reportingDigits !== null &&
+      (!Number.isSafeInteger(reportingDigits) || reportingDigits < 0 || reportingDigits > MAX_DECIMAL_SCALE)) {
+    throw new Error("arithmetic_policy.reporting_fraction_digits must be null or an integer from 0 to 28");
+  }
+  for (const key of ["division_rounding_mode", "reporting_rounding_mode"]) {
+    const value = p.arithmetic_policy[key];
+    if (value !== null && !roundingModes.includes(value)) {
+      throw new Error("arithmetic_policy." + key + " is not a supported rounding mode");
+    }
+  }
 
   const resourceKeys = [
     "max_intermediate_scale", "max_coefficient_digits",
@@ -346,6 +374,11 @@ function validateProfile(p) {
   if (p.approval_state === "test_only") {
     if (p.approvals !== null) throw new Error("test_only profiles must set approvals to null");
   } else {
+    for (const key of arithmeticKeys) {
+      if (p.arithmetic_policy[key] === null) {
+        throw new Error("approved profiles must set arithmetic_policy." + key);
+      }
+    }
     assertObject(p.approvals, "approvals", ["model_owner", "finance_accounting", "engineering"]);
     for (const role of ["model_owner", "finance_accounting", "engineering"]) {
       const a = p.approvals[role];
@@ -710,6 +743,7 @@ function createDerivation(profile) {
       ...profile.resource_limits,
       cpu_memory_allocation_tail_latency_and_concurrency_status: "TARGETS_ONLY__NO_MEASUREMENT_EVIDENCE"
     },
+    arithmetic_policy: profile.arithmetic_policy,
     error_budgets: errorBudgets,
     nodes
   };
