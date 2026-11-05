@@ -33,7 +33,7 @@ The visible sequences are distinct, internally alphabetically ordered, and displ
 
 The page content reviewed on 2026-11-05 does not expose a complete prose rule specification that resolves the relationship between these elements. Secondary public research suggests a possible one-to-one mapping between the 76 visible marker/sequence entries and four cardinal vertices for each of the 19 emoji clues. A separate solver-status note reports the candidate phrase ANTWERPSCHE DIAMANTKRING. Neither claim includes a complete derivation in the material reviewed; both remain hypotheses.
 
-A partial reconstruction has identified four candidate cardinal groups: compass directions, PlayStation-style face buttons, baseball bases, and sailing-vessel positions. Their N/E/S/W conventions are corroborated by independent references. The four groups also expose specific character-multiset residuals (+E/−E, +S/−E, +O/−H, +A/−S). These residuals do not yet form a common transformation rule. See H-004 to H-006 in the formalization record.
+A partial reconstruction now records ten candidate emoji themes: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, and joystick directions. External sources corroborate several category conventions; the Colorado/desert association is explicitly provisional. Each local letter residual is recorded without forcing the groups into a common transformation rule. A separate community discussion reports further candidate readings, including BUSQUETS, INIESTA, VIOLINS, and MERCURY, but does not supply a complete derivation. See H-004 to H-013 in the formalization record.
 
 The full sequence list, emoji sequence, images, and official solution are intentionally not copied into this repository.
 
@@ -45,10 +45,11 @@ The full sequence list, emoji sequence, images, and official solution are intent
 | Visible structure described without reproducing the puzzle | PASS |
 | Sequence counts and ordering properties checked | PASS |
 | Formal input and output semantics established | BLOCKED |
-| Four candidate cardinal groups and independent positional conventions cross-checked | PASS |
-| Candidate letter residuals reproduced for those four groups | PASS |
+| Ten candidate category/position groups documented with independent contextual references | PASS |
+| Local letter-count residuals reproduced for the documented candidate groups | PASS |
+| Community-reported anagram readings registered as unverified leads | PASS |
 | All 19 emoji groups and 76 cardinal assignments reconstructed | BLOCKED |
-| One letter-reallocation rule explained across all 19 groups | BLOCKED |
+| One global letter-reallocation / extraction rule explained across all 19 groups | BLOCKED |
 | Candidate output phrase independently verified | BLOCKED |
 | Candidate mathematical model selected | NOT RUN |
 | Solver implementation | NOT STARTED / DEFERRED |
@@ -68,8 +69,9 @@ The full sequence list, emoji sequence, images, and official solution are intent
 8. Do the 19 emoji clues each identify a four-member semantic set, and what determines the N/E/S/W orientation?
 9. Do the letter-count residuals represent a deliberate transfer operation, and can one rule explain all 19 groups?
 10. What is the correct treatment of Ø within the 76-position model?
+11. Which community-reported readings are intended by the emoji clues, and how is ambiguity between valid anagrams resolved?
 
-These are questions, not proposed answers. Hypotheses H-001 to H-006 and blockers U-001 to U-010 are recorded in PROBLEM_FORMALIZATION.md §4 and must not be promoted to facts without a complete derivation.
+These are questions, not proposed answers. Hypotheses H-001 to H-013 and blockers U-001 to U-010 are recorded in PROBLEM_FORMALIZATION.md §4 and must not be promoted to facts without a complete derivation.
 
 ## 6. Next gate
 

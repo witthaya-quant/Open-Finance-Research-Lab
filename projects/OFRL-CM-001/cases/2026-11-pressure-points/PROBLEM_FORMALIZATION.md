@@ -3,7 +3,7 @@
 # Pressure Points — Initial Problem Formalization
 
 **Case ID:** OFRL-CM-001-CS-001  
-**Formalization version:** 0.4.0  
+**Formalization version:** 0.5.0  
 **Source:** Jane Street, Pressure Points (November 2026)  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
@@ -87,7 +87,7 @@ This is not yet a mathematical model of the puzzle. No mapping function, objecti
 | U-009 | How the 19 emoji clues partition and orient the 76 candidate entries | Determines whether four-member theme groups and cardinal positions are valid | Complete source-grounded grouping and a reproducible orientation rule |
 | U-010 | Whether letter-count residuals between candidate words are intentional | Determines whether the title implies a defined letter-transfer or transformation operation | A rule that explains every residual across all groups and independently reproduces the output |
 
-All ten items remain unresolved in version 0.3.0.
+All ten items remain unresolved in version 0.5.0.
 
 ### 4.1 External research leads — hypotheses, not established rules
 
@@ -127,7 +127,7 @@ The emoji associations are plausible, but they are not an authoritative mapping.
 |---|---|---|---|---|---|
 | Compass | NORTH | EAST | SOUTH | WEST | Candidate source for NORTH contains one extra E; candidate source for EAST lacks one E; SOUTH and WEST are exact anagrams. Aggregate multiset equality holds over all four entries. |
 | Game controller | TRIANGLE | CIRCLE | CROSS | SQUARE | Candidate source for TRIANGLE is the plural TRIANGLES (+S); candidate source for CIRCLE lacks E; CROSS and SQUARE are exact anagrams. |
-| Baseball | SECOND BASE | FIRST BASE | HOME | THIRD BASE | Candidate source for SECOND contains one extra O; candidate source for THIRD lacks H; FIRST and HOME are exact anagrams. |
+| Baseball | SECOND | FIRST | HOME | THIRD | Candidate source for SECOND contains one extra O; candidate source for THIRD lacks H; FIRST and HOME are exact anagrams. |
 | Sailing vessel | BOW | STARBOARD | STERN | PORT | Candidate source for BOW contains one extra A; candidate source for STERN lacks S; STARBOARD and PORT are exact anagrams. |
 
 **Independent positional conventions:**
@@ -146,8 +146,53 @@ Across these four partial groups, the residuals do not establish a common letter
 
 The source alphagrams themselves are not copied into this document. A researcher can reproduce each comparison from the official puzzle source URL and the candidate terms stated above.
 
+**H-007 — Southern Cross / Crux.** Four candidate entries match the four main stars of Crux:
+- Top: GACRUX — the source alphagram has one extra C.
+- East arm: MIMOSA — exact anagram.
+- Foot: ACRUX — the source alphagram is missing U.
+- West arm: IMAI — exact anagram.
 
-**Evidence required before accepting any of H-001 through H-006:**
+The European Southern Observatory confirms Acrux, Mimosa, Gacrux, and Imai as the four main stars of Crux. An astronomy education reference describes Gacrux at the top, Acrux at the foot, Mimosa on the eastern arm, and Imai on the western arm. The east/west labels are chart-orientation dependent, not a universal sky-coordinate convention. The star emoji → Crux association remains an unverified interpretation of Jane Street's clue.
+
+**H-008 — Clock face.** A candidate set is TWELVE (12 o'clock), THREE (3 o'clock), SIX (6 o'clock), and NINE (9 o'clock). The source alphagram for TWELVE has one extra H; the source alphagram for SIX has one extra A and is missing S; THREE and NINE are exact anagrams. The four positions are conventional clock positions, but the residuals and intended extraction rule remain unexplained.
+
+**H-009 — Lotus / India.** The lotus may identify India, whose national flower is the lotus. A political map of India places the four candidate states at the proposed cardinal extremes:
+- North: HIMACHAL PRADESH — source alphagram has one extra G.
+- East: WEST BENGAL — exact anagram.
+- South: TAMIL NADU — source alphagram is missing L.
+- West: GUJARAT — exact anagram.
+
+The Survey of India map and an Indian government reference support the geographic and national-symbol context. This supports a plausible theme mapping, not a rule supplied by Jane Street.
+
+**H-010 — Warning / NFPA 704 hazard diamond.** The warning emoji may refer to the NFPA 704 hazard diamond, which has four quadrants:
+- Top: FLAMMABILITY (often shortened to FIRE in this candidate set) — source alphagram for FIRE has one extra E.
+- Right: INSTABILITY — exact anagram.
+- Bottom: SPECIAL — source alphagram is missing S.
+- Left: HEALTH — exact anagram.
+
+The NFPA standard identifies the hazard-diamond system; a U.S. Department of Homeland Security training reference describes the four quadrants and their positions. The category is precisely *flammability*, not a separate “fire” label. The puzzle-specific association is not proven.
+
+**H-011 — Desert / Colorado and the Four Corners region (provisional).** A candidate cardinal-neighbour set around Colorado is:
+- North: WYOMING — source alphagram has one extra N.
+- East: KANSAS — exact anagram.
+- South: NEW MEXICO — source alphagram is missing E.
+- West: UTAH — exact anagram.
+
+Colorado also borders Nebraska to the northeast and Oklahoma to the southeast, and meets Arizona at the Four Corners point. The Four Corners region includes high-desert terrain. This makes a desert/Colorado interpretation plausible but weaker than the other candidate themes: the emoji-to-region link is inferential, and the four cardinal neighbours are not the complete set of all Colorado neighbours. Treat H-011 as provisional.
+
+**H-012 — Joystick directions.** A candidate set is UP (north), RIGHT (east), DOWN (south), and LEFT (west). The source alphagram for UP has one extra H; RIGHT and DOWN are exact anagrams; the source alphagram for LEFT is missing T. The four directional terms fit the joystick emoji directly, but the role of their residual letters in the full puzzle remains unknown.
+
+**H-013 — Community-reported candidate readings.** The Puzzling Stack Exchange discussion reports further decoded examples including BUSQUETS, INIESTA, VIOLINS, MERCURY, and INSTABILITY, alongside candidates such as GUJARAT, KANSAS, UTAH, WEST BENGAL, and STARBOARD. It also reports near-matches to place names: WYOMING with an additional N, MONTANA with an additional D, NEW MEXICO missing E, and HIMACHAL PRADESH with an additional G. These are user-generated candidate readings, not an authoritative grouping or a worked derivation. The discussion itself says that the puzzle page gives no written rules and explicitly leaves the meaning of the title, Ø, the emoji clues, and “(11 12)” unresolved. MONTANA + D is currently unassigned to any candidate emoji group.
+
+### Cross-group evidence boundary
+
+H-007 through H-012 expand the partial candidate inventory from four to ten emoji themes. The external sources independently corroborate the named star system, conventional clock positions, India's national flower and state geography, the NFPA quadrant layout, and the Colorado/Four Corners geography. They do **not** establish that Jane Street intended these exact groups, that their proposed orientations are the puzzle's orientations, or that the remaining nine emojis follow the same construction.
+
+The exact local character-count residuals are preserved above. They must not be normalized away: Crux +C/−U; clock +H and +A/−S; India +G/−L; NFPA +E/−S; Colorado +N/−E; joystick +H/−T. These observations do not yet yield one consistent global transformation or extraction rule.
+
+
+
+**Evidence required before accepting any of H-001 through H-013:**
 1. Explain the semantic role of the leading marker and account for all 76 entries.
 2. Define the four positions and show why each emoji produces exactly four relevant vertices.
 3. Provide a reproducible mapping from every source entry to exactly one vertex, with no omissions or collisions.
@@ -158,8 +203,11 @@ The source alphagrams themselves are not copied into this document. A researcher
 8. Identify all 19 emoji groups, including the status and meaning of Ø, without leaving unmatched entries.
 9. Derive one consistent letter-transformation rule that accounts for all observed residuals across every group, or reject H-005.
 10. Derive the cardinal orientation of each group and show how those positions lead to the output.
+11. Distinguish a source-backed category convention from the interpretation of an emoji; corroboration of a star chart, map, clock, controller, or hazard label is not proof of puzzle intent.
+12. Reconcile every local character residual and the leading Ø under one explicit global rule, or document why a proposed group is false.
+13. Independently validate community-reported readings against the primary input, and distinguish those readings from the missing global mapping.
 
-The external leads and four partial category reconstructions narrow the research questions but do not close U-001 through U-010. Positional conventions for these four categories are independently corroborated; their puzzle-specific grouping and the letter residual mechanism are not. No algorithm family is selected and no solver is authorized by this update.
+Ten candidate emoji themes have now been recorded across H-004, H-006, and H-007 through H-012, with additional ungrouped community readings in H-013. Their category-level meanings and several positional conventions have supporting references, but Jane Street's intended grouping, the complete 76-entry bijection, Ø's role, the cross-group residual mechanism, and output extraction are not established. U-001 through U-010 remain unresolved. No algorithm family is selected and no solver is authorized by this update.
 
 ## 5. Candidate model structure — intentionally unselected
 
@@ -201,6 +249,14 @@ Secondary research leads, accessed 2026-11-05:
 - [Kaia's current research notes](https://www.kaiaz.me/now/) — reports a 76-to-(19 × 4) cardinal-vertex hypothesis and the candidate phrase; the reviewed page does not provide the full derivation.
 - [Antwerpsche Diamantkring — About](https://diamantkring.be/about/) — confirms the organization is an Antwerp rough-diamond bourse and one of Antwerp's four diamond exchanges; entity corroboration only, not proof of the puzzle answer.
 - [Flemish Government / BELSPO, GARMON Final Report](https://omgeving.vlaanderen.be/sites/default/files/2022-02/ENG_GARMON_final_report_nov_2020.pdf), p. 45 — describes the Flemish Diamond as four agglomerations (Brussels, Ghent, Antwerp, Leuven) at the corners of an abstract diamond; contextual geography only, not puzzle-rule evidence.
+- [European Southern Observatory, Navigating the stars: the stories behind the Southern Cross](https://www.eso.org/public/blog/navigating-the-stars/) — confirms the four main stars of Crux.
+- [AstroSpeedrun, The far southern sky](https://astrospeedrun.com/learn/o1/o1-6/) — describes the conventional chart positions of Gacrux, Acrux, Mimosa, and Imai; chart-orientation context only.
+- [Survey of India, Political Map of India](https://surveyofindia.gov.in/pages/political-map-of-india) — authoritative map reference for the candidate state positions.
+- [Embassy of India, Ashgabat, Information on India](https://eoiashgabat.gov.in/info-on-india.php) — identifies lotus as India's national flower.
+- [National Fire Protection Association, NFPA 704](https://www.nfpa.org/codes-and-standards/nfpa-704-standard-development/704) — identifies the NFPA hazard-diamond system.
+- [U.S. Department of Homeland Security, Hazardous Materials Facility Markings](https://cdp.dhs.gov/shared/se/courses/default/AWR-358%20dL%20040921/groups/119.html) — describes the four NFPA 704 quadrants and their conventional positions.
+- [State Maps, Colorado](https://www.state-maps.org/colorado-map/) — secondary reference for Colorado's cardinal neighbouring states; notes additional northeast/southeast neighbours.
+- [U.S. Department of Energy, Atomic Legacy Discovery Guide: Colorado Plateau](https://www.energy.gov/lm/atomic-legacy-discovery-guide-colorado-plateau) — describes the Four Corners high-desert region as contextual geography only, not proof of the emoji interpretation.
 
 Programme rationale: Jane Street, [Puzzles](https://www.janestreet.com/puzzles/).
 
@@ -215,3 +271,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.2.0 | 2026-11-05 | Added secondary research leads and explicitly unverified cardinal-vertex/output hypotheses; no formalization blockers closed |
 | 0.3.0 | 2026-11-05 | Added partial four-member category hypotheses, letter-multiset audits, contextual entity corroboration, and two additional formalization blockers |
 | 0.4.0 | 2026-11-05 | Added four explicit candidate cardinal layouts, independently sourced positional conventions, and reproducible letter-residual audits; no complete puzzle rule established |
+| 0.5.0 | 2026-11-05 | Added six further candidate themes, community-reported decoded readings, source cross-checks, and explicit evidence boundaries; no formalization blocker closed |

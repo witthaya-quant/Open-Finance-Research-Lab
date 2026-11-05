@@ -9,7 +9,7 @@
 **Pull request:** [#29](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Working branch:** `research/ofrl-cm-001-admission-and-pilot`  
 **Base branch:** `main`  
-**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this handoff update `dd4bd1b9f686a92b460e71953959960c852ca737`.  
+**Pre-update checkpoint:** PR open, Draft, not merged; base SHA `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`; branch head before this research update `6c30d29a56b80b6c167d79dae86281675b61e982`.  
 **Important:** These SHAs are historical checkpoints, not current write tokens. A new session MUST retrieve the current PR head SHA and branch state from GitHub before any write.
 
 ## 1. Purpose
@@ -91,15 +91,17 @@ Jane Street's [Puzzles introduction](https://www.janestreet.com/puzzles/) explic
 - A [Puzzling Stack Exchange discussion](https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026) records exploratory anagram/geographic interpretations and unresolved questions.
 - [Kaia's research notes](https://www.kaiaz.me/now/) (last updated 2026-11-04) report a possible one-to-one mapping between 76 marker/sequence entries and 19 emoji clues × 4 cardinal vertices, plus the candidate `ANTWERPSCHE DIAMANTKRING`.
 - The candidate words have lengths 11 and 12, consistent with the displayed `(11 12)`. This agreement alone does not prove the candidate.
-- The retrieved secondary note does not contain the complete derivation. The official Archive search-index representation displayed a November 2026 “Puzzle Solution” label, but the opened Archive snapshot was stale and did not expose the November entry or a direct solution page. The official solution has therefore NOT been retrieved or validated. Recheck the Archive and inspect the actual solution page before treating it as authoritative evidence.
+- The Puzzling Stack Exchange discussion adds candidate readings (BUSQUETS, INIESTA, VIOLINS, MERCURY, INSTABILITY) and near-place-name residuals, while explicitly leaving the rule semantics unresolved. The official Archive search-index representation displays a November 2026 “Puzzle Solution” entry, but the directly opened Archive HTML is an older cached snapshot and does not expose the November link. The direct solution URL and solution body have NOT been retrieved. Do not treat the index entry as an inspected official derivation.
 
-See hypotheses H-001 to H-006 and open questions O-001, O-004, O-005, O-006, and O-007 in the project documents. Four candidate theme groups have been partially reconstructed (compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions). Their standard N/E/S/W conventions are independently corroborated by National Geographic, Sony, MLB, NOAA, and the U.S. Naval History and Heritage Command. Candidate residuals are explicitly recorded: compass +E/−E, controller +S/−E, baseball +O/−H, sailing +A/−S. The residuals do not yet yield a common rule. This is partial evidence for 4 of 19 themes, not a complete bijection. Treat the candidate mapping and answer as unverified until all 76 entries are assigned with a reproducible derivation and the output condition is independently established.
+See hypotheses H-001 to H-013 and open questions O-001, O-004, O-005, O-006, and O-007 in the project documents. Ten candidate theme groups are now recorded: compass, PlayStation-style face buttons, baseball bases, sailing-vessel positions, Southern Cross, clock face, India's cardinal-border states, NFPA 704 hazard diamond, Colorado/Four Corners region, and joystick directions. Their contextual conventions are supported by references, with the Colorado/desert interpretation explicitly provisional. The community discussion adds ungrouped candidate readings including BUSQUETS, INIESTA, VIOLINS, MERCURY, and INSTABILITY. Exact residuals and their limits are recorded in PROBLEM_FORMALIZATION.md. This is partial evidence for 10 of 19 themes, not a complete bijection; no global rule or output extraction has been demonstrated.
 
 ### Formalization gate
 
-U-001 through U-010 remain unresolved. The four partial groups do not close the full mapping or letter-residual rule. Method selection remains BLOCKED. Do not select SAT/SMT, CSP, graph, search, string, optimization, or any other solver family merely because the cardinalities match. Do not write solver code, create a Cargo workspace, choose dependencies, or build CI until the rules and acceptance predicate justify those actions.
+U-001 through U-010 remain unresolved. Ten candidate themes and further ungrouped readings do not close the complete mapping, clarify Ø, or establish a common letter-residual/extraction rule. Method selection remains BLOCKED. Do not select SAT/SMT, CSP, graph, search, string, optimization, or any other solver family merely because the cardinalities match. Do not write solver code, create a Cargo workspace, choose dependencies, or build CI until the rules and acceptance predicate justify those actions.
 
 A no-go or an explicitly incomplete research case is preferable to fabricated semantics. Financial-engineering transfer is not presumed and may conclude that no useful transfer exists.
+
+Official-source retrieval status: the Archive search index shows a November “Puzzle Solution” entry, but the directly opened page is a stale cache and the direct solution link/body remain unverified. See DATA_MANIFEST.md §5 and GAP-004.
 
 ## 5. Implementation approach
 
@@ -125,11 +127,11 @@ Only then design the smallest useful implementation and independent verifier. A 
 
 ## 7. CI and release status
 
-Before this handoff update, the following workflows succeeded on head `dd4bd1b9f686a92b460e71953959960c852ca737`:
+Before this research update, the following workflows succeeded on head `6c30d29a56b80b6c167d79dae86281675b61e982`:
 
-- [OFRL Repository Policy run #41968623100](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41968623100)
-- [OFRL-IB-001 Numeric and Input Contract Checks run #41968623105](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41968623105)
-- [OFRL-IB-001 Rust Runtime Semantic Validator run #41968623153](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41968623153)
+- [OFRL Repository Policy run #41969058668](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41969058668)
+- [OFRL-IB-001 Rust Runtime Semantic Validator run #41969058718](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41969058718)
+- [OFRL-IB-001 Numeric and Input Contract Checks run #41969058810](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41969058810)
 
 The two OFRL-IB-001 workflows were triggered by repository event behavior; their execution does not authorize changes to OFRL-IB-001. These results apply only to the checkpoint SHA above and must be rechecked after this handoff commit.
 

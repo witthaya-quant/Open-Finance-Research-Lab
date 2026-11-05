@@ -3,7 +3,7 @@
 # OFRL-CM-001 — Data Manifest
 
 **Dataset ID:** OFRL-CM-001-SOURCE-REGISTER  
-**Dataset version:** 0.3.0  
+**Dataset version:** 0.4.0  
 **Data classification:** Public Source (reference-only; no source puzzle payload stored)  
 **Data owner / steward:** Project Owner  
 **Created or retrieved:** 2026-11-05  
@@ -23,7 +23,7 @@ The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The re
 | SRC-002 | Jane Street | https://www.janestreet.com/puzzles/pressure-points-index/ | 2026-11-05 | Original source of the November 2026 Pressure Points puzzle | Third-party puzzle content; redistribution permission not established; URL reference only |
 | SRC-003 | Jane Street | https://www.janestreet.com/puzzles/archive/ | 2026-11-05 | Verify puzzle archive and identify the source context | Third-party website; no archive content copied |
 | SRC-004 | Jane Street Blog | https://blog.janestreet.com/asic-puzzle-results/ | 2026-11-05 | Methodological context on diverse solution methods and verification in a separate ASIC challenge | Third-party article; citation and link only; not a first-pilot input |
-| SRC-005 | Puzzling Stack Exchange | https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026 | 2026-11-05 | Community discussion identifying exploratory anagram/geographic interpretations and unresolved questions | User-generated secondary discussion; not authoritative rules or a verified solution |
+| SRC-005 | Puzzling Stack Exchange | https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026 | 2026-11-05 | Community discussion reporting candidate anagrams, near-place-name residuals, and unresolved questions about the title, marker, emoji clues, and terminal notation | User-generated secondary discussion; not authoritative rules, not a complete mapping, and not a verified solution |
 | SRC-006 | Kaia | https://www.kaiaz.me/now/ | 2026-11-05 | Secondary solver-status lead reporting a 76-entry / 19-by-4 cardinal-vertex hypothesis and candidate phrase ANTWERPSCHE DIAMANTKRING | Personal research notes; the reviewed page does not provide a complete derivation; hypothesis only, not an official or OFRL-verified solution |
 | SRC-007 | Antwerpsche Diamantkring | https://diamantkring.be/about/ | 2026-11-05 | Verify the existence and nature of the candidate entity named in H-003 | Official organization website; citation only; no content reproduced; does not verify the puzzle answer |
 | SRC-008 | Flemish Government / BELSPO | https://omgeving.vlaanderen.be/sites/default/files/2022-02/ENG_GARMON_final_report_nov_2020.pdf | 2026-11-05 | Contextual corroboration that the Flemish Diamond is a four-agglomeration urban region (Brussels, Ghent, Antwerp, Leuven) | Public government report; citation only; contextual geography, not evidence of puzzle rules or answer |
@@ -32,10 +32,19 @@ The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The re
 | SRC-011 | National Oceanic and Atmospheric Administration | https://oceanservice.noaa.gov/facts/port-starboard.html | 2026-11-05 | Verify port/starboard as left/right when facing the bow | Official NOAA fact page; citation and link only; nautical convention context |
 | SRC-012 | U.S. Naval History and Heritage Command | https://www.history.navy.mil/content/history/museums/nmusn/education/educational-resources/ships-to-the-sea-1/nautical-vocabulary-list.html | 2026-11-05 | Verify bow/front and stern/back terminology | Official naval educational reference; citation and link only; nautical convention context |
 | SRC-013 | National Geographic Society | https://education.nationalgeographic.org/resource/cardinal-directions-and-maps/ | 2026-11-05 | Verify the standard four compass directions used as N/E/S/W labels | Educational reference; citation and link only; general directional convention |
+| SRC-014 | European Southern Observatory | https://www.eso.org/public/blog/navigating-the-stars/ | 2026-11-05 | Confirm the four main stars of Crux: Acrux, Mimosa, Gacrux, and Imai | Official observatory outreach article; citation only; confirms star identities, not the puzzle grouping |
+| SRC-015 | AstroSpeedrun | https://astrospeedrun.com/learn/o1/o1-6/ | 2026-11-05 | Cross-check the conventional chart positions of the four main Southern Cross stars | Astronomy education reference; chart-orientation context only; not puzzle-rule evidence |
+| SRC-016 | Survey of India | https://surveyofindia.gov.in/pages/political-map-of-india | 2026-11-05 | Verify the relative cardinal locations of Himachal Pradesh, West Bengal, Tamil Nadu, and Gujarat on India's political map | Government cartographic source; citation and link only; supports state geography |
+| SRC-017 | Embassy of India, Ashgabat | https://eoiashgabat.gov.in/info-on-india.php | 2026-11-05 | Verify the lotus as India's national flower for the H-009 theme hypothesis | Government of India diplomatic mission page; citation only; national-symbol context, not puzzle-rule evidence |
+| SRC-018 | National Fire Protection Association | https://www.nfpa.org/codes-and-standards/nfpa-704-standard-development/704 | 2026-11-05 | Verify the NFPA 704 standard and hazard-diamond context | Official standard publisher page; citation and link only; no full standard text reproduced |
+| SRC-019 | U.S. Department of Homeland Security | https://cdp.dhs.gov/shared/se/courses/default/AWR-358%20dL%20040921/groups/119.html | 2026-11-05 | Verify the four NFPA hazard quadrants and their top/right/bottom/left positions | Government training material; citation only; educational summary of the standard |
+| SRC-020 | State Maps | https://www.state-maps.org/colorado-map/ | 2026-11-05 | Cross-check Colorado's north/east/south/west neighbouring states for the provisional H-011 hypothesis | Secondary map reference; notes additional northeast/southeast neighbours; candidate geography only |
+| SRC-021 | U.S. Department of Energy | https://www.energy.gov/lm/atomic-legacy-discovery-guide-colorado-plateau | 2026-11-05 | Contextual corroboration that the Four Corners region is a high-desert area | U.S. Government geography reference; contextual only; not proof that the desert emoji denotes Colorado |
+| SRC-022 | MehdiSmr / JaneStreetPuzzles | https://github.com/MehdiSmr/JaneStreetPuzzles | 2026-11-05 | Inspect a public third-party mirror that labels the November puzzle “Sorted-Letter Anagrams” and includes a raw CSV plus a script that prints UTF-8 bytes | Third-party mirror; its MIT licence is not assumed to cover Jane Street puzzle data; no CSV or puzzle payload copied into OFRL |
 
 Jane Street's Puzzles page states that puzzles are published every month or two and explains the firm's own rationale for using puzzles: creative problem-solving is relevant to identifying new problems in financial markets and developing potentially novel ways to solve them. This is recorded as the source's stated motivation, not as an OFRL claim that every puzzle represents a financial problem.
 
-The ASIC article was published on 2026-10-02 and concerns a separate hardware reverse-engineering challenge. It is contextual material only; it is not described here as an item in the monthly puzzle archive. The Puzzling Stack Exchange and Kaia references are exploratory secondary sources only; neither is treated as an authoritative rule source or as proof of a solution. SRC-007 confirms the candidate organization's existence and role as an Antwerp rough-diamond bourse; SRC-008 describes the Flemish Diamond's four-city geometry. Neither source establishes that H-003 is the puzzle answer. SRC-009 through SRC-013 corroborate the conventional positions and vocabulary used in the four candidate layouts in H-006; they do not verify that Jane Street intended those groupings.
+The ASIC article was published on 2026-10-02 and concerns a separate hardware reverse-engineering challenge. It is contextual material only; it is not described here as an item in the monthly puzzle archive. The Puzzling Stack Exchange and Kaia references are exploratory secondary sources only; neither is treated as an authoritative rule source or as proof of a solution. SRC-007 confirms the candidate organization's existence and role as an Antwerp rough-diamond bourse; SRC-008 describes the Flemish Diamond's four-city geometry. Neither source establishes that H-003 is the puzzle answer. SRC-009 through SRC-013 corroborate the conventional positions and vocabulary used in the first four candidate layouts. SRC-014 through SRC-021 support category facts and positional conventions behind H-007 through H-012. These sources establish background facts only; none proves that Jane Street intended a particular emoji-to-group mapping. SRC-005 is user-generated research and explicitly leaves the rule semantics unresolved. SRC-022 is a third-party raw-data mirror; its repository README attributes puzzle data to Jane Street, and the only script reviewed reads the CSV and prints UTF-8 byte arrays. It supplies no solver or derivation; no puzzle data has been copied.
 
 ## 3. Classification and privacy
 
@@ -62,6 +71,15 @@ No normalized puzzle dataset or redistribution-ready fixture is created in versi
 
 The Jane Street Archive search-index representation returned during the 2026-11-05 review displayed “November 2026: Pressure Points — Puzzle Solution”. However, the directly opened Archive representation was an older cached snapshot beginning at August 2026 and did not contain the November entry. Attempts to open likely solution-page paths did not retrieve solution content. The live puzzle page still exposes the puzzle and correct-submission list, but no complete official solution text was retrieved in this review. Therefore official-solution availability is **UNCONFIRMED**; do not treat the search-index label as proof that an accessible solution page has been inspected. Recheck the Archive and obtain the actual link/content before relying on an official solution.
 
+### Official-archive index and solution retrieval status
+
+On 2026-11-05, the Jane Street Archive search-index representation displayed “November 2026: Pressure Points” followed by “Puzzle Solution”. The directly opened Archive HTML returned in the same review is an older cached snapshot beginning at August 2026 and does not show the November entry. No direct November solution URL or solution body was retrieved. The evidence status is therefore:
+- Archive search-index entry for a November “Puzzle Solution”: **OBSERVED**.
+- Directly retrievable November solution link: **NOT VERIFIED**.
+- Official solution text and worked derivation: **NOT RETRIEVED**.
+
+Do not treat the search-index label as if the official solution itself has been read. Obtain the actual link and inspect the content before using it to close any formalization blocker.
+
 ## 5. Collection or generation method
 
 Source references were reviewed manually on 2026-11-05. The source URLs are retained as the retrieval path. OFRL has not implemented a scraper, automated data collection, or a periodic source monitor.
@@ -86,7 +104,7 @@ No third-party source file is stored, so no source-file checksum is claimed. If 
 
 - The live source may change after the access date.
 - The page's visible content does not, by itself, establish all problem rules.
-- The Archive's indexed “Puzzle Solution” label could not be reconciled with the older page snapshot returned by direct retrieval; official solution access remains unconfirmed.
+- The Archive search index now displays a November “Puzzle Solution” entry, but the directly opened page remains an older cached snapshot; the direct solution URL and solution content have not been retrieved.
 - No right to reproduce the puzzle text, images, or official solution is assumed.
 - The separate ASIC article provides context on methods and verification but is not evidence about the Pressure Points puzzle's underlying structure.
 
