@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Backend Evaluation Protocol
 
-**Document version:** 0.2.0  
+**Document version:** 0.3.0  
 **Status:** Decision protocol — NO BACKEND SELECTED  
 **Scope:** OFRL-IB-001 V1 only  
 **Precondition:** A Model Owner-approved Numeric Profile and Finance/Accounting review  
@@ -148,6 +148,20 @@ The required thresholds come from the approved profile's resource limits and tar
 8. Record the chosen candidate, rejected candidates, context, limitations, reviewers, CI commit and artifact hashes in a separate versioned decision record.
 
 A profile or tolerance must not be widened after a candidate fails merely to obtain a PASS. If the admitted domain or model convention changes, issue a new profile/model-policy version, document the rationale and rerun the complete matrix.
+
+## 7.1 Interpretation of candidate static-capacity results
+
+The candidate-capacity evaluator compares **conservative derived upper bounds** with declared representation/profile ceilings. Its statuses have deliberately narrow meanings:
+
+| Status | Meaning | What it does not mean |
+|---|---|---|
+| `STATIC_BOUND_EXCEEDS_LIMIT` | At least one derived upper bound exceeds a static ceiling; representability is not proven for that bound | Not an observed runtime overflow and not proof that every feasible input fails |
+| `CONDITIONAL` | One or more required bounds or arithmetic-policy inputs are unresolved | Not a pass |
+| `STATIC_CAPACITY_WITHIN_DECLARED_PROFILE` | All supplied static bounds fit the declared ceilings | Not proof that the actual crate operations preserve the approved semantics; not a runtime or resource pass |
+
+A static upper-bound excess is a **veto on claiming representability**, not a substitute for executing the candidate at approved boundary inputs. A candidate remains ineligible until actual operations have been exercised at just-below, at and just-above boundaries, scale-reduction/rounding behaviour is characterized, and typed errors are verified. Conversely, a static pass cannot prove correctness, deterministic context use, canonical serialization, resource suitability or accounting materiality.
+
+For the current synthetic test-only fixture, the Rust Decimal screen marks 37 of 287 arithmetic nodes `BOUND_EXCEEDS_LIMIT`: 37 coefficient upper bounds exceed the exact 96-bit maximum and 19 scale upper bounds exceed 28 (overlap). Fifty more nodes remain conditional because the division scale/coefficient policy is unresolved. BigDecimal remains conditional on those 50 division-dependent nodes. These observations validate the screening process only; they do not define the intended V1 domain or select a backend.
 
 ## 8. Current decision
 
