@@ -39,6 +39,25 @@ test("fraction arithmetic stays exact and decimal output rounds outward", () => 
   assert.equal(roundOutward(new Fraction(0n), 4), "0.0000");
 });
 
+test("zero fractional source digits are a valid explicit precision limit", () => {
+  const profile = readFixture();
+  profile.source_precision.monetary_max_fraction_digits = 0;
+  profile.source_precision.ratio_max_fraction_digits = 0;
+  profile.source_precision.days_max_fraction_digits = 0;
+  for (const group of [
+    profile.opening_balance_sheet,
+    profile.historical_period.income_statement,
+    profile.historical_period.balance_sheet,
+    profile.historical_period.cash_flow_statement
+  ]) {
+    for (const key of Object.keys(group)) group[key] = String(Math.trunc(Number(group[key])));
+  }
+  for (const key of Object.keys(profile.forecast_drivers)) {
+    profile.forecast_drivers[key] = String(Math.trunc(Number(profile.forecast_drivers[key])));
+  }
+  validateProfile(profile);
+});
+
 test("decimal bound parser rejects non-canonical or signed inputs", () => {
   assert.equal(parseNonNegativeDecimal("125.50", "test").value.toString(), "251/2");
   for (const value of ["-1", "+1", "01", "1.", ".1", "1e3", " 1", "NaN"]) {
@@ -84,6 +103,12 @@ test("synthetic fixture is explicitly test-only and contains no approval claim",
   assert.equal(result.decision, "TEST_ONLY__NOT_A_MODEL_OWNER_APPROVAL");
   assert.equal(result.derivation.candidate_backend_selected, false);
   assert.equal(result.derivation.production_engine_authorized, false);
+  assert.equal(result.derivation.division_policy_status, "SPECIFIED__CANDIDATE_BEHAVIOUR_NOT_YET_VALIDATED");
+  assert.equal(result.derivation.reporting_policy_status, "SPECIFIED__XLSX_RECONCILIATION_NOT_YET_VALIDATED");
+  assert.equal(
+    node(result, "forecast.year_1.accounts_receivable").post_rounding_scale,
+    18
+  );
 });
 
 test("five-year magnitude and scale recurrences use exact operation order", () => {
@@ -171,6 +196,12 @@ test("configured magnitude-scale constraints fail closed when a test bound is to
 test("approved state requires three explicit review records and still does not select a backend", () => {
   const profile = readFixture();
   profile.approval_state = "approved";
+  profile.arithmetic_policy = {
+    division_fractional_scale: 18,
+    division_rounding_mode: "half_even",
+    reporting_fraction_digits: 2,
+    reporting_rounding_mode: "half_up"
+  };
   profile.approvals = {
     model_owner: {
       reviewer: "Model Owner",
