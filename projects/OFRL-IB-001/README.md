@@ -98,6 +98,7 @@ The first reproducible case will use synthetic data created specifically for thi
 - [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md)
 - [Numeric Profile Decision Worksheet](NUMERIC_PROFILE_WORKSHEET.md)
 - [Numeric Profile Derivation and Backend Decision Basis](NUMERIC_PROFILE_DERIVATION.md)
+- [Numeric Backend Evaluation Protocol](NUMERIC_BACKEND_EVALUATION.md)
 - [Shared Schema/Rust contract corpus](../../fixtures/contracts/ofrl-ib-001-shared-corpus.v0.1.0.json)
 
 ## Current branch and approval boundaries
