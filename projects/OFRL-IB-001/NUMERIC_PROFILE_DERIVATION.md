@@ -773,6 +773,8 @@ The POC comparison function computes exact maximum absolute differences and coun
 
 ## 9. Backend decision protocol
 
+The operational acceptance matrix and measurement record are specified in [NUMERIC_BACKEND_EVALUATION.md](NUMERIC_BACKEND_EVALUATION.md). The following decision dimensions are hard gates; they are not weighted preferences.
+
 Do not choose a backend using maximum representable value or a single latency table. After the Numeric Profile is approved, evaluate each candidate against the same frozen profile:
 
 | Decision dimension | Required evidence |
