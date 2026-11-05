@@ -24,7 +24,7 @@ A green metadata workflow does not prove mathematical correctness. Evidence matu
 | ID | Requirement / invariant | Gate | Validation method | Acceptance criteria | Status | Evidence / artifact | Owner |
 |---|---|---|---|---|---|---|---|
 | VAL-001 | Project identity and registration | Admission | Manifest schema and project-registry CI | Manifest valid; folder and project ID match; catalog row is consistent | NOT RUN | project.json; Project Catalog; CI pending | Project Owner |
-| VAL-002 | Source provenance | Admission | Inspect official source references and access metadata | Original publisher, title, URL, purpose context, and access date are recorded | PASS | DATA_MANIFEST.md; Jane Street Puzzles and Pressure Points URLs | Project Owner |
+| VAL-002 | Source provenance | Admission | Inspect official source references and access metadata | Original publisher, title, URL, purpose context, and access date are recorded | PASS | DATA_MANIFEST.md; official Jane Street source URLs | Project Owner |
 | VAL-003 | Third-party rights boundary | Admission / publication | Review stored artifacts against OFRL data and IP policies | No unlicensed puzzle payload, image, or official solution is committed; unresolved rights are not represented as permission | PASS | DATA_MANIFEST.md; current project file scope | Project Owner |
 | VAL-004 | Independence from OFRL-IB-001 | Admission | Compare changed paths and base/head changes | No IB-001 files, issue, branch, or PR modified; only the portfolio catalog is shared | NOT RUN | Admission PR diff and branch review pending | Project Owner |
 | VAL-005 | Problem rules sufficiently formalized | Research | Trace each rule to an authoritative source and define input/output semantics | All correctness-critical rules and output conditions are explicit; unresolved items are closed or declared blockers | BLOCKED | cases/2026-11-pressure-points/PROBLEM_FORMALIZATION.md | Project Owner |
@@ -34,15 +34,17 @@ A green metadata workflow does not prove mathematical correctness. Evidence matu
 | VAL-009 | Reproducibility of published findings | Publication | Clean-environment reproduction from versioned inputs and instructions | A competent reader can reproduce every material reported result | NOT RUN | No computational result is claimed | Project Owner |
 | VAL-010 | Research claims and evidence maturity | Publication | Review claims against evidence levels 0–4 | No claim exceeds the evidence actually obtained | PASS | Manifest maturity 0; no solver or solution claim | Project Owner |
 
-## 3. Initial-pilot observations
+## 3. Initial-pilot structural checks
 
-The official Pressure Points page was accessed on 2026-11-05. The source page visibly contains:
-- A leading symbol.
-- A block of uppercase-letter sequences.
-- A separate block of emoji clues.
+The official Pressure Points page was accessed on 2026-11-05. The visible source contains:
+- One leading marker.
+- 75 distinct uppercase-letter sequences.
+- 19 emoji clues.
 - A terminal notation shown as “(11 12)”.
 
-These observations are not a formal interpretation of the puzzle. See the case-specific formalization note. The source-to-rule mapping remains BLOCKED.
+A structural check of the visible sequence block found that every sequence is internally alphabetically ordered, the list is lexicographically ordered, and the 75 sequences contain 504 letters in total. The length distribution is recorded in PROBLEM_FORMALIZATION.md.
+
+These checks establish representation-level properties only; they do not resolve puzzle semantics.
 
 ## 4. Test inventory
 
@@ -50,8 +52,9 @@ These observations are not a formal interpretation of the puzzle. See the case-s
 |---|---|---|---|---|---|---|---|
 | TEST-001 | Project manifest and catalog validation | Repository policy | OFRL-CM-001 project tree | Registry accepts the new independent project | Awaiting PR workflow | NOT RUN | repository-policy |
 | TEST-002 | Project documentation link validation | Repository policy | New Markdown files | All local links resolve | Awaiting PR workflow | NOT RUN | repository-policy |
-| TEST-003 | Case source attribution review | Manual | DATA_MANIFEST.md | Primary source and purpose correctly attributed | Official URLs recorded | PASS | Manual source review |
+| TEST-003 | Case source attribution review | Manual | DATA_MANIFEST.md | Primary source and purpose correctly attributed | Official URLs and access date recorded | PASS | Manual source review |
 | TEST-004 | Puzzle rule completeness | Research review | Original source and formalization | Every correctness-critical rule traced to source | Source semantics remain incomplete | BLOCKED | Manual research gate |
+| TEST-005 | Visible sequence structural consistency | Structural inspection | Official source representation | Count, uniqueness, internal ordering, overall ordering, and length totals are internally consistent | 75 distinct sequences; 504 letters; observed ordering properties checked | PASS | Structural analysis recorded in PROBLEM_FORMALIZATION.md |
 
 ## 5. Known gaps and exceptions
 

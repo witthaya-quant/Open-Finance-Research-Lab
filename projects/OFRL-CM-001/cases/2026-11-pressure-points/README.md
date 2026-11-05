@@ -25,11 +25,13 @@ Establish a precise, source-traceable problem definition for Pressure Points. De
 
 The official source page, accessed on 2026-11-05, visibly presents:
 - A leading symbol.
-- A block of uppercase-letter sequences.
-- A separate block of emoji clues.
+- 75 uppercase-letter sequences.
+- 19 emoji clues.
 - A terminal notation rendered as “(11 12)”.
 
-The page content retrieved for this initial review does not expose a complete prose rule specification that resolves the relationship between these elements. The structural observations are documented in [PROBLEM_FORMALIZATION.md](PROBLEM_FORMALIZATION.md).
+The visible sequences are distinct, internally alphabetically ordered, and displayed in lexicographical order. Their total length is 504 letters. This is a structural observation only; it does not establish the intended semantic role of the sequences.
+
+The page content retrieved for this initial review does not expose a complete prose rule specification that resolves the relationship between these elements. The formalization note records observed properties and unresolved semantics separately.
 
 The full sequence list, emoji sequence, images, and official solution are intentionally not copied into this repository.
 
@@ -39,6 +41,7 @@ The full sequence list, emoji sequence, images, and official solution are intent
 |---|---|
 | Original source and access date recorded | PASS |
 | Visible structure described without reproducing the puzzle | PASS |
+| Sequence counts and ordering properties checked | PASS |
 | Formal input and output semantics established | BLOCKED |
 | Candidate mathematical model selected | NOT RUN |
 | Solver implementation | NOT STARTED / DEFERRED |
