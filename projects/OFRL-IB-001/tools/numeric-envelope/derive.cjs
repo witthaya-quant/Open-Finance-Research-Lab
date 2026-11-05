@@ -166,7 +166,7 @@ function validateProfile(p) {
     "schema_id", "profile_id", "profile_version", "convention_version",
     "approval_state", "reporting_currency", "unit_scale", "day_count_basis",
     "source_precision", "opening_balance_sheet", "historical_period",
-    "forecast_drivers", "resource_limits", "error_budgets", "approvals"
+    "forecast_drivers", "arithmetic_policy", "resource_limits", "error_budgets", "approvals"
   ]);
 
   if (p.schema_id !== PROFILE_SCHEMA_ID) throw new Error("unsupported numeric profile schema_id");
@@ -504,6 +504,7 @@ function createDerivation(profile) {
   // Historical validator arithmetic: opening Balance Sheet plus each of the
   // three historical periods. These are independent input bounds; historical
   // amounts are not inferred from forecast operating ratios.
+  const hist = H;
   let priorNwc = add("history.opening.nwc.ar_plus_inventory_bound", [
     O.accounts_receivable_max, O.inventory_max
   ]);
