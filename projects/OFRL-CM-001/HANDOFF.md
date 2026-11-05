@@ -130,9 +130,9 @@ Only then design the smallest useful implementation and independent verifier. A 
 
 Before this candidate-cluster update, the following workflows succeeded on head `04400787062ecc0b84c6d75b5315d382a84979de`:
 
-- [OFRL Repository Policy run #41975605588](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857312)
-- [OFRL-IB-001 Numeric and Input Contract Checks run #41975605558](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857377)
-- [OFRL-IB-001 Rust Runtime Semantic Validator run #41975605580](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41973857189)
+- [OFRL Repository Policy run #41975605588](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41975605588)
+- [OFRL-IB-001 Numeric and Input Contract Checks run #41975605558](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41975605558)
+- [OFRL-IB-001 Rust Runtime Semantic Validator run #41975605580](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/41975605580)
 
 The two OFRL-IB-001 workflows were triggered by repository event behavior; their execution does not authorize changes to OFRL-IB-001. These results apply only to the checkpoint SHA above and must be rechecked after this handoff commit.
 
