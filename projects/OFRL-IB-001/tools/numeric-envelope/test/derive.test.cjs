@@ -162,11 +162,15 @@ test("historical validator arithmetic is separately bounded", () => {
   assert.ok(node(result, "history.opening.balance_sheet.total_assets_bound"));
   assert.ok(node(result, "history.opening.balance_sheet.total_liabilities_equity_bound"));
   assert.ok(node(result, "history.period_1.income_statement.recomputed_net_income"));
-  assert.ok(node(result, "history.period_1.income_statement.net_income_comparison_bound"));
   assert.ok(node(result, "history.period_1.balance_sheet.nwc_absolute_bound"));
   assert.ok(node(result, "history.period_1.cash_flow.cfo_after_nwc_subtraction"));
+  assert.ok(node(result, "history.period_1.cash_flow.cfi_comparison_bound") === undefined);
+  assert.ok(node(result, "history.period_1.cash_flow.capex_cash_outflow_bound"));
   assert.ok(node(result, "history.period_1.cash_flow.net_change_after_cff"));
-  assert.ok(node(result, "history.period_1.cash_flow.opening_cash_tieout_bound"));
+  assert.equal(
+    result.nodes.some(item => item.id.includes("comparison_bound") || item.id.includes("tieout_bound")),
+    false
+  );
   assert.ok(node(result, "history.period_1.rollforward.gross_ppe_opening_plus_capex"));
   assert.ok(node(result, "history.period_1.rollforward.debt_opening_plus_drawdowns"));
   assert.ok(node(result, "history.period_1.rollforward.retained_earnings_after_dividend_subtraction"));
