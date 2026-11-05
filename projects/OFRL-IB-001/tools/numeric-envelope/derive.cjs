@@ -462,13 +462,16 @@ function createDerivation(profile) {
   };
   function record(name, value, scale, method, forceDivisionContext = false) {
     const terminatingScaleForBound = terminatingScale(value.d);
-    const exactScale = scale === null ? terminatingScaleForBound : scale;
     const divisionContextRequired = forceDivisionContext || terminatingScaleForBound === null;
-    const coefficientDigits = divisionContextRequired ? null : exactCoefficientDigits(value, exactScale);
-    const coefficientDigitsAtDeclaredScale =
-      divisionContextRequired && scale !== null
-        ? decimalDigits(ceilPositive(value.abs().n * pow10(scale), value.abs().d))
-        : coefficientDigits;
+    const coefficientDigitsIfExact = terminatingScaleForBound === null
+      ? null
+      : exactCoefficientDigits(value, terminatingScaleForBound);
+    const coefficientIntegerUpperBound = scale === null
+      ? null
+      : ceilPositive(value.abs().n * pow10(scale), value.abs().d);
+    const coefficientDigitsUpperBound = coefficientIntegerUpperBound === null
+      ? null
+      : decimalDigits(coefficientIntegerUpperBound);
     const node = {
       id: name,
       method,
@@ -476,14 +479,16 @@ function createDerivation(profile) {
       decimal_upper_bound_18dp: roundOutward(value, 18),
       pre_normalization_scale: forceDivisionContext ? null : scale,
       post_rounding_scale: forceDivisionContext ? scale : null,
-      scale_bound_kind: forceDivisionContext && scale !== null
-        ? "post_rounding_scale"
+      scale_bound_kind: forceDivisionContext
+        ? scale === null ? "unresolved_division_scale" : "post_rounding_scale"
         : "pre_normalization_scale",
       terminating_decimal_scale_for_bound_value: terminatingScaleForBound,
       exact_rational_numerator_digits: decimalDigits(value.n),
       exact_rational_denominator_digits: decimalDigits(value.d),
-      coefficient_digits_if_exact: coefficientDigits,
-      coefficient_digits_upper_bound: coefficientDigitsAtDeclaredScale,
+      coefficient_digits_if_exact: coefficientDigitsIfExact,
+      coefficient_integer_upper_bound: coefficientIntegerUpperBound === null
+        ? null : coefficientIntegerUpperBound.toString(),
+      coefficient_digits_upper_bound: coefficientDigitsUpperBound,
       division_context_required: divisionContextRequired,
       division_rounding_mode: forceDivisionContext
         ? profile.arithmetic_policy.division_rounding_mode
@@ -536,8 +541,6 @@ function createDerivation(profile) {
   let priorGrossPpe = O.gross_ppe_max;
   let priorAccumDep = O.accumulated_depreciation_max;
   let priorRetainedEarnings = O.retained_earnings_absolute_max;
-  let priorShareCapital = O.share_capital_max;
-  let priorCash = O.cash_max;
 
   const openingNetPpe = record(
     "history.opening.net_ppe_absolute_bound", O.gross_ppe_max.value, monetaryScale,
@@ -574,9 +577,6 @@ function createDerivation(profile) {
     const recomputedNetIncome = add(prefix + ".income_statement.recomputed_net_income", [
       incomeSubtotal, i.income_tax_expense_absolute_max
     ]);
-    add(prefix + ".income_statement.net_income_comparison_bound", [
-      recomputedNetIncome, i.net_income_absolute_max
-    ]);
 
     // Historical Balance Sheet identity and NWC arithmetic.
     const netPpe = record(prefix + ".balance_sheet.net_ppe_absolute_bound",
@@ -598,9 +598,6 @@ function createDerivation(profile) {
     const deltaNwc = add(prefix + ".cash_flow.nwc_change_subtraction_bound", [
       currentNwc, priorNwc
     ]);
-    add(prefix + ".cash_flow.nwc_reported_comparison_bound", [
-      deltaNwc, c.change_in_operating_nwc_absolute_max
-    ]);
 
     // Historical Cash Flow Statement: match each checked operation in order.
     const cfoSubtotal = add(prefix + ".cash_flow.cfo_net_income_plus_depreciation", [
@@ -609,70 +606,36 @@ function createDerivation(profile) {
     const cfo = add(prefix + ".cash_flow.cfo_after_nwc_subtraction", [
       cfoSubtotal, c.change_in_operating_nwc_absolute_max
     ]);
-    add(prefix + ".cash_flow.cfo_comparison_bound", [
-      cfo, c.cash_from_operations_absolute_max
-    ]);
-    const cfi = c.capex_absolute_max; // checked 0 - CapEx
-    add(prefix + ".cash_flow.cfi_comparison_bound", [
-      cfi, c.cash_from_investing_absolute_max
-    ]);
+    const cfi = record(prefix + ".cash_flow.capex_cash_outflow_bound",
+      c.capex_absolute_max.value, c.capex_absolute_max.scale,
+      "absolute_bound_of_zero_minus_capex");
     const cffAfterRepayment = add(prefix + ".cash_flow.cff_drawdown_less_repayment", [
       c.debt_drawdowns_absolute_max, c.principal_repayments_absolute_max
     ]);
     const cff = add(prefix + ".cash_flow.cff_after_dividends", [
       cffAfterRepayment, c.dividends_absolute_max
     ]);
-    add(prefix + ".cash_flow.cff_comparison_bound", [
-      cff, c.cash_from_financing_absolute_max
-    ]);
     const operatingAndInvesting = add(prefix + ".cash_flow.cfo_plus_cfi", [cfo, cfi]);
     const netCash = add(prefix + ".cash_flow.net_change_after_cff", [
       operatingAndInvesting, cff
     ]);
-    add(prefix + ".cash_flow.net_change_comparison_bound", [
-      netCash, c.net_change_in_cash_absolute_max
-    ]);
     const closingCash = add(prefix + ".cash_flow.closing_cash_rollforward", [
       c.opening_cash_absolute_max, netCash
-    ]);
-    add(prefix + ".cash_flow.closing_cash_comparison_bound", [
-      closingCash, c.closing_cash_absolute_max
-    ]);
-    add(prefix + ".cash_flow.balance_sheet_cash_tieout_bound", [
-      c.closing_cash_absolute_max, b.cash_max
-    ]);
-    add(prefix + ".cash_flow.opening_cash_tieout_bound", [
-      priorCash, c.opening_cash_absolute_max
-    ]);
-    add(prefix + ".cash_flow.net_income_link_comparison_bound", [
-      i.net_income_absolute_max, c.net_income_absolute_max
-    ]);
-    add(prefix + ".cash_flow.depreciation_addback_link_comparison_bound", [
-      i.depreciation_absolute_max, c.depreciation_addback_absolute_max
     ]);
 
     // Historical PP&E, debt and retained-earnings roll-forwards.
     const grossPpeExpected = add(prefix + ".rollforward.gross_ppe_opening_plus_capex", [
       priorGrossPpe, c.capex_absolute_max
     ]);
-    add(prefix + ".rollforward.gross_ppe_comparison_bound", [
-      grossPpeExpected, b.gross_ppe_max
-    ]);
     const accumDepExpected = add(prefix + ".rollforward.accumulated_depreciation_opening_plus_depreciation", [
       priorAccumDep, i.depreciation_absolute_max
-    ]);
-    add(prefix + ".rollforward.accumulated_depreciation_comparison_bound", [
-      accumDepExpected, b.accumulated_depreciation_max
     ]);
     const debtAvailable = add(prefix + ".rollforward.debt_opening_plus_drawdowns", [
       priorDebt, c.debt_drawdowns_absolute_max
     ]);
-    const closingDebt = add(prefix + ".rollforward.debt_after_repayment_subtraction", [
-      debtAvailable, c.principal_repayments_absolute_max
-    ]);
-    add(prefix + ".rollforward.debt_comparison_bound", [
-      closingDebt, b.interest_bearing_debt_max
-    ]);
+    const closingDebt = record(prefix + ".rollforward.debt_after_repayment_subtraction",
+      debtAvailable.value, debtAvailable.scale,
+      "closing_debt_is_bounded_by_debt_available_under_repayment_domain");
     const retainedEarningsBeforeDividends = add(
       prefix + ".rollforward.retained_earnings_opening_plus_net_income", [
         priorRetainedEarnings, i.net_income_absolute_max
@@ -683,23 +646,13 @@ function createDerivation(profile) {
         retainedEarningsBeforeDividends, c.dividends_absolute_max
       ]
     );
-    add(prefix + ".rollforward.retained_earnings_comparison_bound", [
-      retainedEarningsExpected, b.retained_earnings_absolute_max
-    ]);
 
-    // A comparison between two already-computed values performs no arithmetic;
-    // share-capital constancy is likewise a direct comparison only.
-    add(prefix + ".rollforward.share_capital_comparison_bound", [
-      priorShareCapital, b.share_capital_max
-    ]);
 
     priorNwc = currentNwc;
     priorDebt = b.interest_bearing_debt_max;
     priorGrossPpe = b.gross_ppe_max;
     priorAccumDep = b.accumulated_depreciation_max;
     priorRetainedEarnings = b.retained_earnings_absolute_max;
-    priorShareCapital = b.share_capital_max;
-    priorCash = b.cash_max;
   }
 
   // Forecast engine bounds, five periods. Repayment is limited by available
