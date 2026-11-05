@@ -32,6 +32,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
 | Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
 | Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; synchronized branch passed both Rust toolchains and all six required contexts; unmerged |
+| Typed deserialization diagnostics | Implemented on PR #13 branch | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and regression tests; semantic CI passed on Rust 1.85.0 / 1.99.1; remaining required contexts and independent review pending |
 | Numeric Profile schema, worksheet and exact derivation tool | Open PR #13 branch | Closed profile schema, exact BigInt-rational bounds and division-error propagation; current test fixture emits 287 arithmetic nodes; 30/30 Numeric Envelope tests pass; no owner-approved profile values |\n| Candidate-specific capacity evaluator | Open PR #13 branch | Exact rust_decimal 96-bit coefficient / scale 0–28 screen and BigDecimal profile-ceiling screen; test-only fixture yields rust_decimal `STATIC_BOUND_EXCEEDS_LIMIT` (37 nodes), BigDecimal CONDITIONAL (50 nodes); not a runtime verdict or production decision |
 | Model-specific Numeric Profile | Not approved | Finite input bounds, headroom, error budgets, tolerance and rounding remain open |
 | Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
@@ -63,6 +64,7 @@ Deliverables:
 - This gated roadmap.
 - Corrected project status and reference-case documentation.
 - Added a versioned shared Schema/Rust contract corpus with expected acceptance states and diagnostic codes; metadata, fixture containment, path traversal and symlink checks are implemented and covered by CI.
+- Replaced Serde-message substring classification with a typed structural preflight and shared Decimal parser. RFC 6901 pointers now cover nested fields, escaped object keys, array indices and period context; tests also cover root type errors and pathless malformed JSON. The semantic-validator matrix passed on Rust 1.85.0 and 1.99.1 on the current PR #13 head; the implementation remains unmerged and subject to the rest of the release gates.
 - CLI input bound and UTF-8 rejection tests.
 
 Exit conditions:
