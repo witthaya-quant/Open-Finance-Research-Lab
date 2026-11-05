@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Implementation Roadmap
 
-**Roadmap version:** 0.5.0  
+**Roadmap version:** 0.6.0  
 **Status:** Proposed execution plan with evidence-linked gates  
 **Date:** 2026-11-04
 
@@ -32,7 +32,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
 | Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
 | Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; synchronized branch passed both Rust toolchains and all six required contexts; unmerged |
-| Numeric Profile worksheet and symbolic derivation | Open PR #13 branch | Formula-chain envelope documented symbolically; unbounded Model Owner inputs remain TBD |
+| Numeric Profile schema, worksheet and exact derivation tool | Open PR #13 branch | Closed profile schema, BigInt-rational node derivation and division-error propagation; 332 nodes and 17/17 tool tests passed on code-tested head; test-only fixture only |
 | Model-specific Numeric Profile | Not approved | Finite input bounds, headroom, error budgets, tolerance and rounding remain open |
 | Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
 | Independent finance/accounting sign-off | Not evidenced | Arithmetic benchmarks are not an accounting opinion |
@@ -74,7 +74,7 @@ Exit conditions:
 
 ### Phase 2 — Numeric, dependency and model-policy acceptance
 
-**Status:** Partially evidenced; approval gates remain OPEN.
+**Status:** Derivation and test tooling implemented on PR #13; Model Owner and reviewer decisions remain OPEN.
 
 #### Workstream A — Numeric Profile
 
@@ -93,7 +93,7 @@ Exit conditions:
 
 The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. The symbolic formula-chain and scale derivation is `NUMERIC_PROFILE_DERIVATION.md`. It identifies currently unbounded inputs and derives maximum-path formulas once Model Owner bounds are supplied. It deliberately preserves TBD values rather than fabricate limits.
 
-The branch also contains a candidate-neutral exact derivation tool (`tools/numeric-envelope/derive.cjs`), a versioned profile schema and a test-only synthetic fixture. It enumerates historical validator and forecast operation nodes using exact rational bounds, checks declared source precision and resource targets, and marks unresolved division policy as conditional. Its CI test fixture is not a proposed operating domain and does not grant any production approval.
+The branch also contains a candidate-neutral exact derivation tool (`tools/numeric-envelope/derive.cjs`), a versioned profile schema, a test-only synthetic fixture and the [Numeric Backend Evaluation Protocol](NUMERIC_BACKEND_EVALUATION.md). It enumerates opening Balance Sheet, three historical validator periods and five forecast periods using exact BigInt rational bounds; checks declared source precision, intermediate scale and coefficient ceilings; translates error budgets to reporting currency; and separately propagates division-rounding error through NWC, cash and Balance Sheet identity. The latest code-tested head emitted 332 formula nodes and passed 17/17 tool tests. The fixture is test-only, does not represent the intended company domain, and grants no approval.
 
 **Current domain finding:** V1 has no finite upper bound for revenue growth, COGS / revenue, Opex / revenue, DSO/DIO/DPO, CapEx / revenue, debt drawdowns or interest rate. The current Decimal parser ceiling of 28 fractional digits is only a source-field grammar limit; it is not proof that five forecast years of multiplications preserve that scale. A finite magnitude, scale and coefficient envelope cannot be certified until the owner approves finite bounds for all relevant drivers and opening/historical amounts.
 
