@@ -2,9 +2,9 @@
 
 # OFRL-IB-001 — Implementation Roadmap
 
-**Roadmap version:** 0.6.0  
+**Roadmap version:** 0.7.0  
 **Status:** Proposed execution plan with evidence-linked gates  
-**Date:** 2026-11-04
+**Date:** 2026-11-05
 
 ## 1. Delivery principles
 
@@ -32,7 +32,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
 | Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
 | Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; synchronized branch passed both Rust toolchains and all six required contexts; unmerged |
-| Numeric Profile schema, worksheet and exact derivation tool | Open PR #13 branch | Closed profile schema, BigInt-rational node derivation and division-error propagation; 332 nodes and 17/17 tool tests passed on code-tested head; test-only fixture only |
+| Numeric Profile schema, worksheet and exact derivation tool | Open PR #13 branch | Closed profile schema, exact BigInt-rational bounds and division-error propagation; current test fixture emits 287 arithmetic nodes; 30/30 Numeric Envelope tests pass; no owner-approved profile values |\n| Candidate-specific capacity evaluator | Open PR #13 branch | Exact rust_decimal 96-bit coefficient / scale 0–28 screen and BigDecimal profile-ceiling screen; test-only fixture yields rust_decimal FAIL (37 nodes), BigDecimal CONDITIONAL (50 nodes); not a production decision |
 | Model-specific Numeric Profile | Not approved | Finite input bounds, headroom, error budgets, tolerance and rounding remain open |
 | Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
 | Independent finance/accounting sign-off | Not evidenced | Arithmetic benchmarks are not an accounting opinion |
@@ -103,8 +103,11 @@ Use [`NUMERIC_BACKEND_EVALUATION.md`](NUMERIC_BACKEND_EVALUATION.md) as the cand
 
 - Evaluate candidates only against the accepted magnitude, scale/coefficient and resource profile; no candidate can be selected before Workstream A closes.
 - Review checked arithmetic, scale reduction, operation-specific rounding, parse/format fidelity and canonical serialization.
-- For BigDecimal, replace ambient compile-time defaults with a documented immutable run-scoped arithmetic policy for every rounded operation; bound exact multiplication coefficient growth independently.
-- For rust_decimal, test mantissa/scale capacity and precision-reduction behaviour at every material operation node.
+- Use exact coefficient-integer upper bounds at each declared intermediate scale; compare the resulting integer directly with the exact fixed-width mantissa limit. Digit count alone is not a capacity proof.
+- The branch-local candidate screen checks `rust_decimal 1.43.0` against scale 0–28 and maximum coefficient `79228162514264337593543950335`; the 30-test suite covers at, above and below the mantissa boundary.
+- A test-only profile currently yields `rust_decimal` static FAIL on 37/287 arithmetic nodes: 37 exact coefficient bounds exceed 96-bit capacity and 19 exceed scale 28 (the sets overlap). This shows the illustrative input scales/magnitudes are not compatible with the fixed candidate as modelled; it does not establish the intended V1 business-domain decision.
+- BigDecimal reports CONDITIONAL on 50 nodes because the test-only profile leaves division scale unresolved. Its 80-significant-digit compile-time POC context is not equivalent to the Numeric Profile's fixed fractional-scale division policy. Define an explicit run-scoped adapter or deliberately version the profile's precision semantics; do not assume equivalence.
+- Bound BigDecimal multiplication coefficient growth independently of division precision, and prove resource behaviour with approved limits.
 - Keep Exact Rational as a correctness oracle unless a separate operational resource case justifies evaluating it as a production candidate.
 - Treat existing timing observations as directional only: BigDecimal was 1.50×–2.21× the fixed Decimal candidate in the tested synthetic cases, while Exact Rational was 7.52×–10.30×. They are not production workload evidence. See `poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md` on PR #11.
 - Measure latency, throughput, allocations, peak memory/RSS, tail latency, concurrency and long-running process behaviour under a controlled workload generated from the approved profile.
@@ -259,7 +262,7 @@ Keep research, production formula and reporting changes in separately reviewable
 | Property | Invariants over generated inputs | Reproducible seeds and minimized regression cases |
 | Golden | Independent expected outputs | Versioned reviewed expected values |
 | Negative | Unsupported inputs/scenarios | Stable diagnostic codes and JSON Pointer |
-| Numeric | Magnitude, source/intermediate scale, coefficient growth and accumulated error | Approved Numeric Profile endpoints and just-inside/just-outside tests |
+| Numeric | Magnitude, source/intermediate scale, exact coefficient capacity and accumulated error | Approved Numeric Profile endpoints and just-inside/just-outside tests; static candidate screen is not runtime proof |
 | Contract parity | Schema vs Rust behaviour | Same positive/negative fixture corpus |
 | Determinism | Same input/policy/build | Canonical output and SHA-256 reproducibility |
 | Export | Workbook fidelity | Structural checks and period-by-period reconciliation |
