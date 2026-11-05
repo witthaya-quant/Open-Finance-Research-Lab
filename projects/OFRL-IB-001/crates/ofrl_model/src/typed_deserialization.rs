@@ -345,9 +345,10 @@ struct Failure {
     path: Vec<String>,
 }
 
-pub(crate) fn validate_model_input_shape(value: &Value) -> Result<(), Diagnostic> {
+pub(crate) fn validate_model_input_shape(value: &Value) -> Result<(), Box<Diagnostic>> {
     let mut path = Vec::new();
-    validate_value(value, &ROOT, &mut path).map_err(|failure| (*failure).into_diagnostic(value))
+    validate_value(value, &ROOT, &mut path)
+        .map_err(|failure| Box::new((*failure).into_diagnostic(value)))
 }
 
 impl Failure {
