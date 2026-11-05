@@ -1,6 +1,4 @@
-use ofrl_model::{
-    validate_input_json, Diagnostic, DiagnosticCode, InputStatus, ValidationReport,
-};
+use ofrl_model::{validate_input_json, Diagnostic, DiagnosticCode, InputStatus, ValidationReport};
 use serde_json::{json, Value};
 
 const CASE_A: &str =
@@ -59,10 +57,7 @@ fn nested_missing_field_has_exact_pointer() {
 
     let diagnostic = first(&validate_value(value));
     assert_eq!(diagnostic.code, DiagnosticCode::RequiredFieldMissing);
-    ptr(
-        diagnostic,
-        "/historical_periods/0/income_statement/revenue",
-    );
+    ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
     assert_eq!(diagnostic.period_id.as_deref(), Some("FY2023"));
 }
 
@@ -108,10 +103,7 @@ fn decimal_number_token_reports_exact_field() {
 
     let diagnostic = first(&validate_value(value));
     assert_eq!(diagnostic.code, DiagnosticCode::DecimalStringRequired);
-    ptr(
-        diagnostic,
-        "/historical_periods/0/income_statement/revenue",
-    );
+    ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
 
 #[test]
@@ -121,10 +113,7 @@ fn malformed_decimal_text_reports_noncanonical_code() {
 
     let diagnostic = first(&validate_value(value));
     assert_eq!(diagnostic.code, DiagnosticCode::DecimalTextNonCanonical);
-    ptr(
-        diagnostic,
-        "/historical_periods/0/income_statement/revenue",
-    );
+    ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
 
 #[test]
@@ -135,10 +124,7 @@ fn decimal_scale_excess_reports_scale_code() {
 
     let diagnostic = first(&validate_value(value));
     assert_eq!(diagnostic.code, DiagnosticCode::DecimalScaleExceeded);
-    ptr(
-        diagnostic,
-        "/historical_periods/0/income_statement/revenue",
-    );
+    ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
 
 #[test]
@@ -149,10 +135,7 @@ fn decimal_out_of_range_reports_range_code() {
 
     let diagnostic = first(&validate_value(value));
     assert_eq!(diagnostic.code, DiagnosticCode::DecimalOutOfRange);
-    ptr(
-        diagnostic,
-        "/historical_periods/0/income_statement/revenue",
-    );
+    ptr(diagnostic, "/historical_periods/0/income_statement/revenue");
 }
 
 #[test]
