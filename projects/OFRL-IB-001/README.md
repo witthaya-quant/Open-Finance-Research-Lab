@@ -105,11 +105,13 @@ The first reproducible case will use synthetic data created specifically for thi
 
 The current `main` branch contains the input contract, historical semantic validator, repository governance controls, project registry/data controls, unfiltered Rust validation workflows, the isolated Decimal Contract POC lockfile, and a preview-only SBOM/checksum workflow for the existing Linux CLI input validator. The preview workflow does not represent a released forecast model.
 
-PR #13 remains an open Draft. It contains the bounded CLI input reader, shared Schema/Rust contract corpus, engineering audit, system design, roadmap, Numeric Profile schema/worksheet, exact candidate-neutral derivation tool, division-error propagation, a candidate-specific static capacity evaluator and the Numeric Backend Evaluation Protocol.
+PR #13 remains an open Draft. It contains the bounded CLI input reader, shared Schema/Rust contract corpus, typed deserialization preflight with RFC 6901 JSON Pointer diagnostics, engineering audit, system design, roadmap, Numeric Profile schema/worksheet, exact candidate-neutral derivation tool, division-error propagation, a candidate-specific static capacity evaluator and the Numeric Backend Evaluation Protocol.
 
 The latest code-tested candidate-capacity increment passed all six required Ruleset contexts and 30/30 Numeric Envelope tests on the branch. The test-only fixture emits 287 arithmetic nodes. Static screening reports `rust_decimal 1.43.0` `STATIC_BOUND_EXCEEDS_LIMIT` on 37 nodes (conservative coefficient and/or scale 0–28 upper bounds) and `bigdecimal 0.4.11` CONDITIONAL on 50 nodes because the fixture leaves division scale unresolved. The Rust result means capacity is not proven for the conservative bound; it is not an observed runtime overflow. These are test-only static-capacity observations, not a production-domain or backend decision. The BigDecimal POC's 80-significant-digit compile-time context is not equivalent to the current fixed-fractional-scale Numeric Profile policy.
 
-The implementation, tests and new tools remain branch-local and are not merged production capability. PR #13 remains Draft pending review.
+The typed-diagnostics implementation passed the semantic-validator matrix on Rust 1.85.0 and 1.99.1 at code head `59880aa1b032a2f5c5072f64c1dda7a39dba99f6`, including formatting, Clippy, tests, documentation, canonical Case A CLI acceptance and unsupported-schema CLI rejection. The separate preview-only workflow also completed successfully on that code head. Subsequent documentation commits retriggered CI; do not treat the earlier code-head results as a substitute for required checks on the latest PR head.
+
+The implementation, tests and new tools remain branch-local and are not merged production capability. PR #13 remains Draft pending latest-head CI and independent review.
 
 The Ruleset on `main` is active with six exact required contexts. Documentation-only and project-code smoke PRs (#24 and #27) each passed all six contexts and were closed without merging.
 
