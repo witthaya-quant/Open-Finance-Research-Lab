@@ -32,7 +32,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
 | Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
 | Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; earlier synchronized checkpoint passed all six contexts; latest PR head is being rechecked after typed-diagnostic changes; unmerged |
-| Typed deserialization diagnostics | Implemented on PR #13 branch | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and regression tests; semantic CI passed on Rust 1.85.0 / 1.99.1; remaining required contexts and independent review pending |
+| Typed deserialization diagnostics | Implemented on PR #13 branch | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and nine versioned mutation fixtures; all six required Ruleset contexts, Numeric Envelope derivation and Release Candidate Preview passed on head `58e58ea`; independent review and merge pending |
 | Numeric Profile schema, worksheet and exact derivation tool | Open PR #13 branch | Closed profile schema, exact BigInt-rational bounds and division-error propagation; current test fixture emits 287 arithmetic nodes; 30/30 Numeric Envelope tests pass; no owner-approved profile values |\n| Candidate-specific capacity evaluator | Open PR #13 branch | Exact rust_decimal 96-bit coefficient / scale 0–28 screen and BigDecimal profile-ceiling screen; test-only fixture yields rust_decimal `STATIC_BOUND_EXCEEDS_LIMIT` (37 nodes), BigDecimal CONDITIONAL (50 nodes); not a runtime verdict or production decision |
 | Model-specific Numeric Profile | Not approved | Finite input bounds, headroom, error budgets, tolerance and rounding remain open |
 | Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
@@ -56,7 +56,7 @@ Exit condition: malformed and historically inconsistent input is rejected before
 
 ### Phase 1 — Audit, architecture and input-bound hardening
 
-**Status:** Implemented on the PR #13 branch and synchronized with current `main`. On head `deb66ec6f1b75d086ebcc5a64befffa1312b3e89`, repository-policy and semantic-validator checks on Rust 1.85.0 / 1.99.1 are PASS; the Numeric/Input Contract workflow is still pending. The latest head is not yet claimed to have passed all six required contexts. PR #13 remains Draft pending full CI and independent review.
+**Status:** Implementation complete on the PR #13 branch and synchronized with current `main`. Latest head `58e58ea672b835a6837213fcd73981dfea11dac8` passed all six required Ruleset contexts, Numeric Envelope derivation and the separate Release Candidate Preview. PR #13 is ready for independent review and remains unmerged. Numeric Profile owner decisions remain open and continue to gate backend selection and production forecast-engine authorization.
 
 Deliverables:
 - Engineering Audit with severity-ranked findings.
@@ -243,7 +243,7 @@ Release statuses:
 | Project-code Ruleset smoke test | PR #27 | Closed without merge after all six required contexts passed |
 | Numeric candidate and independent arithmetic research | PR #11, Draft, targets main | POC checks pass; findings reviewed; production adoption remains separate |
 | Schema tooling lockfile | PR #12, Draft, targets main | Review and CI pass; shared corpus remains a separate contract gate |
-| Audit, system design, bounded CLI, shared corpus and Numeric Profile derivation | PR #13, Draft, targets main | Synchronized with current main; refreshed branch passed all six required contexts; complete review before any ready-for-review transition |
+| Audit, system design, bounded CLI, shared corpus, typed diagnostics and Numeric Profile derivation | PR #13, Ready for Review, targets main | Latest head `58e58ea` passed all six required contexts, Numeric Envelope and Release Candidate Preview; independent review and merge required |
 | Numeric Profile/backend decision | New OFRL-only PR | Finite input domain, error budgets, resource and Finance/Accounting gates accepted |
 | Production forecast engine | New OFRL-only PR | Phase 2 exit accepted |
 | ModelRun/provenance/CLI run | New OFRL-only PR | Production calculations and invariants accepted |
@@ -251,7 +251,7 @@ Release statuses:
 
 **Governance status:** the active Ruleset still requires the six exact contexts. After PR #14 reached main, both a documentation-only PR (#24) and a project-code PR (#27) reported and passed all six contexts. Both smoke PRs were closed without merging. Do not remove or relax any required check.
 
-PR #13 remains Draft, but its branch now incorporates the governance merge commit and is up to date with `main`. The refreshed code branch passed all six required contexts. Keep it Draft until the audit, Numeric Profile boundaries and remaining review findings are accepted.
+PR #13 is ready for independent review, but remains unmerged. Its branch incorporates the governance merge commit and is up to date with `main`; latest head `58e58ea` passed all six required contexts and the preview workflows. Numeric Profile boundaries remain a separate Model Owner gate on Issue #28 and are not approved by this PR. Do not authorize the production Forecast Engine until the required owner, Finance/Accounting and Engineering decisions are recorded.
 
 Keep research, production formula and reporting changes in separately reviewable PRs. A Draft PR remains Draft when project-level gates are unresolved, even if its CI is green. No PR is merged by this roadmap without the required review.
 
