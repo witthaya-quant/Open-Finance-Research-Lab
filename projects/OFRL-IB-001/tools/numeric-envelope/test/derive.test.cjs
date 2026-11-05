@@ -110,8 +110,16 @@ test("synthetic fixture is explicitly test-only and contains no approval claim",
   assert.equal(result.decision, "TEST_ONLY__NOT_A_MODEL_OWNER_APPROVAL");
   assert.equal(result.derivation.candidate_backend_selected, false);
   assert.equal(result.derivation.production_engine_authorized, false);
-  assert.equal(result.derivation.intermediate_scale_limit_status, "CONDITIONAL_DIVISION_POLICY");
-  assert.equal(result.derivation.coefficient_digit_limit_status, "CONDITIONAL_DIVISION_POLICY");
+  assert.equal(
+    result.derivation.intermediate_scale_limit_status,
+    "CONDITIONAL_DIVISION_POLICY",
+    JSON.stringify(result.derivation.limit_checks.filter(item => item.status === "FAIL"), null, 2)
+  );
+  assert.equal(
+    result.derivation.coefficient_digit_limit_status,
+    "CONDITIONAL_DIVISION_POLICY",
+    JSON.stringify(result.derivation.limit_checks.filter(item => item.status === "FAIL"), null, 2)
+  );
   assert.equal(result.derivation.division_policy_status, "UNRESOLVED");
   assert.equal(result.derivation.reporting_policy_status, "UNRESOLVED");
   assert.equal(
@@ -286,11 +294,13 @@ test("approved state requires three explicit review records and still does not s
   assert.equal(result.derivation.production_engine_authorized, false);
   assert.equal(
     result.derivation.intermediate_scale_limit_status,
-    "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED"
+    "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED",
+    JSON.stringify(result.derivation.limit_checks.filter(item => item.status === "FAIL"), null, 2)
   );
   assert.equal(
     result.derivation.coefficient_digit_limit_status,
-    "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED"
+    "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED",
+    JSON.stringify(result.derivation.limit_checks.filter(item => item.status === "FAIL"), null, 2)
   );
   assert.equal(
     result.derivation.division_policy_status,
