@@ -976,7 +976,10 @@ function deriveErrorPropagation(profile) {
     const budget = parseNonNegativeDecimal(profile.error_budgets[key], "error_budgets." + key).value;
     budgetChecks[key] = {
       derived_bound_model_units: derivedBound.toString(),
-      approved_budget_model_units: budget.toString(),
+      declared_budget_model_units: budget.toString(),
+      budget_basis: profile.approval_state === "approved"
+        ? "APPROVED_PROFILE"
+        : "TEST_ONLY_DECLARED_VALUES",
       status: derivedBound.compare(budget) <= 0 ? "PASS" : "FAIL",
       reporting_currency_derived_bound: derivedBound.mul(new Fraction(UNIT_FACTORS[profile.unit_scale])).toString(),
       reporting_currency_budget: budget.mul(new Fraction(UNIT_FACTORS[profile.unit_scale])).toString()
@@ -997,7 +1000,10 @@ function deriveErrorPropagation(profile) {
     ).value;
     budgetChecks.display_export_absolute = {
       derived_bound_model_units: displayRoundingError.toString(),
-      approved_budget_model_units: budget.toString(),
+      declared_budget_model_units: budget.toString(),
+      budget_basis: profile.approval_state === "approved"
+        ? "APPROVED_PROFILE"
+        : "TEST_ONLY_DECLARED_VALUES",
       status: displayRoundingError.compare(budget) <= 0 ? "PASS" : "FAIL",
       reporting_currency_derived_bound: displayRoundingError.mul(new Fraction(UNIT_FACTORS[profile.unit_scale])).toString(),
       reporting_currency_budget: budget.mul(new Fraction(UNIT_FACTORS[profile.unit_scale])).toString()
