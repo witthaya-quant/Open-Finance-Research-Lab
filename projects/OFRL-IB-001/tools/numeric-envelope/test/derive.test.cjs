@@ -9,7 +9,6 @@ const test = require("node:test");
 const {
   Fraction,
   createDerivation,
-  deriveErrorPropagation,
   parseNonNegativeDecimal,
   parseSignedDecimal,
   roundOutward,
@@ -202,6 +201,23 @@ test("configured magnitude-scale constraints fail closed when a test bound is to
   assert.ok(result.derivation.limit_checks.some(
     item => item.limit === "max_intermediate_scale" && item.status === "FAIL"
   ));
+});
+
+test("zero division scale is valid input but fails the declared error budgets", () => {
+  const profile = readFixture();
+  profile.arithmetic_policy = {
+    division_fractional_scale: 0,
+    division_rounding_mode: "half_up",
+    reporting_fraction_digits: 0,
+    reporting_rounding_mode: "half_up"
+  };
+  validateProfile(profile);
+  const result = createDerivation(profile);
+  assert.equal(result.error_propagation.status, "DERIVED_UNDER_DECLARED_DIVISION_POLICY");
+  assert.equal(result.error_propagation.maximum_forecast_line_error_bound_model_units, "27/2");
+  assert.equal(result.error_propagation.maximum_balance_sheet_identity_residual_model_units, "15");
+  assert.equal(result.error_propagation.budget_checks.arithmetic_approximation_absolute.status, "FAIL");
+  assert.equal(result.error_propagation.budget_checks.display_export_absolute.status, "FAIL");
 });
 
 test("approved state requires three explicit review records and still does not select a backend", () => {
