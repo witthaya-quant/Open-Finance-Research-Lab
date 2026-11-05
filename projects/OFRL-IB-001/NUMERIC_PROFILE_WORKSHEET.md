@@ -185,6 +185,8 @@ Convert each value using the model's unit scale before deciding whether it is im
 
 ## 6. Candidate evaluation matrix
 
+Use the separate [Numeric Backend Evaluation Protocol](NUMERIC_BACKEND_EVALUATION.md) for hard acceptance gates, candidate-specific checks, controlled measurement requirements and the decision-record procedure. This matrix remains evidence collection, not a weighted score or backend approval.
+
 | Dimension | rust_decimal | BigDecimal | Other candidate | Evidence / decision |
 |---|---|---|---|---|
 | Supported range | 96-bit mantissa; scale 0–28; magnitude depends on retained scale | Arbitrary-size coefficient and scale; resource growth must be bounded | TBD | OPEN |
