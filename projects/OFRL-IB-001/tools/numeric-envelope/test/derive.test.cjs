@@ -261,7 +261,7 @@ test("coefficient digit ceiling fails independently of intermediate scale", () =
   const result = createDerivation(profile);
   assert.equal(
     result.derivation.intermediate_scale_limit_status,
-    "WITHIN_DECLARED_LIMITS__CANDIDATE_VALIDATION_REQUIRED"
+    "CONDITIONAL_DIVISION_POLICY"
   );
   assert.equal(result.derivation.coefficient_digit_limit_status, "FAIL");
   assert.ok(result.derivation.limit_checks.some(item =>
