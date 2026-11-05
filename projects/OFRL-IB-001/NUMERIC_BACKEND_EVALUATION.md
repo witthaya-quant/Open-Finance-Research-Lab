@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Numeric Backend Evaluation Protocol
 
-**Document version:** 0.1.0  
+**Document version:** 0.2.0  
 **Status:** Decision protocol — NO BACKEND SELECTED  
 **Scope:** OFRL-IB-001 V1 only  
 **Precondition:** A Model Owner-approved Numeric Profile and Finance/Accounting review  
@@ -67,22 +67,27 @@ These are veto gates, not weighted preferences. A low runtime cost cannot compen
 The candidate-specific proof must use the actual fixed representation constraints, not only a decimal digit-count approximation.
 
 - Verify the supported scale and coefficient range for each monetary and ratio operation.
-- Compare each exact-rational intermediate against the exact maximum coefficient value, not merely the number of decimal digits.
+- Compare each exact-rational intermediate's **exact coefficient-integer upper bound at its declared scale** against the exact maximum coefficient value, not merely the number of decimal digits. For `rust_decimal 1.43.0`, the positive maximum is `79228162514264337593543950335` with scale 0–28.
+- Exercise the exact maximum coefficient, one integer above it, and one integer below it; separately test every scale boundary and the interaction between scale and coefficient.
 - Exercise checked addition, subtraction, multiplication and division at every approved node's lower/upper endpoint and one representable step inside/outside.
 - Record where multiplication scale is reduced, if at all; prove that any reduction follows the approved arithmetic policy and contributes to the correct error budget.
 - Verify division-by-zero and overflow are typed failures and cannot be confused with a valid zero result.
 - Verify canonical input parsing and output formatting round-trip without losing information.
 - Include migration impact because production input/history domain types currently use `rust_decimal::Decimal`.
 
+The candidate-specific static screen in `tools/numeric-envelope/candidate-capacity.cjs` implements the exact 96-bit coefficient comparison and the 0–28 scale ceiling against generated node bounds. It is a static pre-check only: a PASS does not replace running the real crate operations against boundary values or proving that the Rust implementation's scale-reduction/rounding path matches the approved policy.
+
 ### 4.2 Arbitrary-precision Decimal
 
 Arbitrary coefficient precision removes a fixed-width mantissa ceiling; it does not remove the need for finite scale, coefficient-size, CPU or memory limits.
 
 - Replace reliance on ambient/default division settings with an explicit immutable arithmetic context owned by each ModelRun.
-- The context identity must include division fractional/significant precision as selected by the approved policy, rounding mode, and implementation/version.
+- Resolve the policy representation mismatch before comparing candidates: the Numeric Profile schema currently defines `division_fractional_scale` (a fixed number of digits after the decimal point), while the POC's BigDecimal path uses an 80-significant-digit compile-time default. These policies are not interchangeable. A production adapter must either implement the approved fixed-fractional-scale semantics using an explicit run-scoped Context-aware operation, or the profile contract must be deliberately versioned to express significant-digit precision. Do not infer equivalence from matching a few output values.
+- The context identity must include precision semantics (fixed fractional scale or significant digits), precision value, rounding mode, and implementation/version.
 - Prove all context-aware operations use that context; a single environment variable or developer-machine default is not sufficient authority.
 - Verify multiplication coefficient growth separately from division precision. Multiplication can continue to grow coefficient digits even when division precision is finite.
 - Bound maximum coefficient digits, scale, numerator/denominator intermediates (where applicable), memory and runtime for repeated five-year paths and concurrent runs.
+- The candidate-specific static evaluator can check profile scale/coefficient ceilings for BigDecimal, but it cannot prove package resource limits or the behaviour of the production division adapter. Those remain runtime and operational acceptance gates.
 - Verify serialization is canonical and does not depend on incidental BigDecimal internal scale or formatting.
 - Map library/context errors into typed model calculation errors.
 
@@ -145,6 +150,8 @@ The required thresholds come from the approved profile's resource limits and tar
 A profile or tolerance must not be widened after a candidate fails merely to obtain a PASS. If the admitted domain or model convention changes, issue a new profile/model-policy version, document the rationale and rerun the complete matrix.
 
 ## 8. Current decision
+
+The branch-local static capacity tool, `tools/numeric-envelope/candidate-capacity.cjs`, checks the exact 96-bit fixed-Decimal coefficient and scale limits and the declared BigDecimal profile ceilings. Its result is not a runtime calculation, and any unresolved scale/coefficient node remains CONDITIONAL. It cannot establish production arithmetic semantics, approved resource use, dependency acceptance or financial materiality.
 
 - Numeric Profile: **NOT APPROVED**.
 - Model Owner input-domain decisions: **OPEN**.
