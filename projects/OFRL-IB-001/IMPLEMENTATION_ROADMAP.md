@@ -24,16 +24,16 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | OFRL project workflows | Implemented on main | Rust 1.85.0 / 1.99.1 checks run for all PRs without path filters |
 | Decimal POC lockfile | Implemented on main | Isolated POC lockfile and locked metadata/tree/Clippy/test/doc commands |
 | CLI SBOM/checksum preview | Implemented on main | Preview-only CycloneDX 1.5 artifact for Linux CLI validator; not an official forecast-model release |
-| Rust CLI input hardening | Implemented on PR #13 branch | 1 MiB bound, max-plus-one read, UTF-8 rejection and regression tests; not merged |
+| Rust CLI input hardening | Implemented on main through PR #13 | 1 MiB bound, max-plus-one read, UTF-8 rejection and regression tests; source head `17b77e3`, merge `593d04d` |
 | Full-formula numeric candidate comparison | Open PR #11, Draft | rust_decimal, BigDecimal and Exact Rational research path |
 | Independent multi-period expected values | Open PR #11, Draft | BM-002 160 values + BM-003 640 values = 800 exact outputs |
 | Independent Python reference | Open PR #11, Draft | Standard-library Decimal/Fraction; verifies fixture identity and goldens |
 | Rust SBOM/RustSec research | Open PR #11, Draft | Candidate/POC inventories and point-in-time advisory evidence |
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
 | Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
-| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; all six required contexts passed on validated source checkpoint `e18ca496`; unmerged pending Stage 0 review/merge |
-| Typed deserialization diagnostics | Implemented on PR #13 branch | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and nine versioned mutation fixtures; all six required contexts, Numeric Envelope derivation and Release Candidate Preview passed on validated source checkpoint `e18ca496`; Stage 0 single-maintainer review and merge pending |
-| Numeric Profile schema, worksheet and exact derivation tool | Open PR #13 branch | Closed profile schema, exact BigInt-rational bounds and division-error propagation; current test fixture emits 287 arithmetic nodes; 30/30 Numeric Envelope tests pass; no owner-approved profile values |\n| Candidate-specific capacity evaluator | Open PR #13 branch | Exact rust_decimal 96-bit coefficient / scale 0–28 screen and BigDecimal profile-ceiling screen; test-only fixture yields rust_decimal `STATIC_BOUND_EXCEEDS_LIMIT` (37 nodes), BigDecimal CONDITIONAL (50 nodes); not a runtime verdict or production decision |
+| Shared Schema/Rust corpus | Implemented on main through PR #13 | Versioned positive/negative fixtures, expected schema/runtime outcomes, diagnostic codes and fixture path-safety checks; six required contexts passed on source head `17b77e3` |
+| Typed deserialization diagnostics | Implemented on main through PR #13 | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and nine versioned mutation fixtures; source head `17b77e3` passed full CI |
+| Numeric Profile schema, worksheet and exact derivation tool | Implemented on main through PR #13 | Closed profile schema, exact BigInt-rational derivation and division-error propagation; test-only fixture emits 287 arithmetic nodes; no owner-approved profile values |\n| Candidate-specific capacity evaluator | Implemented on main through PR #13 | Exact rust_decimal 96-bit coefficient / scale 0–28 screen and BigDecimal profile-ceiling screen; test-only fixture yields rust_decimal `STATIC_BOUND_EXCEEDS_LIMIT` (37 nodes) and BigDecimal CONDITIONAL (50 nodes); not a runtime verdict or production decision |
 | Model-specific Numeric Profile | Not approved | Finite input bounds, headroom, error budgets, tolerance and rounding remain open |
 | Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
 | Independent finance/accounting sign-off | Not evidenced | Arithmetic benchmarks are not an accounting opinion |
@@ -42,7 +42,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Canonical ModelRun and provenance | Not implemented | No run manifest or canonical result hash |
 | XLSX generation/reconciliation | Not implemented | No workbook exporter |
 
-**Branch interpretation:** PR #14 was merged to main on 2026-11-04 after PR #18, #20 and #22 were integrated in sequence. PR #11 and #12 remain Draft; PR #13 is Ready for Review and unmerged. PR #13's contents are branch-local and must not be represented as merged production capability.
+**Branch interpretation:** PR #14 was merged to main on 2026-11-04 after PR #18, #20 and #22 were integrated in sequence. PR #11 and #12 remain Draft. PR #13 was merged to `main` on 2026-11-05 as `593d04d125522e5ec42bea06da6b94c3c2abf604` from validated source head `17b77e385f9980ff00c6ab1466361a54a5d34d23`. Its input hardening, shared corpus, typed diagnostics, audit/design documents and test-only numeric tooling are main-branch capabilities; this merge does not approve the Numeric Profile, select a production backend or authorize the Forecast Engine.
 
 ## 3. Delivery phases
 
@@ -56,7 +56,7 @@ Exit condition: malformed and historically inconsistent input is rejected before
 
 ### Phase 1 — Audit, architecture and input-bound hardening
 
-**Status:** Implementation complete on the PR #13 branch and synchronized with current `main`. Validated source checkpoint `e18ca49676ffdaed7ace57e52fd0db4c89536e52` passed all six required Ruleset contexts, Numeric Envelope derivation and the separate Release Candidate Preview (runs `41976312218`, `41976312346`, `41976312265`, `41976312273`). PR #13 is Ready for Review and remains unmerged. This checkpoint is immutable evidence, not a substitute for checking the branch's current SHA. Under Governance Stage 0, the Founder / Principal Maintainer may complete a single-maintainer review and merge after the applicable checklist; an independent peer review is optional additional assurance, not a Stage 0 prerequisite. Numeric Profile owner decisions remain open and continue to gate backend selection and production forecast-engine authorization.
+**Status:** Delivered and merged to `main` through PR #13 at `593d04d125522e5ec42bea06da6b94c3c2abf604`. The validated source head `17b77e385f9980ff00c6ab1466361a54a5d34d23` passed all six required Ruleset contexts, Numeric Envelope derivation and Release Candidate Preview (runs `41980695313`, `41980695585`, `41980695359`, `41980695504`). This phase delivers the audit, design, roadmap, bounded CLI reader, shared Schema/Rust corpus, typed diagnostics and Numeric Profile decision tooling. Numeric Profile owner decisions remain open and continue to gate backend selection and production forecast-engine authorization.
 
 Deliverables:
 - Engineering Audit with severity-ranked findings.
@@ -64,7 +64,7 @@ Deliverables:
 - This gated roadmap.
 - Corrected project status and reference-case documentation.
 - Added a versioned shared Schema/Rust contract corpus with expected acceptance states and diagnostic codes; metadata, fixture containment, path traversal and symlink checks are implemented and covered by CI.
-- Replaced Serde-message substring classification with a typed structural preflight and shared Decimal parser. RFC 6901 pointers now cover nested fields, escaped object keys, array indices and period context; tests also cover root type errors and pathless malformed JSON. The semantic-validator matrix passed on Rust 1.85.0 and 1.99.1 on the current PR #13 head; the implementation remains unmerged and subject to the rest of the release gates.
+- Replaced Serde-message substring classification with a typed structural preflight and shared Decimal parser. RFC 6901 pointers cover nested fields, escaped object keys, array indices and period context; tests also cover root type errors and pathless malformed JSON. The semantic-validator matrix passed on Rust 1.85.0 and 1.99.1 on source head `17b77e3`; the implementation is merged to `main` and future contract changes must preserve these guarantees.
 - CLI input bound and UTF-8 rejection tests.
 
 Exit conditions:
@@ -76,7 +76,7 @@ Exit conditions:
 
 ### Phase 2 — Numeric, dependency and model-policy acceptance
 
-**Status:** Derivation and test tooling implemented on PR #13; Model Owner and reviewer decisions remain OPEN.
+**Status:** Derivation and test tooling implemented and merged to `main` through PR #13; Model Owner, Finance/Accounting and Engineering Numeric Profile decisions remain OPEN.
 
 #### Workstream A — Numeric Profile
 
@@ -106,7 +106,7 @@ Use [`NUMERIC_BACKEND_EVALUATION.md`](NUMERIC_BACKEND_EVALUATION.md) as the cand
 - Evaluate candidates only against the accepted magnitude, scale/coefficient and resource profile; no candidate can be selected before Workstream A closes.
 - Review checked arithmetic, scale reduction, operation-specific rounding, parse/format fidelity and canonical serialization.
 - Use exact coefficient-integer upper bounds at each declared intermediate scale; compare the resulting integer directly with the exact fixed-width mantissa limit. Digit count alone is not a capacity proof.
-- The branch-local candidate screen checks `rust_decimal 1.43.0` against scale 0–28 and maximum coefficient `79228162514264337593543950335`; the 30-test suite covers at, above and below the mantissa boundary.
+- The merged candidate screen checks `rust_decimal 1.43.0` against scale 0–28 and maximum coefficient `79228162514264337593543950335`; the 30-test suite covers at, above and below the mantissa boundary. Static screening is not runtime representability proof.
 - A test-only profile currently yields `rust_decimal` `STATIC_BOUND_EXCEEDS_LIMIT` on 37/287 arithmetic nodes: 37 conservative coefficient upper bounds exceed the 96-bit maximum and 19 exceed scale 28 (the sets overlap). This means capacity is not proven for those conservative bounds; it is not an observed runtime overflow and does not establish that every feasible input fails. It does not establish the intended V1 business-domain decision.
 - BigDecimal reports CONDITIONAL on 50 nodes because the test-only profile leaves division scale unresolved. Its 80-significant-digit compile-time POC context is not equivalent to the Numeric Profile's fixed fractional-scale division policy. Define an explicit run-scoped adapter or deliberately version the profile's precision semantics; do not assume equivalence.
 - Bound BigDecimal multiplication coefficient growth independently of division precision, and prove resource behaviour with approved limits.
@@ -221,7 +221,7 @@ Acceptance:
 
 Deliver:
 - Complete property, boundary, golden, negative and determinism test evidence.
-- Complete review and CI acceptance of the shared JSON Schema/Rust contract corpus introduced on PR #13.
+- Maintain the merged Schema/Rust contract corpus and add regression cases whenever the versioned input contract changes.
 - Final SBOM, licence/source/advisory disposition and release artifact hashes.
 - Reproducible clean-checkout build/run instructions.
 - XLSX structure and display reconciliation report.
@@ -243,7 +243,7 @@ Release statuses:
 | Project-code Ruleset smoke test | PR #27 | Closed without merge after all six required contexts passed |
 | Numeric candidate and independent arithmetic research | PR #11, Draft, targets main | POC checks pass; findings reviewed; production adoption remains separate |
 | Schema tooling lockfile | PR #12, Draft, targets main | Review and CI pass; shared corpus remains a separate contract gate |
-| Audit, system design, bounded CLI, shared corpus, typed diagnostics and Numeric Profile derivation | PR #13, Ready for Review, targets main | Validated checkpoint `e18ca496` passed all six required contexts, Numeric Envelope and Release Candidate Preview; Founder Stage 0 single-maintainer review and merge pending; optional independent peer review may be added |
+| Audit, system design, bounded CLI, shared corpus, typed diagnostics and Numeric Profile derivation | PR #13, merged to main | Merge `593d04d`; source head `17b77e3` passed all six required contexts, Numeric Envelope and Release Candidate Preview; Stage 0 single-maintainer disposition recorded; no independent approval claimed |
 | Numeric Profile/backend decision | New OFRL-only PR | Finite input domain, error budgets, resource and Finance/Accounting gates accepted |
 | Production forecast engine | New OFRL-only PR | Phase 2 exit accepted |
 | ModelRun/provenance/CLI run | New OFRL-only PR | Production calculations and invariants accepted |
@@ -251,7 +251,7 @@ Release statuses:
 
 **Governance status:** the active Ruleset still requires the six exact contexts. After PR #14 reached main, both a documentation-only PR (#24) and a project-code PR (#27) reported and passed all six contexts. Both smoke PRs were closed without merging. Do not remove or relax any required check.
 
-PR #13 is Ready for Review and remains unmerged. Its branch incorporates the governance merge commit and was up to date with `main` at validated checkpoint `e18ca49676ffdaed7ace57e52fd0db4c89536e52` (203 ahead / 0 behind at the time of verification). All six required contexts, Numeric Envelope derivation and Release Candidate Preview passed on that exact source checkpoint. Re-read the branch's current SHA and required checks before merge. Under Governance Stage 0, the Founder / Principal Maintainer may perform and document the single-maintainer review before merging; this must not be described as independent review. Optional external peer review may be pursued but is not required by the current Stage 0 policy. Numeric Profile boundaries remain a separate Model Owner gate on Issue #28 and are not approved by this PR. Do not authorize the production Forecast Engine until the required owner, Finance/Accounting and Engineering decisions are recorded.
+PR #13 is merged to `main` at `593d04d125522e5ec42bea06da6b94c3c2abf604` from source head `17b77e385f9980ff00c6ab1466361a54a5d34d23`. All six required contexts, Numeric Envelope derivation and Release Candidate Preview passed on that exact source head. The Founder Stage 0 single-maintainer disposition is recorded in the PR conversation; it is not independent human approval. Issue #23 was closed by the PR. Numeric Profile boundaries remain a separate Model Owner gate on Issue #28 and are not approved by this merge. Do not authorize the production Forecast Engine until the required Model Owner, Finance/Accounting and Engineering decisions are recorded.
 
 Keep research, production formula and reporting changes in separately reviewable PRs. A Draft PR remains Draft when project-level gates are unresolved, even if its CI is green. No PR is merged by this roadmap without the required review.
 

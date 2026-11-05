@@ -493,6 +493,9 @@ This design describes the target system, not a claim that all target components 
 ### Implemented on main
 
 - Versioned model input schema, canonical synthetic fixture, Rust typed input and historical semantic validator.
+- Bounded CLI input reader (1 MiB max-plus-one read, invalid UTF-8 rejection) and typed deserialization diagnostics with RFC 6901 JSON Pointers.
+- Versioned shared Schema/Rust positive/negative corpus, path-safety checks and nine diagnostic mutation fixtures.
+- Numeric Profile schema, exact-rational derivation, candidate static-capacity screen and evaluation protocol (tooling only; no profile approval or backend selection).
 - Active repository Ruleset with exactly six required GitHub Actions contexts.
 - Always-running repository policy workflow and project/portfolio registry validation.
 - OFRL validation workflows that run without path filters on Rust 1.85.0 and 1.99.1.
@@ -501,18 +504,21 @@ This design describes the target system, not a claim that all target components 
 
 The governance/supply-chain sequence was integrated through PR #14 (including PRs #18, #20 and #22) as main commit `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`. Post-merge documentation-only and project-code smoke PRs both reported and passed all six required contexts; both were closed without merging.
 
-### Branch-local implementation evidence
+### Merged implementation evidence
 
-PR #13 is Open / Ready for Review and remains unmerged. Its branch contains:
+PR #13 was merged to `main` at `593d04d125522e5ec42bea06da6b94c3c2abf604` from validated source head `17b77e385f9980ff00c6ab1466361a54a5d34d23`. It delivered:
 
 - Engineering Audit and this System Design.
 - Bounded CLI input reader (1 MiB limit, max-plus-one read, invalid UTF-8 rejection).
-- Versioned positive/negative Schema/Rust shared contract corpus.
-- Implementation Roadmap.
-- Numeric Profile Decision Worksheet.
-- Symbolic Numeric Profile Derivation and backend decision basis.
+- Versioned positive/negative Schema/Rust shared contract corpus and fixture path-safety checks.
+- Typed structural preflight, shared Decimal parser and nine mutation diagnostics fixtures.
+- Implementation Roadmap and Decision Log updates.
+- Numeric Profile Decision Worksheet, symbolic derivation, division-error propagation and candidate-specific static capacity evaluator.
+- Numeric Backend Evaluation Protocol.
 
-The original implementation baseline passed the five project-specific checks before the governance workflow was merged into main. PR #13 was then synchronized with current main through a merge commit preserving both histories. At validated source checkpoint `e18ca49676ffdaed7ace57e52fd0db4c89536e52`, the six required contexts, Numeric Envelope derivation and Release Candidate Preview passed (workflow runs `41976312218`, `41976312346`, `41976312265`, `41976312273`). PR-only code and documentation must not be presented as merged production capability. This is an immutable validated checkpoint; read the current PR head and exact-head checks before merge. Under Governance Stage 0, the Founder / Principal Maintainer may perform the single-maintainer review and merge after the applicable checklist; this is not independent review.
+All six required Ruleset contexts passed on source head `17b77e3`, together with Numeric Envelope derivation and Release Candidate Preview (workflow runs `41980695313`, `41980695585`, `41980695359`, `41980695504`). The Numeric Envelope artifact was verified against all five internal SHA-256 entries. The preview artifact is marked `PREVIEW_ONLY_NOT_A_RELEASE` and validates CLI input-contract/history only. The source head and merge commit are deliberately recorded as different identifiers.
+
+The Founder Stage 0 single-maintainer disposition is recorded in the PR conversation. It was executed by ChatGPT at the repository owner's explicit instruction and is not independent human approval.
 
 ### Open research and approval gates
 
