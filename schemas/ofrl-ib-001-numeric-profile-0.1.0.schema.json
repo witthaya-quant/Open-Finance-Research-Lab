@@ -221,7 +221,7 @@
         "max_concurrent_runs"
       ],
       "properties": {
-        "max_intermediate_scale": { "type": "integer", "minimum": 1, "maximum": 10000 },
+        "max_intermediate_scale": { "type": "integer", "minimum": 0, "maximum": 10000 },
         "max_coefficient_digits": { "type": "integer", "minimum": 1, "maximum": 10000 },
         "max_input_bytes": { "type": "integer", "minimum": 1, "maximum": 1048576 },
         "max_cpu_ms": { "type": "integer", "minimum": 1 },
@@ -263,7 +263,7 @@
           "arithmetic_policy": {
             "type": "object",
             "properties": {
-              "division_fractional_scale": { "type": "integer", "minimum": 1 },
+              "division_fractional_scale": { "type": "integer", "minimum": 0 },
               "division_rounding_mode": { "$ref": "#/$defs/roundingMode" },
               "reporting_fraction_digits": { "type": "integer", "minimum": 0 },
               "reporting_rounding_mode": { "$ref": "#/$defs/roundingMode" }
