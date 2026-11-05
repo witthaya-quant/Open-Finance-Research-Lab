@@ -444,6 +444,10 @@ function createDerivation(profile) {
     const exactScale = scale === null ? terminatingScaleForBound : scale;
     const divisionContextRequired = forceDivisionContext || terminatingScaleForBound === null;
     const coefficientDigits = divisionContextRequired ? null : exactCoefficientDigits(value, exactScale);
+    const coefficientDigitsAtDeclaredScale =
+      divisionContextRequired && scale !== null
+        ? decimalDigits(ceilPositive(value.abs().n * pow10(scale), value.abs().d))
+        : coefficientDigits;
     const node = {
       id: name,
       method,
@@ -458,6 +462,7 @@ function createDerivation(profile) {
       exact_rational_numerator_digits: decimalDigits(value.n),
       exact_rational_denominator_digits: decimalDigits(value.d),
       coefficient_digits_if_exact: coefficientDigits,
+      coefficient_digits_upper_bound: coefficientDigitsAtDeclaredScale,
       division_context_required: divisionContextRequired,
       division_rounding_mode: forceDivisionContext
         ? profile.arithmetic_policy.division_rounding_mode
@@ -775,22 +780,27 @@ function createDerivation(profile) {
 
   const limitChecks = [];
   for (const node of nodes) {
-    if (node.pre_normalization_scale !== null) {
+    const scaleBound = node.post_rounding_scale !== null
+      ? node.post_rounding_scale
+      : node.pre_normalization_scale;
+    if (scaleBound !== null) {
       limitChecks.push({
         node: node.id,
         limit: "max_intermediate_scale",
-        actual: node.pre_normalization_scale,
+        bound_kind: node.scale_bound_kind,
+        actual: scaleBound,
         allowed: profile.resource_limits.max_intermediate_scale,
-        status: node.pre_normalization_scale <= profile.resource_limits.max_intermediate_scale ? "PASS" : "FAIL"
+        status: scaleBound <= profile.resource_limits.max_intermediate_scale ? "PASS" : "FAIL"
       });
     }
-    if (node.coefficient_digits_if_exact !== null) {
+    if (node.coefficient_digits_upper_bound !== null) {
       limitChecks.push({
         node: node.id,
         limit: "max_coefficient_digits",
-        actual: node.coefficient_digits_if_exact,
+        bound_kind: node.division_context_required ? "outward_rounded_coefficient" : "exact_coefficient",
+        actual: node.coefficient_digits_upper_bound,
         allowed: profile.resource_limits.max_coefficient_digits,
-        status: node.coefficient_digits_if_exact <= profile.resource_limits.max_coefficient_digits ? "PASS" : "FAIL"
+        status: node.coefficient_digits_upper_bound <= profile.resource_limits.max_coefficient_digits ? "PASS" : "FAIL"
       });
     }
   }
