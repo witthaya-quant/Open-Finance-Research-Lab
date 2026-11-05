@@ -7,7 +7,7 @@
 **Production baseline:** `main` at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`  
 **Research evidence:** PR #11, head `120ccd3414fb7018011ea3991800728f86736319`  
 **Schema-tooling evidence:** PR #12, head `c38f9ad50ff4ff39f92d6cf7514a6a917e6971cd`  
-**System-design, CLI hardening and Numeric Profile tooling:** PR #13 remains open Draft; head `9eca393c5c886e7d15bf929bcf39a4e6f7387266` passed all six required contexts and 30/30 Numeric Envelope tests; checksummed test-only evidence artifact `13389542339` was downloaded and independently verified; the separate preview-only Release Candidate Preview workflow remains queued  
+**System-design, CLI hardening and Numeric Profile tooling:** PR #13 is Open / Ready for Review; latest head `516a434610d98f3b92b8d2356d596d078e3b50de` passed all six required contexts, Numeric Envelope derivation and Release Candidate Preview; artifacts `13390714759` and `13391567017` were uploaded on that exact head  
 **Status:** Evidence-based audit at main `cc2d01b`; merged governance and supply-chain controls are distinguished from branch-local OFRL-IB-001 implementation evidence
 
 ## 1. Executive assessment
@@ -18,7 +18,7 @@ The open research PR #11 materially improves the numeric evidence base: it conta
 
 Repository governance and supply-chain controls are now on `main` following PR #14, which integrated the reviewed PR #18 / #20 / #22 sequence. The active Ruleset and its six required checks were re-read after merge. Documentation-only and project-code smoke PRs (#24 and #27) each reported and passed all six exact required contexts, then were closed without merge. These changes improve repository controls; they do not create a production forecast engine.
 
-The system is **not yet a production forecast model**. The production Rust workspace still validates inputs and historical relationships only. It does not calculate the five forecast years, produce a canonical ModelRun, evaluate Structural Integrity / Scenario Feasibility for calculated results, produce deterministic provenance, or generate an XLSX report. PR #13 remains Draft and contains branch-local input hardening, shared contract corpus, system design and numeric derivation work.
+The system is **not yet a production forecast model**. The production Rust workspace still validates inputs and historical relationships only. It does not calculate the five forecast years, produce a canonical ModelRun, evaluate Structural Integrity / Scenario Feasibility for calculated results, produce deterministic provenance, or generate an XLSX report. PR #13 is Ready for Review and contains branch-local input hardening, shared contract corpus, system design and numeric derivation work.
 
 The principal remaining risk is not simply a lack of code. It is the unresolved boundary between (a) evidence that software follows the currently written equations and (b) approval that those equations, conventions, numeric limits and reporting treatments are appropriate for the declared modelling purpose. The implementation must preserve that distinction.
 
@@ -202,9 +202,9 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Remediation:** A typed structural preflight now classifies closed-object shape, required/unknown properties, JSON type mismatches, enum values, and Decimal token/text/scale/range errors using contract-owned error kinds. It builds RFC 6901 pointers with `~` and `/` escaping, array indices, root-document pointers and period context where available. The preflight and Serde adapter share the same Decimal parser. Public diagnostic selection does not inspect Serde display text; malformed JSON remains pathless when no unambiguous field location exists. No new dependency was added.
 
-**Evidence:** `crates/ofrl_model/src/typed_deserialization.rs`, `src/domain.rs`, `src/validation.rs`, and `tests/typed_deserialization_diagnostics.rs`. The semantic-validator workflow passed formatting, Clippy, tests, docs, Case A CLI acceptance and unsupported-schema CLI rejection on Rust 1.85.0 and 1.99.1 at PR #13 head `59880aa1b032a2f5c5072f64c1dda7a39dba99f6`.
+**Evidence:** `crates/ofrl_model/src/typed_deserialization.rs`, `src/domain.rs`, `src/validation.rs`, and `tests/typed_deserialization_diagnostics.rs`. The semantic-validator workflow passed formatting, Clippy, tests, docs, Case A CLI acceptance and unsupported-schema CLI rejection on Rust 1.85.0 and 1.99.1 at PR #13 head `516a434610d98f3b92b8d2356d596d078e3b50de`; the full six-context Ruleset matrix, Numeric Envelope derivation and Release Candidate Preview also passed on that exact head. The regression suite consumes nine versioned mutation cases.
 
-**Disposition:** The implementation is branch-local until PR #13 passes all six Ruleset-required contexts, receives independent review and is merged. Issue #23 remains open until that merge.
+**Disposition:** The implementation is branch-local until PR #13 is merged. OFRL is in Governance Stage 0; `GOVERNANCE.md` sections 3 and 6 permit the Founder / Principal Maintainer to review and merge their own PR when no independent Maintainer exists, provided the decision is recorded as a single-maintainer review and not independent approval. Optional external peer review may strengthen assurance but is not a Stage 0 prerequisite. Issue #23 is linked with `Fixes #23` and will close on merge.
 
 ### EA-07 — JSON Schema and Rust contract parity is not enforced
 
@@ -294,7 +294,7 @@ Severity definitions: **Blocker** must close before production forecast acceptan
 
 **Original risk:** A required context that is absent from the protected base workflow set can leave PRs blocked. Weakening the Ruleset would have concealed the publication-order problem.
 
-**Disposition:** RESOLVED. Keep all six contexts unchanged. Repeat the API read-back and representative documentation/project-code smoke tests after material workflow or Ruleset changes. PR #13 has now synchronized with current main and its refreshed branch passed all six required contexts. It remains Draft pending review; that review is separate from the governance dependency.
+**Disposition:** RESOLVED. Keep all six contexts unchanged. Repeat the API read-back and representative documentation/project-code smoke tests after material workflow or Ruleset changes. PR #13 has synchronized with current main and latest head `516a434` passed all six required contexts. It is Ready for Review; the Founder may complete the Stage 0 single-maintainer review and merge after the applicable checklist. This review is separate from the closed governance dependency.
 
 ## 6. Numeric tolerance interpretation
 

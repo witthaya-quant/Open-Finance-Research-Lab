@@ -503,7 +503,7 @@ The governance/supply-chain sequence was integrated through PR #14 (including PR
 
 ### Branch-local implementation evidence
 
-PR #13 remains Draft and unmerged. Its branch contains:
+PR #13 is Open / Ready for Review and remains unmerged. Its branch contains:
 
 - Engineering Audit and this System Design.
 - Bounded CLI input reader (1 MiB limit, max-plus-one read, invalid UTF-8 rejection).
@@ -512,7 +512,7 @@ PR #13 remains Draft and unmerged. Its branch contains:
 - Numeric Profile Decision Worksheet.
 - Symbolic Numeric Profile Derivation and backend decision basis.
 
-The original implementation baseline passed the five project-specific checks before the governance workflow was merged into main. PR #13 was then synchronized with current main through a merge commit preserving both histories. The refreshed code branch passed all six required contexts, including `repository-policy`, on Rust 1.85.0 and 1.99.1. PR-only code and documentation must not be presented as merged production capability.
+The original implementation baseline passed the five project-specific checks before the governance workflow was merged into main. PR #13 was then synchronized with current main through a merge commit preserving both histories. The refreshed code branch at head `516a434610d98f3b92b8d2356d596d078e3b50de` passed all six required contexts, including `repository-policy`, on Rust 1.85.0 and 1.99.1; Numeric Envelope derivation and Release Candidate Preview also passed on that exact head. PR-only code and documentation must not be presented as merged production capability. Under Governance Stage 0, the Founder / Principal Maintainer may perform the single-maintainer review and merge after the applicable checklist; this is not independent review.
 
 ### Open research and approval gates
 

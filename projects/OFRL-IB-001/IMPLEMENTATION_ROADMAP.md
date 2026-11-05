@@ -31,8 +31,8 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Rust SBOM/RustSec research | Open PR #11, Draft | Candidate/POC inventories and point-in-time advisory evidence |
 | Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
 | Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
-| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; earlier synchronized checkpoint passed all six contexts; latest PR head is being rechecked after typed-diagnostic changes; unmerged |
-| Typed deserialization diagnostics | Implemented on PR #13 branch | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and nine versioned mutation fixtures; all six required Ruleset contexts, Numeric Envelope derivation and Release Candidate Preview passed on head `58e58ea`; independent review and merge pending |
+| Shared Schema/Rust corpus | Open PR #13 branch | Versioned positive/negative fixtures, expected schema/runtime outcomes and diagnostic codes; all six required contexts passed on latest head `516a434`; unmerged pending Stage 0 review/merge |
+| Typed deserialization diagnostics | Implemented on PR #13 branch | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and nine versioned mutation fixtures; all six required Ruleset contexts, Numeric Envelope derivation and Release Candidate Preview passed on head `516a434`; Stage 0 single-maintainer review and merge pending |
 | Numeric Profile schema, worksheet and exact derivation tool | Open PR #13 branch | Closed profile schema, exact BigInt-rational bounds and division-error propagation; current test fixture emits 287 arithmetic nodes; 30/30 Numeric Envelope tests pass; no owner-approved profile values |\n| Candidate-specific capacity evaluator | Open PR #13 branch | Exact rust_decimal 96-bit coefficient / scale 0–28 screen and BigDecimal profile-ceiling screen; test-only fixture yields rust_decimal `STATIC_BOUND_EXCEEDS_LIMIT` (37 nodes), BigDecimal CONDITIONAL (50 nodes); not a runtime verdict or production decision |
 | Model-specific Numeric Profile | Not approved | Finite input bounds, headroom, error budgets, tolerance and rounding remain open |
 | Production numeric backend | Not selected | Candidate evidence is not an adoption decision |
@@ -42,7 +42,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Canonical ModelRun and provenance | Not implemented | No run manifest or canonical result hash |
 | XLSX generation/reconciliation | Not implemented | No workbook exporter |
 
-**Branch interpretation:** PR #14 was merged to main on 2026-11-04 after PR #18, #20 and #22 were integrated in sequence. PR #11, #12 and #13 remain Draft and unmerged. PR #13's contents are branch-local and must not be represented as merged production capability.
+**Branch interpretation:** PR #14 was merged to main on 2026-11-04 after PR #18, #20 and #22 were integrated in sequence. PR #11 and #12 remain Draft; PR #13 is Ready for Review and unmerged. PR #13's contents are branch-local and must not be represented as merged production capability.
 
 ## 3. Delivery phases
 
@@ -56,7 +56,7 @@ Exit condition: malformed and historically inconsistent input is rejected before
 
 ### Phase 1 — Audit, architecture and input-bound hardening
 
-**Status:** Implementation complete on the PR #13 branch and synchronized with current `main`. Latest head `58e58ea672b835a6837213fcd73981dfea11dac8` passed all six required Ruleset contexts, Numeric Envelope derivation and the separate Release Candidate Preview. PR #13 is ready for independent review and remains unmerged. Numeric Profile owner decisions remain open and continue to gate backend selection and production forecast-engine authorization.
+**Status:** Implementation complete on the PR #13 branch and synchronized with current `main`. Latest head `516a434610d98f3b92b8d2356d596d078e3b50de` passed all six required Ruleset contexts, Numeric Envelope derivation and the separate Release Candidate Preview. PR #13 is Ready for Review and remains unmerged. Under Governance Stage 0, the Founder / Principal Maintainer may complete a single-maintainer review and merge after the applicable checklist; an independent peer review is optional additional assurance, not a Stage 0 prerequisite. Numeric Profile owner decisions remain open and continue to gate backend selection and production forecast-engine authorization.
 
 Deliverables:
 - Engineering Audit with severity-ranked findings.
@@ -243,7 +243,7 @@ Release statuses:
 | Project-code Ruleset smoke test | PR #27 | Closed without merge after all six required contexts passed |
 | Numeric candidate and independent arithmetic research | PR #11, Draft, targets main | POC checks pass; findings reviewed; production adoption remains separate |
 | Schema tooling lockfile | PR #12, Draft, targets main | Review and CI pass; shared corpus remains a separate contract gate |
-| Audit, system design, bounded CLI, shared corpus, typed diagnostics and Numeric Profile derivation | PR #13, Ready for Review, targets main | Latest head `58e58ea` passed all six required contexts, Numeric Envelope and Release Candidate Preview; independent review and merge required |
+| Audit, system design, bounded CLI, shared corpus, typed diagnostics and Numeric Profile derivation | PR #13, Ready for Review, targets main | Latest head `516a434` passed all six required contexts, Numeric Envelope and Release Candidate Preview; Founder Stage 0 single-maintainer review and merge pending; optional independent peer review may be added |
 | Numeric Profile/backend decision | New OFRL-only PR | Finite input domain, error budgets, resource and Finance/Accounting gates accepted |
 | Production forecast engine | New OFRL-only PR | Phase 2 exit accepted |
 | ModelRun/provenance/CLI run | New OFRL-only PR | Production calculations and invariants accepted |
@@ -251,7 +251,7 @@ Release statuses:
 
 **Governance status:** the active Ruleset still requires the six exact contexts. After PR #14 reached main, both a documentation-only PR (#24) and a project-code PR (#27) reported and passed all six contexts. Both smoke PRs were closed without merging. Do not remove or relax any required check.
 
-PR #13 is ready for independent review, but remains unmerged. Its branch incorporates the governance merge commit and is up to date with `main`; latest head `58e58ea` passed all six required contexts and the preview workflows. Numeric Profile boundaries remain a separate Model Owner gate on Issue #28 and are not approved by this PR. Do not authorize the production Forecast Engine until the required owner, Finance/Accounting and Engineering decisions are recorded.
+PR #13 is Ready for Review and remains unmerged. Its branch incorporates the governance merge commit and is up to date with `main`; latest head `516a434` passed all six required contexts, Numeric Envelope derivation and Release Candidate Preview. Under Governance Stage 0, the Founder / Principal Maintainer may perform and document the single-maintainer review before merging; this must not be described as independent review. Optional external peer review may be pursued but is not required by the current Stage 0 policy. Numeric Profile boundaries remain a separate Model Owner gate on Issue #28 and are not approved by this PR. Do not authorize the production Forecast Engine until the required owner, Finance/Accounting and Engineering decisions are recorded.
 
 Keep research, production formula and reporting changes in separately reviewable PRs. A Draft PR remains Draft when project-level gates are unresolved, even if its CI is green. No PR is merged by this roadmap without the required review.
 
