@@ -291,7 +291,7 @@ test("NOT APPLICABLE requires a reason and cannot waive non-applicable R3 hard g
       assessment_status: "ELIGIBLE_FOR_AUTHORIZATION",
       gates: [
         "scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval",
-        "reproducibility", "domain_review", "independent_domain_review", "security_review",
+        "reproducibility", "domain_review", "dependency_and_sbom", "independent_domain_review", "security_review",
         "privacy_legal_review", "operational_safeguards", "incident_response", "rollback_recovery",
       ].map((id) => makeGate(id, id === "privacy_legal_review"
         ? { status: "NOT APPLICABLE", assessor: undefined, evidence: [], rationale: "The reviewed project scope does not process personal or regulated data; the privacy/legal assessment is therefore not applicable." }
