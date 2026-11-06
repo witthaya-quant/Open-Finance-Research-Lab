@@ -291,7 +291,7 @@
                   "identity",
                   "role",
                   "independent",
-                  "conflict_disclosed",
+                  "conflict_status",
                   "review_reference"
                 ],
                 "properties": {
@@ -308,13 +308,16 @@
                   "independent": {
                     "type": "boolean"
                   },
-                  "conflict_disclosed": {
-                    "type": "boolean"
-                  },
                   "review_reference": {
                     "type": "string",
                     "minLength": 8,
                     "maxLength": 2048
+                  },
+                  "conflict_status": {
+                    "enum": [
+                      "NONE_DECLARED",
+                      "DISCLOSED"
+                    ]
                   }
                 }
               }
