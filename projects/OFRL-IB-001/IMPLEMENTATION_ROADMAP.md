@@ -2,15 +2,35 @@
 
 # OFRL-IB-001 — Implementation Roadmap
 
-**Roadmap version:** 0.8.0  
-**Status:** Proposed execution plan with evidence-linked gates  
-**Date:** 2026-11-05
+**Roadmap version:** 0.9.0  
+**Status:** Canonical project delivery register; execution remains gated by recorded decisions  
+**Audit baseline:** main at 5f8f578c387150214a1f438c3d67da48652eb4cb  
+**Date:** 2026-11-06
 
 ## 1. Delivery principles
 
 Deliver in small, reviewable increments. Each increment must preserve a reproducible repository state, have a bounded scope, and distinguish research evidence from production capability.
 
 The V1 scope remains one generic non-financial operating company, three annual historical periods, five annual forecast periods, one reporting currency and one model-level unit scale. The first release does not include financial institutions, consolidation, multi-currency translation, statutory reporting claims, DCF/LBO valuation or automatic funding mechanisms.
+
+## 1.1 Authority and single-source-of-truth rules
+
+**This file is the sole project-level execution source of truth for OFRL-IB-001.** It owns current workstream status, phase gates, stable task IDs, dependencies, blockers and next permitted actions.
+
+| Information | Authoritative location | Must not be duplicated in |
+|---|---|---|
+| Project scope, phases, task status, blockers and next actions | This Implementation Roadmap | A second roadmap, dashboard, task board, chat handoff file or copied Issue checklist |
+| Project identity, lifecycle, risk, maturity and release status | project.json and root PROJECT_CATALOG.md | A second manifest or informal status table |
+| Model behaviour, formulas and exclusions | RESEARCH_SPECIFICATION.md and MODEL_CONVENTIONS.md | Roadmap prose or code comments redefining financial policy |
+| Engineering design and component boundaries | ENGINEERING_ARCHITECTURE.md and SYSTEM_DESIGN.md | Ad hoc architecture files or duplicate diagrams |
+| Accepted/superseded decisions and rationale | DECISION_LOG.md | Roadmap task descriptions or PR summaries as historical authority |
+| Acceptance criteria and validation evidence | VALIDATION_MATRIX.md and linked workflow/test evidence | A parallel test tracker |
+| Model Owner numeric inputs awaiting approval | NUMERIC_PROFILE_WORKSHEET.md and Issue #28 | Fixtures, benchmark values, stress-test values or chat guesses |
+| Audit findings and residual controls | ENGINEERING_AUDIT.md | A second findings register |
+
+GitHub Issues and Pull Requests provide discussion, review and implementation evidence. They do not replace this task register. README is navigation and a concise public status summary, not a competing roadmap.
+
+**File and directory control:** do not create another roadmap, task register, status dashboard, agent handoff summary, folder, crate, workflow, benchmark or schema unless a stable task ID or approved Decision Log entry authorizes the exact path and explains why existing locations cannot serve the purpose. Update the existing owner document instead of creating a second copy. Every agent must read this file first, verify live Git state and task dependencies, and update this register through a reviewable change before handoff.
 
 ## 2. Current implementation baseline
 
@@ -25,12 +45,12 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Decimal POC lockfile | Implemented on main | Isolated POC lockfile and locked metadata/tree/Clippy/test/doc commands |
 | CLI SBOM/checksum preview | Implemented on main | Preview-only CycloneDX 1.5 artifact for Linux CLI validator; not an official forecast-model release |
 | Rust CLI input hardening | Implemented on main through PR #13 | 1 MiB bound, max-plus-one read, UTF-8 rejection and regression tests; source head `17b77e3`, merge `593d04d` |
-| Full-formula numeric candidate comparison | Open PR #11, Draft | rust_decimal, BigDecimal and Exact Rational research path |
-| Independent multi-period expected values | Open PR #11, Draft | BM-002 160 values + BM-003 640 values = 800 exact outputs |
-| Independent Python reference | Open PR #11, Draft | Standard-library Decimal/Fraction; verifies fixture identity and goldens |
-| Rust SBOM/RustSec research | Open PR #11, Draft | Candidate/POC inventories and point-in-time advisory evidence |
-| Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
-| Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
+| Full-formula numeric candidate comparison | PR #11 open Draft; branch stale/diverged | Old head 120ccd3414fb7018011ea3991800728f86736319; compare main...head was 77 ahead / 371 behind. Its eight checks passed only on that historical SHA. Salvage required files into a fresh main-based PR; do not merge this branch directly. |
+| Independent multi-period expected values | PR #11 branch only; not on main | BM-002/BM-003 claims total 800 exact outputs. Associated POC/golden files are not in the main project tree; treat as unmerged evidence until selectively reviewed and revalidated. |
+| Independent Python reference | PR #11 branch only; not on main | Its exact-rational reference is described on the unmerged branch; scope and independence must be re-audited before relying on results. |
+| Rust SBOM/RustSec research | PR #11 branch only; not on main | Candidate inventory/advisory snapshots require freshness review and do not satisfy official release review. |
+| Runtime-cost observation harness | PR #11 branch only; not on main | Single-run synthetic timing is directional only; memory, allocation, tail-latency, concurrency and representative workload evidence remain open. |
+| Schema validator dependency lock | Implemented on main; PR #12 closed unmerged | package.json, package-lock.json and schema-validation shell script are on main. PR #12 was closed without merge because the core file blobs matched main exactly. Issue #9 is closed completed. |
 | Shared Schema/Rust corpus | Implemented on main through PR #13 | Versioned positive/negative fixtures, expected schema/runtime outcomes, diagnostic codes and fixture path-safety checks; six required contexts passed on source head `17b77e3` |
 | Typed deserialization diagnostics | Implemented on main through PR #13 | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and nine versioned mutation fixtures; source head `17b77e3` passed full CI |
 | Numeric Profile schema, worksheet and exact derivation tool | Implemented on main through PR #13 | Closed profile schema, exact BigInt-rational derivation and division-error propagation; test-only fixture emits 287 arithmetic nodes; no owner-approved profile values |
@@ -43,7 +63,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Canonical ModelRun and provenance | Not implemented | No run manifest or canonical result hash |
 | XLSX generation/reconciliation | Not implemented | No workbook exporter |
 
-**Branch interpretation:** PR #14 was merged to main on 2026-11-04 after PR #18, #20 and #22 were integrated in sequence. PR #11 and #12 remain Draft. PR #13 was merged to `main` on 2026-11-05 as `593d04d125522e5ec42bea06da6b94c3c2abf604` from validated source head `17b77e385f9980ff00c6ab1466361a54a5d34d23`. Its input hardening, shared corpus, typed diagnostics, audit/design documents and test-only numeric tooling are main-branch capabilities; this merge does not approve the Numeric Profile, select a production backend or authorize the Forecast Engine.
+**Live branch interpretation (2026-11-06):** PR #14 and PR #13 are merged. PR #13 merged as 593d04d125522e5ec42bea06da6b94c3c2abf604 from validated source head 17b77e385f9980ff00c6ab1466361a54a5d34d23; PR #30 subsequently advanced main to 5f8f578c387150214a1f438c3d67da48652eb4cb. PR #11 remains Draft but is 77 commits ahead / 371 behind main at its old head; its CI is historical, not current main evidence. PR #12 is closed without merge because its core tooling is already on main. No PR #11 branch result is represented as a main capability. The PR #13 merge does not approve a Numeric Profile, select a backend or authorize the Forecast Engine.
 
 ## 3. Delivery phases
 
@@ -96,7 +116,7 @@ Exit conditions:
 
 The worksheet is `NUMERIC_PROFILE_WORKSHEET.md`. The symbolic formula-chain and scale derivation is `NUMERIC_PROFILE_DERIVATION.md`. It identifies currently unbounded inputs and derives maximum-path formulas once Model Owner bounds are supplied. It deliberately preserves TBD values rather than fabricate limits.
 
-The branch also contains a candidate-neutral exact derivation tool (`tools/numeric-envelope/derive.cjs`), a versioned profile schema, a test-only synthetic fixture and the [Numeric Backend Evaluation Protocol](NUMERIC_BACKEND_EVALUATION.md). It enumerates opening Balance Sheet, three historical validator periods and five forecast periods using exact BigInt rational bounds; checks declared source precision, intermediate scale and coefficient ceilings; translates error budgets to reporting currency; and separately propagates division-rounding error through NWC, cash and Balance Sheet identity. The validated e18 evidence artifact records 287 arithmetic formula nodes and 474 bound checks; 30/30 Numeric Envelope tests passed on that exact source checkpoint. Earlier node totals and test counts refer to prior derivation revisions and are not current evidence. The fixture is test-only, does not represent the intended company domain, and grants no approval.
+The main-branch derivation tool (tools/numeric-envelope/derive.cjs), versioned input schema and candidate-capacity evaluator were merged through PR #13. The validated source-head artifact contains 287 arithmetic nodes and is explicitly test-only. On that synthetic profile, the static evaluator reports 37 rust_decimal nodes with conservative bounds above the 96-bit coefficient ceiling (including 19 scale-related reasons that overlap coefficient reasons) and 50 BigDecimal nodes conditional on unresolved division policy. These are static screening outputs, not runtime overflow observations, intended business-domain limits or candidate selection. The older 474-bound-count statement belonged to an earlier derivation revision and is not current approval evidence. The separate 800-output BM-002/BM-003 research and Python reference remain on unmerged PR #11.
 
 **Current domain finding:** V1 has no finite upper bound for revenue growth, COGS / revenue, Opex / revenue, DSO/DIO/DPO, CapEx / revenue, debt drawdowns or interest rate. The current Decimal parser ceiling of 28 fractional digits is only a source-field grammar limit; it is not proof that five forecast years of multiplications preserve that scale. A finite magnitude, scale and coefficient envelope cannot be certified until the owner approves finite bounds for all relevant drivers and opening/historical amounts.
 
@@ -112,7 +132,7 @@ Use [`NUMERIC_BACKEND_EVALUATION.md`](NUMERIC_BACKEND_EVALUATION.md) as the cand
 - BigDecimal reports CONDITIONAL on 50 nodes because the test-only profile leaves division scale unresolved. Its 80-significant-digit compile-time POC context is not equivalent to the Numeric Profile's fixed fractional-scale division policy. Define an explicit run-scoped adapter or deliberately version the profile's precision semantics; do not assume equivalence.
 - Bound BigDecimal multiplication coefficient growth independently of division precision, and prove resource behaviour with approved limits.
 - Keep Exact Rational as a correctness oracle unless a separate operational resource case justifies evaluating it as a production candidate.
-- Treat existing timing observations as directional only: BigDecimal was 1.50×–2.21× the fixed Decimal candidate in the tested synthetic cases, while Exact Rational was 7.52×–10.30×. They are not production workload evidence. See `poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md` on PR #11.
+- Treat the 1.50×–2.21× and 7.52×–10.30× timing observations mentioned in PR #11 as historical, non-gating synthetic observations on an unmerged branch only. They are not main-branch evidence and are not production workload measurements. Do not use them to select a backend.
 - Measure latency, throughput, allocations, peak memory/RSS, tail latency, concurrency and long-running process behaviour under a controlled workload generated from the approved profile.
 - Measure migration cost because production input/history domain types currently use `rust_decimal`.
 - Review typed failure semantics, determinism, MSRV/platform support, dependency source/licence/advisory status and per-run provenance.
@@ -129,7 +149,7 @@ Use [`NUMERIC_BACKEND_EVALUATION.md`](NUMERIC_BACKEND_EVALUATION.md) as the cand
 - Record source obligations and distribution-notice requirements.
 - Preserve SBOMs, checksums and exact source/build identity.
 
-The PR #11 workflow provides candidate/POC inventory and point-in-time advisory evidence. The isolated Decimal Contract POC lockfile, locked CI and preview-only CLI SBOM/checksum workflow are now on main through PRs #20/#22. They improve dependency reproducibility and artifact inventory but do not close source-level legal review, advisory disposition, multi-platform release evidence or official-release authorization. The yanked `xml-rs 0.8.19` preview-generator exception remains time-bounded and must be re-reviewed before official release.
+PR #11's dependency inventory and advisory results remain on its unmerged branch and are point-in-time evidence only. The isolated Decimal Contract POC lockfile and locked CI, plus the preview-only CLI SBOM/checksum workflow, are on main through PRs #20/#22. The main preview pipeline does not close source-level licence/notice review, advisory disposition, multi-platform release evidence or official-release authorization. Issue #16 remains open for these release gates. The yanked xml-rs 0.8.19 preview-generator exception is time-bounded and must be reviewed before official release.
 
 #### Workstream D — Independent finance and accounting review
 
@@ -141,7 +161,7 @@ The PR #11 workflow provides candidate/POC inventory and point-in-time advisory 
 - Check negative cash, funding shortfall, structural integrity and reportability.
 - Record reviewer scope, findings, decisions and unresolved limitations.
 
-BM-002 and BM-003 give 800 exact expected arithmetic outputs. They are not a substitute for this review.
+PR #11 describes BM-002/BM-003 with 800 exact expected arithmetic outputs on its unmerged branch. Even after independent revalidation and main integration, arithmetic goldens are not a substitute for this finance/accounting review.
 
 **Phase 2 exit:** Numeric Profile, production backend, dependency/source/licence disposition and finance/accounting review are approved, versioned and linked to evidence. Any unresolved blocker keeps Phase 3 closed.
 
@@ -242,8 +262,8 @@ Release statuses:
 | Repository foundation, portfolio controls, dependency lock and CLI SBOM preview | PR #14, with #18 → #20 → #22 integrated | MERGED to main as `cc2d01b`; post-merge Ruleset and workflow read-back completed |
 | Documentation-only Ruleset smoke test | PR #24 | Closed without merge after all six required contexts passed |
 | Project-code Ruleset smoke test | PR #27 | Closed without merge after all six required contexts passed |
-| Numeric candidate and independent arithmetic research | PR #11, Draft, targets main | POC checks pass; findings reviewed; production adoption remains separate |
-| Schema tooling lockfile | PR #12, Draft, targets main | Review and CI pass; shared corpus remains a separate contract gate |
+| Numeric candidate and independent arithmetic research | PR #11, Draft, stale/diverged | Old head 120ccd3414fb7018011ea3991800728f86736319; 77 ahead / 371 behind main; exact-old-head checks passed historically. Do not merge directly. Selectively salvage valuable research into a fresh main-based PR after source review, then rerun all checks. |
+| Schema tooling lockfile | PR #12, closed without merge | Core package.json, lockfile and validation script blobs are identical on main; Issue #9 is closed completed. The old branch was not merged. |
 | Audit, system design, bounded CLI, shared corpus, typed diagnostics and Numeric Profile derivation | PR #13, merged to main | Merge `593d04d`; source head `17b77e3` passed all six required contexts, Numeric Envelope and Release Candidate Preview; Stage 0 single-maintainer disposition recorded; no independent approval claimed |
 | Numeric Profile/backend decision | New OFRL-only PR | Finite input domain, error budgets, resource and Finance/Accounting gates accepted |
 | Production forecast engine | New OFRL-only PR | Phase 2 exit accepted |
@@ -279,3 +299,43 @@ Every material change records the prior decision, new decision, rationale, affec
 Never change a tolerance after observing a failed result merely to produce PASS. Any threshold change requires a dated rationale, policy version change and complete rerun.
 
 This roadmap authorizes work only in `projects/OFRL-IB-001/` within `witthaya-quant/Open-Finance-Research-Lab`. It does not authorize edits to other projects or unrelated repository files.
+
+
+## 7. Canonical active task register
+
+This table is the only active IB task list. Task IDs are stable. A task moves to COMPLETE only when acceptance evidence is linked and the corresponding source documents are updated. GitHub Issues track discussion and evidence; they are not copied as a second checklist.
+
+| Task ID | Workstream | Required outcome | Current status | Dependency / next action |
+|---|---|---|---|---|
+| IB-T001 | Model Owner domain decision | Finite V1 bounds for operating drivers and opening/historical amounts; units, inclusivity, sign/zero policy, source rationale, integer/fractional precision for monetary/ratio/day classes; confirm retained 0–1 assumptions | **BLOCKED — Kenny / Model Owner input** | Complete the existing Numeric Profile Worksheet and Issue #28. Do not infer values from Case A, fixtures, static capacity or POC stress points. |
+| IB-T002 | Finance/Accounting policy review | Review V1 equations, operating assumptions, accounting links, materiality, rounding, and separate arithmetic / accounting-identity / schedule-roll-forward / workbook display error budgets | **BLOCKED — qualified review required** | Follows T001 domain definition; record reviewer, competence/scope, evidence, findings and decision. Do not substitute AI analysis or founder notes for independent review. |
+| IB-T003 | Engineering numeric envelope | Derive five-year maximum magnitudes, pre-normalization scales, coefficient bounds at every material formula node, division context/error propagation and finite resource envelope | **BLOCKED — approved input policy required** | After T001/T002 policy inputs, rerun the main-branch exact derivation, derive just-below/at/just-above boundary cases and measure runtime resources. |
+| IB-T004 | Production arithmetic backend | Select or reject rust_decimal, BigDecimal or another justified candidate using correctness, representability, precision, determinism, resource, source/licence and migration gates | **NOT STARTED — gated** | T001–T003 plus Workstream D review; no candidate is selected by weighted score if any hard gate fails. |
+| IB-T005 | Dependency and source acceptance | Complete package-source/provenance, licence/notice, advisory, exception and reproducible-build disposition for the eventual production dependency graph | **OPEN — Issue #16** | Main preview is not an official release SBOM. Work may proceed in parallel only where it does not assume the final backend; resolve yanked generator exception before release. |
+| IB-T006 | Canonical Rust forecast engine | Implement operating forecast, supporting schedules and integrated IS/BS/CFS inside existing ofrl_model boundaries | **NOT STARTED — blocked by Phase 2 exit** | No new crate or alternate formula engine. Implement only after T001–T004 and T002 review are accepted. |
+| IB-T007 | Forecast validation | Structural Integrity and Scenario Feasibility, formula coverage, edge/boundary/property tests, no-plug and funding-shortfall behaviour | **NOT STARTED — depends on T006** | Use approved numeric policy and the existing Validation Matrix after its tolerance gates are versioned and approved. |
+| IB-T008 | ModelRun, provenance and CLI | Deterministic canonical result contract, SHA-256 input/output fingerprints, policy/backend/engine identity, formula lineage and safe atomic writes | **NOT STARTED — depends on T006/T007** | Extend existing ofrl_cli; preserve distinct validation, calculation, integrity and feasibility outcomes. |
+| IB-T009 | Analyst-facing XLSX | Generate the workbook from canonical ModelRun only and reconcile every material displayed value | **NOT STARTED — depends on T008** | Do not create spreadsheet formulas that become a second calculation authority. |
+| IB-T010 | Release and independent reproduction | Complete R2 release readiness, clean-checkout reproduction, final SBOM/checksum, licence/data review, known limitations, independent domain review and authorized publication | **NOT STARTED — depends on T005–T009 and root Issue #19** | Preview artifact is not a release. Obtain applicable R2 domain assurance and complete the release record before publishing. |
+
+### 7.1 Phase exit criteria
+
+- **Phase 2 exit:** T001–T005 relevant decisions and evidence accepted, including Model Owner domain, Finance/Accounting review, Engineering scale/coefficient/resource proof and explicit backend decision. No Phase 3 implementation before this exit.
+- **Phase 3 exit:** complete five-year deterministic three-statement engine with reviewed formulas, hard-gate Structural Integrity and separate Scenario Feasibility results.
+- **Phase 4 exit:** canonical ModelRun and CLI determinism/provenance are proven from a clean checkout.
+- **Phase 5 exit:** workbook is generated solely from ModelRun and reconciles against canonical output under the approved display policy.
+- **Phase 6 exit:** release readiness, dependency/data/IP/security review, R2 domain assurance, reproduction and Founder publication authorization are recorded. Evidence maturity must reflect what was demonstrated; Level 4 requires actual independent replication, not merely release.
+
+## 8. Agent continuation contract
+
+Every new chat, code agent or human contributor must:
+1. Read this file first, then read the task's specialist source documents.
+2. Fetch current main, active PR metadata, branch head, compare counts and exact-head checks before changing files. Prior GitHub snapshots are historical until re-fetched.
+3. Receive one or more existing Task IDs from §7; no task ID means no implementation authorization.
+4. Record exact repository, branch, starting SHA, allowed paths, objective, acceptance criteria and required test commands in the task/PR description.
+5. Keep changes within authorized existing project paths. Do not create parallel folders, roadmaps or duplicate status documents.
+6. Preserve failing, blocked, skipped and not-applicable states. A green workflow does not prove financial correctness.
+7. Update this roadmap and the relevant specialist document in the same reviewed change when status or decisions change.
+8. Leave unresolved Model Owner, Finance/Accounting, Engineering or release approvals to their actual decision owners.
+
+An agent handoff is complete only when another agent can continue from the task ID, source-of-truth links, exact commit, evidence and next action without relying on this chat transcript.

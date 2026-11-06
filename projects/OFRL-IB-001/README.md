@@ -95,7 +95,9 @@ The first reproducible case will use synthetic data created specifically for thi
 
 - [Engineering Audit](ENGINEERING_AUDIT.md)
 - [System Design and Control Architecture](SYSTEM_DESIGN.md)
-- [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md)
+- [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md) — **sole execution source of truth** for task IDs, phases, dependencies, blockers and next actions.
+
+All agents and contributors must start from the Implementation Roadmap and use its existing task IDs. This README is navigation only; it must not become a parallel status board. Project specifications, model conventions, architecture, decision log, validation matrix and Numeric Profile worksheet retain their specialist authority as mapped in the roadmap. Do not create duplicate roadmaps, handoff summaries, task trackers or folders without an explicitly authorized task.
 - [Numeric Profile Decision Worksheet](NUMERIC_PROFILE_WORKSHEET.md)
 - [Numeric Profile Derivation and Backend Decision Basis](NUMERIC_PROFILE_DERIVATION.md)
 - [Numeric Backend Evaluation Protocol](NUMERIC_BACKEND_EVALUATION.md)
