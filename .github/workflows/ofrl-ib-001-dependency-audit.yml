@@ -10,6 +10,8 @@ on:
       - "projects/OFRL-IB-001/poc/decimal-contract/Cargo.toml"
       - "projects/OFRL-IB-001/poc/decimal-contract/Cargo.lock"
   workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"
 
 permissions:
   contents: read
