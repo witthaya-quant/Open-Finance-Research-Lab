@@ -151,6 +151,10 @@ jobs:
 
           app_metadata, poc_metadata, app_lock, poc_lock, cache_root, output = map(pathlib.Path, sys.argv[1:])
           CRATES_IO = "registry+https://github.com/rust-lang/crates.io-index"
+          LICENSE_TEXT_NAMES = re.compile(
+              r"^(license|licence|unlicense|copying)([-_.].*)?$",
+              re.IGNORECASE,
+          )
           NOTICE_NAMES = re.compile(
               r"^(license|licence|unlicense|copying|notice|copyright|patents|authors|contributors)([-_.].*)?$",
               re.IGNORECASE,
@@ -318,6 +322,11 @@ jobs:
                                   "sha256": sha256_bytes(file_content),
                               })
 
+                          license_text_files = [
+                              item for item in legal_files
+                              if LICENSE_TEXT_NAMES.match(pathlib.PurePosixPath(item["path"]).name)
+                          ]
+
                           records.append({
                               "name": name,
                               "version": version,
@@ -337,6 +346,12 @@ jobs:
                               "source_manifest_license_file": source_license_file,
                               "metadata_cross_check": metadata_match,
                               "license_and_notice_files": legal_files,
+                              "license_text_files": license_text_files,
+                              "license_text_candidate_count": len(license_text_files),
+                              "license_text_status": (
+                                  "FOUND_IN_SOURCE_ARCHIVE" if license_text_files
+                                  else "NOT_FOUND_IN_SOURCE_ARCHIVE"
+                              ),
                               "source_review": "PENDING",
                               "licence_review": "PENDING",
                               "archive_integrity": "SHA256_MATCHES_COMMITTED_LOCKFILE",
@@ -350,6 +365,9 @@ jobs:
                   "locked_registry_package_count": len(packages),
                   "metadata_registry_package_count": len(metadata_map),
                   "source_archives_verified": len(records),
+                  "packages_without_license_text_candidate": sum(
+                      1 for item in records if item["license_text_candidate_count"] == 0
+                  ),
                   "lockfile_sha256": sha256_file(lock_path),
                   "packages": records,
               }, errors
@@ -362,7 +380,7 @@ jobs:
           )
 
           report = {
-              "schema_version": "1.0.0",
+              "schema_version": "1.1.0",
               "review_state": "PENDING_MANUAL_SOURCE_AND_LICENCE_REVIEW",
               "interpretation": (
                   "Inventory only. Cargo fetched dependencies under the committed lockfiles; each source archive "
