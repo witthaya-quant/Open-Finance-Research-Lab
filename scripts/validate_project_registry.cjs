@@ -303,11 +303,108 @@ function isSafeEvidenceReference(reference, projectDir) {
   }
 }
 
+function residualRiskAssessmentViolations(readiness, projectDir) {
+  const violations = [];
+  const assessment = readiness?.residual_risk_assessment;
+  if (!isObject(assessment)) {
+    return ["project.json: residual_risk_assessment must be an object"];
+  }
+
+  const risks = Array.isArray(assessment.risks) ? assessment.risks : [];
+  if (assessment.status === "NOT_ASSESSED") {
+    if (assessment.outcome !== "NOT_ASSESSED" ||
+        assessment.reviewed_by !== null ||
+        assessment.reviewer_role !== null ||
+        assessment.reviewed_at !== null ||
+        assessment.next_review_at !== null ||
+        (assessment.evidence?.length ?? 0) !== 0 ||
+        risks.length !== 0) {
+      violations.push("project.json: NOT_ASSESSED residual-risk state must not contain an assessment outcome, reviewer, dates, evidence or risk records");
+    }
+    return violations;
+  }
+
+  if (assessment.status !== "ASSESSED") return violations;
+  if (assessment.outcome === "NOT_ASSESSED") {
+    violations.push("project.json: an ASSESSED residual-risk review requires an explicit outcome");
+  }
+  if (typeof assessment.reviewed_at !== "string" ||
+      typeof assessment.next_review_at !== "string" ||
+      Date.parse(assessment.next_review_at) < Date.parse(assessment.reviewed_at)) {
+    violations.push("project.json: residual-risk next_review_at must not precede reviewed_at");
+  }
+
+  for (const reference of assessment.evidence ?? []) {
+    if (!isSafeEvidenceReference(reference, projectDir)) {
+      violations.push("project.json: residual-risk assessment has an unsafe or unresolved evidence reference");
+    }
+  }
+
+  if (assessment.outcome === "NO_RESIDUAL_RISKS" && risks.length !== 0) {
+    violations.push("project.json: NO_RESIDUAL_RISKS outcome must have an empty risks array");
+  }
+  if (assessment.outcome === "RESIDUAL_RISKS_RECORDED" && risks.length === 0) {
+    violations.push("project.json: RESIDUAL_RISKS_RECORDED outcome requires at least one risk record");
+  }
+
+  const seenRiskIds = new Set();
+  for (const risk of risks) {
+    if (!isObject(risk) || typeof risk.risk_id !== "string") continue;
+    if (seenRiskIds.has(risk.risk_id)) {
+      violations.push("project.json: duplicate residual-risk id '" + risk.risk_id + "'");
+    }
+    seenRiskIds.add(risk.risk_id);
+
+    if (Date.parse(risk.review_due_at) > Date.parse(risk.expires_at)) {
+      violations.push("project.json: residual risk '" + risk.risk_id + "' review_due_at must not be later than expires_at");
+    }
+
+    for (const reference of risk.evidence ?? []) {
+      if (!isSafeEvidenceReference(reference, projectDir)) {
+        violations.push("project.json: residual risk '" + risk.risk_id + "' has an unsafe or unresolved evidence reference");
+      }
+    }
+
+    if (risk.decision === "ACCEPTED") {
+      if (typeof risk.accepted_by !== "string" ||
+          typeof risk.accepted_by_role !== "string" ||
+          typeof risk.accepted_at !== "string" ||
+          typeof risk.decision_reference !== "string") {
+        violations.push("project.json: ACCEPTED residual risk '" + risk.risk_id + "' requires a named accepting authority, role, date and decision reference");
+      } else if (!isSafeEvidenceReference(risk.decision_reference, projectDir)) {
+        violations.push("project.json: ACCEPTED residual risk '" + risk.risk_id + "' requires a resolvable acceptance decision reference");
+      }
+      if (!Array.isArray(risk.evidence) || risk.evidence.length === 0) {
+        violations.push("project.json: ACCEPTED residual risk '" + risk.risk_id + "' requires supporting evidence");
+      }
+      if (typeof risk.accepted_at === "string" && Date.parse(risk.accepted_at) > Date.parse(risk.expires_at)) {
+        violations.push("project.json: accepted residual risk '" + risk.risk_id + "' cannot be accepted after its expiry date");
+      }
+    } else if (risk.accepted_by !== null || risk.accepted_by_role !== null || risk.accepted_at !== null) {
+      violations.push("project.json: non-ACCEPTED residual risk '" + risk.risk_id + "' must not carry acceptance fields");
+    }
+
+    if (["MITIGATED", "TRANSFERRED", "CLOSED"].includes(risk.decision)) {
+      if (!Array.isArray(risk.evidence) || risk.evidence.length === 0 ||
+          typeof risk.decision_reference !== "string" ||
+          !isSafeEvidenceReference(risk.decision_reference, projectDir)) {
+        violations.push("project.json: " + risk.decision + " residual risk '" + risk.risk_id + "' requires evidence and a resolvable decision reference");
+      }
+    }
+  }
+
+  return violations;
+}
+
 function releaseReadinessViolations(manifest, projectDir) {
   const violations = [];
   const readiness = manifest?.release_readiness;
   if (!isObject(readiness)) {
     return ["project.json: release_readiness must be an object under manifest schema 1.1.0"];
+  }
+
+  for (const violation of residualRiskAssessmentViolations(readiness, projectDir)) {
+    violations.push(violation);
   }
 
   const gates = Array.isArray(readiness.gates) ? readiness.gates : [];
@@ -389,6 +486,20 @@ function releaseReadinessViolations(manifest, projectDir) {
 
   const assessment = readiness.assessment_status;
   const authorization = readiness.authorization;
+  const residualRiskAssessment = readiness.residual_risk_assessment;
+
+  if (assessment === "NOT_ASSESSED" && residualRiskAssessment?.status !== "NOT_ASSESSED") {
+    violations.push("project.json: NOT_ASSESSED release readiness must keep residual-risk assessment NOT_ASSESSED");
+  }
+  if (assessment === "ELIGIBLE_FOR_AUTHORIZATION") {
+    if (residualRiskAssessment?.status !== "ASSESSED" ||
+        !["NO_RESIDUAL_RISKS", "RESIDUAL_RISKS_RECORDED"].includes(residualRiskAssessment?.outcome)) {
+      violations.push("project.json: ELIGIBLE_FOR_AUTHORIZATION requires a completed residual-risk assessment");
+    }
+    if ((residualRiskAssessment?.risks ?? []).some((risk) => risk.decision === "OPEN")) {
+      violations.push("project.json: ELIGIBLE_FOR_AUTHORIZATION cannot contain OPEN residual risks");
+    }
+  }
   const allRequiredSatisfied = required.every((gateId) => {
     const gate = gatesById.get(gateId);
     if (!gate) return false;
