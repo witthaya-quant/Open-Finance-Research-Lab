@@ -30,7 +30,6 @@ jobs:
       RUST_TOOLCHAIN: "1.85.0"
       CARGO_AUDIT_VERSION: "0.22.2"
       CARGO_AUDIT_SHA256: "ab28a1bdb54db4d5d8ad5981cf1f959410370b3d28250dbd35f6a44248620e39"
-      CARGO_HOME: ${{ runner.temp }}/ofrl-cargo-home
       SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
     steps:
@@ -44,6 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          export CARGO_HOME="$RUNNER_TEMP/ofrl-cargo-home"
 
           if ! command -v rustup >/dev/null 2>&1; then
             echo "::error::rustup is not present on the ubuntu-24.04 runner; refusing to execute a remote bootstrap script." >&2
@@ -86,6 +86,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          export CARGO_HOME="$RUNNER_TEMP/ofrl-cargo-home"
 
           output="$RUNNER_TEMP/ofrl-ib-001-dependency-audit"
           work="$RUNNER_TEMP/ofrl-ib-001-source-work"
@@ -395,6 +396,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          export CARGO_HOME="$RUNNER_TEMP/ofrl-cargo-home"
 
           output="$RUNNER_TEMP/ofrl-ib-001-dependency-audit"
           mkdir -p "$output"
