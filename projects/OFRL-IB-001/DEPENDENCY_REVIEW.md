@@ -72,13 +72,13 @@ The inventory computes SHA-256 against each lockfile checksum and hashes candida
 
 ### 3.1 Exact-head source archive inventory — PR #34
 
-The corrected schema 1.2.0 workflow completed successfully on PR #34 source commit `cd72d5d8f4efc4728a16da2a744d8edc54821e24`:
+The corrected schema 1.2.0 workflow completed successfully on PR #34 source commit `a47b68c808cb996f932f0fc475e85807f87e1fae`:
 
-- Workflow run: [#42185736016 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42185736016)
-- Artifact: `ofrl-ib-001-dependency-audit-cd72d5d8f4efc4728a16da2a744d8edc54821e24` (ID `13487187666`)
-- Artifact archive SHA-256: `23e339a2ee54d800af4bc353617977171efaf9095fd2c5d9c8000dad52ac1c4d`; the downloaded archive was independently hashed and matched GitHub's reported digest.
-- Inventory schema: `1.2.0`, which detects both dedicated licence filenames and embedded licence-section headings.
-- Source revision: PR `pull_request` event, not `main`. The application and Decimal POC lockfiles were unchanged from the main baseline recorded above; this run does not represent a merged-main run.
+- Workflow run: [#42186000627 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42186000627)
+- Artifact: `ofrl-ib-001-dependency-audit-a47b68c808cb996f932f0fc475e85807f87e1fae` (ID `13487721458`)
+- Artifact archive SHA-256: `5b72fefda65438758c115c04b8bde13d6fab4ceea0cf791a4792461ecc604d23`; the downloaded archive was independently hashed and matched GitHub's reported digest.
+- Inventory schema: `1.2.0`, detecting both dedicated licence filenames and embedded licence-section headings.
+- Source revision: PR `pull_request` event, not `main`. The application and Decimal POC lockfiles were unchanged from the main baseline recorded above.
 
 | Scope | Locked registry packages | Source archives matched lockfile SHA-256 | Cargo metadata vs source manifest | Licence-text candidates | Packages with no licence-text candidate |
 |---|---:|---:|---:|---:|---:|
@@ -108,7 +108,7 @@ The tagged upstream source was checked directly:
 
 The package occurs once in the application lockfile and once in the isolated Decimal POC lockfile. The source-archive inventory records `AUTHORS` in both scopes (3,693 bytes; archive SHA-256 `ff92bed461f50338dd703a9ba9aee496a425957873df1d91192776e4bdf5dda7`). The original schema 1.1 result did not inspect embedded section headings and therefore must not be interpreted as proof that the package omitted its licence material.
 
-The corrected schema 1.2.0 matcher was verified by [workflow run #42185736016](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42185736016). The uploaded artifact records all four embedded headings under `license_text_files` and reports `FOUND_IN_SOURCE_ARCHIVE` for `r-efi 5.3.0` in both dependency scopes. The application and POC inventories each report zero packages without a licence-text candidate.
+The corrected schema 1.2.0 matcher was independently verified again by [workflow run #42186000627](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42186000627). The uploaded artifact records all four embedded headings under `license_text_files` and reports `FOUND_IN_SOURCE_ARCHIVE` for `r-efi 5.3.0` in both dependency scopes. The application and POC inventories each report zero packages without a licence-text candidate.
 
 This is a classification improvement, not a legal approval or a claim that every referenced upstream licence document is reproduced in full.
 
@@ -148,7 +148,7 @@ A clean point-in-time scan does not prove that a package is free of vulnerabilit
 
 ### 5.1 Current RustSec result — PR #34 exact run
 
-The same PR #34 workflow run `42185736016` audited the current committed application and Decimal POC lockfiles with `cargo-audit 0.22.2`, `--deny warnings`, and no ignore list:
+The same PR #34 workflow run `42186000627` audited the current committed application and Decimal POC lockfiles with `cargo-audit 0.22.2`, `--deny warnings`, and no ignore list:
 
 | Scope | Audit dependency count | Vulnerabilities | Warnings | Exit |
 |---|---:|---:|---:|---:|
@@ -164,7 +164,7 @@ RustSec Advisory Database snapshot:
 
 This is a successful, point-in-time scan for the exact two lockfiles and database commit above. It is not proof of absence of vulnerabilities, exploitability, application defects, system-library risks or issues outside RustSec. It does not resolve the `xml-rs 0.8.19` exception in the separate CycloneDX generator graph.
 
-The PR head was `cd72d5d8f4efc4728a16da2a744d8edc54821e24`; the workflow definition and package manifests/lockfiles were unchanged for this run. The artifact ID was `13487187666`, with archive SHA-256 `23e339a2ee54d800af4bc353617977171efaf9095fd2c5d9c8000dad52ac1c4d`. The downloaded archive hash matched GitHub's digest. The scan must be repeated after dependency/manifest/lockfile/workflow changes and after merge to main as required by the release process.
+The audited source commit was `a47b68c808cb996f932f0fc475e85807f87e1fae`; the workflow definition and package manifests/lockfiles were unchanged for this run. The artifact ID was `13487721458`, with archive SHA-256 `5b72fefda65438758c115c04b8bde13d6fab4ceea0cf791a4792461ecc604d23`. The downloaded archive hash matched GitHub's digest. The scan must be repeated after dependency/manifest/lockfile/workflow changes and after merge to main as required by the release process.
 
 ## 6. SBOM and release provenance
 
