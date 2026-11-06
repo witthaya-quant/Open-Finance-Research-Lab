@@ -340,8 +340,13 @@ function releaseReadinessViolations(manifest, projectDir) {
       if (!isSafeEvidenceReference(gate.assessor.review_reference, projectDir)) {
         violations.push("project.json: PASS gate '" + gate.gate_id + "' requires a resolvable reviewer/decision reference");
       }
-      if (gate.assessor.independent === true && gate.assessor.conflict_status !== "NONE_DECLARED" && gate.assessor.conflict_status !== "DISCLOSED") {
-        violations.push("project.json: independent assessor for '" + gate.gate_id + "' must record conflict status");
+      if (gate.assessor.independent === true && gate.assessor.conflict_status !== "NONE_DECLARED") {
+        violations.push("project.json: assessor for '" + gate.gate_id + "' cannot claim independence while a conflict is disclosed");
+      }
+      const ownerIdentity = String(manifest.owner || "").toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+      const assessorIdentity = String(gate.assessor.identity || "").toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+      if (gate.assessor.independent === true && ownerIdentity && assessorIdentity === ownerIdentity) {
+        violations.push("project.json: project owner cannot be recorded as an independent assessor");
       }
       const requiresIndependentAssessor =
         gate.gate_id === "independent_domain_review" ||
