@@ -8,7 +8,7 @@
 **Source publication label:** November 2026  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
-**Case status:** INCOMPLETE — H-017 conditional third-party 19-roster map independently reproduced; semantic and rule validation remain BLOCKED  
+**Case status:** INCOMPLETE — CM-T0008 candidate screening complete; H-017 remains conditional; source-rule and completeness validation remain BLOCKED  
 **Evidence maturity:** 0 — Proposed
 
 ## 1. Why this case was selected
@@ -39,6 +39,8 @@ Historical pre-H-017 screen (2026-11-06): the Four Anemoi (22; 9 optima), Char D
 
 H-017 supplies candidate rosters for the six previously unresolved emojis, but their evidence grades differ. Beijing's imperial altars and the Sistine Madonna composition have contextual support; Pigpen X-grid is a plausible geometric wordplay lead. The Washington D.C. neighborhoods lack precise official boundary vertices; Monopoly corners are not cardinal directions; orchestra seating is variable; and the Barcelona diamond reference depicts Yaya Touré rather than Busquets. The Queen roster also moves from the earlier 🎶 hypothesis H-014 to 👸, while the earlier football H-015 competes with the new Barcelona roster. None is accepted as Jane Street's intended association.
 
+H-018 completed the source-led positional challenge. Sotheby's confirms Queen crest symbols for May, Mercury, Deacon and Taylor, but the two lions do not distinguish Deacon from Taylor left/right. A 2010/11 Barcelona tactical retrospective supports the Messi/Xavi/Busquets/Iniesta box or asymmetric-diamond interpretation, while emphasizing fluid rotations. The Royal Collection Trust confirms Sistine Madonna's Sixtus-left / Barbara-right / cherubs-lower layout. The common Pigpen X-grid and Beijing altar directions align with H-017. The Washington D.C. locality set is directionally plausible but not built from official neighborhood boundaries. Monopoly's four corners can be transformed to T/R/B/L by a declared 45-degree clockwise board rotation, but the monocle-to-Mr.-Monopoly clue link remains unsupported. Orchestra seating is conductor-dependent, so no universal four-point layout is accepted. Details are in PROBLEM_FORMALIZATION.md H-018 and DATA_MANIFEST.md SRC-060–SRC-067.
+
 The full sequence list, emoji sequence, images, and official solution are intentionally not copied into this repository.
 
 ## 4. Current research status
@@ -50,12 +52,12 @@ The full sequence list, emoji sequence, images, and official solution are intent
 | Sequence counts and ordering properties checked | PASS |
 | Formal input and output semantics established | BLOCKED |
 | CM-T0007 audit of twelve candidate clusters: 48 distinct source assignments checked; 25 exact candidate anagrams and 23 residual-bearing pairs; semantic fit and positional evidence graded separately | PASS — audit only, not proof of puzzle intent |
-| CM-T0008 candidate work: H-017 third-party complete-map review, strict conditional exact-cover reconstruction, residual-string extraction, and semantic/code audit | IN PROGRESS — 19 candidate rosters / 76 entries map uniquely under the third-party 2/1/1 rule; no roster or rule accepted as official; published solver comparator FAILs strict validation |
+| CM-T0008 candidate work: H-017 complete-map audit plus H-018 evidence-led semantic/positional challenge of the previously open clues | PASS — screening complete; no candidate mapping accepted as an official Jane Street rule; Queen slot swap, 🧐 clue link, and exact global semantics remain unresolved |
 | Local letter-count residuals reproduced for the documented candidate groups | PASS |
 | Community-reported anagram readings registered as unverified leads | PASS |
 | Secondary solver-status sources reviewed and correctly classified as leads, not proofs | PASS |
-| Direct official solution URL and worked derivation retrieved | BLOCKED |
-| Source-validated 19 emoji groups and 76 cardinal assignments reconstructed | BLOCKED — H-017 conditionally covers 76/76 entries for the third-party's fixed rosters; source-backed clue membership, cardinal orientation, Ø meaning, and Jane Street rule remain unverified |
+| Official Archive index now lists November Pressure Points / Puzzle Solution; direct solution URL and worked derivation retrieved | BLOCKED — index text observed; direct href and solution body not retrieved |
+| Source-validated 19 emoji groups and 76 cardinal assignments reconstructed | BLOCKED — H-017 conditionally covers 76/76 source entries, but Queen's left/right member assignment, 🧐 clue membership, and source-authorized 19-group/cardinal rules remain unverified |
 | One global letter-reallocation / extraction rule explained across all 19 groups | BLOCKED |
 | Candidate output phrase independently verified | BLOCKED |
 | Candidate mathematical model selected | NOT RUN |
@@ -78,7 +80,7 @@ The full sequence list, emoji sequence, images, and official solution are intent
 10. What is the correct treatment of Ø within the 76-position model?
 11. Which community-reported readings are intended by the emoji clues, and how is ambiguity between valid anagrams resolved?
 
-These are questions, not proposed answers. Hypotheses H-001 to H-017 and blockers U-001 to U-010 are recorded in PROBLEM_FORMALIZATION.md §4 and must not be promoted to facts without a complete derivation.
+These are questions, not proposed answers. Hypotheses H-001 to H-017 and blockers U-001 to U-010 are recorded in PROBLEM_FORMALIZATION.md §4; H-018 is an evidence audit, not a new solution hypothesis. None should be promoted to fact without a complete derivation.
 
 ## 6. Next gate
 
@@ -99,7 +101,7 @@ All puzzle content remains attributable to Jane Street. OFRL does not claim owne
 
 **Current disposition: INCOMPLETE / BLOCKED — not solved and not ready for solver implementation.**
 
-The current research round has reproduced a third-party candidate map for all 19 themes and 76 visible entries under a strict 2-exact / 1-surplus / 1-deficit multiset rule. This is a conditional exact cover of the nominated rosters, not a source-validated solution. The residual strings and Antwerp candidate output form a coherent external interpretation, but theme-to-emoji associations, positions, the role of Ø, extraction order, and rule intent remain unresolved. Several candidate groups are weak or contradicted by positional sources, and the third-party solver implementation contains a false-positive comparator defect. The official Archive still does not expose a verifiable November solution target or body in the retrieved page; third-party submission claims do not close that gap.
+The current research round has reproduced a third-party candidate map for all 19 themes and 76 visible source entries under a strict 2-exact / 1-surplus / 1-deficit multiset rule. This is a conditional exact cover of nominated rosters, not a source-validated solution. H-018 improves the positional evidence for selected clues but leaves the Queen Deacon/Taylor left-right swap unresolved, the 🧐-to-Monopoly association unsupported, D.C. positions approximate, and orchestra seating non-universal. The role of Ø, source-authorized theme membership, the global residual/extraction rule, and uniqueness/completeness remain unresolved. The Archive search index now displays a November “Puzzle Solution” label, but the accessible HTML still exposes no direct November href or solution body; third-party submission claims do not close this gap.
 
 This is a **no-go for solver implementation under the evidence currently available**, not a claim that the puzzle is unsolvable and not a declaration that the case has been solved. Do not create a Cargo workspace, choose dependencies, or implement a solver while the correctness predicate remains undefined.
 

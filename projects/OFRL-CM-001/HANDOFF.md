@@ -76,10 +76,10 @@ Agents must not create additional files, branches, issues, PRs, dependencies, or
 - Distinguish exact arithmetic, numerical approximation, statistical estimate, and heuristic result.
 - Do not claim financial applicability or trading performance without a separate defensible mapping and relevant empirical/economic validation.
 - Respect the Data Policy, License Policy, and Publication/IP Boundary. Public availability is not redistribution permission.
-- Current CM-T0008 continuation: audit H-017 as a **conditional third-party candidate map**, not an accepted solution. Challenge semantic membership, positional geometry, extraction ordering, and the role of Ø. Preserve the Queen/H-014 versus Orchestra and football/H-015 versus Barcelona conflicts.
+- CM-T0008's H-017/H-018 candidate-screening round is **PASS — screen complete; no official Jane Street mapping accepted**. Do not reopen completed negative rosters without new independent evidence. Queen left/right remains ambiguous; the 🧐-to-Monopoly link is not accepted; D.C. locality geometry is approximate; orchestra seating is not universal.
 - The pinned third-party `solver.py` has a two-sided multiset-comparison defect; do not rely on it as an executable verifier, copy it, or adapt it into OFRL. Use the strict criterion documented in PROBLEM_FORMALIZATION.md H-017 for any further manual cross-check.
-- Do not repeat previously screened negative rosters without new independent source evidence. Keep the official Jane Street solution task open unless an actual direct official target and body are retrieved.
-- H-017's 76/76 exact cover and candidate Antwerp phrase do not authorize solver implementation. No Cargo workspace, Rust solver, dependency, benchmark, or project-specific workflow until the formalization and correctness-predicate gates pass.
+- Current next tasks are CM-T0009 (Ø, displayed ordering, residual transformation, terminal notation), CM-T0010 (retrieve the direct official solution target/body if available), and CM-T0011 (independent derivation and correctness/completeness assessment). The official Archive search index now displays a November “Puzzle Solution” label, but no direct href or body has yet been retrieved.
+- H-017's 76/76 conditional exact cover and candidate Antwerp phrase do not authorize solver implementation. VAL-014/015 remain BLOCKED. No Cargo workspace, Rust solver, dependency, benchmark, or project-specific workflow until the formalization and correctness-predicate gates pass.
 
 ## 6. End-of-task protocol
 
