@@ -299,7 +299,7 @@ test("NOT APPLICABLE requires a reason and cannot waive non-applicable R3 hard g
     }),
   };
   const errors = registry.releaseReadinessViolations(manifest, ROOT);
-  assert.ok(errors.some((x) => x.includes("privacy_legal_review") === false && x.includes("ELIGIBLE_FOR_AUTHORIZATION") === false) || errors.length === 0);
+  assert.deepEqual(errors, []);
   manifest.release_readiness.gates.find((x) => x.gate_id === "security_review").status = "NOT APPLICABLE";
   assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("risk-tier gate")));
 });
