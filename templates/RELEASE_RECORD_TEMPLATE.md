@@ -18,15 +18,15 @@ Describe the released deliverable, intended use, supported scope, and material c
 
 | Gate | Result | Evidence |
 |---|---|---|
-| Specification and scope | PASS / FAIL / BLOCKED | |
-| Domain / research correctness | PASS / FAIL / BLOCKED / N/A | |
-| Data and licensing | PASS / FAIL / BLOCKED / N/A | |
-| Implementation / tests | PASS / FAIL / BLOCKED / N/A | |
-| Security and privacy | PASS / FAIL / BLOCKED / N/A | |
-| Reproducibility | PASS / FAIL / BLOCKED | |
-| Publication authorization | PASS / FAIL / BLOCKED | |
+| Specification and scope | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Domain / research correctness | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Data and licensing | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Implementation / tests | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Security and privacy | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Reproducibility | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Publication authorization | PASS / FAIL / NOT RUN / BLOCKED | |
 
-Link the Validation Matrix and CI runs. Do not describe a check as passed unless it was actually executed.
+Link the manifest's release_readiness gates, the Validation Matrix, actual submitted reviews/Decision Records, and exact-source CI runs. For NOT APPLICABLE, include the rationale. Do not describe a check as passed unless it was actually executed; do not count requested reviewers or AI assistance as independent review.
 
 ## 3. Build and artifact provenance
 
