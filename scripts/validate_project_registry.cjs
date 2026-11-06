@@ -324,14 +324,23 @@ function residualRiskAssessmentViolations(readiness, projectDir) {
     return violations;
   }
 
-  if (assessment.status !== "ASSESSED") return violations;
+  if (assessment.status !== "ASSESSED") {
+    violations.push("project.json: residual-risk assessment status must be NOT_ASSESSED or ASSESSED");
+    return violations;
+  }
   if (assessment.outcome === "NOT_ASSESSED") {
     violations.push("project.json: an ASSESSED residual-risk review requires an explicit outcome");
   }
-  if (typeof assessment.reviewed_at !== "string" ||
-      typeof assessment.next_review_at !== "string" ||
-      Date.parse(assessment.next_review_at) < Date.parse(assessment.reviewed_at)) {
+  if (typeof assessment.reviewed_by !== "string" ||
+      typeof assessment.reviewer_role !== "string" ||
+      typeof assessment.reviewed_at !== "string" ||
+      typeof assessment.next_review_at !== "string") {
+    violations.push("project.json: ASSESSED residual-risk review requires a named reviewer, role and review dates");
+  } else if (Date.parse(assessment.next_review_at) < Date.parse(assessment.reviewed_at)) {
     violations.push("project.json: residual-risk next_review_at must not precede reviewed_at");
+  }
+  if (!Array.isArray(assessment.evidence) || assessment.evidence.length === 0) {
+    violations.push("project.json: ASSESSED residual-risk review requires at least one evidence reference");
   }
 
   for (const reference of assessment.evidence ?? []) {
@@ -357,6 +366,14 @@ function residualRiskAssessmentViolations(readiness, projectDir) {
 
     if (Date.parse(risk.review_due_at) > Date.parse(risk.expires_at)) {
       violations.push("project.json: residual risk '" + risk.risk_id + "' review_due_at must not be later than expires_at");
+    }
+    if (typeof assessment.next_review_at === "string" &&
+        Date.parse(risk.review_due_at) > Date.parse(assessment.next_review_at)) {
+      violations.push("project.json: residual risk '" + risk.risk_id + "' review_due_at must not be later than the assessment next_review_at");
+    }
+    if (typeof assessment.reviewed_at === "string" &&
+        Date.parse(risk.expires_at) < Date.parse(assessment.reviewed_at)) {
+      violations.push("project.json: residual risk '" + risk.risk_id + "' was already expired when the assessment was recorded");
     }
 
     for (const reference of risk.evidence ?? []) {
