@@ -105,6 +105,18 @@ PR #22 adds a **preview-only** CycloneDX 1.5 SBOM and SHA-256 bundle for the imp
 
 The preview generator is pinned to `cargo-cyclonedx 0.5.9`; its published lockfile includes yanked `xml-rs 0.8.19`. This is recorded as a time-bounded, preview-only build-tool exception with review due by 2027-02-04 or earlier if upstream removes the dependency. The reason for the yank was not established; absence of a surfaced advisory is not proof of safety.
 
+**Main-branch dependency baseline (verified 2026-11-06; source `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`)**
+
+The application workspace lockfile `projects/OFRL-IB-001/Cargo.lock` has Git blob `21ac76815662e765ee6502da059a312d2e9bc9eb` and contains 54 package records: 52 crates.io registry packages plus the two local workspace packages (`ofrl_cli`, `ofrl_model`). No Git-sourced package is present. Five package names resolve at more than one version: `getrandom`, `rand`, `rand_chacha`, `rand_core`, and `syn`. These are inventory observations, not vulnerability findings; each duplicate must be assessed against the actual target graph and advisory data.
+
+The PR #22 preview run `41838318926` was a `pull_request` run on source commit `3ca98dd26de97098f68fa0ca45b92fbb466f1d19`, not a build run on the current `main` commit. Its application lockfile has the same Git blob SHA as the current `main` lockfile, so its target-specific 41-component inventory (40 registry packages plus local `ofrl_model`) remains relevant to that locked dependency graph. It does not establish a fresh build of the current source commit, multi-platform support, source-level legal acceptance, or an official release.
+
+The isolated Decimal POC remains a distinct dependency boundary: its lockfile Git blob is `eb2ecaed4be37129070271108911ae57f03530ba` and contains 56 package records (55 registry packages plus the local POC package), with no Git-sourced packages. Its existing `DEPENDENCY_REVIEW.md` explicitly limits the review to the POC and keeps source-level licence/security review open; it cannot be used as acceptance evidence for the application workspace.
+
+The current `.github/dependabot.yml` schedules weekly update proposals for the application Cargo workspace, the isolated POC, GitHub Actions, and the npm schema-validator. This is maintenance automation, not a vulnerability scan or a source-level review. The four workflow files currently on `main` contain no `cargo audit` / RustSec scan step. PR #11's point-in-time dependency inventory and RustSec results remain on its unmerged Draft branch and are not current `main` evidence.
+
+**Current disposition:** lockfile identity, registry-source classification, target-specific preview SBOM evidence, and update automation are partially evidenced. Package-source/repository provenance mapping, exact source-archive licence and notice review, current advisory triage for the eventual production graph, and a complete package-level acceptance record remain open. The yanked `xml-rs 0.8.19` exception remains limited to the preview generator and is due for review by 2027-02-04. No production dependency graph is approved while IB-T004 remains gated, and no official release SBOM/checksum or publication authorization exists.
+
 Open items remain:
 
 - Source provenance and source-level licence/notice review for dependencies intended for distribution.
