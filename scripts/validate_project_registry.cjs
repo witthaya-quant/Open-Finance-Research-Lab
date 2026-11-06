@@ -508,6 +508,9 @@ function releaseReadinessViolations(manifest, projectDir) {
   if (assessment === "NOT_ASSESSED" && residualRiskAssessment?.status !== "NOT_ASSESSED") {
     violations.push("project.json: NOT_ASSESSED release readiness must keep residual-risk assessment NOT_ASSESSED");
   }
+  if (assessment === "NOT_ASSESSED" && gates.length !== 0) {
+    violations.push("project.json: NOT_ASSESSED release readiness must not contain gate dispositions");
+  }
   if (assessment === "ELIGIBLE_FOR_AUTHORIZATION") {
     if (residualRiskAssessment?.status !== "ASSESSED" ||
         !["NO_RESIDUAL_RISKS", "RESIDUAL_RISKS_RECORDED"].includes(residualRiskAssessment?.outcome)) {
