@@ -369,6 +369,7 @@
                   ],
                   "properties": {
                     "evidence": {
+                      "type": "array",
                       "minItems": 1
                     },
                     "assessor": {
