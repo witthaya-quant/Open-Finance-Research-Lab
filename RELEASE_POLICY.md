@@ -149,6 +149,28 @@ Each registered project's `project.json` must reflect its lifecycle and release 
 
 Project-specific versioning may differ. Do not impose one version number across unrelated research, data, software, and model deliverables. Where a project contains multiple independently released components, record their versions and compatibility separately.
 
+### 10.1 Machine-readable release readiness and authorization
+
+Manifest schema 1.1.0 is the authoritative machine-readable release-readiness contract for each registered project. It keeps four separate dimensions distinct: lifecycle state, risk tier, evidence maturity, and release authorization.
+
+Assessment states:
+- `NOT_ASSESSED`: no formal release assessment has been completed. This is the normal state for proposed and in-development work; no gate list is fabricated.
+- `BLOCKED`: formal assessment has begun and at least one required gate is missing, failed, not run, or blocked.
+- `ELIGIBLE_FOR_AUTHORIZATION`: every required gate for the project type, data classification, lifecycle and risk tier is PASS or has a permitted, reasoned NOT APPLICABLE disposition.
+
+Gate dispositions are `PASS`, `FAIL`, `NOT RUN`, `BLOCKED`, and `NOT APPLICABLE`. A PASS must identify the assessor, role, independence/conflict declaration, evidence and review reference. A NOT APPLICABLE decision must state why the gate does not apply. R3 cannot waive founder approval, independent domain/security review, operational safeguards, incident response or rollback/recovery. Privacy/legal review may be N/A only when the rationale is recorded.
+
+Authorization is separate:
+- `NOT_AUTHORIZED`: no publication/live-use permission exists.
+- `AUTHORIZED`: an explicit authority, role, date, decision record and exact 40-character source commit are recorded.
+- `WITHDRAWN`: a previously authorized release has been withdrawn and the manifest lifecycle/release state must reflect withdrawal.
+
+The registry requires a full applicable gate inventory once assessment is BLOCKED or ELIGIBLE. A project in `NOT_ASSESSED` may remain in proposal/development with an empty gate list. A `pre_release` or `released` artifact requires eligible assessment and explicit authorization. `LIVE_EXTERNAL` requires a released, authorized R3 project; lower risk tiers cannot declare this mode. A project does not become released because CI is green or a preview artifact exists.
+
+The registry is a structural and state-transition control. It verifies required gate coverage, evidence references, named assessors, independence flags for gates that require an independent reviewer, reasoned N/A states, lifecycle consistency and the separate authorization record. It cannot independently authenticate a person's competence, verify a reviewer's GitHub identity against an external evidence URL, determine legal applicability, or prove that cited evidence is true. The Founder and actual qualified reviewers remain accountable for those decisions. Never treat AI-assisted review as independent human review.
+
+The project manifest template and the existing release record template carry the same gate vocabulary. Project-specific validation matrices continue to own domain acceptance criteria; this policy does not create a second task tracker or replace those matrices.
+
 ## 11. Related documents
 
 - [Research Standards](RESEARCH_STANDARDS.md)
