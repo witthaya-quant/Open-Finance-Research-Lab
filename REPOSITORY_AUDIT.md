@@ -191,6 +191,9 @@ The PR branch has passing repository-policy, Rust semantic-validator, Decimal-co
 
 ## 9. Audit interpretation
 
+**Control baseline update:** PR #31 is merged to `main` at `66a73fcd19a9b33f2dcebf1ebd66b2de1c3ed562`. Root Issue #19 / AUD-022 is now being implemented on branch `governance/risk-tier-release-readiness`; until that PR is merged, the new release-readiness contract is proposed code, not active main-branch enforcement.
+
+
 The audit does not recommend adding a GitHub Organization, changing the public repository to a restrictive source-available licence, adopting a CLA/CAA without a licensing need, or creating Maintainer/Code Owner roles before people are appointed.
 
 The recommended operating model remains a Founder-led public repository under the Founder's personal account, with fork-based contributions and a separately controlled private research workstream.
@@ -200,7 +203,7 @@ Every finding should be closed by evidence: a merged change, a verified GitHub s
 
 ## 10. Current portfolio and delivery read-back — 2026-11-06
 
-**Evidence baseline:** the current default branch was fetched at main commit `5f8f578c387150214a1f438c3d67da48652eb4cb`. This is a point-in-time API audit, not a claim that repository security settings outside accessible GitHub endpoints have been verified.
+**Evidence baseline:** the current default branch was fetched at main commit `66a73fcd19a9b33f2dcebf1ebd66b2de1c3ed562` after PR #31 merged. The Issue #19 implementation described below is on a separate branch and is not yet a main-branch capability. This is a point-in-time API audit, not a claim that repository security settings outside accessible GitHub endpoints have been verified.
 
 ### 10.1 Repository controls
 
@@ -211,7 +214,7 @@ Every finding should be closed by evidence: a merged change, a verified GitHub s
 | Repository-wide policy gate | repository-policy workflow exists on main and is a required Ruleset context | Implemented; continue testing documentation-only and project-code changes |
 | Project registry | Project manifest schema, project lifecycle/standards and registry validator are on main | Implemented; current Project Catalog remains the authoritative admission list |
 | Schema validator tooling | package.json, package-lock.json and validation shell script are on main | Issue #9 is closed as completed; PR #12 was closed without merge after exact blob comparison showed its core files already existed on main |
-| Release-readiness enforcement | Risk-tier controls are not fully enforced for release transitions | OPEN — Issue #19 / AUD-022 |
+| Release-readiness enforcement | Manifest schema 1.1.0, risk-tier gate derivation, reviewer/conflict evidence, residual-risk assessment/ownership/expiry controls and separate authorization are implemented on PR #32's governance branch; current main remains unchanged | **IN PROGRESS — Issue #19 / AUD-022**; exact-head repository-policy and all six required contexts have passed on the last verified PR head; rerun on the final head, review and merge before calling the control active on main |
 | Account continuity | Policy is documented; actual personal-account MFA/recovery/successor/backup settings are not proven by repository files | Founder action remains manual and must be confirmed separately |
 | GitHub Advanced Security | Secret scanning, push protection, Dependabot alerts and code scanning settings were not verified by the available repository read-back | UNKNOWN; do not infer enabled or disabled |
 | Maintainer independence | Repository governance remains Stage 0 / Founder-maintained | No independent review evidence may be claimed until an eligible person submits an actual review |
@@ -232,23 +235,24 @@ OFRL-CM-001 is proposed in draft PR #29 but is **not registered on main** and is
 |---|---|---|
 | [#2 — IB V1 scope and forecast-engine gates](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/2) | OPEN; legacy parent tracker has 31 checked / 6 unchecked items but contains older branch/status statements | Reconcile it to the canonical IB Implementation Roadmap; do not treat the old checklist as current task truth |
 | [#16 — Rust supply-chain controls before release](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/16) | OPEN; 24 checked / 10 unchecked | Finish release-source SBOM, source-level licence/notice/security review, temporary generator exception disposition, checksums and authorization before official release |
-| [#19 — risk-tier release readiness](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/19) | OPEN; AUD-022 | Define and enforce risk-proportionate R2/R3 release evidence, independent review, privacy/legal applicability, operations, incident response and rollback gates |
+| [#19 — risk-tier release readiness](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/19) | OPEN; implementation tracked in Draft PR #32 | Complete final exact-head CI, review, merge and post-merge verification of manifest schema 1.1.0, cross-field registry enforcement, residual-risk controls, templates and policy alignment |
 | [#28 — finite V1 numeric input domain](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/28) | OPEN; 0/9 criteria checked; no approved versioned Numeric Profile | Model Owner must provide finite domain and precision decisions; Finance/Accounting and Engineering record their own separate decisions |
 | [#23 — typed deserialization diagnostics](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/23) | CLOSED / completed; 9/9 criteria checked | No remaining implementation action for EA-06 |
 
 ### 10.4 Open Pull Requests — current exact branch state
 
-The following states and comparisons were fetched against main `5f8f578c387150214a1f438c3d67da48652eb4cb` on 2026-11-06. The old SHA check results listed below are attached only to those old SHAs and must not be carried to any updated branch.
+The following states and comparisons were fetched against current main `66a73fcd19a9b33f2dcebf1ebd66b2de1c3ed562` on 2026-11-06. Branch comparisons are measured against that commit even where a PR targets another base branch. Every CI result is valid only for the exact SHA stated; it must not be carried to a newer head.
 
 | PR | State / purpose | Head and divergence | CI / blocker / disposition |
 |---|---|---|---|
-| [#11 — numeric foundations research](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/11) | Open / Draft | `120ccd3414fb7018011ea3991800728f86736319`; 77 ahead / 371 behind; diverged | Eight checks succeeded on that exact old head, but it is not current main evidence. The 800-output BM-002/BM-003 material and Python reference are branch-only. Do not merge the branch directly; selectively review and port only required evidence to a fresh main-based branch, rerun checks and update the project record. |
-| [#21 — CycloneDX candidate release pipeline](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/21) | Open / Draft | `c8e2f1966d17e0b9623a63a16d2d14565077f355`; 2 ahead / 234 behind; diverged | Six required contexts succeeded on the old head; the additional candidate-bundle job failed because the generator produced no matching binary-specific SBOM file. No release artifact was established. Do not merge directly; reconsider only after source/target/output-path investigation on a fresh base. Main's PR #22 preview is separate and uses the narrower preview contract. |
-| [#25 — upload-artifact dependency update](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/25) | Open / non-draft; Dependabot | `6b638c17584e134e8537fbaddf742d075d0965cc`; compare reported 1 ahead / 3 behind; diverged | Eight contexts succeeded on that old head. Update against current main and require exact-head CI before merge decision. |
-| [#26 — setup-node dependency update](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/26) | Open / non-draft; Dependabot | `ac31c444811239f070e0aff7445230f27a4d4244`; compare reported 1 ahead / 3 behind; diverged | Seven contexts succeeded on that old head. Update against current main and require exact-head CI before merge decision. |
-| [#29 — OFRL-CM-001 admission and pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29) | Open / Draft | `3b18860a769b2c1751535099b7335feb007ca8e5`; 23 ahead / 212 behind; diverged | Seven workflows succeeded on the exact old head. It is not admitted on main. The formalization still records unresolved Pressure Points semantics and no solver authorization. Rebase/port only after a fresh admission review; no solver or case completion should be inferred from green CI. |
+| [#11 — numeric foundations research](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/11) | Open / Draft | `120ccd3414fb7018011ea3991800728f86736319`; 77 ahead / 376 behind current main; diverged | Eight checks succeeded on that exact old head, but it is not current main evidence. The 800-output BM-002/BM-003 material and Python reference are branch-only. Do not merge the branch directly; selectively review and port only required evidence to a fresh main-based branch, rerun checks and update the project record. |
+| [#21 — CycloneDX candidate release pipeline](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/21) | Open / Draft | `c8e2f1966d17e0b9623a63a16d2d14565077f355`; PR base is `supply-chain/decimal-poc-lockfile`; 2 ahead / 239 behind current main; diverged | Six required contexts succeeded on the old head; the additional candidate-bundle job failed because the generator produced no matching binary-specific SBOM file. No release artifact was established. Do not merge directly; reconsider only after source/target/output-path investigation on a fresh base. Main's PR #22 preview is separate and uses the narrower preview contract. |
+| [#25 — upload-artifact dependency update](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/25) | Open / non-draft; Dependabot | `6b638c17584e134e8537fbaddf742d075d0965cc`; 1 ahead / 8 behind current main; diverged | Eight contexts succeeded on that old head. Update against current main and require exact-head CI before merge decision. |
+| [#26 — setup-node dependency update](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/26) | Open / non-draft; Dependabot | `ac31c444811239f070e0aff7445230f27a4d4244`; 1 ahead / 8 behind current main; diverged | Seven contexts succeeded on that old head. Update against current main and require exact-head CI before merge decision. |
+| [#29 — OFRL-CM-001 admission and pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29) | Open / Draft | `3b18860a769b2c1751535099b7335feb007ca8e5`; 23 ahead / 217 behind current main; diverged | Seven workflows succeeded on the exact old head. It is not admitted on main. The formalization still records unresolved Pressure Points semantics and no solver authorization. Rebase/port only after a fresh admission review; no solver or case completion should be inferred from green CI. |
+| [#32 — risk-tier release readiness](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/32) | Open / Draft | Last verified head `da09ca049cfc253241650c66ca829e202605dd69`; 43 ahead / 0 behind main at that snapshot | Repository-policy and all six required contexts passed on that exact head; 27 registry tests passed. The additional Release Candidate Preview workflow was still running. This audit update changes the PR head, so those results are historical and every required context must pass again on the new exact head before merge. |
 
-PR #12 was closed without merge after the three core schema-tooling files were found byte-for-byte identical by Git blob SHA on main and its old head. Issue #9 was then closed as completed. This is a duplicate-branch resolution, not a PR merge.
+PR #12 was closed without merge after the three core schema-tooling files were found byte-for-byte identical by Git blob SHA on main and its old head. Issue #9 was then closed as completed. This is a duplicate-branch resolution, not a PR merge. PR #31 subsequently merged as `66a73fcd19a9b33f2dcebf1ebd66b2de1c3ed562`, refreshing this audit and establishing the canonical IB execution register. The current Issue #19 release-readiness implementation remains on its own branch until its exact-head checks and merge are completed.
 
 ### 10.5 What remains before OFRL-IB-001 V1 can be called complete
 
@@ -283,7 +287,7 @@ These are candidate workstreams, not approved projects or a promise to implement
 
 ### 10.7 Portfolio-level residual controls
 
-- Issue #19 / AUD-022: risk-proportionate machine-enforced release readiness for R2/R3.
+- Issue #19 / AUD-022: machine-enforced release readiness for R0–R3, including residual-risk ownership, review dates and expiry. Implementation is in PR #32 and remains inactive on main until final exact-head checks and merge.
 - Issue #16: official release supply-chain, source/licence/notice and artifact controls.
 - Founder account continuity: configure and test MFA, recovery, successor and backup controls; code alone cannot prove personal account settings.
 - Advanced Security settings: verify each actual setting in GitHub or report it UNKNOWN.

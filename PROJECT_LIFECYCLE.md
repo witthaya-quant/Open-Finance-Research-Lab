@@ -22,7 +22,7 @@ Every project admitted under the OFRL name must have:
 
 - A unique, stable project ID.
 - A canonical directory under `projects/<PROJECT-ID>/`.
-- A machine-readable `project.json` manifest validated against [the project manifest schema](schemas/ofrl-project-manifest-1.0.0.schema.json).
+- A machine-readable `project.json` manifest validated against [the project manifest schema](schemas/ofrl-project-manifest-1.1.0.schema.json).
 - A project README describing purpose, scope, status, and limitations.
 - A project Decision Log.
 - A validation matrix or explicit validation plan proportionate to the project.
@@ -80,8 +80,11 @@ The `project.json` file is the authoritative machine-readable metadata for one p
 - Licence profile and data classification.
 - Required project documents and validation profiles.
 - Release status.
+- A versioned `release_readiness` assessment, risk-tier gate evidence, named assessors, and a separate release-authorization record.
 
-The repository-wide [Project Catalog](PROJECT_CATALOG.md) is a human-readable navigation index. Every project directory must appear in the catalog. The repository policy workflow compiles the manifest JSON Schema with Ajv and validates each project manifest, then checks directory/ID consistency, required files, type/risk profiles, workflow paths, lifecycle/release consistency, and catalog-field agreement.
+The manifest's `release_readiness` contract distinguishes `NOT_ASSESSED`, `BLOCKED`, and `ELIGIBLE_FOR_AUTHORIZATION` from the separate authorization states `NOT_AUTHORIZED`, `AUTHORIZED`, and `WITHDRAWN`. A green assessment is not publication permission. Projects may remain `NOT_ASSESSED` during proposal and development; once an assessment is started or release is requested, the registry requires the full applicable gate inventory and rejects unsupported lifecycle transitions.
+
+The repository-wide [Project Catalog](PROJECT_CATALOG.md) is a human-readable navigation index. Every project directory must appear in the catalog. The repository policy workflow compiles the manifest JSON Schema with Ajv and validates each project manifest, then checks directory/ID consistency, required files, type/risk profiles, workflow paths, lifecycle/release consistency, risk-tier release-readiness evidence, authorization gates, and catalog-field agreement.
 
 Do not duplicate mutable project facts across multiple root registries. Update the project manifest first, then update the catalog links and summary in the same Pull Request.
 

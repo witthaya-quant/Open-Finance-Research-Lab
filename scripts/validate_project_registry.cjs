@@ -18,7 +18,7 @@ const path = require("node:path");
 const ROOT = path.resolve(__dirname, "..");
 const PROJECTS_ROOT = path.join(ROOT, "projects");
 const CATALOG_PATH = path.join(ROOT, "PROJECT_CATALOG.md");
-const SCHEMA_PATH = path.join(ROOT, "schemas", "ofrl-project-manifest-1.0.0.schema.json");
+const SCHEMA_PATH = path.join(ROOT, "schemas", "ofrl-project-manifest-1.1.0.schema.json");
 const NODE_MODULES = path.join(__dirname, "schema-validator", "node_modules");
 
 const AjvModule = require(path.join(NODE_MODULES, "ajv", "dist", "2020"));
@@ -228,6 +228,374 @@ function riskTierPolicyViolations(manifest, threatModelExists) {
   return violations;
 }
 
+const REQUIRED_RELEASE_GATE_IDS = new Set([
+  "scope_and_claims",
+  "evidence_and_limitations",
+  "data_rights",
+  "licence_and_ip",
+  "reproducibility",
+  "domain_review",
+  "numeric_and_financial_controls",
+  "dependency_and_sbom",
+  "independent_domain_review",
+  "security_review",
+  "privacy_legal_review",
+  "operational_safeguards",
+  "incident_response",
+  "rollback_recovery",
+  "founder_approval",
+  "maintenance_and_corrections",
+]);
+
+function assessmentRequiresGateInventory(status) {
+  return status === "BLOCKED" || status === "ELIGIBLE_FOR_AUTHORIZATION";
+}
+
+function requiredReleaseGateIds(manifest) {
+  const ids = [
+    "scope_and_claims",
+    "evidence_and_limitations",
+    "licence_and_ip",
+    "founder_approval",
+  ];
+  const types = new Set(Array.isArray(manifest?.project_types) ? manifest.project_types : []);
+
+  if (manifest?.risk_tier && manifest.risk_tier !== "R0") {
+    ids.push("reproducibility", "domain_review");
+  }
+  if (manifest?.data_classification && manifest.data_classification !== "none") {
+    ids.push("data_rights", "privacy_legal_review");
+  }
+  if (types.has("financial_model")) {
+    ids.push("numeric_and_financial_controls");
+  }
+  if (["software", "infrastructure"].some((type) => types.has(type))) {
+    ids.push("dependency_and_sbom");
+  }
+  if (manifest?.release_readiness?.independent_assurance_required === true) {
+    ids.push("independent_domain_review");
+  }
+  if (manifest?.lifecycle_status === "maintenance") {
+    ids.push("maintenance_and_corrections");
+  }
+  if (manifest?.risk_tier === "R3") {
+    ids.push(
+      "independent_domain_review",
+      "security_review",
+      "privacy_legal_review",
+      "operational_safeguards",
+      "incident_response",
+      "rollback_recovery"
+    );
+  }
+  return [...new Set(ids)];
+}
+
+function isSafeEvidenceReference(reference, projectDir) {
+  if (typeof reference !== "string" || reference.trim() !== reference || reference.length === 0) {
+    return false;
+  }
+  try {
+    const url = new URL(reference);
+    return url.protocol === "https:" && Boolean(url.hostname) && !url.username && !url.password;
+  } catch {
+    return Boolean(resolveFileWithin(projectDir, reference));
+  }
+}
+
+function residualRiskAssessmentViolations(readiness, projectDir) {
+  const violations = [];
+  const assessment = readiness?.residual_risk_assessment;
+  if (!isObject(assessment)) {
+    return ["project.json: residual_risk_assessment must be an object"];
+  }
+
+  const risks = Array.isArray(assessment.risks) ? assessment.risks : [];
+  if (assessment.status === "NOT_ASSESSED") {
+    if (assessment.outcome !== "NOT_ASSESSED" ||
+        assessment.reviewed_by !== null ||
+        assessment.reviewer_role !== null ||
+        assessment.reviewed_at !== null ||
+        assessment.next_review_at !== null ||
+        (assessment.evidence?.length ?? 0) !== 0 ||
+        risks.length !== 0) {
+      violations.push("project.json: NOT_ASSESSED residual-risk state must not contain an assessment outcome, reviewer, dates, evidence or risk records");
+    }
+    return violations;
+  }
+
+  if (assessment.status !== "ASSESSED") {
+    violations.push("project.json: residual-risk assessment status must be NOT_ASSESSED or ASSESSED");
+    return violations;
+  }
+  if (assessment.outcome === "NOT_ASSESSED") {
+    violations.push("project.json: an ASSESSED residual-risk review requires an explicit outcome");
+  }
+  if (typeof assessment.reviewed_by !== "string" ||
+      typeof assessment.reviewer_role !== "string" ||
+      typeof assessment.reviewed_at !== "string" ||
+      typeof assessment.next_review_at !== "string") {
+    violations.push("project.json: ASSESSED residual-risk review requires a named reviewer, role and review dates");
+  } else if (Date.parse(assessment.next_review_at) < Date.parse(assessment.reviewed_at)) {
+    violations.push("project.json: residual-risk next_review_at must not precede reviewed_at");
+  }
+  if (!Array.isArray(assessment.evidence) || assessment.evidence.length === 0) {
+    violations.push("project.json: ASSESSED residual-risk review requires at least one evidence reference");
+  }
+
+  for (const reference of assessment.evidence ?? []) {
+    if (!isSafeEvidenceReference(reference, projectDir)) {
+      violations.push("project.json: residual-risk assessment has an unsafe or unresolved evidence reference");
+    }
+  }
+
+  if (assessment.outcome === "NO_RESIDUAL_RISKS" && risks.length !== 0) {
+    violations.push("project.json: NO_RESIDUAL_RISKS outcome must have an empty risks array");
+  }
+  if (assessment.outcome === "RESIDUAL_RISKS_RECORDED" && risks.length === 0) {
+    violations.push("project.json: RESIDUAL_RISKS_RECORDED outcome requires at least one risk record");
+  }
+
+  const seenRiskIds = new Set();
+  for (const risk of risks) {
+    if (!isObject(risk) || typeof risk.risk_id !== "string") continue;
+    if (seenRiskIds.has(risk.risk_id)) {
+      violations.push("project.json: duplicate residual-risk id '" + risk.risk_id + "'");
+    }
+    seenRiskIds.add(risk.risk_id);
+
+    if (Date.parse(risk.review_due_at) > Date.parse(risk.expires_at)) {
+      violations.push("project.json: residual risk '" + risk.risk_id + "' review_due_at must not be later than expires_at");
+    }
+    if (typeof assessment.next_review_at === "string" &&
+        Date.parse(risk.review_due_at) > Date.parse(assessment.next_review_at)) {
+      violations.push("project.json: residual risk '" + risk.risk_id + "' review_due_at must not be later than the assessment next_review_at");
+    }
+    if (typeof assessment.reviewed_at === "string" &&
+        Date.parse(risk.expires_at) < Date.parse(assessment.reviewed_at)) {
+      violations.push("project.json: residual risk '" + risk.risk_id + "' was already expired when the assessment was recorded");
+    }
+
+    for (const reference of risk.evidence ?? []) {
+      if (!isSafeEvidenceReference(reference, projectDir)) {
+        violations.push("project.json: residual risk '" + risk.risk_id + "' has an unsafe or unresolved evidence reference");
+      }
+    }
+
+    if (risk.decision === "ACCEPTED") {
+      if (typeof risk.accepted_by !== "string" ||
+          typeof risk.accepted_by_role !== "string" ||
+          typeof risk.accepted_at !== "string" ||
+          typeof risk.decision_reference !== "string") {
+        violations.push("project.json: ACCEPTED residual risk '" + risk.risk_id + "' requires a named accepting authority, role, date and decision reference");
+      } else if (!isSafeEvidenceReference(risk.decision_reference, projectDir)) {
+        violations.push("project.json: ACCEPTED residual risk '" + risk.risk_id + "' requires a resolvable acceptance decision reference");
+      }
+      if (!Array.isArray(risk.evidence) || risk.evidence.length === 0) {
+        violations.push("project.json: ACCEPTED residual risk '" + risk.risk_id + "' requires supporting evidence");
+      }
+      if (typeof risk.accepted_at === "string" && Date.parse(risk.accepted_at) > Date.parse(risk.expires_at)) {
+        violations.push("project.json: accepted residual risk '" + risk.risk_id + "' cannot be accepted after its expiry date");
+      }
+    } else if (risk.accepted_by !== null || risk.accepted_by_role !== null || risk.accepted_at !== null) {
+      violations.push("project.json: non-ACCEPTED residual risk '" + risk.risk_id + "' must not carry acceptance fields");
+    }
+
+    if (["MITIGATED", "TRANSFERRED", "CLOSED"].includes(risk.decision)) {
+      if (!Array.isArray(risk.evidence) || risk.evidence.length === 0 ||
+          typeof risk.decision_reference !== "string" ||
+          !isSafeEvidenceReference(risk.decision_reference, projectDir)) {
+        violations.push("project.json: " + risk.decision + " residual risk '" + risk.risk_id + "' requires evidence and a resolvable decision reference");
+      }
+    }
+  }
+
+  return violations;
+}
+
+function releaseReadinessViolations(manifest, projectDir) {
+  const violations = [];
+  const readiness = manifest?.release_readiness;
+  if (!isObject(readiness)) {
+    return ["project.json: release_readiness must be an object under manifest schema 1.1.0"];
+  }
+
+  for (const violation of residualRiskAssessmentViolations(readiness, projectDir)) {
+    violations.push(violation);
+  }
+
+  const gates = Array.isArray(readiness.gates) ? readiness.gates : [];
+  const gatesById = new Map();
+  for (const gate of gates) {
+    if (!isObject(gate) || typeof gate.gate_id !== "string") continue;
+    if (gatesById.has(gate.gate_id)) {
+      violations.push("project.json: duplicate release-readiness gate '" + gate.gate_id + "'");
+    } else {
+      gatesById.set(gate.gate_id, gate);
+    }
+    if (!REQUIRED_RELEASE_GATE_IDS.has(gate.gate_id)) {
+      violations.push("project.json: unsupported release-readiness gate '" + gate.gate_id + "'");
+      continue;
+    }
+
+    if (Array.isArray(gate.evidence)) {
+      for (const reference of gate.evidence) {
+        if (!isSafeEvidenceReference(reference, projectDir)) {
+          violations.push("project.json: release gate '" + gate.gate_id + "' has an unsafe or unresolved evidence reference");
+        }
+      }
+    }
+
+    if (gate.status === "PASS") {
+      if (!isObject(gate.assessor)) {
+        violations.push("project.json: PASS gate '" + gate.gate_id + "' requires a named assessor");
+        continue;
+      }
+      if (!isSafeEvidenceReference(gate.assessor.review_reference, projectDir)) {
+        violations.push("project.json: PASS gate '" + gate.gate_id + "' requires a resolvable reviewer/decision reference");
+      }
+      if (gate.assessor.independent === true && gate.assessor.conflict_status !== "NONE_DECLARED") {
+        violations.push("project.json: assessor for '" + gate.gate_id + "' cannot claim independence while a conflict is disclosed");
+      }
+      const ownerIdentity = String(manifest.owner || "").toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+      const assessorIdentity = String(gate.assessor.identity || "").toLocaleLowerCase().replace(/[^a-z0-9]/g, "");
+      if (gate.assessor.independent === true && ownerIdentity && assessorIdentity === ownerIdentity) {
+        violations.push("project.json: project owner cannot be recorded as an independent assessor");
+      }
+      const requiresIndependentAssessor =
+        gate.gate_id === "independent_domain_review" ||
+        (gate.gate_id === "security_review" && manifest.risk_tier === "R3");
+      if (requiresIndependentAssessor && gate.assessor.independent !== true) {
+        violations.push("project.json: " + gate.gate_id + " PASS requires an independent assessor");
+      }
+      if (requiresIndependentAssessor && gate.assessor.conflict_status !== "NONE_DECLARED") {
+        violations.push("project.json: " + gate.gate_id + " cannot count as independent PASS when a reviewer conflict is disclosed");
+      }
+      if (gate.gate_id === "founder_approval" && gate.assessor.independent === true) {
+        violations.push("project.json: founder_approval must not be represented as independent review");
+      }
+    }
+
+    if (gate.status === "NOT APPLICABLE" && (typeof gate.rationale !== "string" || gate.rationale.trim().length < 30)) {
+      violations.push("project.json: NOT APPLICABLE gate '" + gate.gate_id + "' requires a substantive rationale");
+    }
+  }
+
+  const required = requiredReleaseGateIds(manifest);
+  if (assessmentRequiresGateInventory(readiness.assessment_status)) {
+    for (const gateId of required) {
+      if (!gatesById.has(gateId)) {
+        violations.push("project.json: release readiness is missing required gate '" + gateId + "'");
+      }
+    }
+  }
+
+  if (manifest.risk_tier === "R2" &&
+      Array.isArray(manifest.project_types) &&
+      manifest.project_types.includes("financial_model") &&
+      readiness.independent_assurance_required !== true) {
+    violations.push("R2 financial models must require independent domain assurance before release");
+  }
+
+  if (manifest.risk_tier === "R3" && readiness.independent_assurance_required !== true) {
+    violations.push("R3 projects must require independent assurance");
+  }
+
+  const assessment = readiness.assessment_status;
+  const authorization = readiness.authorization;
+  const residualRiskAssessment = readiness.residual_risk_assessment;
+
+  if (assessment === "NOT_ASSESSED" && residualRiskAssessment?.status !== "NOT_ASSESSED") {
+    violations.push("project.json: NOT_ASSESSED release readiness must keep residual-risk assessment NOT_ASSESSED");
+  }
+  if (assessment === "NOT_ASSESSED" && gates.length !== 0) {
+    violations.push("project.json: NOT_ASSESSED release readiness must not contain gate dispositions");
+  }
+  if (assessment === "ELIGIBLE_FOR_AUTHORIZATION") {
+    if (residualRiskAssessment?.status !== "ASSESSED" ||
+        !["NO_RESIDUAL_RISKS", "RESIDUAL_RISKS_RECORDED"].includes(residualRiskAssessment?.outcome)) {
+      violations.push("project.json: ELIGIBLE_FOR_AUTHORIZATION requires a completed residual-risk assessment");
+    }
+    if ((residualRiskAssessment?.risks ?? []).some((risk) => risk.decision === "OPEN")) {
+      violations.push("project.json: ELIGIBLE_FOR_AUTHORIZATION cannot contain OPEN residual risks");
+    }
+  }
+  const allRequiredSatisfied = required.every((gateId) => {
+    const gate = gatesById.get(gateId);
+    if (!gate) return false;
+    if (gate.status === "PASS") return true;
+    if (gate.status !== "NOT APPLICABLE") return false;
+    return gateId === "privacy_legal_review";
+  });
+  const hasUnresolvedGate =
+    required.some((gateId) => {
+      const gate = gatesById.get(gateId);
+      return !gate || !["PASS", "NOT APPLICABLE"].includes(gate.status);
+    }) ||
+    gates.some((gate) => ["FAIL", "NOT RUN", "BLOCKED"].includes(gate.status));
+
+  if (assessment === "ELIGIBLE_FOR_AUTHORIZATION") {
+    if (!allRequiredSatisfied) {
+      violations.push("project.json: ELIGIBLE_FOR_AUTHORIZATION requires every applicable risk-tier gate to PASS or have a justified NOT APPLICABLE state");
+    }
+    if (gates.some((gate) => gate.status === "FAIL" || gate.status === "NOT RUN" || gate.status === "BLOCKED")) {
+      violations.push("project.json: eligible release readiness cannot contain FAIL, NOT RUN, or BLOCKED gates");
+    }
+  }
+
+  if (assessment === "BLOCKED" && !hasUnresolvedGate) {
+    violations.push("project.json: BLOCKED release readiness must identify at least one unresolved required gate");
+  }
+
+  if (authorization?.status === "AUTHORIZED" && assessment !== "ELIGIBLE_FOR_AUTHORIZATION") {
+    violations.push("project.json: authorization cannot be AUTHORIZED before release readiness is eligible");
+  }
+
+  if (authorization?.status === "AUTHORIZED") {
+    const founderGate = gatesById.get("founder_approval");
+    if (!founderGate || founderGate.status !== "PASS") {
+      violations.push("project.json: AUTHORIZED release requires a PASS founder_approval gate");
+    } else if (founderGate.assessor?.identity !== authorization.authority) {
+      violations.push("project.json: release authority must match the recorded founder_approval assessor");
+    }
+  }
+
+  const requiresAuthorization =
+    manifest.release_status === "pre_release" ||
+    manifest.release_status === "released" ||
+    readiness.operational_mode === "LIVE_EXTERNAL";
+
+  if (requiresAuthorization && authorization?.status !== "AUTHORIZED") {
+    violations.push("project.json: pre_release, released, and LIVE_EXTERNAL states require explicit AUTHORIZED release readiness");
+  }
+
+  if (manifest.release_status === "withdrawn" && authorization?.status !== "WITHDRAWN") {
+    violations.push("project.json: withdrawn release_status requires WITHDRAWN release authorization");
+  }
+  if (authorization?.status === "WITHDRAWN" && manifest.release_status !== "withdrawn") {
+    violations.push("project.json: WITHDRAWN authorization requires release_status 'withdrawn'");
+  }
+
+  if (readiness.operational_mode === "LIVE_EXTERNAL") {
+    if (manifest.risk_tier !== "R3") {
+      violations.push("project.json: LIVE_EXTERNAL operation is restricted to R3 projects");
+    }
+    if (manifest.release_status !== "released") {
+      violations.push("project.json: LIVE_EXTERNAL operation requires release_status 'released'");
+    }
+  }
+
+  if (authorization?.status === "AUTHORIZED" && !isSafeEvidenceReference(authorization.decision_record, projectDir)) {
+    violations.push("project.json: AUTHORIZED release requires a resolvable decision_record reference");
+  }
+
+  if (authorization?.status === "AUTHORIZED" && typeof authorization.source_commit !== "string") {
+    violations.push("project.json: AUTHORIZED release requires the exact 40-character source_commit");
+  }
+
+  return violations;
+}
+
 function relativeName(filePath) {
   return path.relative(ROOT, filePath).split(path.sep).join("/");
 }
@@ -390,12 +758,12 @@ function validateManifest(projectDir, folderName, catalogRows, seenIds, validate
     }
   }
 
-  if (manifest.schema_version !== "1.0.0") {
-    fail(relativeDir + "/project.json: unsupported schema_version; expected 1.0.0");
+  if (manifest.schema_version !== "1.1.0") {
+    fail(relativeDir + "/project.json: unsupported schema_version; expected 1.1.0");
   }
 
-  if (manifest.$schema !== "../../schemas/ofrl-project-manifest-1.0.0.schema.json") {
-    fail(relativeDir + "/project.json: $schema must reference the repository project-manifest schema");
+  if (manifest.$schema !== "../../schemas/ofrl-project-manifest-1.1.0.schema.json") {
+    fail(relativeDir + "/project.json: $schema must reference the repository project-manifest schema 1.1.0");
   }
 
   const id = manifest.project_id;
@@ -503,6 +871,10 @@ function validateManifest(projectDir, folderName, catalogRows, seenIds, validate
   }
 
   for (const violation of releaseStateViolations(manifest)) {
+    fail(relativeDir + ": " + violation);
+  }
+
+  for (const violation of releaseReadinessViolations(manifest, projectDir)) {
     fail(relativeDir + ": " + violation);
   }
 
@@ -655,5 +1027,8 @@ module.exports = {
   missingBaseDocumentGroups,
   missingTypeValidationProfiles,
   releaseStateViolations,
+  releaseReadinessViolations,
+  requiredReleaseGateIds,
+  isSafeEvidenceReference,
   riskTierPolicyViolations,
 };

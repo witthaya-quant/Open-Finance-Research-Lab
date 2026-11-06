@@ -18,15 +18,15 @@ Describe the released deliverable, intended use, supported scope, and material c
 
 | Gate | Result | Evidence |
 |---|---|---|
-| Specification and scope | PASS / FAIL / BLOCKED | |
-| Domain / research correctness | PASS / FAIL / BLOCKED / N/A | |
-| Data and licensing | PASS / FAIL / BLOCKED / N/A | |
-| Implementation / tests | PASS / FAIL / BLOCKED / N/A | |
-| Security and privacy | PASS / FAIL / BLOCKED / N/A | |
-| Reproducibility | PASS / FAIL / BLOCKED | |
-| Publication authorization | PASS / FAIL / BLOCKED | |
+| Specification and scope | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Domain / research correctness | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Data and licensing | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Implementation / tests | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Security and privacy | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Reproducibility | PASS / FAIL / NOT RUN / BLOCKED / NOT APPLICABLE | |
+| Publication authorization | PASS / FAIL / NOT RUN / BLOCKED | |
 
-Link the Validation Matrix and CI runs. Do not describe a check as passed unless it was actually executed.
+Link the manifest's release_readiness gates, the Validation Matrix, actual submitted reviews/Decision Records, and exact-source CI runs. For NOT APPLICABLE, include the rationale. Do not describe a check as passed unless it was actually executed; do not count requested reviewers or AI assistance as independent review.
 
 ## 3. Build and artifact provenance
 
@@ -57,6 +57,21 @@ Describe supported environments, API/schema compatibility, breaking changes, upg
 ## 6. Known limitations and risks
 
 List unresolved defects, untested conditions, evidence maturity, residual risks, and unsupported uses.
+
+### Residual-risk review
+
+**Assessment status:** NOT_ASSESSED / ASSESSED  
+**Outcome:** NOT_ASSESSED / NO_RESIDUAL_RISKS / RESIDUAL_RISKS_RECORDED  
+**Reviewed by / role:**  
+**Reviewed at:** YYYY-MM-DD  
+**Next review at:** YYYY-MM-DD  
+**Evidence reference(s):**
+
+| Risk ID | Summary (sanitized) | Severity | Disposition | Control owner | Review due | Expires | Expiry condition | Decision / evidence reference |
+|---|---|---|---|---|---|---|---|---|
+| | | LOW / MEDIUM / HIGH / CRITICAL | OPEN / MITIGATED / TRANSFERRED / ACCEPTED / CLOSED | | YYYY-MM-DD | YYYY-MM-DD | | |
+
+For every ACCEPTED residual risk, additionally record the accepting authority, role, acceptance date, supporting evidence and decision reference in the project manifest. An OPEN residual risk blocks `ELIGIBLE_FOR_AUTHORIZATION`. Keep confidential review materials outside the repository; use only sanitized summaries and access-controlled references here.
 
 ## 7. Corrections and support status
 
