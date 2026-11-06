@@ -343,11 +343,14 @@ function releaseReadinessViolations(manifest, projectDir) {
       if (gate.assessor.independent === true && gate.assessor.conflict_status !== "NONE_DECLARED" && gate.assessor.conflict_status !== "DISCLOSED") {
         violations.push("project.json: independent assessor for '" + gate.gate_id + "' must record conflict status");
       }
-      if (gate.gate_id === "independent_domain_review" && gate.assessor.independent !== true) {
-        violations.push("project.json: independent_domain_review PASS requires an independent assessor");
+      const requiresIndependentAssessor =
+        gate.gate_id === "independent_domain_review" ||
+        (gate.gate_id === "security_review" && manifest.risk_tier === "R3");
+      if (requiresIndependentAssessor && gate.assessor.independent !== true) {
+        violations.push("project.json: " + gate.gate_id + " PASS requires an independent assessor");
       }
-      if (gate.gate_id === "security_review" && manifest.risk_tier === "R3" && gate.assessor.independent !== true) {
-        violations.push("project.json: R3 security_review PASS requires an independent assessor");
+      if (requiresIndependentAssessor && gate.assessor.conflict_status !== "NONE_DECLARED") {
+        violations.push("project.json: " + gate.gate_id + " cannot count as independent PASS when a reviewer conflict is disclosed");
       }
       if (gate.gate_id === "founder_approval" && gate.assessor.independent === true) {
         violations.push("project.json: founder_approval must not be represented as independent review");
