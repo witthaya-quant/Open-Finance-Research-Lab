@@ -56,7 +56,7 @@ The application workspace currently supplies the Rust input domain, historical s
 
 The application and Decimal POC graphs are locked to crates.io registry packages. The committed Cargo.lock records package versions, registry source identifiers, and registry archive checksums.
 
-The new [Dependency Audit workflow](../../.github/workflows/ofrl-ib-001-dependency-audit.yml) is designed to:
+The new [Dependency Audit workflow](../../.github/workflows/ofrl-ib-001-dependency-audit.yml) runs for relevant pull-request changes, supports manual dispatch, and schedules a weekly source-inventory and RustSec recheck on the default branch after merge (Monday 06:17 UTC). It remains separate from the six required Ruleset contexts and does not add a new branch-protection requirement. The workflow is designed to:
 
 1. Resolve package metadata from each exact committed lockfile with the declared Rust toolchain and `--locked`.
 2. Fetch the exact committed-lockfile package archives with `cargo fetch --locked`, without compiling or executing package build scripts.
