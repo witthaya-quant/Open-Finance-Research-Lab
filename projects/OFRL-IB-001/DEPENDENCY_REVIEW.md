@@ -72,22 +72,25 @@ The inventory computes SHA-256 against each lockfile checksum and hashes candida
 
 ### 3.1 Exact-head source archive inventory — PR #34
 
-The current workflow completed successfully on PR #34 source commit `448c436486e75a7f40ad80fa20c612abf9618bc3`:
+The corrected schema 1.2.0 workflow completed successfully on PR #34 source commit `cd72d5d8f4efc4728a16da2a744d8edc54821e24`:
 
-- Workflow run: [#42181012893 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42181012893)
-- Artifact: `ofrl-ib-001-dependency-audit-448c436486e75a7f40ad80fa20c612abf9618bc3` (ID `13485366773`)
-- Artifact archive SHA-256: `a9dfae7e951c2b7ae8ddbcfb740583d5771ab58d43463dd182593a23bd3cf338`; the downloaded archive was independently hashed and matched GitHub's reported digest.
+- Workflow run: [#42185736016 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42185736016)
+- Artifact: `ofrl-ib-001-dependency-audit-cd72d5d8f4efc4728a16da2a744d8edc54821e24` (ID `13487187666`)
+- Artifact archive SHA-256: `23e339a2ee54d800af4bc353617977171efaf9095fd2c5d9c8000dad52ac1c4d`; the downloaded archive was independently hashed and matched GitHub's reported digest.
+- Inventory schema: `1.2.0`, which detects both dedicated licence filenames and embedded licence-section headings.
 - Source revision: PR `pull_request` event, not `main`. The application and Decimal POC lockfiles were unchanged from the main baseline recorded above; this run does not represent a merged-main run.
 
-| Scope | Locked registry packages | Source archives matched lockfile SHA-256 | Cargo metadata vs source manifest | Licence/notice candidates |
-|---|---:|---:|---:|---:|
-| Application workspace | 52 | 52 / 52 | 52 / 52 | 111 files |
-| Decimal Contract POC | 55 | 55 / 55 | 55 / 55 | 119 files |
-| **Total records** | **107** | **107 / 107** | **107 / 107** | **230 files** |
+| Scope | Locked registry packages | Source archives matched lockfile SHA-256 | Cargo metadata vs source manifest | Licence-text candidates | Packages with no licence-text candidate |
+|---|---:|---:|---:|---:|---:|
+| Application workspace | 52 | 52 / 52 | 52 / 52 | 52 / 52 | 0 |
+| Decimal Contract POC | 55 | 55 / 55 | 55 / 55 | 55 / 55 | 0 |
+| **Total records** | **107** | **107 / 107** | **107 / 107** | **107 / 107** | **0** |
 
-All 107 source archives matched their committed `Cargo.lock` SHA-256 checksums. The package identity, licence expression, licence-file field and repository field in each downloaded source archive matched Cargo metadata where the package appeared in the all-features metadata graph. There were no Git or non-crates.io registry sources, no missing publisher-declared licence expressions, no missing declared licence files, and no package without a detected licence/notice candidate file.
+All 107 source archives matched their committed `Cargo.lock` SHA-256 checksums. Package identity, licence expression, licence-file field and repository field in each downloaded source archive matched Cargo metadata where the package appeared in the all-features metadata graph. There were no Git or non-crates.io registry sources, no missing publisher-declared licence expressions, no missing declared licence files, and no package without a detected licence-text candidate under the corrected filename/embedded-section rule.
 
-The inventory records file paths, byte sizes and SHA-256 hashes for candidate licence, Unlicense, copyright, patent, authorship and notice files. It does **not** read these results as legal approvals. All 107 package records retain `licence_review=PENDING` and `source_review=PENDING`; the package-level terms and distribution obligations still require human review.
+The evidence artifact records candidate licence, Unlicense, copyright, patent, authorship and notice files by path, byte size and SHA-256. It also records embedded section names. In particular, `r-efi 5.3.0` is classified from its `AUTHORS` file with four embedded headings: `LICENSE`, `AUTHORS-MIT`, `AUTHORS-ASL`, and `AUTHORS-LGPL`, in both dependency scopes.
+
+These are source-inventory and classification results, not legal approvals. All 107 package records retain `licence_review=PENDING` and `source_review=PENDING`; package-level alternatives, notices, exceptions and downstream distribution obligations still require human review.
 
 ## 4. Licence, copyright and notice review
 
@@ -105,7 +108,9 @@ The tagged upstream source was checked directly:
 
 The package occurs once in the application lockfile and once in the isolated Decimal POC lockfile. The source-archive inventory records `AUTHORS` in both scopes (3,693 bytes; archive SHA-256 `ff92bed461f50338dd703a9ba9aee496a425957873df1d91192776e4bdf5dda7`). The original schema 1.1 result did not inspect embedded section headings and therefore must not be interpreted as proof that the package omitted its licence material.
 
-The dependency workflow is being upgraded to schema 1.2.0 so it detects both dedicated licence filenames and explicit embedded sections such as `LICENSE:` and `AUTHORS-MIT:`. This is a classification improvement, not a legal approval or a claim that every referenced upstream licence document is reproduced in full. The rerun on the corrected matcher must show the embedded headings in the evidence artifact before this inventory control is treated as verified.
+The corrected schema 1.2.0 matcher was verified by [workflow run #42185736016](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42185736016). The uploaded artifact records all four embedded headings under `license_text_files` and reports `FOUND_IN_SOURCE_ARCHIVE` for `r-efi 5.3.0` in both dependency scopes. The application and POC inventories each report zero packages without a licence-text candidate.
+
+This is a classification improvement, not a legal approval or a claim that every referenced upstream licence document is reproduced in full.
 
 **Disposition:** the prior missing-text finding is withdrawn. Source provenance and licence metadata are internally consistent at the inspected tag, but the package's licence alternatives, complete referenced terms, required notices and downstream distribution obligations remain subject to human review. Keep `source_review=PENDING` and `licence_review=PENDING` until that review is recorded.
 
@@ -143,7 +148,7 @@ A clean point-in-time scan does not prove that a package is free of vulnerabilit
 
 ### 5.1 Current RustSec result — PR #34 exact run
 
-The same PR #34 workflow run `42181012893` audited the current committed application and Decimal POC lockfiles with `cargo-audit 0.22.2`, `--deny warnings`, and no ignore list:
+The same PR #34 workflow run `42185736016` audited the current committed application and Decimal POC lockfiles with `cargo-audit 0.22.2`, `--deny warnings`, and no ignore list:
 
 | Scope | Audit dependency count | Vulnerabilities | Warnings | Exit |
 |---|---:|---:|---:|---:|
@@ -154,12 +159,12 @@ RustSec Advisory Database snapshot:
 
 - Commit: `26fd2d43f7280a1fb925a3743ec463017afe7119`
 - Timestamp: `2026-11-05T09:50:49+01:00`
-- Advisory records reported by the audit: 1,409
-- Both JSON reports recorded `vulnerabilities.found=false`, `vulnerabilities.count=0`, and an empty `warnings` object. The informational warning categories Unmaintained, Unsound and Notice were enabled as deny-worthy warnings.
+- Advisory records reported by the audit: 1,409.
+- Both JSON reports recorded `vulnerabilities.found=false`, `vulnerabilities.count=0`, and an empty `warnings` object. Informational warning categories Unmaintained, Unsound and Notice were enabled as deny-worthy warnings.
 
-This is a successful, current-at-run-time point-in-time scan for the exact two lockfiles and the database commit above. It is not proof of absence of vulnerabilities, exploitability, application defects, system-library risks or issues outside RustSec. It does not resolve the `xml-rs 0.8.19` exception in the separate CycloneDX generator graph.
+This is a successful, point-in-time scan for the exact two lockfiles and database commit above. It is not proof of absence of vulnerabilities, exploitability, application defects, system-library risks or issues outside RustSec. It does not resolve the `xml-rs 0.8.19` exception in the separate CycloneDX generator graph.
 
-The PR head was `448c436486e75a7f40ad80fa20c612abf9618bc3`; the workflow definition and package manifests/lockfiles have not changed after this run. Subsequent changes to the PR are documentation-only. The scan should be repeated after dependency/manifest/lockfile/workflow changes and after merge to main as required by the release process.
+The PR head was `cd72d5d8f4efc4728a16da2a744d8edc54821e24`; the workflow definition and package manifests/lockfiles were unchanged for this run. The artifact ID was `13487187666`, with archive SHA-256 `23e339a2ee54d800af4bc353617977171efaf9095fd2c5d9c8000dad52ac1c4d`. The downloaded archive hash matched GitHub's digest. The scan must be repeated after dependency/manifest/lockfile/workflow changes and after merge to main as required by the release process.
 
 ## 6. SBOM and release provenance
 
