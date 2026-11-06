@@ -340,7 +340,12 @@
                     "then": {
                       "required": [
                         "conflict_rationale"
-                      ]
+                      ],
+                      "properties": {
+                        "conflict_rationale": {
+                          "type": "string"
+                        }
+                      }
                     }
                   }
                 ]
@@ -365,6 +370,9 @@
                   "properties": {
                     "evidence": {
                       "minItems": 1
+                    },
+                    "assessor": {
+                      "type": "object"
                     }
                   }
                 }
