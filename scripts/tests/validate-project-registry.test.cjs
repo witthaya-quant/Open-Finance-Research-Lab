@@ -212,6 +212,37 @@ test("manifest schema 1.1.0 declares a separate release-readiness and authorizat
   );
 });
 
+test("manifest schema enforces mutually consistent residual-risk states", () => {
+  const AjvModule = require(path.join(ROOT, "scripts/schema-validator/node_modules/ajv/dist/2020"));
+  const Ajv2020 = AjvModule.default || AjvModule;
+  const FormatsModule = require(path.join(ROOT, "scripts/schema-validator/node_modules/ajv-formats"));
+  const addFormats = FormatsModule.default || FormatsModule;
+  const schema = JSON.parse(fs.readFileSync(
+    path.join(ROOT, "schemas/ofrl-project-manifest-1.1.0.schema.json"),
+    "utf8"
+  ));
+  const ajv = new Ajv2020({ allErrors: true, strict: true, validateFormats: true });
+  addFormats(ajv);
+  const validate = ajv.compile(schema);
+  const baseline = JSON.parse(fs.readFileSync(
+    path.join(ROOT, "projects/OFRL-IB-001/project.json"),
+    "utf8"
+  ));
+  assert.equal(validate(baseline), true, JSON.stringify(validate.errors));
+
+  const invalidNotAssessed = JSON.parse(JSON.stringify(baseline));
+  invalidNotAssessed.release_readiness.residual_risk_assessment.risks = [makeResidualRisk()];
+  assert.equal(validate(invalidNotAssessed), false);
+
+  const validAssessed = JSON.parse(JSON.stringify(baseline));
+  validAssessed.release_readiness.residual_risk_assessment = makeAssessedNoResidualRisks();
+  assert.equal(validate(validAssessed), true, JSON.stringify(validate.errors));
+
+  const invalidAssessed = JSON.parse(JSON.stringify(validAssessed));
+  invalidAssessed.release_readiness.residual_risk_assessment.outcome = "NOT_ASSESSED";
+  assert.equal(validate(invalidAssessed), false);
+});
+
 test("NOT_ASSESSED project can remain in research or development without fabricated gate evidence", () => {
   const manifest = {
     risk_tier: "R2",
