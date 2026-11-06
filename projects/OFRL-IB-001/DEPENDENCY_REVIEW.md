@@ -91,6 +91,25 @@ The inventory records file paths, byte sizes and SHA-256 hashes for candidate li
 
 ## 4. Licence, copyright and notice review
 
+### 4.1 r-efi 5.3.0 — licence material embedded in AUTHORS
+
+The first schema 1.1 inventory classified `r-efi 5.3.0` as `NOT_FOUND_IN_SOURCE_ARCHIVE` for licence text because it used a filename-only rule. That was a **false negative**: the archive contains an `AUTHORS` file, and the upstream source stores its licence material inside that file rather than in a separately named `LICENSE` file.
+
+The tagged upstream source was checked directly:
+
+- Upstream release tag: [`r-efi/r-efi@v5.3.0`](https://github.com/r-efi/r-efi/tree/v5.3.0).
+- [README.md — License section](https://github.com/r-efi/r-efi/blob/v5.3.0/README.md) declares `MIT OR Apache-2.0 OR LGPL-2.1-or-later` and explicitly says to see `AUTHORS` for details.
+- [Cargo.toml](https://github.com/r-efi/r-efi/blob/v5.3.0/Cargo.toml) declares the identical Cargo `license` expression and the same repository URL as the source archive metadata.
+- [AUTHORS](https://github.com/r-efi/r-efi/blob/v5.3.0/AUTHORS) contains the headings `LICENSE`, `AUTHORS-MIT`, `AUTHORS-ASL`, and `AUTHORS-LGPL`. These sections state the triple-licensing arrangement, reproduce MIT terms, reference the Apache-2.0 text, and state the LGPL-2.1-or-later terms with a reference to the GNU licence text.
+- The file also contains copyright and author attribution sections. It is not merely an authors list.
+
+The package occurs once in the application lockfile and once in the isolated Decimal POC lockfile. The source-archive inventory records `AUTHORS` in both scopes (3,693 bytes; archive SHA-256 `ff92bed461f50338dd703a9ba9aee496a425957873df1d91192776e4bdf5dda7`). The original schema 1.1 result did not inspect embedded section headings and therefore must not be interpreted as proof that the package omitted its licence material.
+
+The dependency workflow is being upgraded to schema 1.2.0 so it detects both dedicated licence filenames and explicit embedded sections such as `LICENSE:` and `AUTHORS-MIT:`. This is a classification improvement, not a legal approval or a claim that every referenced upstream licence document is reproduced in full. The rerun on the corrected matcher must show the embedded headings in the evidence artifact before this inventory control is treated as verified.
+
+**Disposition:** the prior missing-text finding is withdrawn. Source provenance and licence metadata are internally consistent at the inspected tag, but the package's licence alternatives, complete referenced terms, required notices and downstream distribution obligations remain subject to human review. Keep `source_review=PENDING` and `licence_review=PENDING` until that review is recorded.
+
+
 The repository's [Licensing and Reuse Policy](../../LICENSE_POLICY.md) applies to OFRL-owned material. Third-party crates remain under their own terms. OFRL's Apache-2.0 software licence does not relicense dependencies or remove their notice obligations.
 
 Known POC metadata items requiring source-level confirmation include:
