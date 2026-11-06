@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - ".github/workflows/ofrl-ib-001-dependency-audit.yml"
+      - ".cargo/config"
+      - ".cargo/config.toml"
+      - "projects/OFRL-IB-001/.cargo/config"
+      - "projects/OFRL-IB-001/.cargo/config.toml"
       - "projects/OFRL-IB-001/Cargo.toml"
       - "projects/OFRL-IB-001/Cargo.lock"
       - "projects/OFRL-IB-001/crates/**/Cargo.toml"
@@ -222,6 +226,22 @@ jobs:
               errors = []
               records = []
 
+              locked_keys = {
+                  (item["name"], item["version"], item["source"])
+                  for item in packages
+              }
+              metadata_keys = set(metadata_map)
+              for name, version, source in sorted(locked_keys - metadata_keys):
+                  errors.append(
+                      f"{name}@{version}: locked registry package is missing from Cargo metadata"
+                  )
+              for name, version, source in sorted(metadata_keys - locked_keys):
+                  errors.append(
+                      f"{name}@{version}: Cargo metadata contains a registry package absent from Cargo.lock"
+                  )
+              if len(locked_keys) != len(packages):
+                  errors.append("Cargo.lock contains duplicate registry package identities")
+
               if non_registry:
                   errors.extend(
                       f"{item['name']}@{item['version']}: non-registry source "
@@ -267,6 +287,11 @@ jobs:
                               )
 
                           metadata_package = metadata_map.get((name, version, source))
+                          if metadata_package is None:
+                              raise ValueError(
+                                  "locked registry package is missing from Cargo metadata; "
+                                  "refusing to classify it as a successful cross-check"
+                              )
                           source_license = package_manifest_data.get("license")
                           source_license_file = package_manifest_data.get("license-file")
                           if metadata_package:
@@ -289,11 +314,7 @@ jobs:
                                   )
                               metadata_match = "MATCH"
                           else:
-                              metadata_license = None
-                              metadata_license_file = None
-                              metadata_repository = None
-                              source_repository = package_manifest_data.get("repository")
-                              metadata_match = "LOCKED_NOT_IN_ALL_FEATURES_METADATA"
+                              raise AssertionError("metadata_package presence was checked above")
 
                           if not source_license and not source_license_file:
                               errors.append(
@@ -353,8 +374,7 @@ jobs:
                               "publisher_repository_url": metadata_repository,
                               "source_manifest_repository_url": source_repository,
                               "repository_metadata_matches_source_archive": (
-                                  metadata_match != "MATCH"
-                                  or metadata_repository == source_repository
+                                  metadata_repository == source_repository
                               ),
                               "publisher_declared_license_expression": metadata_license,
                               "publisher_declared_license_file": metadata_license_file,
@@ -557,11 +577,149 @@ jobs:
             fi
           done
 
-          if [[ -e "$output/AUDIT_FINDINGS_OR_AUDIT_ERROR" ]] || grep -Eq '=[1-9][0-9]*$' "$output/audit-exit-codes.txt"; then
+          if [[ -e "$output/AUDIT_FINDINGS_OR_AUDIT_ERROR" ]]; then
             echo "::error::At least one RustSec audit returned a non-zero exit status."
-            cat "$output/audit-exit-codes.txt"
             exit 1
           fi
 
-          echo "PASS: both committed dependency graphs were inventoried and passed the configured RustSec audit."
-          echo "Manual source, copyright, licence and notice acceptance remains a separate review gate."
+          python3 - "$output" "$SOURCE_SHA" "$CARGO_AUDIT_VERSION" "$CARGO_AUDIT_SHA256" <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          output = pathlib.Path(sys.argv[1])
+          expected_source_sha, expected_audit_version, expected_audit_sha256 = sys.argv[2:]
+
+          def load_json(name):
+              with (output / name).open("r", encoding="utf-8") as handle:
+                  return json.load(handle)
+
+          def require(condition, message):
+              if not condition:
+                  raise SystemExit(f"FAIL: {message}")
+
+          inventory = load_json("package-source-inventory.json")
+          context = load_json("audit-context.json")
+          require(inventory.get("schema_version") == "1.2.0", "unexpected inventory schema version")
+          require(
+              inventory.get("review_state") == "PENDING_MANUAL_SOURCE_AND_LICENCE_REVIEW",
+              "manual legal/source review state must remain explicit",
+          )
+          require(context.get("project_id") == "OFRL-IB-001", "wrong project identity in audit context")
+          require(context.get("source_commit") == expected_source_sha, "audit context source SHA mismatch")
+          require(context.get("audit_exit_status") == "PASS", "audit context does not record PASS")
+          require(context.get("rust_toolchain") == "1.85.0", "unexpected Rust toolchain")
+          require(expected_audit_version in context.get("cargo_audit_version", ""), "cargo-audit version mismatch")
+          require(
+              context.get("cargo_audit_release_archive_sha256") == expected_audit_sha256,
+              "cargo-audit release checksum mismatch",
+          )
+          advisory = context.get("rustsec_advisory_database", {})
+          require(bool(advisory.get("commit")), "RustSec advisory database commit is missing")
+          require(bool(advisory.get("commit_time")), "RustSec advisory database timestamp is missing")
+          require(bool(advisory.get("remote")), "RustSec advisory database remote is missing")
+
+          expected_scopes = {
+              "application_workspace": "projects/OFRL-IB-001/Cargo.lock",
+              "decimal_contract_poc": "projects/OFRL-IB-001/poc/decimal-contract/Cargo.lock",
+          }
+          scopes = inventory.get("scopes")
+          require(isinstance(scopes, list) and len(scopes) == 2, "inventory must contain exactly two dependency scopes")
+          scope_map = {item.get("scope"): item for item in scopes}
+          require(set(scope_map) == set(expected_scopes), "unexpected or missing dependency scope")
+
+          lockfile_hashes = {}
+          for name, lockfile in expected_scopes.items():
+              scope = scope_map[name]
+              require(scope.get("lockfile") == lockfile, f"{name}: unexpected lockfile path")
+              locked_count = scope.get("locked_registry_package_count")
+              require(isinstance(locked_count, int) and locked_count > 0, f"{name}: invalid locked package count")
+              require(
+                  scope.get("source_archives_verified") == locked_count,
+                  f"{name}: not every locked registry archive was verified",
+              )
+              require(
+                  scope.get("metadata_registry_package_count") == locked_count,
+                  f"{name}: Cargo metadata package count does not match Cargo.lock",
+              )
+              packages = scope.get("packages")
+              require(
+                  isinstance(packages, list) and len(packages) == locked_count,
+                  f"{name}: package records do not cover the complete locked registry set",
+              )
+              require(scope.get("packages_without_license_text_candidate") == 0, f"{name}: missing licence-text candidate")
+              seen = set()
+              for package in packages:
+                  key = (package.get("name"), package.get("version"), package.get("source"))
+                  require(all(key), f"{name}: incomplete package identity")
+                  require(key not in seen, f"{name}: duplicate package identity {key}")
+                  seen.add(key)
+                  require(
+                      package.get("source") == "registry+https://github.com/rust-lang/crates.io-index",
+                      f"{name}: unexpected package source for {key}",
+                  )
+                  require(
+                      package.get("archive_integrity") == "SHA256_MATCHES_COMMITTED_LOCKFILE"
+                      and package.get("downloaded_archive_sha256") == package.get("locked_archive_checksum"),
+                      f"{name}: source archive checksum mismatch for {key}",
+                  )
+                  require(package.get("metadata_cross_check") == "MATCH", f"{name}: missing metadata cross-check for {key}")
+                  require(
+                      package.get("repository_metadata_matches_source_archive") is True,
+                      f"{name}: repository metadata mismatch for {key}",
+                  )
+                  require(
+                      package.get("license_text_status") == "FOUND_IN_SOURCE_ARCHIVE"
+                      and package.get("license_text_candidate_count", 0) > 0,
+                      f"{name}: licence-text candidate not found for {key}",
+                  )
+                  require(
+                      package.get("source_review") == "PENDING"
+                      and package.get("licence_review") == "PENDING",
+                      f"{name}: automated inventory must not self-approve legal review for {key}",
+                  )
+              lockfile_hashes[name] = scope.get("lockfile_sha256")
+
+          recorded_hashes = {}
+          for line in (output / "lockfile-sha256.txt").read_text(encoding="utf-8").splitlines():
+              if not line.strip():
+                  continue
+              key, separator, value = line.partition("=")
+              require(bool(separator) and key not in recorded_hashes, "malformed or duplicate lockfile hash record")
+              recorded_hashes[key] = value
+          expected_hash_records = {
+              "application": lockfile_hashes["application_workspace"],
+              "decimal-contract-poc": lockfile_hashes["decimal_contract_poc"],
+          }
+          require(recorded_hashes == expected_hash_records, "lockfile hash manifest does not match inventory")
+
+          exit_codes = {}
+          for line in (output / "audit-exit-codes.txt").read_text(encoding="utf-8").splitlines():
+              key, separator, value = line.partition("=")
+              require(bool(separator) and key not in exit_codes, "malformed or duplicate RustSec exit-code record")
+              exit_codes[key] = value
+          require(
+              exit_codes == {"application-workspace": "0", "decimal-contract-poc": "0"},
+              "RustSec audits did not both return zero",
+          )
+
+          for filename in ("application-workspace.cargo-audit.json", "decimal-contract-poc.cargo-audit.json"):
+              report = load_json(filename)
+              dependency_count = report.get("lockfile", {}).get("dependency-count")
+              require(isinstance(dependency_count, int) and dependency_count > 0, f"{filename}: invalid dependency count")
+              vulnerabilities = report.get("vulnerabilities", {})
+              require(
+                  vulnerabilities.get("found") is False
+                  and vulnerabilities.get("count") == 0
+                  and vulnerabilities.get("list") == [],
+                  f"{filename}: vulnerability findings are present",
+              )
+              require(report.get("warnings") == {}, f"{filename}: RustSec warnings are present")
+              require(report.get("settings", {}).get("ignore") == [], f"{filename}: advisory ignore list is not empty")
+              database = report.get("database", {})
+              require(database.get("last-commit") == advisory.get("commit"), f"{filename}: database commit mismatch")
+              require(database.get("last-updated") == advisory.get("commit_time"), f"{filename}: database timestamp mismatch")
+
+          print("PASS: complete lockfile/archive/metadata inventory and both RustSec JSON reports are internally consistent.")
+          print("Manual source, copyright, licence and notice acceptance remains PENDING.")
+          PY
