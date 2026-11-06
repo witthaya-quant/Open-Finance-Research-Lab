@@ -460,7 +460,10 @@ test("OPEN residual risks prevent eligibility even when every release gate passe
 });
 
 test("accepted residual risks require named acceptance authority, evidence, owner, review and expiry", () => {
+  const required = ["scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval"];
   const valid = makeReadiness({
+    assessment_status: "BLOCKED",
+    gates: required.map((id) => makeGate(id, { status: "BLOCKED", assessor: undefined, evidence: [] })),
     residual_risk_assessment: {
       ...makeAssessedNoResidualRisks(),
       outcome: "RESIDUAL_RISKS_RECORDED",
