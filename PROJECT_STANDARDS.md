@@ -185,6 +185,8 @@ The versioned project manifest (schema 1.1.0) records release evidence separatel
 - **R2:** R1 controls plus project-type controls such as financial/numeric controls and dependency/SBOM evidence. Independent assurance is explicitly decided and explained; financial models require it before release.
 - **R3:** R2-relevant controls plus mandatory independent domain review, independent security review, privacy/legal applicability, operational safeguards, incident response, rollback/recovery and Founder approval. Privacy/legal review may be marked NOT APPLICABLE only with a reasoned assessment. The threat-model and security-profile admission checks remain in force.
 
+Any non-`none` data classification also requires both `data_rights` and an explicit `privacy_legal_review`; the latter may be NOT APPLICABLE only with a substantive scope-based rationale. R3 requires `privacy_legal_review` regardless of data classification.
+
 The registry rejects promotion to `pre_release` or `released` unless the assessment is eligible and a separate authorization is recorded. `LIVE_EXTERNAL` is restricted to an R3 project with released and authorized status. Maintenance requires evidence of correction/support controls. The validator checks manifest structure, gate coverage, references and state consistency; it does **not** verify reviewer qualifications, conduct a legal opinion, or authenticate the substance of external evidence. Those remain human governance decisions and must be evidenced by actual review records.
 
 ## 5. Cross-project validation profiles
