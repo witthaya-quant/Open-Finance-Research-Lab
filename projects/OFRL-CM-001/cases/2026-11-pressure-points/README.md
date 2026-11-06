@@ -8,7 +8,7 @@
 **Source publication label:** November 2026  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
-**Case status:** INCOMPLETE — secondary leads reviewed; complete rule semantics and derivation remain BLOCKED  
+**Case status:** INCOMPLETE — additional directional-family and visual false-positive screens completed; no new emoji mapping accepted; complete rule semantics and derivation remain BLOCKED  
 **Evidence maturity:** 0 — Proposed
 
 ## 1. Why this case was selected
@@ -35,6 +35,8 @@ The page content reviewed on 2026-11-05 does not expose a complete prose rule sp
 
 A provisional inventory now records thirteen candidate theme/structure clusters: the twelve audited under CM-T0007 plus H-016, a Diamond Model of Intrusion Analysis candidate for 💻. H-016 uses ADVERSARY, CAPABILITY, VICTIM, and INFRASTRUCTURE in the top/right/bottom/left positions of the published model; the letter residuals are +U and −E. The source establishes the framework and its geometry, not Jane Street's intended emoji association. Across 13 candidates, 52 distinct source sequences are provisionally assigned; 23 sequences plus Ø remain and six emojis have no candidate group. The Colorado/desert association remains weak; Queen has no established cardinal ordering; football remains underdetermined because GARETH is a given name. CM-T0007's 12-group audit found 25 exact / 23 residual-bearing pairs; H-016 adds two exact / two residual-bearing pairs, for 27 exact / 25 residual-bearing comparisons overall. The 24 = 6×4 remainder is arithmetic only. CM-T0008 also screened literal Dragon King, Four Heavenly King, swine-breed, and four-order architecture sets by minimum one-to-one multiset distance; their best totals were 19, 34, 29, and 23 respectively, so none was accepted. The Four Heavenly Kings have cardinal-direction support but a poor lexical fit; the classical architecture set is incomplete because the established set has five orders. See CM-T0007 and CM-T0008 in PROBLEM_FORMALIZATION.md.
 
+CM-T0008's 2026-11-06 extension also screened the Four Anemoi (minimum multiset distance 22; 9 tied optima), the Char Dham (25; 3), and the Four Amnaya Peethams (24; 2) against the 23-entry residual inventory. Their external cardinal traditions are documented, but their lexical fits are weak and no unique assignment results; none is accepted. A source check also rejects the common Monopoly-mascot-with-monocle association for 🧐; this does not identify the intended clue. The six emoji remain unresolved, and the 13 provisional clusters / 52 assignments are unchanged. Details and source provenance are in PROBLEM_FORMALIZATION.md, DATA_MANIFEST.md, and VALIDATION_MATRIX.md.
+
 The full sequence list, emoji sequence, images, and official solution are intentionally not copied into this repository.
 
 ## 4. Current research status
@@ -46,7 +48,7 @@ The full sequence list, emoji sequence, images, and official solution are intent
 | Sequence counts and ordering properties checked | PASS |
 | Formal input and output semantics established | BLOCKED |
 | CM-T0007 audit of twelve candidate clusters: 48 distinct source assignments checked; 25 exact candidate anagrams and 23 residual-bearing pairs; semantic fit and positional evidence graded separately | PASS — audit only, not proof of puzzle intent |
-| CM-T0008 candidate work: H-016 Diamond Model lead, expanded lexical ambiguity audit, and alternate directional-roster/transliteration screens | IN PROGRESS — H-016 remains unaccepted; additional screens did not establish a new group; six emoji remain unmapped |
+| CM-T0008 candidate work: H-016 Diamond Model lead, expanded lexical ambiguity audit, alternate directional-roster/transliteration screens, and additional Anemoi/temple/visual false-positive checks | IN PROGRESS — no new group accepted; 13 provisional clusters remain unchanged; six emoji remain unmapped |
 | Local letter-count residuals reproduced for the documented candidate groups | PASS |
 | Community-reported anagram readings registered as unverified leads | PASS |
 | Secondary solver-status sources reviewed and correctly classified as leads, not proofs | PASS |
@@ -80,7 +82,7 @@ These are questions, not proposed answers. Hypotheses H-001 to H-016 and blocker
 
 Do not select SAT, CSP, graph search, string matching, anagram search, or another method until the rules support that representation.
 
-**CM-T0008 remains in progress.** The Diamond Model candidate H-016 is a new lead for 💻, not an accepted puzzle mapping. The Dragon Kings, Four Heavenly Kings, four swine breeds, four selected Classical Orders, Chinese Four Symbols name variants, and Japanese Four Heavenly Kings name variants have been screened and not accepted under the documented multiset-distance test. Continue investigating the six remaining emoji clues against the 23 unused source sequences plus Ø. Treat the 24 = 6×4 equality as a count check only, not as proof of a four-vertex bijection. If semantic rules cannot be established, preserve the blocker rather than inventing missing rules.
+**CM-T0008 remains in progress.** H-016 remains a candidate association only and is separate from the six unresolved emoji. The Dragon Kings, Four Heavenly Kings, swine breeds, selected Classical Orders, Chinese Four Symbols variants, Japanese Four Heavenly Kings variants, Four Anemoi, Char Dham, and Four Amnaya Peethams have been screened and not accepted. The Monopoly-monocle association has been rejected as a false visual memory, not replaced by another interpretation. Continue only with new source-backed member rosters or positional arguments for 👸, 🐷, 🖼️, 🧐, and 🐉; do not repeat the tested temple or Anemoi families. The 24 = 6×4 equality remains a count check only. If semantic rules cannot be established, preserve the blocker rather than inventing missing rules.
 
 ## 7. Attribution
 
@@ -95,7 +97,7 @@ All puzzle content remains attributable to Jane Street. OFRL does not claim owne
 
 **Current disposition: INCOMPLETE / BLOCKED — not solved and not ready for solver implementation.**
 
-The current research round has completed its permitted source and candidate-context review, but it has not closed the mathematical case. Thirteen of 19 emoji/structure themes have provisional candidate groupings, including H-016 as a source-grounded Diamond Model lead but not a proven Jane Street clue association. Six groups, the role of Ø, a single global letter-residual rule, output extraction, and independent verification of the candidate phrase remain unresolved. The formalization also records alternate directional-roster/transliteration screens and an expanded lexical ambiguity audit; none produced an accepted new group. The Archive search-result text does not verify a solution hyperlink or provide the solution body. Public solver-status pages reviewed on 2026-11-05 do not supply a complete derivation.
+The current research round has completed its permitted source and candidate-context review, but it has not closed the mathematical case. Thirteen of 19 emoji/structure themes have provisional candidate groupings, including H-016 as a source-grounded Diamond Model lead but not a proven Jane Street clue association. Six groups, the role of Ø, a single global letter-residual rule, output extraction, and independent verification of the candidate phrase remain unresolved. The formalization also records expanded lexical ambiguity, Four Symbols/Four Heavenly Kings transliteration, Four Anemoi, Char Dham, and Four Amnaya Peetham screens; none produced an accepted new group. A source check rejects the Monopoly-monocle false association but does not decode 🧐. The Archive search-result text does not verify a solution hyperlink or provide the solution body. Public solver-status pages reviewed on 2026-11-05 do not supply a complete derivation.
 
 This is a **no-go for solver implementation under the evidence currently available**, not a claim that the puzzle is unsolvable and not a declaration that the case has been solved. Do not create a Cargo workspace, choose dependencies, or implement a solver while the correctness predicate remains undefined.
 
