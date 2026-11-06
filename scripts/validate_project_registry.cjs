@@ -264,7 +264,7 @@ function requiredReleaseGateIds(manifest) {
     ids.push("reproducibility", "domain_review");
   }
   if (manifest?.data_classification && manifest.data_classification !== "none") {
-    ids.push("data_rights");
+    ids.push("data_rights", "privacy_legal_review");
   }
   if (types.has("financial_model")) {
     ids.push("numeric_and_financial_controls");
