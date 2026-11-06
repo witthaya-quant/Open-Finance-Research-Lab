@@ -129,7 +129,7 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 
 | Task ID | Phase | Task / required result | Status | Dependency / exit evidence |
 |---|---|---|---|---|
-| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — current audit snapshot recorded** | Exact head `c14c4433…`, main `cdbf345c…`, ahead 25 / behind 219, 14 changed paths, zero reviews/comments/threads, and exact-head CI 3/3 PASS recorded in §7 |
+| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — research commit audit recorded** | Exact research head `faa691f1…`, main `cdbf345c…`, ahead 26 / behind 219, 14 changed paths, zero reviews/comments/threads, and exact-head CI 3/3 PASS recorded in §7; the present SSOT-only follow-up is a separate metadata commit |
 | CM-T0002 | P0 | Resolve branch integration and PR #29 merge readiness | **HOLD — owner decision required** | Main is 219 commits ahead of the merge base; this branch is 25 commits ahead. Preserve the current Draft PR and do not rebase, merge, retarget, or synchronize without an explicit owner decision; re-audit path overlap before any future integration |
 | CM-T0003 | P0/P1 | Establish one canonical project-management register and remove duplicate handoff/roadmap authority | **PASS** | PROJECT_CONTROL.md is canonical; HANDOFF.md is procedure-only; exact-head Repository Policy run #42017737205 passed |
 | CM-T0004 | P1 | Define project mandate, workstreams, phase gates, and delivery acceptance | **PASS** | PROJECT_CONTROL.md §§2–6 and DECISION_LOG.md D-011–D-014; exact-head Repository Policy run #42017737205 passed |
@@ -148,26 +148,28 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 ## 7. Recorded GitHub verification snapshot
 
 **Snapshot date:** 2026-11-06  
-**Snapshot commit:** [`c14c4433cde7f985e87ef543fb56e60461ce2e9f`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/c14c4433cde7f985e87ef543fb56e60461ce2e9f)  
+**Snapshot commit:** [`faa691f1433aab1532f3f8189f84925ec517fd28`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/faa691f1433aab1532f3f8189f84925ec517fd28)  
 **Repository:** `witthaya-quant/Open-Finance-Research-Lab`  
 **PR:** [#29 — Project admission and Pressure Points research pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Branch observed:** `research/ofrl-cm-001-admission-and-pilot`
 
-At this snapshot:
-- Branch / PR head: `c14c4433cde7f985e87ef543fb56e60461ce2e9f`.
+At this full research-commit snapshot:
+- Branch / PR head: `faa691f1433aab1532f3f8189f84925ec517fd28`.
 - PR state: Open / Draft / Not merged; GitHub reports mergeable.
 - Base branch: `main`; observed main head: `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`; merge base / PR base checkpoint: `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`.
-- Compare: branch ahead 25 / behind 219.
+- Compare: branch ahead 26 / behind 219.
 - PR changed files: 14. The paths are `PROJECT_CATALOG.md` and files under `projects/OFRL-CM-001/**`; no path under `projects/OFRL-IB-001/**`, `.github/**`, `schemas/**`, `scripts/**`, or `fixtures/**` is changed.
 - PR issue comments: 0; reviews: 0; review threads: 0.
-- All three workflows completed successfully on this exact head:
-  - [OFRL Repository Policy #42177234497](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42177234497)
-  - [OFRL-IB-001 Numeric and Input Contract Checks #42177234603](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42177234603)
-  - [OFRL-IB-001 Rust Runtime Semantic Validator #42177234504](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42177234504)
+- All three workflows completed successfully on this exact research commit:
+  - [OFRL Repository Policy #42181704706](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42181704706)
+  - [OFRL-IB-001 Numeric and Input Contract Checks #42181704636](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42181704636)
+  - [OFRL-IB-001 Rust Runtime Semantic Validator #42181704802](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42181704802)
 
 The two IB-001 workflows ran because of repository PR-event behavior. Their success is not evidence of changes to IB-001 or mathematical correctness for CM-001.
 
-**Live-state rule:** This section is a frozen, auditable checkpoint, not a dynamic GitHub view and not a write token. At every new chat or task, agents MUST re-fetch PR #29, branch `HEAD`, `main`, compare counts, changed paths, comments/reviews, and exact-head workflows before taking action. A later commit does not make this snapshot authoritative for future operations.
+**Snapshot boundary:** This records the full research commit. A subsequent one-file Project Control metadata commit updates this register's snapshot and task evidence; therefore the current branch head may be one commit ahead of the research snapshot. Always fetch the live PR and branch refs before repository operations.
+
+**Live-state rule:** This section is a frozen, auditable checkpoint, not a dynamic GitHub view and not a write token. At every new chat or task, agents MUST re-fetch PR #29, branch `HEAD`, `main`, compare counts, changed paths, comments/reviews, and exact-head workflows.
 ## 8. Project document ownership map
 
 | Document | Sole responsibility | Must not become |
