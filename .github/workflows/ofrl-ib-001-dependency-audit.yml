@@ -160,7 +160,7 @@ jobs:
               re.IGNORECASE,
           )
           EMBEDDED_LICENSE_SECTIONS = re.compile(
-              r"^\\s*(LICENSE|AUTHORS-(?:MIT|ASL|LGPL|APACHE|BSD)|COPYING(?:-[A-Z0-9_-]+)?)\\s*:",
+              r"^\s*(LICENSE|AUTHORS-(?:MIT|ASL|LGPL|APACHE|BSD)|COPYING(?:-[A-Z0-9_-]+)?)\s*:",
               re.IGNORECASE | re.MULTILINE,
           )
 
