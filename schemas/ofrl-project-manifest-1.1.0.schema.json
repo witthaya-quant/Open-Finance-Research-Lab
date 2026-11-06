@@ -318,8 +318,32 @@
                       "NONE_DECLARED",
                       "DISCLOSED"
                     ]
+                  },
+                  "conflict_rationale": {
+                    "type": "string",
+                    "minLength": 30,
+                    "maxLength": 1000
                   }
-                }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "conflict_status": {
+                          "const": "DISCLOSED"
+                        }
+                      },
+                      "required": [
+                        "conflict_status"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "conflict_rationale"
+                      ]
+                    }
+                  }
+                ]
               }
             },
             "allOf": [
