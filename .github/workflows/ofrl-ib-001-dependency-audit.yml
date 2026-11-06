@@ -152,7 +152,7 @@ jobs:
           app_metadata, poc_metadata, app_lock, poc_lock, cache_root, output = map(pathlib.Path, sys.argv[1:])
           CRATES_IO = "registry+https://github.com/rust-lang/crates.io-index"
           NOTICE_NAMES = re.compile(
-              r"^(license|licence|copying|notice|copyright|patents|authors|contributors)([-_.].*)?$",
+              r"^(license|licence|unlicense|copying|notice|copyright|patents|authors|contributors)([-_.].*)?$",
               re.IGNORECASE,
           )
 
