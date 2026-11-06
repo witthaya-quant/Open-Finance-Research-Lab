@@ -116,17 +116,15 @@ jobs:
             --manifest-path "$poc_manifest" \
             > "$work/decimal-poc-metadata.json"
 
-          rustup run "$RUST_TOOLCHAIN" cargo vendor \
-            --locked --all-features --versioned-dirs \
-            --manifest-path "$app_manifest" \
-            "$work/application-vendor" \
-            > "$work/application-vendor-config.txt"
+          rustup run "$RUST_TOOLCHAIN" cargo fetch \
+            --locked --manifest-path "$app_manifest"
 
-          rustup run "$RUST_TOOLCHAIN" cargo vendor \
-            --locked --all-features --versioned-dirs \
-            --manifest-path "$poc_manifest" \
-            "$work/decimal-poc-vendor" \
-            > "$work/decimal-poc-vendor-config.txt"
+
+
+          rustup run "$RUST_TOOLCHAIN" cargo fetch \
+            --locked --manifest-path "$poc_manifest"
+
+
 
           app_lock_after="$(sha256sum "$app_lock" | awk '{print $1}')"
           poc_lock_after="$(sha256sum "$poc_lock" | awk '{print $1}')"
@@ -141,17 +139,17 @@ jobs:
             "$work/decimal-poc-metadata.json" \
             "$app_lock" \
             "$poc_lock" \
-            "$work/application-vendor" \
-            "$work/decimal-poc-vendor" \
+            "$CARGO_HOME/registry/cache" \
             "$output/package-source-inventory.json" <<'PY'
           import hashlib
           import json
           import pathlib
           import re
           import sys
+          import tarfile
           import tomllib
 
-          app_metadata, poc_metadata, app_lock, poc_lock, app_vendor, poc_vendor, output = map(pathlib.Path, sys.argv[1:])
+          app_metadata, poc_metadata, app_lock, poc_lock, cache_root, output = map(pathlib.Path, sys.argv[1:])
           CRATES_IO = "registry+https://github.com/rust-lang/crates.io-index"
           NOTICE_NAMES = re.compile(
               r"^(license|licence|copying|notice|copyright|patents|authors|contributors)([-_.].*)?$",
@@ -165,143 +163,233 @@ jobs:
               with path.open("rb") as handle:
                   return tomllib.load(handle)
 
-          def digest(path):
-              value = hashlib.sha256()
+          def sha256_bytes(value):
+              return hashlib.sha256(value).hexdigest()
+
+          def sha256_file(path):
+              digest = hashlib.sha256()
               with path.open("rb") as handle:
                   for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-                      value.update(chunk)
-              return value.hexdigest()
+                      digest.update(chunk)
+              return digest.hexdigest()
 
-          def registry_lock_entries(path):
-              return [
-                  item for item in read_toml(path).get("package", [])
+          def locked_registry_packages(path):
+              data = read_toml(path)
+              packages = data.get("package", [])
+              git_or_other = [
+                  item for item in packages
+                  if item.get("source") and not item["source"].startswith(("registry+", "sparse+"))
+              ]
+              registry = [
+                  item for item in packages
                   if item.get("source", "").startswith(("registry+", "sparse+"))
               ]
+              return registry, git_or_other
 
-          def vendor_manifest_map(root):
-              found = {}
-              for directory in sorted(root.iterdir()):
-                  manifest_path = directory / "Cargo.toml"
-                  if not directory.is_dir() or not manifest_path.is_file():
-                      continue
-                  package = read_toml(manifest_path).get("package", {})
-                  key = (package.get("name"), package.get("version"))
-                  if all(key):
-                      found.setdefault(key, []).append((directory, package))
-              return found
+          def archive_for(package, cache):
+              filename = f"{package['name']}-{package['version']}.crate"
+              candidates = sorted(cache.rglob(filename))
+              checksum = package.get("checksum")
+              matching = [path for path in candidates if sha256_file(path) == checksum]
+              if not checksum:
+                  raise ValueError(f"{filename}: lockfile entry has no checksum")
+              if not matching:
+                  observed = [sha256_file(path) for path in candidates]
+                  raise ValueError(
+                      f"{filename}: no cached source archive matches lockfile checksum "
+                      f"{checksum}; candidates={observed}"
+                  )
+              return matching[0]
 
-          def build_scope(label, metadata_path, lock_path, vendor_path):
+          def package_manifest(archive):
+              with tarfile.open(archive, mode="r:gz") as bundle:
+                  manifests = [
+                      member for member in bundle.getmembers()
+                      if member.isfile()
+                      and len(pathlib.PurePosixPath(member.name).parts) == 2
+                      and pathlib.PurePosixPath(member.name).name == "Cargo.toml"
+                  ]
+                  if len(manifests) != 1:
+                      raise ValueError(
+                          f"{archive.name}: expected exactly one archive-root Cargo.toml, "
+                          f"found {len(manifests)}"
+                      )
+                  raw = bundle.extractfile(manifests[0]).read()
+                  manifest = tomllib.loads(raw.decode("utf-8"))
+                  package = manifest.get("package")
+                  if not isinstance(package, dict):
+                      raise ValueError(f"{archive.name}: archive-root Cargo.toml has no [package]")
+                  return bundle, manifests[0], package
+
+          def inventory_scope(label, metadata_path, lock_path, cache):
               metadata = read_json(metadata_path)
-              lock = registry_lock_entries(lock_path)
-              vendor = vendor_manifest_map(vendor_path)
-              locked = {
-                  (item["name"], item["version"], item["source"])
-                  for item in lock
+              packages, non_registry = locked_registry_packages(lock_path)
+              metadata_map = {
+                  (item["name"], item["version"], item["source"]): item
+                  for item in metadata.get("packages", [])
+                  if item.get("source")
               }
-              packages = [item for item in metadata.get("packages", []) if item.get("source")]
-              resolved = {
-                  (item["name"], item["version"], item["source"])
-                  for item in packages
-              }
-              missing = sorted(locked - resolved)
-              extra = sorted(resolved - locked)
-              if missing or extra:
-                  raise SystemExit(
-                      f"{label}: locked/metadata package sets differ; missing={missing}, extra={extra}"
+              errors = []
+              records = []
+
+              if non_registry:
+                  errors.extend(
+                      f"{item['name']}@{item['version']}: non-registry source "
+                      f"{item.get('source')} requires explicit source approval"
+                      for item in non_registry
                   )
 
-              records = []
-              errors = []
-              for package in sorted(packages, key=lambda p: (p["name"], p["version"], p["source"])):
-                  name, version, source = package["name"], package["version"], package["source"]
-                  matches = vendor.get((name, version), [])
-                  if len(matches) != 1:
-                      errors.append(f"{name}@{version}: expected one vendored archive, found {len(matches)}")
+              for locked in sorted(packages, key=lambda item: (item["name"], item["version"], item["source"])):
+                  name, version, source = locked["name"], locked["version"], locked["source"]
+                  if source != CRATES_IO:
+                      errors.append(
+                          f"{name}@{version}: unexpected registry source {source}; explicit approval required"
+                      )
                       continue
 
-                  source_dir, source_manifest = matches[0]
-                  declared_license = package.get("license")
-                  declared_license_file = package.get("license_file")
-                  archive_license = source_manifest.get("license")
-                  archive_license_file = source_manifest.get("license-file")
-                  repository = package.get("repository")
-                  archive_repository = source_manifest.get("repository")
+                  try:
+                      archive = archive_for(locked, cache)
+                      with tarfile.open(archive, mode="r:gz") as bundle:
+                          manifest_members = [
+                              member for member in bundle.getmembers()
+                              if member.isfile()
+                              and len(pathlib.PurePosixPath(member.name).parts) == 2
+                              and pathlib.PurePosixPath(member.name).name == "Cargo.toml"
+                          ]
+                          if len(manifest_members) != 1:
+                              raise ValueError(
+                                  f"expected exactly one archive-root Cargo.toml, "
+                                  f"found {len(manifest_members)}"
+                              )
+                          manifest_member = manifest_members[0]
+                          raw_manifest = bundle.extractfile(manifest_member).read()
+                          manifest = tomllib.loads(raw_manifest.decode("utf-8"))
+                          package_manifest_data = manifest.get("package")
+                          if not isinstance(package_manifest_data, dict):
+                              raise ValueError("archive-root Cargo.toml has no [package]")
 
-                  if not declared_license and not declared_license_file:
-                      errors.append(f"{name}@{version}: missing publisher-declared license/license-file")
-                  if declared_license != archive_license:
-                      errors.append(f"{name}@{version}: license metadata differs from vendored Cargo.toml")
-                  if declared_license_file != archive_license_file:
-                      errors.append(f"{name}@{version}: license-file metadata differs from vendored Cargo.toml")
-                  if declared_license_file and not (source_dir / declared_license_file).is_file():
-                      errors.append(f"{name}@{version}: declared license-file is absent from source archive")
+                          if (
+                              package_manifest_data.get("name") != name
+                              or package_manifest_data.get("version") != version
+                          ):
+                              raise ValueError(
+                                  "archive manifest identity does not match the lockfile package identity"
+                              )
 
-                  lock_entry = next(
-                      item for item in lock
-                      if item["name"] == name and item["version"] == version and item["source"] == source
-                  )
-                  if not lock_entry.get("checksum"):
-                      errors.append(f"{name}@{version}: registry lock entry has no checksum")
+                          metadata_package = metadata_map.get((name, version, source))
+                          source_license = package_manifest_data.get("license")
+                          source_license_file = package_manifest_data.get("license-file")
+                          if metadata_package:
+                              metadata_license = metadata_package.get("license")
+                              metadata_license_file = metadata_package.get("license_file")
+                              metadata_repository = metadata_package.get("repository")
+                              source_repository = package_manifest_data.get("repository")
 
-                  legal_files = []
-                  for path in sorted(source_dir.rglob("*")):
-                      if path.is_file() and NOTICE_NAMES.match(path.name):
-                          legal_files.append({
-                              "path": path.relative_to(source_dir).as_posix(),
-                              "size_bytes": path.stat().st_size,
-                              "sha256": digest(path),
+                              if metadata_license != source_license:
+                                  errors.append(
+                                      f"{name}@{version}: Cargo metadata and source archive licence expressions differ"
+                                  )
+                              if metadata_license_file != source_license_file:
+                                  errors.append(
+                                      f"{name}@{version}: Cargo metadata and source archive license-file fields differ"
+                                  )
+                              if metadata_repository != source_repository:
+                                  errors.append(
+                                      f"{name}@{version}: Cargo metadata and source archive repository fields differ"
+                                  )
+                              metadata_match = "MATCH"
+                          else:
+                              metadata_license = None
+                              metadata_license_file = None
+                              metadata_repository = None
+                              source_repository = package_manifest_data.get("repository")
+                              metadata_match = "LOCKED_NOT_IN_ALL_FEATURES_METADATA"
+
+                          if not source_license and not source_license_file:
+                              errors.append(
+                                  f"{name}@{version}: source archive declares neither license nor license-file"
+                              )
+
+                          archive_root = pathlib.PurePosixPath(manifest_member.name).parts[0]
+                          if source_license_file:
+                              license_member_path = (
+                                  pathlib.PurePosixPath(archive_root) / source_license_file
+                              ).as_posix()
+                              if not any(
+                                  member.isfile() and member.name == license_member_path
+                                  for member in bundle.getmembers()
+                              ):
+                                  errors.append(
+                                      f"{name}@{version}: source archive is missing declared license-file "
+                                      f"{source_license_file}"
+                                  )
+
+                          legal_files = []
+                          for member in sorted(bundle.getmembers(), key=lambda item: item.name):
+                              if not member.isfile():
+                                  continue
+                              basename = pathlib.PurePosixPath(member.name).name
+                              if not NOTICE_NAMES.match(basename):
+                                  continue
+                              file_content = bundle.extractfile(member).read()
+                              legal_files.append({
+                                  "path": member.name.removeprefix(archive_root + "/"),
+                                  "size_bytes": len(file_content),
+                                  "sha256": sha256_bytes(file_content),
+                              })
+
+                          records.append({
+                              "name": name,
+                              "version": version,
+                              "source": source,
+                              "source_class": "crates_io_registry",
+                              "locked_archive_checksum": locked.get("checksum"),
+                              "downloaded_archive_sha256": sha256_file(archive),
+                              "publisher_repository_url": metadata_repository,
+                              "source_manifest_repository_url": source_repository,
+                              "repository_metadata_matches_source_archive": (
+                                  metadata_match != "MATCH"
+                                  or metadata_repository == source_repository
+                              ),
+                              "publisher_declared_license_expression": metadata_license,
+                              "publisher_declared_license_file": metadata_license_file,
+                              "source_manifest_license_expression": source_license,
+                              "source_manifest_license_file": source_license_file,
+                              "metadata_cross_check": metadata_match,
+                              "license_and_notice_files": legal_files,
+                              "source_review": "PENDING",
+                              "licence_review": "PENDING",
+                              "archive_integrity": "SHA256_MATCHES_COMMITTED_LOCKFILE",
                           })
-
-                  records.append({
-                      "name": name,
-                      "version": version,
-                      "source": source,
-                      "source_class": "crates_io_registry" if source == CRATES_IO else "other_registry",
-                      "locked_archive_checksum": lock_entry.get("checksum"),
-                      "publisher_repository_url": repository,
-                      "source_manifest_repository_url": archive_repository,
-                      "repository_metadata_matches_source_archive": repository == archive_repository,
-                      "declared_license_expression": declared_license,
-                      "declared_license_file": declared_license_file,
-                      "source_manifest_license_expression": archive_license,
-                      "source_manifest_license_file": archive_license_file,
-                      "license_and_notice_files": legal_files,
-                      "source_review": "PENDING",
-                      "licence_review": "PENDING",
-                      "archive_integrity_basis": "cargo_vendor_success_under_committed_lockfile",
-                  })
-
-              non_crates_io = [p for p in records if p["source_class"] != "crates_io_registry"]
-              errors.extend(
-                  f"{p['name']}@{p['version']}: non-crates.io source requires explicit approval"
-                  for p in non_crates_io
-              )
+                  except (OSError, ValueError, tarfile.TarError, KeyError) as error:
+                      errors.append(f"{name}@{version}: {error}")
 
               return {
                   "scope": label,
                   "lockfile": lock_path.as_posix(),
-                  "locked_registry_package_count": len(lock),
-                  "metadata_registry_package_count": len(packages),
-                  "vendored_registry_package_count": len(records),
-                  "lockfile_sha256": digest(lock_path),
+                  "locked_registry_package_count": len(packages),
+                  "metadata_registry_package_count": len(metadata_map),
+                  "source_archives_verified": len(records),
+                  "lockfile_sha256": sha256_file(lock_path),
                   "packages": records,
               }, errors
 
-          application, application_errors = build_scope(
-              "application_workspace", app_metadata, app_lock, app_vendor
+          application, application_errors = inventory_scope(
+              "application_workspace", app_metadata, app_lock, cache_root
           )
-          decimal_poc, decimal_errors = build_scope(
-              "decimal_contract_poc", poc_metadata, poc_lock, poc_vendor
+          decimal_poc, decimal_errors = inventory_scope(
+              "decimal_contract_poc", poc_metadata, poc_lock, cache_root
           )
 
           report = {
               "schema_version": "1.0.0",
               "review_state": "PENDING_MANUAL_SOURCE_AND_LICENCE_REVIEW",
               "interpretation": (
-                  "Inventory only. Cargo downloaded sources under committed lockfiles and verified registry "
-                  "archive checksums. Repository URLs and licence expressions are publisher-declared values "
-                  "cross-checked against the source archive manifest. File names and hashes identify licence/"
-                  "notice candidates; they do not constitute legal acceptance or complete copyright review."
+                  "Inventory only. Cargo fetched dependencies under the committed lockfiles; each source archive "
+                  "SHA-256 was checked against its Cargo.lock checksum. The source archive Cargo.toml was compared "
+                  "with Cargo metadata where the package is in the all-features metadata graph. Licence/notice "
+                  "file names, sizes and hashes identify review candidates; they do not constitute legal acceptance "
+                  "or a complete copyright review."
               ),
               "scopes": [application, decimal_poc],
           }
@@ -316,7 +404,7 @@ jobs:
           for scope in report["scopes"]:
               print(
                   f"PASS: {scope['scope']} - "
-                  f"{scope['vendored_registry_package_count']} locked registry sources inventoried."
+                  f"{scope['source_archives_verified']} source archive checksums matched committed lockfile entries."
               )
           PY
 
