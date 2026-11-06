@@ -129,6 +129,49 @@ function makeReadiness(overrides = {}) {
       decision_record: null,
       source_commit: null,
     },
+    residual_risk_assessment: {
+      status: "NOT_ASSESSED",
+      outcome: "NOT_ASSESSED",
+      reviewed_by: null,
+      reviewer_role: null,
+      reviewed_at: null,
+      next_review_at: null,
+      evidence: [],
+      risks: [],
+    },
+    ...overrides,
+  };
+}
+
+function makeAssessedNoResidualRisks() {
+  return {
+    status: "ASSESSED",
+    outcome: "NO_RESIDUAL_RISKS",
+    reviewed_by: "Kenny",
+    reviewer_role: "Founder / Principal Maintainer",
+    reviewed_at: "2026-11-06",
+    next_review_at: "2027-02-06",
+    evidence: ["https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/19"],
+    risks: [],
+  };
+}
+
+function makeResidualRisk(overrides = {}) {
+  return {
+    risk_id: "RISK-001",
+    summary: "A documented residual risk with a bounded and reviewable consequence.",
+    severity: "MEDIUM",
+    decision: "ACCEPTED",
+    control_owner: "Project Maintainer",
+    review_due_at: "2027-01-15",
+    expires_at: "2027-02-01",
+    expiry_condition: "Acceptance expires on the stated date or earlier if the project scope changes materially.",
+    rationale: "Residual risk is accepted for a bounded research-only scope with an explicit review date.",
+    evidence: ["https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/19"],
+    accepted_by: "Kenny",
+    accepted_by_role: "Founder / Principal Maintainer",
+    accepted_at: "2026-11-06",
+    decision_reference: "https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/19",
     ...overrides,
   };
 }
@@ -247,6 +290,7 @@ test("ELIGIBLE_FOR_AUTHORIZATION requires every applicable gate and substantive 
     release_status: "not_released",
     release_readiness: makeReadiness({
       assessment_status: "ELIGIBLE_FOR_AUTHORIZATION",
+      residual_risk_assessment: makeAssessedNoResidualRisks(),
       gates: required.filter((x) => x !== "founder_approval").map((x) => makeGate(x)).concat([makeGate("founder_approval")]),
     }),
   };
@@ -289,6 +333,7 @@ test("NOT APPLICABLE requires a reason and cannot waive non-applicable R3 hard g
       independent_assurance_required: true,
       independent_assurance_rationale: "R3 requires independent assurance because failures may cause material external harm.",
       assessment_status: "ELIGIBLE_FOR_AUTHORIZATION",
+      residual_risk_assessment: makeAssessedNoResidualRisks(),
       gates: [
         "scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval",
         "reproducibility", "domain_review", "dependency_and_sbom", "independent_domain_review", "security_review",
@@ -370,4 +415,118 @@ test("PASS evidence and reviewer references must resolve to HTTPS or a safe proj
   const errors = registry.releaseReadinessViolations(manifest, ROOT);
   assert.ok(errors.some((x) => x.includes("unsafe or unresolved evidence")));
   assert.ok(errors.some((x) => x.includes("reviewer/decision reference")));
+});
+
+
+test("eligible release readiness requires an assessed residual-risk disposition", () => {
+  const required = ["scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval"];
+  const manifest = {
+    owner: "Kenny",
+    risk_tier: "R0",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "validation",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      assessment_status: "ELIGIBLE_FOR_AUTHORIZATION",
+      gates: required.map((id) => makeGate(id)),
+    }),
+  };
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("requires a completed residual-risk assessment")));
+  manifest.release_readiness.residual_risk_assessment = makeAssessedNoResidualRisks();
+  assert.deepEqual(registry.releaseReadinessViolations(manifest, ROOT), []);
+});
+
+test("OPEN residual risks prevent eligibility even when every release gate passes", () => {
+  const required = ["scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval"];
+  const manifest = {
+    owner: "Kenny",
+    risk_tier: "R0",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "validation",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      assessment_status: "ELIGIBLE_FOR_AUTHORIZATION",
+      residual_risk_assessment: {
+        ...makeAssessedNoResidualRisks(),
+        outcome: "RESIDUAL_RISKS_RECORDED",
+        risks: [makeResidualRisk({ decision: "OPEN", accepted_by: null, accepted_by_role: null, accepted_at: null })],
+      },
+      gates: required.map((id) => makeGate(id)),
+    }),
+  };
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("cannot contain OPEN residual risks")));
+});
+
+test("accepted residual risks require named acceptance authority, evidence, owner, review and expiry", () => {
+  const valid = makeReadiness({
+    residual_risk_assessment: {
+      ...makeAssessedNoResidualRisks(),
+      outcome: "RESIDUAL_RISKS_RECORDED",
+      risks: [makeResidualRisk()],
+    },
+  });
+  const manifest = {
+    owner: "Kenny",
+    risk_tier: "R0",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "in_development",
+    release_status: "not_released",
+    release_readiness: valid,
+  };
+  assert.deepEqual(registry.releaseReadinessViolations(manifest, ROOT), []);
+
+  valid.residual_risk_assessment.risks[0].accepted_by = null;
+  valid.residual_risk_assessment.risks[0].accepted_by_role = null;
+  valid.residual_risk_assessment.risks[0].accepted_at = null;
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("requires a named accepting authority")));
+});
+
+test("residual risk review dates, expiry and IDs are enforced", () => {
+  const assessment = {
+    ...makeAssessedNoResidualRisks(),
+    outcome: "RESIDUAL_RISKS_RECORDED",
+    risks: [
+      makeResidualRisk(),
+      makeResidualRisk({ risk_id: "RISK-001" }),
+    ],
+  };
+  const manifest = {
+    owner: "Kenny",
+    risk_tier: "R0",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "in_development",
+    release_status: "not_released",
+    release_readiness: makeReadiness({ residual_risk_assessment: assessment }),
+  };
+  const errors = registry.releaseReadinessViolations(manifest, ROOT);
+  assert.ok(errors.some((x) => x.includes("duplicate residual-risk id")));
+  assessment.risks[0].review_due_at = "2027-03-01";
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("review_due_at must not be later than expires_at")));
+});
+
+test("NOT_ASSESSED residual-risk metadata cannot contain an implicit risk decision", () => {
+  const assessment = {
+    status: "NOT_ASSESSED",
+    outcome: "NOT_ASSESSED",
+    reviewed_by: null,
+    reviewer_role: null,
+    reviewed_at: null,
+    next_review_at: null,
+    evidence: [],
+    risks: [makeResidualRisk()],
+  };
+  const manifest = {
+    owner: "Kenny",
+    risk_tier: "R0",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "in_development",
+    release_status: "not_released",
+    release_readiness: makeReadiness({ residual_risk_assessment: assessment }),
+  };
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("must not contain an assessment outcome")));
 });
