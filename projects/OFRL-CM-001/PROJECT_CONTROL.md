@@ -5,7 +5,7 @@
 **Project ID:** `OFRL-CM-001`  
 **Project:** Computational Methods & Problem-Solving Case Studies  
 **Owner:** Kenny (Witthaya Maidee)  
-**Control version:** 1.0.1  
+**Control version:** 1.0.2  
 **Last reviewed:** 2026-11-06  
 **Lifecycle:** In Development  
 **Risk tier:** R1 — Analytical  
@@ -129,14 +129,14 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 
 | Task ID | Phase | Task / required result | Status | Dependency / exit evidence |
 |---|---|---|---|---|
-| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — research commit audit recorded** | Exact research head `faa691f1…`, main `cdbf345c…`, ahead 26 / behind 219, 14 changed paths, zero reviews/comments/threads, and exact-head CI 3/3 PASS recorded in §7; the present SSOT-only follow-up is a separate metadata commit |
-| CM-T0002 | P0 | Resolve branch integration and PR #29 merge readiness | **HOLD — owner decision required** | Main is 219 commits ahead of the merge base; this branch is 25 commits ahead. Preserve the current Draft PR and do not rebase, merge, retarget, or synchronize without an explicit owner decision; re-audit path overlap before any future integration |
+| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — research commit audit recorded** | Exact research head `b3465bff…`, main `cdbf345c…`, ahead 28 / behind 219, 14 changed paths, zero reviews/comments/threads, and exact-research-head CI 3/3 PASS recorded in §7; this Project Control refresh is a separate one-file metadata commit |
+| CM-T0002 | P0 | Resolve branch integration and PR #29 merge readiness | **HOLD — owner decision required** | Main is 219 commits ahead of the merge base; this branch is 28 commits ahead. Preserve the current Draft PR and do not rebase, merge, retarget, or synchronize without an explicit owner decision; re-audit path overlap before any future integration |
 | CM-T0003 | P0/P1 | Establish one canonical project-management register and remove duplicate handoff/roadmap authority | **PASS** | PROJECT_CONTROL.md is canonical; HANDOFF.md is procedure-only; exact-head Repository Policy run #42017737205 passed |
 | CM-T0004 | P1 | Define project mandate, workstreams, phase gates, and delivery acceptance | **PASS** | PROJECT_CONTROL.md §§2–6 and DECISION_LOG.md D-011–D-014; exact-head Repository Policy run #42017737205 passed |
 | CM-T0005 | P1 | Establish the initial Quantitative Practice Playbook | **PASS — initial v0.1.0 baseline** | PRACTICE_PLAYBOOK.md content audit; exact-head Repository Policy run #42017737205 passed |
 | CM-T0006 | P1 | Align manifest, README, research specification, implementation approach, protocol, and validation links with the approved scope | **PASS** | project.json v0.2.0, PROJECT_CATALOG.md type row, README and specialist cross-links; Repository Policy run #42017737205 passed |
 | CM-T0007 | P2 | Independently audit all 12 current Pressure Points candidate clusters and their residuals | **PASS — audit complete; no candidate promoted to fact** | PROBLEM_FORMALIZATION.md §4 CM-T0007 audit: 48 distinct source assignments, 25 exact / 23 residual-bearing comparisons, 13 surplus / 11 deficit letters, semantic/positional evidence graded separately; no global rule derived |
-| CM-T0008 | P2 | Investigate the remaining emoji clues and unassigned visible items without assuming the 19×4 model | **IN PROGRESS — no new group accepted; six emoji remain unmapped** | 13 candidate clusters / 52 provisional assignments and 23 sequences + Ø remain unchanged. Existing lexical, Dragon Kings/Four Symbols/Four Heavenly Kings, swine-breed, Anemoi (22; 9 optima), Char Dham (25; 3), and Amnaya Peetham (24; 2) screens are recorded as not accepted; the Monopoly-monocle visual association is a false positive. Next work must introduce a new source-backed roster or positional argument rather than repeat these screens. The 24 = 6×4 equality is arithmetic only; no global mapping, residual rule, or correctness predicate is established |
+| CM-T0008 | P2 | Investigate the remaining emoji clues and unassigned visible items without assuming the 19×4 model | **IN PROGRESS — H-017 conditional map audited; no official mapping accepted** | Pinned third-party H-017 proposes 19 four-term rosters. Independent strict two-sided multiset audits reproduce one assignment per fixed roster and conditionally cover 76/76 entries once: 38 exact, 19 source-surplus, 19 target-deficit, including Ø→U (−U). Conditional residual strings are NEWESTROUGHEXCHANGE / LEUVENGHENTBRUSSELS; ANTWERPSCHE DIAMANTKRING is a candidate output interpretation only. Semantic/positional evidence remains mixed: Queen/Orchestra and football/Barcelona rosters conflict; Monopoly corners lack cardinal proof; D.C. geometry and orchestra seating are weak; several group/position claims remain inferential. Third-party solver.py has a comparator defect (VAL-031 / TEST-036 FAIL) and is not a valid verifier. H-017 does not establish Jane Street's rule, uniqueness over all possible themes, the role of Ø, or official output semantics. Keep U-001–U-010, VAL-014/015 BLOCKED, official solution task OPEN, and solver/workbench gate NO-GO |
 | CM-T0009 | P2 | Determine the role of Ø, sequence ordering, residual transformation, and terminal notation | **BLOCKED** | Must derive one consistent interpretation or reject the current model |
 | CM-T0010 | P2 | Retrieve and inspect a direct official solution, if Jane Street publishes an actual linked target | **OPEN — source-monitoring task** | Recheck the live Archive; never infer a URL from search text |
 | CM-T0011 | P2 | Independently derive output and establish soundness/completeness/uniqueness claims as applicable | **BLOCKED** | Formal specification and acceptance predicate required |
@@ -148,26 +148,26 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 ## 7. Recorded GitHub verification snapshot
 
 **Snapshot date:** 2026-11-06  
-**Snapshot commit:** [`faa691f1433aab1532f3f8189f84925ec517fd28`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/faa691f1433aab1532f3f8189f84925ec517fd28)  
+**Snapshot commit:** [`b3465bffff41e3bfaf05c6801426ae0274c8b1c3`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/b3465bffff41e3bfaf05c6801426ae0274c8b1c3)  
 **Repository:** `witthaya-quant/Open-Finance-Research-Lab`  
 **PR:** [#29 — Project admission and Pressure Points research pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Branch observed:** `research/ofrl-cm-001-admission-and-pilot`
 
-At this full research-commit snapshot:
-- Branch / PR head: `faa691f1433aab1532f3f8189f84925ec517fd28`.
+At this full H-017 research-commit snapshot:
+- Branch / PR head: `b3465bffff41e3bfaf05c6801426ae0274c8b1c3`.
 - PR state: Open / Draft / Not merged; GitHub reports mergeable.
 - Base branch: `main`; observed main head: `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`; merge base / PR base checkpoint: `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`.
-- Compare: branch ahead 26 / behind 219.
-- PR changed files: 14. The paths are `PROJECT_CATALOG.md` and files under `projects/OFRL-CM-001/**`; no path under `projects/OFRL-IB-001/**`, `.github/**`, `schemas/**`, `scripts/**`, or `fixtures/**` is changed.
+- Compare: branch ahead 28 / behind 219.
+- PR changed files: 14. The paths remain `PROJECT_CATALOG.md` and files under `projects/OFRL-CM-001/**`; no path under `projects/OFRL-IB-001/**`, `.github/**`, `schemas/**`, `scripts/**`, or `fixtures/**` is changed.
 - PR issue comments: 0; reviews: 0; review threads: 0.
 - All three workflows completed successfully on this exact research commit:
-  - [OFRL Repository Policy #42181704706](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42181704706)
-  - [OFRL-IB-001 Numeric and Input Contract Checks #42181704636](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42181704636)
-  - [OFRL-IB-001 Rust Runtime Semantic Validator #42181704802](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42181704802)
+  - [OFRL Repository Policy #42228347657](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42228347657)
+  - [OFRL-IB-001 Numeric and Input Contract Checks #42228347684](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42228347684)
+  - [OFRL-IB-001 Rust Runtime Semantic Validator #42228347638](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42228347638)
 
 The two IB-001 workflows ran because of repository PR-event behavior. Their success is not evidence of changes to IB-001 or mathematical correctness for CM-001.
 
-**Snapshot boundary:** This records the full research commit. A subsequent one-file Project Control metadata commit updates this register's snapshot and task evidence; therefore the current branch head may be one commit ahead of the research snapshot. Always fetch the live PR and branch refs before repository operations.
+**Snapshot boundary:** This records the full H-017 research commit. A subsequent one-file Project Control metadata commit updates this register's snapshot and task evidence; therefore the current branch head may be one commit ahead of this research snapshot. Always fetch live PR and branch refs before repository operations.
 
 **Live-state rule:** This section is a frozen, auditable checkpoint, not a dynamic GitHub view and not a write token. At every new chat or task, agents MUST re-fetch PR #29, branch `HEAD`, `main`, compare counts, changed paths, comments/reviews, and exact-head workflows.
 ## 8. Project document ownership map
