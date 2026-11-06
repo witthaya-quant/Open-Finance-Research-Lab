@@ -55,6 +55,16 @@
       "authorized_at": null,
       "decision_record": null,
       "source_commit": null
+    },
+    "residual_risk_assessment": {
+      "status": "NOT_ASSESSED",
+      "outcome": "NOT_ASSESSED",
+      "reviewed_by": null,
+      "reviewer_role": null,
+      "reviewed_at": null,
+      "next_review_at": null,
+      "evidence": [],
+      "risks": []
     }
   }
 }
