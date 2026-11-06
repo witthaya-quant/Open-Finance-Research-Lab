@@ -227,6 +227,32 @@ test("NOT_ASSESSED project can remain in research or development without fabrica
   assert.deepEqual(registry.releaseReadinessViolations(manifest, ROOT), []);
 });
 
+test("R1 risk tier requires analytical reproducibility and domain review without R2/R3 operational gates", () => {
+  const manifest = {
+    owner: "Kenny",
+    risk_tier: "R1",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "in_development",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      assessment_status: "BLOCKED",
+      gates: registry.requiredReleaseGateIds({
+        risk_tier: "R1",
+        project_types: ["research"],
+        data_classification: "none",
+        release_readiness: { independent_assurance_required: false },
+      }).map((id) => makeGate(id, { status: "BLOCKED", assessor: undefined, evidence: [] })),
+    }),
+  };
+  const required = registry.requiredReleaseGateIds(manifest);
+  assert.ok(required.includes("reproducibility"));
+  assert.ok(required.includes("domain_review"));
+  assert.ok(!required.includes("numeric_and_financial_controls"));
+  assert.ok(!required.includes("security_review"));
+  assert.deepEqual(registry.releaseReadinessViolations(manifest, ROOT), []);
+});
+
 test("required release gates scale by risk, project type and data classification", () => {
   assert.deepEqual(
     registry.requiredReleaseGateIds({
@@ -372,6 +398,56 @@ test("LIVE_EXTERNAL is restricted to R3 and requires released, authorized readin
   assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("LIVE_EXTERNAL operation is restricted to R3")));
 });
 
+
+test("R3 LIVE_EXTERNAL authorization passes only with complete independent controls and provenance", () => {
+  const seed = {
+    risk_tier: "R3",
+    project_types: ["software", "infrastructure"],
+    data_classification: "none",
+    lifecycle_status: "released",
+    release_status: "released",
+    version: "1.0.0",
+    release_readiness: makeReadiness({
+      assessment_status: "ELIGIBLE_FOR_AUTHORIZATION",
+      operational_mode: "LIVE_EXTERNAL",
+      independent_assurance_required: true,
+      independent_assurance_rationale: "R3 external operation can cause material direct harm and requires independent domain and security assurance.",
+      residual_risk_assessment: makeAssessedNoResidualRisks(),
+    }),
+  };
+  const required = registry.requiredReleaseGateIds(seed);
+  seed.release_readiness.gates = required.map((id) => id === "privacy_legal_review"
+    ? makeGate(id, {
+        status: "NOT APPLICABLE",
+        assessor: undefined,
+        evidence: [],
+        rationale: "The assessed scope does not collect or process personal or regulated data; privacy/legal applicability was explicitly reviewed.",
+      })
+    : makeGate(id));
+  seed.release_readiness.authorization = {
+    status: "AUTHORIZED",
+    authority: "Kenny",
+    authority_role: "Founder / Principal Maintainer",
+    authorized_at: "2026-11-06",
+    decision_record: "https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/19",
+    source_commit: "a".repeat(40),
+  };
+  assert.deepEqual(registry.releaseReadinessViolations(seed, ROOT), []);
+
+  seed.release_readiness.gates.find((gate) => gate.gate_id === "founder_approval").assessor.identity = "Another Person";
+  assert.ok(registry.releaseReadinessViolations(seed, ROOT).some((x) => x.includes("release authority must match")));
+});
+
+test("withdrawn release state requires deprecated or archived lifecycle and withdrawal authorization", () => {
+  assert.ok(registry.releaseStateViolations({
+    lifecycle_status: "released",
+    release_status: "withdrawn",
+  }).some((x) => x.includes("withdrawn releases must be deprecated or archived")));
+  assert.deepEqual(registry.releaseStateViolations({
+    lifecycle_status: "archived",
+    release_status: "withdrawn",
+  }), []);
+});
 
 test("a disclosed conflict cannot satisfy a required independent domain review", () => {
   const manifest = {
