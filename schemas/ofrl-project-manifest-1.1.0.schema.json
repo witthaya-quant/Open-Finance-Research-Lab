@@ -392,6 +392,7 @@
                 "then": {
                   "properties": {
                     "rationale": {
+                      "type": "string",
                       "minLength": 30
                     }
                   }
