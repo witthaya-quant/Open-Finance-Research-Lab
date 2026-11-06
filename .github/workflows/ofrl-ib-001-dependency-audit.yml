@@ -159,6 +159,10 @@ jobs:
               r"^(license|licence|unlicense|copying|notice|copyright|patents|authors|contributors)([-_.].*)?$",
               re.IGNORECASE,
           )
+          EMBEDDED_LICENSE_SECTIONS = re.compile(
+              r"^\\s*(LICENSE|AUTHORS-(?:MIT|ASL|LGPL|APACHE|BSD)|COPYING(?:-[A-Z0-9_-]+)?)\\s*:",
+              re.IGNORECASE | re.MULTILINE,
+          )
 
           def read_json(path):
               return json.loads(path.read_text(encoding="utf-8"))
@@ -316,15 +320,25 @@ jobs:
                               if not NOTICE_NAMES.match(basename):
                                   continue
                               file_content = bundle.extractfile(member).read()
+                              decoded_content = file_content.decode("utf-8", errors="replace")
+                              embedded_sections = sorted(set(
+                                  section.upper()
+                                  for section in EMBEDDED_LICENSE_SECTIONS.findall(decoded_content)
+                              ))
+                              dedicated_license_name = bool(LICENSE_TEXT_NAMES.match(basename))
                               legal_files.append({
                                   "path": member.name.removeprefix(archive_root + "/"),
                                   "size_bytes": len(file_content),
                                   "sha256": sha256_bytes(file_content),
+                                  "dedicated_license_filename": dedicated_license_name,
+                                  "embedded_license_sections": embedded_sections,
+                                  "is_license_text_candidate": (
+                                      dedicated_license_name or bool(embedded_sections)
+                                  ),
                               })
 
                           license_text_files = [
-                              item for item in legal_files
-                              if LICENSE_TEXT_NAMES.match(pathlib.PurePosixPath(item["path"]).name)
+                              item for item in legal_files if item["is_license_text_candidate"]
                           ]
 
                           records.append({
@@ -380,13 +394,15 @@ jobs:
           )
 
           report = {
-              "schema_version": "1.1.0",
+              "schema_version": "1.2.0",
               "review_state": "PENDING_MANUAL_SOURCE_AND_LICENCE_REVIEW",
               "interpretation": (
                   "Inventory only. Cargo fetched dependencies under the committed lockfiles; each source archive "
                   "SHA-256 was checked against its Cargo.lock checksum. The source archive Cargo.toml was compared "
-                  "with Cargo metadata where the package is in the all-features metadata graph. Licence/notice "
-                  "file names, sizes and hashes identify review candidates; they do not constitute legal acceptance "
+                  "with Cargo metadata where the package is in the all-features metadata graph. Licence text is "
+                  "classified by dedicated filename or explicit embedded headings such as LICENSE and AUTHORS-MIT; "
+                  "other notice/author files are not treated as licence text unless such a heading is present. "
+                  "File hashes and section headings identify review candidates; they do not constitute legal acceptance "
                   "or a complete copyright review."
               ),
               "scopes": [application, decimal_poc],
