@@ -58,6 +58,21 @@ Describe supported environments, API/schema compatibility, breaking changes, upg
 
 List unresolved defects, untested conditions, evidence maturity, residual risks, and unsupported uses.
 
+### Residual-risk review
+
+**Assessment status:** NOT_ASSESSED / ASSESSED  
+**Outcome:** NOT_ASSESSED / NO_RESIDUAL_RISKS / RESIDUAL_RISKS_RECORDED  
+**Reviewed by / role:**  
+**Reviewed at:** YYYY-MM-DD  
+**Next review at:** YYYY-MM-DD  
+**Evidence reference(s):**
+
+| Risk ID | Summary (sanitized) | Severity | Disposition | Control owner | Review due | Expires | Expiry condition | Decision / evidence reference |
+|---|---|---|---|---|---|---|---|---|
+| | | LOW / MEDIUM / HIGH / CRITICAL | OPEN / MITIGATED / TRANSFERRED / ACCEPTED / CLOSED | | YYYY-MM-DD | YYYY-MM-DD | | |
+
+For every ACCEPTED residual risk, additionally record the accepting authority, role, acceptance date, supporting evidence and decision reference in the project manifest. An OPEN residual risk blocks `ELIGIBLE_FOR_AUTHORIZATION`. Keep confidential review materials outside the repository; use only sanitized summaries and access-controlled references here.
+
 ## 7. Corrections and support status
 
 State the issue/reporting route, support scope, deprecation policy, and how material corrections will be communicated.
