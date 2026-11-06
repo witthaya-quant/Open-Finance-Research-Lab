@@ -327,6 +327,32 @@ test("LIVE_EXTERNAL is restricted to R3 and requires released, authorized readin
   assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("LIVE_EXTERNAL operation is restricted to R3")));
 });
 
+
+test("a disclosed conflict cannot satisfy a required independent domain review", () => {
+  const manifest = {
+    risk_tier: "R2",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "in_development",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      independent_assurance_required: true,
+      independent_assurance_rationale: "The material research claim requires independent domain assurance before release.",
+      gates: [makeGate("independent_domain_review", {
+        assessor: {
+          identity: "Reviewer One",
+          role: "External domain reviewer",
+          independent: true,
+          conflict_status: "DISCLOSED",
+          conflict_rationale: "The reviewer has a current commercial relationship with the project owner.",
+          review_reference: "https://github.com/example/review",
+        },
+      })],
+    }),
+  };
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("cannot count as independent PASS")));
+});
+
 test("PASS evidence and reviewer references must resolve to HTTPS or a safe project-local file", () => {
   const manifest = {
     risk_tier: "R0",
