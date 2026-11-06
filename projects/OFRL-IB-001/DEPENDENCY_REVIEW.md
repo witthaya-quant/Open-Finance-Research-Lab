@@ -70,6 +70,25 @@ The new [Dependency Audit workflow](../../.github/workflows/ofrl-ib-001-dependen
 
 The inventory computes SHA-256 against each lockfile checksum and hashes candidate licence, Unlicense, copyright, patent, attribution and notice files from the downloaded package archive. The package-level inventory is not considered accepted until the relevant source, licence, attribution, notice, patent, exception and redistribution obligations have been reviewed and dispositioned. Missing or inconsistent metadata must remain visible; it must not be inferred or silently accepted.
 
+### 3.1 Exact-head source archive inventory — PR #34
+
+The current workflow completed successfully on PR #34 source commit `448c436486e75a7f40ad80fa20c612abf9618bc3`:
+
+- Workflow run: [#42181012893 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42181012893)
+- Artifact: `ofrl-ib-001-dependency-audit-448c436486e75a7f40ad80fa20c612abf9618bc3` (ID `13485366773`)
+- Artifact archive SHA-256: `a9dfae7e951c2b7ae8ddbcfb740583d5771ab58d43463dd182593a23bd3cf338`; the downloaded archive was independently hashed and matched GitHub's reported digest.
+- Source revision: PR `pull_request` event, not `main`. The application and Decimal POC lockfiles were unchanged from the main baseline recorded above; this run does not represent a merged-main run.
+
+| Scope | Locked registry packages | Source archives matched lockfile SHA-256 | Cargo metadata vs source manifest | Licence/notice candidates |
+|---|---:|---:|---:|---:|
+| Application workspace | 52 | 52 / 52 | 52 / 52 | 111 files |
+| Decimal Contract POC | 55 | 55 / 55 | 55 / 55 | 119 files |
+| **Total records** | **107** | **107 / 107** | **107 / 107** | **230 files** |
+
+All 107 source archives matched their committed `Cargo.lock` SHA-256 checksums. The package identity, licence expression, licence-file field and repository field in each downloaded source archive matched Cargo metadata where the package appeared in the all-features metadata graph. There were no Git or non-crates.io registry sources, no missing publisher-declared licence expressions, no missing declared licence files, and no package without a detected licence/notice candidate file.
+
+The inventory records file paths, byte sizes and SHA-256 hashes for candidate licence, Unlicense, copyright, patent, authorship and notice files. It does **not** read these results as legal approvals. All 107 package records retain `licence_review=PENDING` and `source_review=PENDING`; the package-level terms and distribution obligations still require human review.
+
 ## 4. Licence, copyright and notice review
 
 The repository's [Licensing and Reuse Policy](../../LICENSE_POLICY.md) applies to OFRL-owned material. Third-party crates remain under their own terms. OFRL's Apache-2.0 software licence does not relicense dependencies or remove their notice obligations.
@@ -102,6 +121,26 @@ The earlier [PR #11 dependency audit](https://github.com/witthaya-quant/Open-Fin
 That scan does not satisfy the current-head advisory gate. The new workflow runs `cargo audit --file <committed-lockfile> --deny warnings --json` against the current application and committed Decimal POC lockfiles, then records the exact RustSec database commit and commit time. No advisory ignore list is supplied. Any non-zero result is blocking until dispositioned.
 
 A clean point-in-time scan does not prove that a package is free of vulnerabilities, establish exploitability or reachability, cover operating-system libraries, or detect defects not represented in the RustSec database.
+
+### 5.1 Current RustSec result — PR #34 exact run
+
+The same PR #34 workflow run `42181012893` audited the current committed application and Decimal POC lockfiles with `cargo-audit 0.22.2`, `--deny warnings`, and no ignore list:
+
+| Scope | Audit dependency count | Vulnerabilities | Warnings | Exit |
+|---|---:|---:|---:|---:|
+| Application workspace | 54 | 0 | 0 | 0 |
+| Decimal Contract POC | 56 | 0 | 0 | 0 |
+
+RustSec Advisory Database snapshot:
+
+- Commit: `26fd2d43f7280a1fb925a3743ec463017afe7119`
+- Timestamp: `2026-11-05T09:50:49+01:00`
+- Advisory records reported by the audit: 1,409
+- Both JSON reports recorded `vulnerabilities.found=false`, `vulnerabilities.count=0`, and an empty `warnings` object. The informational warning categories Unmaintained, Unsound and Notice were enabled as deny-worthy warnings.
+
+This is a successful, current-at-run-time point-in-time scan for the exact two lockfiles and the database commit above. It is not proof of absence of vulnerabilities, exploitability, application defects, system-library risks or issues outside RustSec. It does not resolve the `xml-rs 0.8.19` exception in the separate CycloneDX generator graph.
+
+The PR head was `448c436486e75a7f40ad80fa20c612abf9618bc3`; the workflow definition and package manifests/lockfiles have not changed after this run. Subsequent changes to the PR are documentation-only. The scan should be repeated after dependency/manifest/lockfile/workflow changes and after merge to main as required by the release process.
 
 ## 6. SBOM and release provenance
 
