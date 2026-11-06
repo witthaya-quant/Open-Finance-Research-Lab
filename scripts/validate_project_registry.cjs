@@ -247,14 +247,25 @@ const REQUIRED_RELEASE_GATE_IDS = new Set([
   "maintenance_and_corrections",
 ]);
 
-const NON_WAIVABLE_R3_GATES = new Set([
-  "founder_approval",
+const NON_WAIVABLE_GATES = new Set([
+  "scope_and_claims",
+  "evidence_and_limitations",
+  "licence_and_ip",
+  "reproducibility",
+  "domain_review",
+  "numeric_and_financial_controls",
+  "dependency_and_sbom",
   "independent_domain_review",
   "security_review",
   "operational_safeguards",
   "incident_response",
   "rollback_recovery",
+  "founder_approval",
 ]);
+
+function assessmentRequiresGateInventory(status) {
+  return status === "BLOCKED" || status === "ELIGIBLE_FOR_AUTHORIZATION";
+}
 
 function requiredReleaseGateIds(manifest) {
   const ids = [
@@ -365,9 +376,11 @@ function releaseReadinessViolations(manifest, projectDir) {
   }
 
   const required = requiredReleaseGateIds(manifest);
-  for (const gateId of required) {
-    if (!gatesById.has(gateId)) {
-      violations.push("project.json: release readiness is missing required gate '" + gateId + "'");
+  if (assessmentRequiresGateInventory(readiness.assessment_status)) {
+    for (const gateId of required) {
+      if (!gatesById.has(gateId)) {
+        violations.push("project.json: release readiness is missing required gate '" + gateId + "'");
+      }
     }
   }
 
@@ -384,18 +397,19 @@ function releaseReadinessViolations(manifest, projectDir) {
 
   const assessment = readiness.assessment_status;
   const authorization = readiness.authorization;
-  const requiredNonWaivable = manifest.risk_tier === "R3" ? NON_WAIVABLE_R3_GATES : new Set(["founder_approval"]);
   const allRequiredSatisfied = required.every((gateId) => {
     const gate = gatesById.get(gateId);
     if (!gate) return false;
     if (gate.status === "PASS") return true;
     if (gate.status !== "NOT APPLICABLE") return false;
-    return !requiredNonWaivable.has(gateId);
+    return gateId === "privacy_legal_review";
   });
-  const hasUnresolvedGate = required.some((gateId) => {
-    const gate = gatesById.get(gateId);
-    return !gate || !["PASS", "NOT APPLICABLE"].includes(gate.status);
-  });
+  const hasUnresolvedGate =
+    required.some((gateId) => {
+      const gate = gatesById.get(gateId);
+      return !gate || !["PASS", "NOT APPLICABLE"].includes(gate.status);
+    }) ||
+    gates.some((gate) => ["FAIL", "NOT RUN", "BLOCKED"].includes(gate.status));
 
   if (assessment === "ELIGIBLE_FOR_AUTHORIZATION") {
     if (!allRequiredSatisfied) {
