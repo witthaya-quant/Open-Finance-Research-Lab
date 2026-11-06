@@ -2,7 +2,7 @@
 
 # OFRL-IB-001 — Dependency and Source Review
 
-**Review version:** 0.1.2  
+**Review version:** 0.1.3  
 **Task:** IB-T005 — Dependency and source acceptance  
 **Issue:** [#16 — Rust supply-chain controls](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/16)  
 **Status:** OPEN — automated source inventory and advisory evidence are verified on PR #34; human package-level source, licence, notice and release acceptance remain pending  
@@ -66,21 +66,25 @@ The new [Dependency Audit workflow](../../.github/workflows/ofrl-ib-001-dependen
 6. Preserve the source revision, lockfile hashes, tool version and advisory database commit in the CI evidence artifact.
 7. Keep fetched source archives in the ephemeral runner Cargo cache; upload only the bounded inventory and audit evidence, not third-party source archives.
 
+8. Compare locked registry package identities with Cargo metadata in both directions and fail on missing, extra, or duplicate identities; reject unapproved non-crates.io or Git sources.
+9. Parse and cross-check the generated evidence artifact before passing: require complete scope/package coverage, archive checksum equality, metadata matches, licence-text candidates, exact lockfile hashes, exact source/tool/advisory identity, zero audit exit codes, and empty vulnerability/warning results. Preserve human source and licence review as `PENDING`; automation cannot grant legal acceptance.
+
+The workflow's pull-request path filters also include root and project-local Cargo source configuration files, so changes to registry/source resolution trigger the audit.
+
 **Interpretation boundary:** a crates.io source identifier and matching checksum establish which registry archive was retrieved. A package's `repository` field remains publisher-declared metadata; it is not proof that the linked upstream repository is owned or controlled by the publisher. File-name/hash inventory identifies review candidates; it is not a legal interpretation or copyright clearance.
 
 The inventory computes SHA-256 against each lockfile checksum and hashes candidate licence, Unlicense, copyright, patent, attribution and notice files from the downloaded package archive. The package-level inventory is not considered accepted until the relevant source, licence, attribution, notice, patent, exception and redistribution obligations have been reviewed and dispositioned. Missing or inconsistent metadata must remain visible; it must not be inferred or silently accepted.
 
-### 3.1 Final PR-head source archive inventory — PR #34
+The final source-inventory and advisory-evidence run for PR #34 completed successfully against source commit `0158b1adacff08ff3587c01722cefb75bfa85be0`:
 
-The final source-inventory and advisory-evidence run for PR #34 completed successfully against source commit `9bd7f44c5ee81e852cd47ce498e475ed9b0cec3f`:
-
-- Workflow run: [#42186587738 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42186587738).
-- Artifact: `ofrl-ib-001-dependency-audit-9bd7f44c5ee81e852cd47ce498e475ed9b0cec3f` (ID `13488210692`; 17,549 bytes; retained through 2026-12-06).
-- Artifact archive SHA-256: `1945a83d8730d036f3e7666df42aa5cc1b394c00ff3b29ddf5f4d0ba259676a4`; the downloaded archive was independently hashed and matched GitHub's reported digest.
+- Workflow run: [#42229312405 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312405).
+- Artifact: `ofrl-ib-001-dependency-audit-0158b1adacff08ff3587c01722cefb75bfa85be0` (ID `13507007891`; 17,550 bytes; retained for 30 days from upload).
+- Artifact archive SHA-256: `818c24d7b272f89b206897cfbb607db5dd05ac8759d051ae51aa071a3355a2ef`; the downloaded archive was independently hashed and matched GitHub's reported digest.
 - Inventory schema: `1.2.0`, with dedicated licence-filename and embedded licence-section detection.
 - Exact lockfile SHA-256 values: application `485a9c8d5e7d04a7abf0cd266540c7499dd49c51999c3c553532ad9200864c90`; Decimal Contract POC `288b19b1e97cab000df902961af302d0ba4413bad5dabd731da7feddaf4f9d56`.
 - The artifact's `audit-context.json` records the same source commit, Rust 1.85.0, checksum-pinned `cargo-audit 0.22.2`, and RustSec database commit `26fd2d43f7280a1fb925a3743ec463017afe7119`.
-- This is a pull-request source commit, not a `main` run. The later synchronization commits for this PR change documentation only; they do not change the audited workflow, Cargo manifests or lockfiles.
+- The final audit run used the hardened workflow: bidirectional Cargo.lock/Cargo metadata package-set parity is fail-closed; missing/extra/duplicate identities and non-crates.io sources are rejected; the final step validates every inventory scope and package record, checksum/metadata parity, lockfile manifest, audit context and RustSec JSON report before PASS.
+- This is a pull-request source commit, not a `main` run. Subsequent documentation-only synchronization commits do not alter the workflow, Cargo manifests or lockfiles included in this audit.
 
 | Scope | Locked registry packages | Source archives matched lockfile SHA-256 | Cargo metadata cross-checks | Licence-text candidates | Packages without a licence-text candidate |
 |---|---:|---:|---:|---:|---:|
@@ -92,7 +96,9 @@ The downloaded artifact was inspected directly. Every package record has `metada
 
 The application RustSec JSON reports 54 locked dependencies, zero vulnerabilities and zero warnings. The Decimal Contract POC report records 56 locked dependencies, zero vulnerabilities and zero warnings. Both exit codes are zero; the exact database snapshot and interpretation are recorded in §5.1.
 
-The corrected matcher detects `r-efi 5.3.0` licence material embedded in `AUTHORS` in both dependency scopes, including the four headings `LICENSE`, `AUTHORS-MIT`, `AUTHORS-ASL`, and `AUTHORS-LGPL`.
+The corrected matcher detects `r-efi 5.3.0` licence material embedded in `AUTHORS` in both dependency scopes, including `LICENSE`, `AUTHORS-MIT`, `AUTHORS-ASL`, and `AUTHORS-LGPL`.
+
+The exact PR-head validation also includes [Repository Policy run #42229312477](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312477), [Numeric and Input Contract run #42229312556](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312556), and [Rust Runtime Semantic Validator run #42229312412](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312412). All four workflows completed successfully on source `0158b1a`; semantic validator checks passed on Rust 1.85.0 and 1.99.1.
 
 ## 4. Licence, copyright and notice review
 
@@ -110,7 +116,7 @@ The tagged upstream source was checked directly:
 
 The package occurs once in the application lockfile and once in the isolated Decimal POC lockfile. The source-archive inventory records `AUTHORS` in both scopes (3,693 bytes; archive SHA-256 `ff92bed461f50338dd703a9ba9aee496a425957873df1d91192776e4bdf5dda7`). The original schema 1.1 result did not inspect embedded section headings and therefore must not be interpreted as proof that the package omitted its licence material.
 
-The corrected schema 1.2.0 matcher was verified on the final dependency-audit source commit by [workflow run #42186587738](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42186587738). Its artifact (`13488210692`; SHA-256 `1945a83d8730d036f3e7666df42aa5cc1b394c00ff3b29ddf5f4d0ba259676a4`) records all four embedded headings under `license_text_files` and reports `FOUND_IN_SOURCE_ARCHIVE` for `r-efi 5.3.0` in both dependency scopes. The application and POC inventories each report zero packages without a licence-text candidate.
+The corrected schema 1.2.0 matcher was verified on the final dependency-audit source commit by [workflow run #42229312405](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312405). Its artifact (`13507007891`; SHA-256 `818c24d7b272f89b206897cfbb607db5dd05ac8759d051ae51aa071a3355a2ef`) records all four embedded headings under `license_text_files` and reports `FOUND_IN_SOURCE_ARCHIVE` for `r-efi 5.3.0` in both dependency scopes. The application and POC inventories each report zero packages without a licence-text candidate.
 
 This is a classification improvement, not a legal approval or a claim that every referenced upstream licence document is reproduced in full.
 
@@ -148,9 +154,9 @@ That scan does not satisfy the current-head advisory gate. The new workflow runs
 
 A clean point-in-time scan does not prove that a package is free of vulnerabilities, establish exploitability or reachability, cover operating-system libraries, or detect defects not represented in the RustSec database.
 
-### 5.1 Current RustSec result — PR #34 final dependency-audit run
+### 5.1 Current RustSec result — PR #34 hardened dependency-audit run
 
-Workflow run [#42186587738](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42186587738) audited the exact committed application and Decimal Contract POC lockfiles at source commit `9bd7f44c5ee81e852cd47ce498e475ed9b0cec3f` with checksum-pinned `cargo-audit 0.22.2`, `--deny warnings`, and no ignore list.
+Workflow run [#42229312405](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312405) audited the exact committed application and Decimal Contract POC lockfiles at source commit `0158b1adacff08ff3587c01722cefb75bfa85be0` with checksum-pinned `cargo-audit 0.22.2`, `--deny warnings`, and no ignore list.
 
 | Scope | Audit dependency count | Vulnerabilities | Warnings | Exit |
 |---|---:|---:|---:|---:|
@@ -164,7 +170,9 @@ RustSec Advisory Database snapshot:
 - Advisory records reported by the audit: 1,409.
 - Both JSON reports record `vulnerabilities.found=false`, `vulnerabilities.count=0`, and an empty `warnings` object. Informational warning categories Unmaintained, Unsound and Notice were enabled as deny-worthy warnings.
 
-The uploaded exact-run artifact is ID `13488210692`, size 17,549 bytes, archive SHA-256 `1945a83d8730d036f3e7666df42aa5cc1b394c00ff3b29ddf5f4d0ba259676a4`. The audit context records source commit `9bd7f44c5ee81e852cd47ce498e475ed9b0cec3f`, Rust toolchain `1.85.0`, the checksum-pinned scanner archive, and the exact advisory database revision.
+The uploaded exact-run artifact is ID `13507007891`, size 17,550 bytes, archive SHA-256 `818c24d7b272f89b206897cfbb607db5dd05ac8759d051ae51aa071a3355a2ef`. The audit context records source commit `0158b1adacff08ff3587c01722cefb75bfa85be0`, Rust toolchain `1.85.0`, the checksum-pinned scanner archive, and the exact advisory database revision. The downloaded archive digest was independently verified against GitHub's artifact digest.
+
+The same source revision passed all four PR workflows: Repository Policy [#42229312477](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312477), Numeric and Input Contract [#42229312556](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312556), Rust Runtime Semantic Validator [#42229312412](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312412), and Dependency Audit [#42229312405](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312405). Both semantic-validator Rust toolchains (1.85.0 and 1.99.1) completed successfully. The Numeric Envelope and Decimal Contract / JSON Schema jobs also passed.
 
 This is successful, point-in-time evidence for the two lockfiles and database commit above. It is not proof of absence of vulnerabilities, exploitability, application defects, system-library risks or issues outside RustSec. It does not resolve the `xml-rs 0.8.19` exception in the separate CycloneDX generator graph. The scan must be repeated after dependency/manifest/lockfile/workflow changes and on the default branch after merge as required by the release process.
 
@@ -200,17 +208,16 @@ Alternative generators or an SPDX-based pipeline may be evaluated only against t
 |---|---|
 | Committed application lockfile and package inventory | PASS — baseline identities verified; 52 registry packages in the application lockfile |
 | Isolated POC lockfile and package inventory | PASS — separate baseline; 55 registry packages in the committed POC lockfile |
-| Registry source-archive integrity | PASS on PR #34 dependency-audit source commit `9bd7f44` — 107 / 107 archive SHA-256 values matched committed lockfile checksums; rerun on `main` after merge |
-| Cargo metadata/source-manifest cross-check | PASS on the same source commit — 107 / 107 package records matched for identity, licence expression, licence-file and repository fields |
+| Registry source-archive integrity | PASS on hardened PR #34 dependency-audit source commit `0158b1a` — 107 / 107 archive SHA-256 values matched committed lockfile checksums; rerun on `main` after merge |
+| Cargo metadata/source-manifest cross-check | PASS on the same source commit — 107 / 107 package records matched for identity, licence expression, licence-file and repository fields; workflow now fails on missing/extra/duplicate metadata identities |
 | Licence/notice candidate discovery | PASS as inventory only — 107 / 107 package records have a detected licence-text candidate; all 107 remain pending human review |
+| Evidence artifact integrity gate | PASS — complete package inventory, lockfile hashes, source/tool/advisory identity and RustSec JSON reports were cross-checked before CI PASS |
 | Package-by-package source and repository provenance review | OPEN — all 107 records retain `source_review=PENDING`; publisher repository metadata is not proof of ownership/control |
 | Package-by-package licence, copyright, patent and notice disposition | OPEN — all 107 records retain `licence_review=PENDING`; alternatives, exceptions and distribution obligations require human disposition |
-| Current RustSec audit on both committed lockfiles | PASS on PR #34 source commit — 0 vulnerabilities and 0 warnings on both lockfiles against the recorded 1,409-entry database snapshot; point-in-time only, rerun after merge and relevant changes |
+| Current RustSec audit on both committed lockfiles | PASS on hardened PR #34 source commit — 0 vulnerabilities and 0 warnings on both lockfiles against the recorded 1,409-entry database snapshot; point-in-time only, rerun after merge and relevant changes |
 | Duplicate-version and source exception review | OPEN — five duplicate package names in the application lockfile require target/feature review; no Git sources were found in either current lockfile |
 | Preview-generator exception review | OPEN; restricted to the preview-only generator and due 2027-02-04 or earlier if upstream removes the yanked package |
 | Official release SBOM/checksums and reproducible release identity | NOT DONE — requires the exact approved release source and supported target matrix |
 | Release authorization | NOT AUTHORIZED |
 
 **IB-T005 remains OPEN.** PR #34 delivers repeatable technical inventory and point-in-time advisory evidence; it does not approve any package or authorize distribution. The exact source audit is on an unmerged PR commit, not `main`; the scheduled default-branch recheck becomes active after merge. Human source/licence/notice dispositions, the generator exception, the eventual production dependency graph after IB-T004, official release SBOM/checksums, reproduction and publication authorization remain separate gates. No forecast engine work is authorized by this document.
-
-
