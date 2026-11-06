@@ -477,13 +477,22 @@ test("accepted residual risks require named acceptance authority, evidence, owne
     data_classification: "none",
     lifecycle_status: "in_development",
     release_status: "not_released",
-    release_readiness: valid,
+    release_readiness: makeReadiness({
+      assessment_status: "BLOCKED",
+      residual_risk_assessment: valid.residual_risk_assessment,
+      gates: [
+        makeGate("scope_and_claims", { status: "BLOCKED", assessor: undefined, evidence: [] }),
+        makeGate("evidence_and_limitations"),
+        makeGate("licence_and_ip"),
+        makeGate("founder_approval"),
+      ],
+    }),
   };
   assert.deepEqual(registry.releaseReadinessViolations(manifest, ROOT), []);
 
-  valid.residual_risk_assessment.risks[0].accepted_by = null;
-  valid.residual_risk_assessment.risks[0].accepted_by_role = null;
-  valid.residual_risk_assessment.risks[0].accepted_at = null;
+  manifest.release_readiness.residual_risk_assessment.risks[0].accepted_by = null;
+  manifest.release_readiness.residual_risk_assessment.risks[0].accepted_by_role = null;
+  manifest.release_readiness.residual_risk_assessment.risks[0].accepted_at = null;
   assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("requires a named accepting authority")));
 });
 
