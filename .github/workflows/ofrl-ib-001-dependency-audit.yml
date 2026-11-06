@@ -1,0 +1,462 @@
+name: OFRL-IB-001 Dependency Audit
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/ofrl-ib-001-dependency-audit.yml"
+      - "projects/OFRL-IB-001/Cargo.toml"
+      - "projects/OFRL-IB-001/Cargo.lock"
+      - "projects/OFRL-IB-001/crates/**/Cargo.toml"
+      - "projects/OFRL-IB-001/poc/decimal-contract/Cargo.toml"
+      - "projects/OFRL-IB-001/poc/decimal-contract/Cargo.lock"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ofrl-ib-001-dependency-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependency-audit:
+    name: Locked source inventory and RustSec audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      PROJECT_DIR: projects/OFRL-IB-001
+      RUST_TOOLCHAIN: "1.85.0"
+      CARGO_AUDIT_VERSION: "0.22.2"
+      CARGO_AUDIT_SHA256: "ab28a1bdb54db4d5d8ad5981cf1f959410370b3d28250dbd35f6a44248620e39"
+      CARGO_HOME: ${{ runner.temp }}/ofrl-cargo-home
+      SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+    steps:
+      - name: Checkout exact source commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Install declared Rust toolchain and checksum-pinned cargo-audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if ! command -v rustup >/dev/null 2>&1; then
+            echo "::error::rustup is not present on the ubuntu-24.04 runner; refusing to execute a remote bootstrap script." >&2
+            exit 1
+          fi
+
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal
+          TOOL_DIR="$RUNNER_TEMP/ofrl-tools"
+          mkdir -p "$TOOL_DIR/cargo-audit" "$CARGO_HOME/bin"
+          export PATH="$CARGO_HOME/bin:$PATH"
+
+          archive="$TOOL_DIR/cargo-audit.tgz"
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location \
+            "https://github.com/rustsec/rustsec/releases/download/cargo-audit/v0.22.2/cargo-audit-x86_64-unknown-linux-gnu-v0.22.2.tgz" \
+            -o "$archive"
+
+          printf '%s  %s\n' "$CARGO_AUDIT_SHA256" "$archive" | sha256sum --check -
+          tar -xzf "$archive" -C "$TOOL_DIR/cargo-audit"
+
+          audit_bin="$(find "$TOOL_DIR/cargo-audit" -type f -name cargo-audit -print -quit)"
+          if [[ -z "$audit_bin" ]]; then
+            echo "::error::The checksum-verified cargo-audit archive did not contain cargo-audit."
+            exit 1
+          fi
+
+          install -m 0755 "$audit_bin" "$CARGO_HOME/bin/cargo-audit"
+          echo "$CARGO_HOME/bin" >> "$GITHUB_PATH"
+
+          cargo_audit_version="$(cargo audit --version 2>&1)"
+          printf '%s\n' "$cargo_audit_version"
+          if ! grep -Fq "$CARGO_AUDIT_VERSION" <<< "$cargo_audit_version"; then
+            echo "::error::Unexpected cargo-audit version."
+            exit 1
+          fi
+
+          rustup run "$RUST_TOOLCHAIN" rustc --version
+          rustup run "$RUST_TOOLCHAIN" cargo --version
+
+      - name: Collect locked dependency graphs and source-archive inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          output="$RUNNER_TEMP/ofrl-ib-001-dependency-audit"
+          work="$RUNNER_TEMP/ofrl-ib-001-source-work"
+          mkdir -p "$output" "$work"
+
+          app_manifest="$PROJECT_DIR/Cargo.toml"
+          app_lock="$PROJECT_DIR/Cargo.lock"
+          poc_manifest="$PROJECT_DIR/poc/decimal-contract/Cargo.toml"
+          poc_lock="$PROJECT_DIR/poc/decimal-contract/Cargo.lock"
+
+          for required_file in "$app_manifest" "$app_lock" "$poc_manifest" "$poc_lock"; do
+            if [[ ! -f "$required_file" ]]; then
+              echo "::error::Required committed manifest or lockfile is missing: $required_file"
+              exit 1
+            fi
+          done
+
+          app_lock_before="$(sha256sum "$app_lock" | awk '{print $1}')"
+          poc_lock_before="$(sha256sum "$poc_lock" | awk '{print $1}')"
+
+          rustup run "$RUST_TOOLCHAIN" cargo metadata \
+            --locked --all-features --format-version 1 \
+            --manifest-path "$app_manifest" \
+            > "$work/application-metadata.json"
+
+          rustup run "$RUST_TOOLCHAIN" cargo metadata \
+            --locked --all-features --format-version 1 \
+            --manifest-path "$poc_manifest" \
+            > "$work/decimal-poc-metadata.json"
+
+          rustup run "$RUST_TOOLCHAIN" cargo vendor \
+            --locked --all-features --versioned-dirs \
+            --manifest-path "$app_manifest" \
+            "$work/application-vendor" \
+            > "$work/application-vendor-config.txt"
+
+          rustup run "$RUST_TOOLCHAIN" cargo vendor \
+            --locked --all-features --versioned-dirs \
+            --manifest-path "$poc_manifest" \
+            "$work/decimal-poc-vendor" \
+            > "$work/decimal-poc-vendor-config.txt"
+
+          app_lock_after="$(sha256sum "$app_lock" | awk '{print $1}')"
+          poc_lock_after="$(sha256sum "$poc_lock" | awk '{print $1}')"
+
+          if [[ "$app_lock_before" != "$app_lock_after" || "$poc_lock_before" != "$poc_lock_after" ]]; then
+            echo "::error::A committed Cargo.lock changed during metadata or source inventory collection."
+            exit 1
+          fi
+
+          python3 - \
+            "$work/application-metadata.json" \
+            "$work/decimal-poc-metadata.json" \
+            "$app_lock" \
+            "$poc_lock" \
+            "$work/application-vendor" \
+            "$work/decimal-poc-vendor" \
+            "$output/package-source-inventory.json" <<'PY'
+          import hashlib
+          import json
+          import pathlib
+          import re
+          import sys
+          import tomllib
+
+          app_metadata, poc_metadata, app_lock, poc_lock, app_vendor, poc_vendor, output = map(pathlib.Path, sys.argv[1:])
+          CRATES_IO = "registry+https://github.com/rust-lang/crates.io-index"
+          NOTICE_NAMES = re.compile(
+              r"^(license|licence|copying|notice|copyright|patents|authors|contributors)([-_.].*)?$",
+              re.IGNORECASE,
+          )
+
+          def read_json(path):
+              return json.loads(path.read_text(encoding="utf-8"))
+
+          def read_toml(path):
+              with path.open("rb") as handle:
+                  return tomllib.load(handle)
+
+          def digest(path):
+              value = hashlib.sha256()
+              with path.open("rb") as handle:
+                  for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                      value.update(chunk)
+              return value.hexdigest()
+
+          def registry_lock_entries(path):
+              return [
+                  item for item in read_toml(path).get("package", [])
+                  if item.get("source", "").startswith(("registry+", "sparse+"))
+              ]
+
+          def vendor_manifest_map(root):
+              found = {}
+              for directory in sorted(root.iterdir()):
+                  manifest_path = directory / "Cargo.toml"
+                  if not directory.is_dir() or not manifest_path.is_file():
+                      continue
+                  package = read_toml(manifest_path).get("package", {})
+                  key = (package.get("name"), package.get("version"))
+                  if all(key):
+                      found.setdefault(key, []).append((directory, package))
+              return found
+
+          def build_scope(label, metadata_path, lock_path, vendor_path):
+              metadata = read_json(metadata_path)
+              lock = registry_lock_entries(lock_path)
+              vendor = vendor_manifest_map(vendor_path)
+              locked = {
+                  (item["name"], item["version"], item["source"])
+                  for item in lock
+              }
+              packages = [item for item in metadata.get("packages", []) if item.get("source")]
+              resolved = {
+                  (item["name"], item["version"], item["source"])
+                  for item in packages
+              }
+              missing = sorted(locked - resolved)
+              extra = sorted(resolved - locked)
+              if missing or extra:
+                  raise SystemExit(
+                      f"{label}: locked/metadata package sets differ; missing={missing}, extra={extra}"
+                  )
+
+              records = []
+              errors = []
+              for package in sorted(packages, key=lambda p: (p["name"], p["version"], p["source"])):
+                  name, version, source = package["name"], package["version"], package["source"]
+                  matches = vendor.get((name, version), [])
+                  if len(matches) != 1:
+                      errors.append(f"{name}@{version}: expected one vendored archive, found {len(matches)}")
+                      continue
+
+                  source_dir, source_manifest = matches[0]
+                  declared_license = package.get("license")
+                  declared_license_file = package.get("license_file")
+                  archive_license = source_manifest.get("license")
+                  archive_license_file = source_manifest.get("license-file")
+                  repository = package.get("repository")
+                  archive_repository = source_manifest.get("repository")
+
+                  if not declared_license and not declared_license_file:
+                      errors.append(f"{name}@{version}: missing publisher-declared license/license-file")
+                  if declared_license != archive_license:
+                      errors.append(f"{name}@{version}: license metadata differs from vendored Cargo.toml")
+                  if declared_license_file != archive_license_file:
+                      errors.append(f"{name}@{version}: license-file metadata differs from vendored Cargo.toml")
+                  if declared_license_file and not (source_dir / declared_license_file).is_file():
+                      errors.append(f"{name}@{version}: declared license-file is absent from source archive")
+
+                  lock_entry = next(
+                      item for item in lock
+                      if item["name"] == name and item["version"] == version and item["source"] == source
+                  )
+                  if not lock_entry.get("checksum"):
+                      errors.append(f"{name}@{version}: registry lock entry has no checksum")
+
+                  legal_files = []
+                  for path in sorted(source_dir.rglob("*")):
+                      if path.is_file() and NOTICE_NAMES.match(path.name):
+                          legal_files.append({
+                              "path": path.relative_to(source_dir).as_posix(),
+                              "size_bytes": path.stat().st_size,
+                              "sha256": digest(path),
+                          })
+
+                  records.append({
+                      "name": name,
+                      "version": version,
+                      "source": source,
+                      "source_class": "crates_io_registry" if source == CRATES_IO else "other_registry",
+                      "locked_archive_checksum": lock_entry.get("checksum"),
+                      "publisher_repository_url": repository,
+                      "source_manifest_repository_url": archive_repository,
+                      "repository_metadata_matches_source_archive": repository == archive_repository,
+                      "declared_license_expression": declared_license,
+                      "declared_license_file": declared_license_file,
+                      "source_manifest_license_expression": archive_license,
+                      "source_manifest_license_file": archive_license_file,
+                      "license_and_notice_files": legal_files,
+                      "source_review": "PENDING",
+                      "licence_review": "PENDING",
+                      "archive_integrity_basis": "cargo_vendor_success_under_committed_lockfile",
+                  })
+
+              non_crates_io = [p for p in records if p["source_class"] != "crates_io_registry"]
+              errors.extend(
+                  f"{p['name']}@{p['version']}: non-crates.io source requires explicit approval"
+                  for p in non_crates_io
+              )
+
+              return {
+                  "scope": label,
+                  "lockfile": lock_path.as_posix(),
+                  "locked_registry_package_count": len(lock),
+                  "metadata_registry_package_count": len(packages),
+                  "vendored_registry_package_count": len(records),
+                  "lockfile_sha256": digest(lock_path),
+                  "packages": records,
+              }, errors
+
+          application, application_errors = build_scope(
+              "application_workspace", app_metadata, app_lock, app_vendor
+          )
+          decimal_poc, decimal_errors = build_scope(
+              "decimal_contract_poc", poc_metadata, poc_lock, poc_vendor
+          )
+
+          report = {
+              "schema_version": "1.0.0",
+              "review_state": "PENDING_MANUAL_SOURCE_AND_LICENCE_REVIEW",
+              "interpretation": (
+                  "Inventory only. Cargo downloaded sources under committed lockfiles and verified registry "
+                  "archive checksums. Repository URLs and licence expressions are publisher-declared values "
+                  "cross-checked against the source archive manifest. File names and hashes identify licence/"
+                  "notice candidates; they do not constitute legal acceptance or complete copyright review."
+              ),
+              "scopes": [application, decimal_poc],
+          }
+          output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+          errors = application_errors + decimal_errors
+          if errors:
+              for error in errors:
+                  print(f"ERROR: {error}", file=sys.stderr)
+              raise SystemExit(1)
+
+          for scope in report["scopes"]:
+              print(
+                  f"PASS: {scope['scope']} - "
+                  f"{scope['vendored_registry_package_count']} locked registry sources inventoried."
+              )
+          PY
+
+          printf 'application=%s\n' "$app_lock_after" > "$output/lockfile-sha256.txt"
+          printf 'decimal-contract-poc=%s\n' "$poc_lock_after" >> "$output/lockfile-sha256.txt"
+          rm -rf "$work"
+
+      - name: Run current RustSec advisory audits
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          output="$RUNNER_TEMP/ofrl-ib-001-dependency-audit"
+          mkdir -p "$output"
+          audit_failure=0
+
+          run_audit() {
+            local label="$1"
+            local lockfile="$2"
+            local report="$output/$label.cargo-audit.json"
+            local exit_code=0
+
+            set +e
+            cargo audit --file "$lockfile" --deny warnings --json > "$report"
+            exit_code=$?
+            set -e
+
+            printf '%s=%s\n' "$label" "$exit_code" >> "$output/audit-exit-codes.txt"
+            if [[ "$exit_code" -ne 0 ]]; then
+              audit_failure=1
+            fi
+          }
+
+          run_audit "application-workspace" "$PROJECT_DIR/Cargo.lock"
+          run_audit "decimal-contract-poc" "$PROJECT_DIR/poc/decimal-contract/Cargo.lock"
+
+          advisory_db="$CARGO_HOME/advisory-db"
+          if [[ ! -d "$advisory_db/.git" ]]; then
+            echo "::error::RustSec advisory database was not created; the scan cannot be considered complete."
+            exit 1
+          fi
+
+          advisory_commit="$(git -C "$advisory_db" rev-parse HEAD)"
+          advisory_commit_time="$(git -C "$advisory_db" show -s --format=%cI HEAD)"
+          advisory_remote="$(git -C "$advisory_db" remote get-url origin)"
+          source_commit_time="$(git show -s --format=%cI "$SOURCE_SHA")"
+          cargo_audit_version="$(cargo audit --version 2>&1)"
+
+          python3 - \
+            "$output/audit-context.json" \
+            "$SOURCE_SHA" \
+            "$source_commit_time" \
+            "$RUST_TOOLCHAIN" \
+            "$cargo_audit_version" \
+            "$CARGO_AUDIT_SHA256" \
+            "$advisory_commit" \
+            "$advisory_commit_time" \
+            "$advisory_remote" \
+            "$audit_failure" <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          (
+              output, source_sha, source_time, rust_toolchain, audit_version,
+              audit_sha256, advisory_commit, advisory_time, advisory_remote,
+              audit_failure
+          ) = sys.argv[1:]
+
+          context = {
+              "project_id": "OFRL-IB-001",
+              "source_commit": source_sha,
+              "source_commit_time": source_time,
+              "rust_toolchain": rust_toolchain,
+              "cargo_audit_version": audit_version,
+              "cargo_audit_release_archive_sha256": audit_sha256,
+              "rustsec_advisory_database": {
+                  "remote": advisory_remote,
+                  "commit": advisory_commit,
+                  "commit_time": advisory_time,
+              },
+              "audit_command": "cargo audit --file <committed-lockfile> --deny warnings --json",
+              "audit_scopes": [
+                  "projects/OFRL-IB-001/Cargo.lock",
+                  "projects/OFRL-IB-001/poc/decimal-contract/Cargo.lock",
+              ],
+              "audit_exit_status": "FAIL" if audit_failure == "1" else "PASS",
+              "interpretation": (
+                  "Point-in-time advisory evidence for the exact lockfiles and database revision above. "
+                  "A clean result does not prove absence of vulnerabilities, exploitability, application defects, "
+                  "or risks outside the RustSec database. Warnings are denied and no ignore list is supplied."
+              ),
+              "licence_status": "INVENTORY_ONLY_MANUAL_REVIEW_PENDING",
+          }
+          pathlib.Path(output).write_text(
+              json.dumps(context, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          if [[ "$audit_failure" -ne 0 ]]; then
+            touch "$output/AUDIT_FINDINGS_OR_AUDIT_ERROR"
+          fi
+
+      - name: Upload dependency audit evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0 (Node.js 24)
+        with:
+          name: ofrl-ib-001-dependency-audit-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/ofrl-ib-001-dependency-audit/
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 6
+
+      - name: Enforce complete source inventory and advisory results
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$RUNNER_TEMP/ofrl-ib-001-dependency-audit"
+
+          for required in \
+            package-source-inventory.json \
+            audit-context.json \
+            application-workspace.cargo-audit.json \
+            decimal-contract-poc.cargo-audit.json \
+            audit-exit-codes.txt \
+            lockfile-sha256.txt
+          do
+            if [[ ! -s "$output/$required" ]]; then
+              echo "::error::Required dependency evidence is missing: $required"
+              exit 1
+            fi
+          done
+
+          if [[ -e "$output/AUDIT_FINDINGS_OR_AUDIT_ERROR" ]] || grep -Eq '=[1-9][0-9]*$' "$output/audit-exit-codes.txt"; then
+            echo "::error::At least one RustSec audit returned a non-zero exit status."
+            cat "$output/audit-exit-codes.txt"
+            exit 1
+          fi
+
+          echo "PASS: both committed dependency graphs were inventoried and passed the configured RustSec audit."
+          echo "Manual source, copyright, licence and notice acceptance remains a separate review gate."
