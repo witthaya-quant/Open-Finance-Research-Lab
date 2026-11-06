@@ -59,12 +59,12 @@ The application and Decimal POC graphs are locked to crates.io registry packages
 The new [Dependency Audit workflow](../../.github/workflows/ofrl-ib-001-dependency-audit.yml) is designed to:
 
 1. Resolve package metadata from each exact committed lockfile with the declared Rust toolchain and `--locked`.
-2. Download the corresponding source packages with `cargo vendor --locked`, without compiling or executing package build scripts.
+2. Fetch the exact committed-lockfile package archives with `cargo fetch --locked`, without compiling or executing package build scripts.
 3. Let Cargo verify each downloaded registry archive against its lockfile checksum.
 4. Cross-check publisher-declared `license`, `license-file`, and `repository` fields against the downloaded source archive's `Cargo.toml`.
 5. Record candidate licence, copyright, patent, attribution and notice files by path, size and SHA-256.
 6. Preserve the source revision, lockfile hashes, tool version and advisory database commit in the CI evidence artifact.
-7. Keep the vendored source tree outside the repository and outside the uploaded evidence artifact.
+7. Keep fetched source archives in the ephemeral runner Cargo cache; upload only the bounded inventory and audit evidence, not third-party source archives.
 
 **Interpretation boundary:** a crates.io source identifier and matching checksum establish which registry archive was retrieved. A package's `repository` field remains publisher-declared metadata; it is not proof that the linked upstream repository is owned or controlled by the publisher. File-name/hash inventory identifies review candidates; it is not a legal interpretation or copyright clearance.
 
