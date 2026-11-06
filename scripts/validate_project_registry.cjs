@@ -247,22 +247,6 @@ const REQUIRED_RELEASE_GATE_IDS = new Set([
   "maintenance_and_corrections",
 ]);
 
-const NON_WAIVABLE_GATES = new Set([
-  "scope_and_claims",
-  "evidence_and_limitations",
-  "licence_and_ip",
-  "reproducibility",
-  "domain_review",
-  "numeric_and_financial_controls",
-  "dependency_and_sbom",
-  "independent_domain_review",
-  "security_review",
-  "operational_safeguards",
-  "incident_response",
-  "rollback_recovery",
-  "founder_approval",
-]);
-
 function assessmentRequiresGateInventory(status) {
   return status === "BLOCKED" || status === "ELIGIBLE_FOR_AUTHORIZATION";
 }
