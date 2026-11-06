@@ -45,12 +45,12 @@ GitHub Issues and Pull Requests provide discussion, review and implementation ev
 | Decimal POC lockfile | Implemented on main | Isolated POC lockfile and locked metadata/tree/Clippy/test/doc commands |
 | CLI SBOM/checksum preview | Implemented on main | Preview-only CycloneDX 1.5 artifact for Linux CLI validator; not an official forecast-model release |
 | Rust CLI input hardening | Implemented on main through PR #13 | 1 MiB bound, max-plus-one read, UTF-8 rejection and regression tests; source head `17b77e3`, merge `593d04d` |
-| Full-formula numeric candidate comparison | Open PR #11, Draft | rust_decimal, BigDecimal and Exact Rational research path |
-| Independent multi-period expected values | Open PR #11, Draft | BM-002 160 values + BM-003 640 values = 800 exact outputs |
-| Independent Python reference | Open PR #11, Draft | Standard-library Decimal/Fraction; verifies fixture identity and goldens |
-| Rust SBOM/RustSec research | Open PR #11, Draft | Candidate/POC inventories and point-in-time advisory evidence |
-| Runtime-cost observation harness | Open PR #11, Draft; initial timing CI passed | Non-gating synthetic observations; memory, allocation and production workload evidence remain open |
-| Schema validator dependency lock | Open PR #12, Draft | Pinned AJV / Node toolchain and lockfile; shared contract parity is a separate gate |
+| Full-formula numeric candidate comparison | PR #11 open Draft; branch stale/diverged | Old head 120ccd3414fb7018011ea3991800728f86736319; compare main...head was 77 ahead / 371 behind. Its eight checks passed only on that historical SHA. Salvage required files into a fresh main-based PR; do not merge this branch directly. |
+| Independent multi-period expected values | PR #11 branch only; not on main | BM-002/BM-003 claims total 800 exact outputs. Associated POC/golden files are not in the main project tree; treat as unmerged evidence until selectively reviewed and revalidated. |
+| Independent Python reference | PR #11 branch only; not on main | Its exact-rational reference is described on the unmerged branch; scope and independence must be re-audited before relying on results. |
+| Rust SBOM/RustSec research | PR #11 branch only; not on main | Candidate inventory/advisory snapshots require freshness review and do not satisfy official release review. |
+| Runtime-cost observation harness | PR #11 branch only; not on main | Single-run synthetic timing is directional only; memory, allocation, tail-latency, concurrency and representative workload evidence remain open. |
+| Schema validator dependency lock | Implemented on main; PR #12 closed unmerged | package.json, package-lock.json and schema-validation shell script are on main. PR #12 was closed without merge because the core file blobs matched main exactly. Issue #9 is closed completed. |
 | Shared Schema/Rust corpus | Implemented on main through PR #13 | Versioned positive/negative fixtures, expected schema/runtime outcomes, diagnostic codes and fixture path-safety checks; six required contexts passed on source head `17b77e3` |
 | Typed deserialization diagnostics | Implemented on main through PR #13 | Contract-owned preflight error kinds, shared Decimal parser, RFC 6901 pointers, escaped path segments, array indices, period context and nine versioned mutation fixtures; source head `17b77e3` passed full CI |
 | Numeric Profile schema, worksheet and exact derivation tool | Implemented on main through PR #13 | Closed profile schema, exact BigInt-rational derivation and division-error propagation; test-only fixture emits 287 arithmetic nodes; no owner-approved profile values |
@@ -132,7 +132,7 @@ Use [`NUMERIC_BACKEND_EVALUATION.md`](NUMERIC_BACKEND_EVALUATION.md) as the cand
 - BigDecimal reports CONDITIONAL on 50 nodes because the test-only profile leaves division scale unresolved. Its 80-significant-digit compile-time POC context is not equivalent to the Numeric Profile's fixed fractional-scale division policy. Define an explicit run-scoped adapter or deliberately version the profile's precision semantics; do not assume equivalence.
 - Bound BigDecimal multiplication coefficient growth independently of division precision, and prove resource behaviour with approved limits.
 - Keep Exact Rational as a correctness oracle unless a separate operational resource case justifies evaluating it as a production candidate.
-- Treat existing timing observations as directional only: BigDecimal was 1.50×–2.21× the fixed Decimal candidate in the tested synthetic cases, while Exact Rational was 7.52×–10.30×. They are not production workload evidence. See `poc/model-numeric-envelope/BENCHMARKS_PERFORMANCE.md` on PR #11.
+- Treat the 1.50×–2.21× and 7.52×–10.30× timing observations mentioned in PR #11 as historical, non-gating synthetic observations on an unmerged branch only. They are not main-branch evidence and are not production workload measurements. Do not use them to select a backend.
 - Measure latency, throughput, allocations, peak memory/RSS, tail latency, concurrency and long-running process behaviour under a controlled workload generated from the approved profile.
 - Measure migration cost because production input/history domain types currently use `rust_decimal`.
 - Review typed failure semantics, determinism, MSRV/platform support, dependency source/licence/advisory status and per-run provenance.
@@ -149,7 +149,7 @@ Use [`NUMERIC_BACKEND_EVALUATION.md`](NUMERIC_BACKEND_EVALUATION.md) as the cand
 - Record source obligations and distribution-notice requirements.
 - Preserve SBOMs, checksums and exact source/build identity.
 
-The PR #11 workflow provides candidate/POC inventory and point-in-time advisory evidence. The isolated Decimal Contract POC lockfile, locked CI and preview-only CLI SBOM/checksum workflow are now on main through PRs #20/#22. They improve dependency reproducibility and artifact inventory but do not close source-level legal review, advisory disposition, multi-platform release evidence or official-release authorization. The yanked `xml-rs 0.8.19` preview-generator exception remains time-bounded and must be re-reviewed before official release.
+PR #11's dependency inventory and advisory results remain on its unmerged branch and are point-in-time evidence only. The isolated Decimal Contract POC lockfile and locked CI, plus the preview-only CLI SBOM/checksum workflow, are on main through PRs #20/#22. The main preview pipeline does not close source-level licence/notice review, advisory disposition, multi-platform release evidence or official-release authorization. Issue #16 remains open for these release gates. The yanked xml-rs 0.8.19 preview-generator exception is time-bounded and must be reviewed before official release.
 
 #### Workstream D — Independent finance and accounting review
 
@@ -263,7 +263,7 @@ Release statuses:
 | Documentation-only Ruleset smoke test | PR #24 | Closed without merge after all six required contexts passed |
 | Project-code Ruleset smoke test | PR #27 | Closed without merge after all six required contexts passed |
 | Numeric candidate and independent arithmetic research | PR #11, Draft, stale/diverged | Old head 120ccd3414fb7018011ea3991800728f86736319; 77 ahead / 371 behind main; exact-old-head checks passed historically. Do not merge directly. Selectively salvage valuable research into a fresh main-based PR after source review, then rerun all checks. |
-| Schema tooling lockfile | PR #12, closed without merge; core tooling already on main | Review and CI pass; shared corpus remains a separate contract gate |
+| Schema tooling lockfile | PR #12, closed without merge | Core package.json, lockfile and validation script blobs are identical on main; Issue #9 is closed completed. The old branch was not merged. |
 | Audit, system design, bounded CLI, shared corpus, typed diagnostics and Numeric Profile derivation | PR #13, merged to main | Merge `593d04d`; source head `17b77e3` passed all six required contexts, Numeric Envelope and Release Candidate Preview; Stage 0 single-maintainer disposition recorded; no independent approval claimed |
 | Numeric Profile/backend decision | New OFRL-only PR | Finite input domain, error budgets, resource and Finance/Accounting gates accepted |
 | Production forecast engine | New OFRL-only PR | Phase 2 exit accepted |
