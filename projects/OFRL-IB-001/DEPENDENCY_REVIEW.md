@@ -2,10 +2,10 @@
 
 # OFRL-IB-001 — Dependency and Source Review
 
-**Review version:** 0.1.0  
+**Review version:** 0.1.1  
 **Task:** IB-T005 — Dependency and source acceptance  
 **Issue:** [#16 — Rust supply-chain controls](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/16)  
-**Status:** OPEN — inventory controls are being established; human source, licence, notice and release acceptance remain pending  
+**Status:** OPEN — automated source inventory and advisory evidence are verified on PR #34; human package-level source, licence, notice and release acceptance remain pending  
 **Baseline:** `main` at `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`  
 **Review date:** 2026-11-06
 
