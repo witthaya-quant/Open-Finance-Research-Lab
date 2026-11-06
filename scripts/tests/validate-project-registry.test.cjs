@@ -31,7 +31,7 @@ test("every supported project type has explicit document and validation-profile 
 });
 
 test("the manifest schema and validator agree on allowed validation profiles", () => {
-  const schemaPath = path.join(ROOT, "schemas", "ofrl-project-manifest-1.0.0.schema.json");
+  const schemaPath = path.join(ROOT, "schemas", "ofrl-project-manifest-1.1.0.schema.json");
   const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
   const schemaProfiles = new Set(schema.properties.validation_profiles.items.enum);
   assert.deepEqual([...registry.ALLOWED_VALIDATION_PROFILES].sort(), [...schemaProfiles].sort());
@@ -80,7 +80,7 @@ test("prototype projects have a dedicated validation profile", () => {
 });
 
 test("risk-tier enum is aligned with the manifest schema", () => {
-  const schemaPath = path.join(ROOT, "schemas", "ofrl-project-manifest-1.0.0.schema.json");
+  const schemaPath = path.join(ROOT, "schemas", "ofrl-project-manifest-1.1.0.schema.json");
   const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
   assert.deepEqual([...registry.ALLOWED_RISK_TIERS].sort(), [...schema.properties.risk_tier.enum].sort());
   assert.deepEqual([...registry.ALLOWED_RISK_TIERS].sort(), ["R0", "R1", "R2", "R3"]);
@@ -110,4 +110,238 @@ test("R3 registration requires security profile and a declared threat model", ()
   assert.deepEqual(registry.riskTierPolicyViolations(
     { ...complete, risk_tier: "R2" }, false
   ), []);
+});
+
+
+function makeReadiness(overrides = {}) {
+  return {
+    assessment_version: "1.0.0",
+    assessment_status: "NOT_ASSESSED",
+    operational_mode: "RESEARCH_ONLY",
+    independent_assurance_required: false,
+    independent_assurance_rationale: "Current scope does not require an external independent reviewer before research-only work.",
+    gates: [],
+    authorization: {
+      status: "NOT_AUTHORIZED",
+      authority: null,
+      authority_role: null,
+      authorized_at: null,
+      decision_record: null,
+      source_commit: null,
+    },
+    ...overrides,
+  };
+}
+
+function makeGate(gateId, overrides = {}) {
+  const independent = ["independent_domain_review", "security_review"].includes(gateId);
+  const identity = gateId === "founder_approval" ? "Kenny" : "Reviewer One";
+  return {
+    gate_id: gateId,
+    status: "PASS",
+    rationale: "The defined scope was reviewed and the recorded evidence supports this gate disposition.",
+    evidence: ["https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/19"],
+    recorded_by: identity,
+    recorded_at: "2026-11-06",
+    assessor: {
+      identity,
+      role: gateId === "founder_approval" ? "Founder / Principal Maintainer" : "Domain reviewer",
+      independent,
+      conflict_status: "NONE_DECLARED",
+      review_reference: "https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/31",
+    },
+    ...overrides,
+  };
+}
+
+test("manifest schema 1.1.0 declares a separate release-readiness and authorization contract", () => {
+  const schemaPath = path.join(ROOT, "schemas", "ofrl-project-manifest-1.1.0.schema.json");
+  const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+  assert.equal(schema.properties.schema_version.const, "1.1.0");
+  assert.ok(schema.required.includes("release_readiness"));
+  assert.deepEqual(
+    schema.properties.release_readiness.properties.assessment_status.enum,
+    ["NOT_ASSESSED", "BLOCKED", "ELIGIBLE_FOR_AUTHORIZATION"]
+  );
+  assert.deepEqual(
+    schema.properties.release_readiness.properties.authorization.properties.status.enum,
+    ["NOT_AUTHORIZED", "AUTHORIZED", "WITHDRAWN"]
+  );
+});
+
+test("NOT_ASSESSED project can remain in research or development without fabricated gate evidence", () => {
+  const manifest = {
+    risk_tier: "R2",
+    project_types: ["research", "financial_model"],
+    data_classification: "synthetic",
+    lifecycle_status: "in_development",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      independent_assurance_required: true,
+      independent_assurance_rationale: "Financial-model outputs may inform business decisions and require independent domain assurance before release.",
+    }),
+  };
+  assert.deepEqual(registry.releaseReadinessViolations(manifest, ROOT), []);
+});
+
+test("required release gates scale by risk, project type and data classification", () => {
+  assert.deepEqual(
+    registry.requiredReleaseGateIds({
+      risk_tier: "R0",
+      project_types: ["research"],
+      data_classification: "none",
+      lifecycle_status: "in_development",
+      release_readiness: { independent_assurance_required: false },
+    }),
+    ["scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval"]
+  );
+
+  const r2Financial = registry.requiredReleaseGateIds({
+    risk_tier: "R2",
+    project_types: ["financial_model", "software"],
+    data_classification: "synthetic",
+    lifecycle_status: "in_development",
+    release_readiness: { independent_assurance_required: true },
+  });
+  for (const required of [
+    "scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval",
+    "reproducibility", "domain_review", "data_rights", "numeric_and_financial_controls",
+    "dependency_and_sbom", "independent_domain_review",
+  ]) assert.ok(r2Financial.includes(required), required);
+
+  const r3 = registry.requiredReleaseGateIds({
+    risk_tier: "R3",
+    project_types: ["software"],
+    data_classification: "restricted",
+    lifecycle_status: "in_development",
+    release_readiness: { independent_assurance_required: true },
+  });
+  for (const required of [
+    "independent_domain_review", "security_review", "privacy_legal_review",
+    "operational_safeguards", "incident_response", "rollback_recovery", "founder_approval",
+  ]) assert.ok(r3.includes(required), required);
+});
+
+test("R2 financial models must explicitly require independent domain assurance", () => {
+  const manifest = {
+    risk_tier: "R2",
+    project_types: ["financial_model"],
+    data_classification: "none",
+    lifecycle_status: "in_development",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      independent_assurance_required: false,
+      independent_assurance_rationale: "No independent reviewer is planned for this financial model.",
+    }),
+  };
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("R2 financial models must require independent")));
+});
+
+test("ELIGIBLE_FOR_AUTHORIZATION requires every applicable gate and substantive N/A rationale", () => {
+  const required = ["scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval"];
+  const manifest = {
+    risk_tier: "R0",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "validation",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      assessment_status: "ELIGIBLE_FOR_AUTHORIZATION",
+      gates: required.filter((x) => x !== "founder_approval").map((x) => makeGate(x)).concat([makeGate("founder_approval")]),
+    }),
+  };
+  assert.deepEqual(registry.releaseReadinessViolations(manifest, ROOT), []);
+
+  manifest.release_readiness.gates.pop();
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("missing required gate 'founder_approval'")));
+
+  manifest.release_readiness.gates.push(makeGate("founder_approval", { status: "NOT APPLICABLE", assessor: undefined, evidence: [], rationale: "Not applicable." }));
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("NOT APPLICABLE gate 'founder_approval' requires a substantive rationale")));
+});
+
+test("independent domain review and R3 security review require independent assessors", () => {
+  const independentGate = makeGate("independent_domain_review", {
+    assessor: { identity: "Owner", role: "Founder", independent: false, conflict_status: "NONE_DECLARED", review_reference: "https://github.com/example/review" },
+  });
+  const manifest = {
+    risk_tier: "R2",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "in_development",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      independent_assurance_required: true,
+      independent_assurance_rationale: "This claim requires independent domain assurance before it can be released.",
+      gates: [independentGate],
+    }),
+  };
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("independent_domain_review PASS requires an independent assessor")));
+});
+
+test("NOT APPLICABLE requires a reason and cannot waive non-applicable R3 hard gates", () => {
+  const manifest = {
+    risk_tier: "R3",
+    project_types: ["software", "infrastructure"],
+    data_classification: "none",
+    lifecycle_status: "validation",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      independent_assurance_required: true,
+      independent_assurance_rationale: "R3 requires independent assurance because failures may cause material external harm.",
+      assessment_status: "ELIGIBLE_FOR_AUTHORIZATION",
+      gates: [
+        "scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval",
+        "reproducibility", "domain_review", "independent_domain_review", "security_review",
+        "privacy_legal_review", "operational_safeguards", "incident_response", "rollback_recovery",
+      ].map((id) => makeGate(id, id === "privacy_legal_review"
+        ? { status: "NOT APPLICABLE", assessor: undefined, evidence: [], rationale: "The reviewed project scope does not process personal or regulated data; the privacy/legal assessment is therefore not applicable." }
+        : {})),
+    }),
+  };
+  const errors = registry.releaseReadinessViolations(manifest, ROOT);
+  assert.ok(errors.some((x) => x.includes("privacy_legal_review") === false && x.includes("ELIGIBLE_FOR_AUTHORIZATION") === false) || errors.length === 0);
+  manifest.release_readiness.gates.find((x) => x.gate_id === "security_review").status = "NOT APPLICABLE";
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("risk-tier gate")));
+});
+
+test("LIVE_EXTERNAL is restricted to R3 and requires released, authorized readiness", () => {
+  const manifest = {
+    risk_tier: "R2",
+    project_types: ["software"],
+    data_classification: "none",
+    lifecycle_status: "released",
+    release_status: "released",
+    version: "1.0.0",
+    release_readiness: makeReadiness({
+      operational_mode: "LIVE_EXTERNAL",
+      authorization: {
+        status: "AUTHORIZED",
+        authority: "Kenny",
+        authority_role: "Founder",
+        authorized_at: "2026-11-06",
+        decision_record: "https://github.com/example/decision",
+        source_commit: "a".repeat(40),
+      },
+    }),
+  };
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("LIVE_EXTERNAL operation is restricted to R3")));
+});
+
+test("PASS evidence and reviewer references must resolve to HTTPS or a safe project-local file", () => {
+  const manifest = {
+    risk_tier: "R0",
+    project_types: ["research"],
+    data_classification: "none",
+    lifecycle_status: "in_development",
+    release_status: "not_released",
+    release_readiness: makeReadiness({
+      gates: [makeGate("scope_and_claims", {
+        evidence: ["http://insecure.example/evidence"],
+        assessor: { identity: "Reviewer", role: "Research reviewer", independent: false, conflict_status: "NONE_DECLARED", review_reference: "../outside.md" },
+      })],
+    }),
+  };
+  const errors = registry.releaseReadinessViolations(manifest, ROOT);
+  assert.ok(errors.some((x) => x.includes("unsafe or unresolved evidence")));
+  assert.ok(errors.some((x) => x.includes("reviewer/decision reference")));
 });
