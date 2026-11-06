@@ -120,7 +120,6 @@ jobs:
             --locked --manifest-path "$app_manifest"
 
 
-
           rustup run "$RUST_TOOLCHAIN" cargo fetch \
             --locked --manifest-path "$poc_manifest"
 
@@ -200,26 +199,6 @@ jobs:
                       f"{checksum}; candidates={observed}"
                   )
               return matching[0]
-
-          def package_manifest(archive):
-              with tarfile.open(archive, mode="r:gz") as bundle:
-                  manifests = [
-                      member for member in bundle.getmembers()
-                      if member.isfile()
-                      and len(pathlib.PurePosixPath(member.name).parts) == 2
-                      and pathlib.PurePosixPath(member.name).name == "Cargo.toml"
-                  ]
-                  if len(manifests) != 1:
-                      raise ValueError(
-                          f"{archive.name}: expected exactly one archive-root Cargo.toml, "
-                          f"found {len(manifests)}"
-                      )
-                  raw = bundle.extractfile(manifests[0]).read()
-                  manifest = tomllib.loads(raw.decode("utf-8"))
-                  package = manifest.get("package")
-                  if not isinstance(package, dict):
-                      raise ValueError(f"{archive.name}: archive-root Cargo.toml has no [package]")
-                  return bundle, manifests[0], package
 
           def inventory_scope(label, metadata_path, lock_path, cache):
               metadata = read_json(metadata_path)
