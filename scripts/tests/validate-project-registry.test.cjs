@@ -234,6 +234,10 @@ test("manifest schema enforces mutually consistent residual-risk states", () => 
   invalidNotAssessed.release_readiness.residual_risk_assessment.risks = [makeResidualRisk()];
   assert.equal(validate(invalidNotAssessed), false);
 
+  const unassessedWithGateResult = JSON.parse(JSON.stringify(baseline));
+  unassessedWithGateResult.release_readiness.gates = [makeGate("scope_and_claims")];
+  assert.equal(validate(unassessedWithGateResult), false);
+
   const validAssessed = JSON.parse(JSON.stringify(baseline));
   validAssessed.release_readiness.residual_risk_assessment = makeAssessedNoResidualRisks();
   assert.equal(validate(validAssessed), true, JSON.stringify(validate.errors));
@@ -256,6 +260,9 @@ test("NOT_ASSESSED project can remain in research or development without fabrica
     }),
   };
   assert.deepEqual(registry.releaseReadinessViolations(manifest, ROOT), []);
+
+  manifest.release_readiness.gates = [makeGate("scope_and_claims", { status: "BLOCKED", assessor: undefined, evidence: [] })];
+  assert.ok(registry.releaseReadinessViolations(manifest, ROOT).some((x) => x.includes("NOT_ASSESSED release readiness must not contain gate dispositions")));
 });
 
 test("R1 risk tier requires analytical reproducibility and domain review without R2/R3 operational gates", () => {
