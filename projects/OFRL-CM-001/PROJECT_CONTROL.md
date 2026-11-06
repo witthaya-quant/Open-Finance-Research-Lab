@@ -6,7 +6,7 @@
 **Project:** Computational Methods & Problem-Solving Case Studies  
 **Owner:** Kenny (Witthaya Maidee)  
 **Control version:** 1.0.0  
-**Last reviewed:** 2026-11-05  
+**Last reviewed:** 2026-11-06  
 **Lifecycle:** In Development  
 **Risk tier:** R1 — Analytical  
 **Evidence maturity:** 0 — Proposed  
@@ -136,7 +136,7 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 | CM-T0005 | P1 | Establish the initial Quantitative Practice Playbook | **PASS — initial v0.1.0 baseline** | PRACTICE_PLAYBOOK.md content audit; exact-head Repository Policy run #42017737205 passed |
 | CM-T0006 | P1 | Align manifest, README, research specification, implementation approach, protocol, and validation links with the approved scope | **PASS** | project.json v0.2.0, PROJECT_CATALOG.md type row, README and specialist cross-links; Repository Policy run #42017737205 passed |
 | CM-T0007 | P2 | Independently audit all 12 current Pressure Points candidate clusters and their residuals | **PASS — audit complete; no candidate promoted to fact** | PROBLEM_FORMALIZATION.md §4 CM-T0007 audit: 48 distinct source assignments, 25 exact / 23 residual-bearing comparisons, 13 surplus / 11 deficit letters, semantic/positional evidence graded separately; no global rule derived |
-| CM-T0008 | P2 | Investigate the remaining emoji clues and unassigned visible items without assuming the 19×4 model | **IN PROGRESS — H-016 is a source-backed Diamond Model candidate for 💻; six emoji remain unmapped** | 13 candidate clusters now account provisionally for 52 distinct sequences; 23 unused sequences plus Ø = 24 remain. Literal Dragon King, Four Heavenly King, swine-breed, and four-order architecture rosters were screened by minimum one-to-one multiset distance (19, 34, 29, 23) and not accepted. The equality 24 = 6×4 is arithmetic only; no global mapping or residual rule is established |
+| CM-T0008 | P2 | Investigate the remaining emoji clues and unassigned visible items without assuming the 19×4 model | **IN PROGRESS — H-016 remains a candidate only; six emoji remain unmapped** | 13 candidate clusters / 52 provisional source assignments remain unchanged; 23 unused sequences plus Ø = 24 remain. The lexical screen records exact leads PALISADES, HEAVEN, VIOLINS, and PUTTI plus ambiguous one-character alternatives (including MONTANA / MADONNA). The original four structured rosters and alternate Chinese Four Symbols / Japanese Four Heavenly Kings name forms were screened (minimum totals 19, 34, 29, 23, then 22, 23, 35, and 24); none was accepted. The equality 24 = 6×4 is arithmetic only; no new group, global mapping, or residual rule is established |
 | CM-T0009 | P2 | Determine the role of Ø, sequence ordering, residual transformation, and terminal notation | **BLOCKED** | Must derive one consistent interpretation or reject the current model |
 | CM-T0010 | P2 | Retrieve and inspect a direct official solution, if Jane Street publishes an actual linked target | **OPEN — source-monitoring task** | Recheck the live Archive; never infer a URL from search text |
 | CM-T0011 | P2 | Independently derive output and establish soundness/completeness/uniqueness claims as applicable | **BLOCKED** | Formal specification and acceptance predicate required |
@@ -237,4 +237,4 @@ A no-go disposition is a valid research outcome, but it must retain the research
 
 ## 11. Next permitted work
 
-The next work item remains **CM-T0008 — investigate the six remaining emoji clues against the 23 unused source sequences plus Ø**. H-016 is only a candidate association for 💻, supported by the published Diamond Model's four-feature diamond. Test other groups with the same source/lexical/semantic/positional/residual separation. Treat 24 = 6×4 as a cardinality check only. Do not infer group membership, orientation, or Ø semantics from counts alone. Do not start solver implementation.
+The next work item remains **CM-T0008 — investigate 👸, 🐷, 🖼️, 🧐, 🐉, and 🏛️ against the 23 unused source sequences plus Ø**. Prioritize evidence-led candidate generation for 👸, 🖼️, and 🧐; do not repeat pig, dragon, or temple rosters without a new source, naming convention, or positional argument. Keep H-016 as a candidate association only. Treat 24 = 6×4 as a cardinality check only. Do not infer group membership, orientation, or Ø semantics from counts alone. Do not start solver implementation.

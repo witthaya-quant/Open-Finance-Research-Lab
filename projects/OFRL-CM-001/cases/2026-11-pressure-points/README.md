@@ -46,7 +46,7 @@ The full sequence list, emoji sequence, images, and official solution are intent
 | Sequence counts and ordering properties checked | PASS |
 | Formal input and output semantics established | BLOCKED |
 | CM-T0007 audit of twelve candidate clusters: 48 distinct source assignments checked; 25 exact candidate anagrams and 23 residual-bearing pairs; semantic fit and positional evidence graded separately | PASS — audit only, not proof of puzzle intent |
-| CM-T0008 preliminary H-016 Diamond Model lead: four core intrusion features mapped to top/right/bottom/left with independently counted +U/−E residuals | IN PROGRESS — source supports the model, but laptop-emoji intent and the remaining six groups are unresolved |
+| CM-T0008 candidate work: H-016 Diamond Model lead, expanded lexical ambiguity audit, and alternate directional-roster/transliteration screens | IN PROGRESS — H-016 remains unaccepted; additional screens did not establish a new group; six emoji remain unmapped |
 | Local letter-count residuals reproduced for the documented candidate groups | PASS |
 | Community-reported anagram readings registered as unverified leads | PASS |
 | Secondary solver-status sources reviewed and correctly classified as leads, not proofs | PASS |
@@ -80,7 +80,7 @@ These are questions, not proposed answers. Hypotheses H-001 to H-016 and blocker
 
 Do not select SAT, CSP, graph search, string matching, anagram search, or another method until the rules support that representation.
 
-**CM-T0008 remains in progress.** The Diamond Model candidate H-016 is a new lead for 💻, not an accepted puzzle mapping. Four other literal structural rosters (Dragon Kings, Four Heavenly Kings, four swine breeds, and four Classical Orders) have been screened and not accepted under the documented multiset-distance test. Continue investigating the six remaining emoji clues against the 23 unused source sequences plus Ø. Treat the 24 = 6×4 equality as a count check only, not as proof of a four-vertex bijection. If semantic rules cannot be established, preserve the blocker rather than inventing missing rules.
+**CM-T0008 remains in progress.** The Diamond Model candidate H-016 is a new lead for 💻, not an accepted puzzle mapping. The Dragon Kings, Four Heavenly Kings, four swine breeds, four selected Classical Orders, Chinese Four Symbols name variants, and Japanese Four Heavenly Kings name variants have been screened and not accepted under the documented multiset-distance test. Continue investigating the six remaining emoji clues against the 23 unused source sequences plus Ø. Treat the 24 = 6×4 equality as a count check only, not as proof of a four-vertex bijection. If semantic rules cannot be established, preserve the blocker rather than inventing missing rules.
 
 ## 7. Attribution
 
@@ -95,7 +95,7 @@ All puzzle content remains attributable to Jane Street. OFRL does not claim owne
 
 **Current disposition: INCOMPLETE / BLOCKED — not solved and not ready for solver implementation.**
 
-The current research round has completed its permitted source and candidate-context review, but it has not closed the mathematical case. Thirteen of 19 emoji/structure themes have provisional candidate groupings, including H-016 as a source-grounded Diamond Model lead but not a proven Jane Street clue association. Six groups, the role of Ø, a single global letter-residual rule, output extraction, and independent verification of the candidate phrase remain unresolved. Four additional literal four-member rosters were screened but not accepted; their negative results are retained in the formalization record. The Archive search-result text does not verify a solution hyperlink or provide the solution body. Public solver-status pages reviewed on 2026-11-05 do not supply a complete derivation.
+The current research round has completed its permitted source and candidate-context review, but it has not closed the mathematical case. Thirteen of 19 emoji/structure themes have provisional candidate groupings, including H-016 as a source-grounded Diamond Model lead but not a proven Jane Street clue association. Six groups, the role of Ø, a single global letter-residual rule, output extraction, and independent verification of the candidate phrase remain unresolved. The formalization also records alternate directional-roster/transliteration screens and an expanded lexical ambiguity audit; none produced an accepted new group. The Archive search-result text does not verify a solution hyperlink or provide the solution body. Public solver-status pages reviewed on 2026-11-05 do not supply a complete derivation.
 
 This is a **no-go for solver implementation under the evidence currently available**, not a claim that the puzzle is unsolvable and not a declaration that the case has been solved. Do not create a Cargo workspace, choose dependencies, or implement a solver while the correctness predicate remains undefined.
 

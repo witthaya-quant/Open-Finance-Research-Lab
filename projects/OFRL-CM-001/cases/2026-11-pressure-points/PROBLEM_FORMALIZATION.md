@@ -3,7 +3,7 @@
 # Pressure Points — Initial Problem Formalization
 
 **Case ID:** OFRL-CM-001-CS-001  
-**Formalization version:** 0.7.0  
+**Formalization version:** 0.9.2  
 **Source:** Jane Street, Pressure Points (November 2026)  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
@@ -248,6 +248,54 @@ The assignments above are minimum-cost mappings among the 23 remaining strings f
 The lexical scan and structured family screen do not establish any additional four-member group. The live inventory therefore remains 13 provisional clusters / 52 provisional source assignments, with 23 sequences plus Ø and six emoji unassigned. The count 24 = 6×4 remains arithmetic alignment only.
 
 
+
+
+### CM-T0008 — Expanded lexical ambiguity screen (2026-11-06)
+
+The remaining 23-entry inventory was screened again with the locally installed CMU Pronouncing Dictionary wrapper, version 1.1.3. This is a lexical lead generator only; it does not define the meaning of any source sequence. Exact single-word hits include **PALISADES**, **HEAVEN**, and **VIOLINS**. **PUTTI** is an exact character-multiset match checked separately; it was not returned by this CMUdict build. The National Gallery glossary supports the art-related meaning of *putti*, but does not establish a four-member set.
+
+A focused review of exact and one-character multiset-distance candidates exposes ambiguity:
+
+| Remaining source alphagram | Candidate reading(s) | Source-to-target residual | Research disposition |
+|---|---|---|---|
+| `AADMNNOT` | MONTANA; MADONNA | +D against MONTANA; +T against MADONNA | Two different readings have the same distance of 1. The letters alone do not select a state or an art/religious term. |
+| `AEILLNPSU` | PINELLAS | +U | One-character lexical lead; no four-member positional set established. |
+| `AGIJLOOT` | GALIOTO | +J | Proper-name lead without a case-supported identity or category. |
+| `CCDNOOTU` | COCONUT; CONDUCT; CONDUCTOR | +D; +O; −R, respectively | Multiple plausible readings at distance 1; no unique decoding. |
+| `CEINOPRSSUX` | EXCURSIONS; PERCUSSION | +P; +X, respectively | Both are one-character leads with unrelated semantics; neither establishes a quartet. |
+
+These findings supplement the earlier near-match leads **MONTANA**, **CONDUCTOR**, **PERCUSSION**, and **EXCURSIONS**. They show why a nearest-word result cannot be treated as a decoded answer: one source can admit multiple equally close readings with unrelated meanings. Short entries such as GO, XI, MOO, SUN, SW, T, and V remain low-information and are not promoted.
+
+No lexical candidate from this screen is assigned to an emoji. In particular, MADONNA is an alternative reading of the same source alphagram previously discussed as MONTANA; it is not a new hypothesis for 👸 or 🖼️.
+
+### CM-T0008 — Alternate directional-family and transliteration screens (2026-11-06)
+
+The earlier screen tested the Four Dragon Kings, Four Heavenly Kings in Sanskrit-derived names, four U.S. swine breeds, and four selected classical architectural orders. To reduce the chance of a false negative caused solely by spelling choice, additional source-backed directional structures and name variants were tested against the same 23 unused source sequences.
+
+For each four-term roster, every injective assignment of four distinct source sequences was examined. The score is the previously defined character-multiset L1 distance, summed over the four assignments. There are (23\times22\times21\times20=212{,}520) possible injective assignments per roster. The minimum and number of tied optima were checked by exhaustive enumeration. No acceptance threshold is defined; scores are comparative lexical-fit evidence only.
+
+| Candidate structure / spelling | Minimum-cost assignment (one optimum) | Minimum total distance | Optimal-assignment count | Evidence and disposition |
+|---|---|---:|---:|---|
+| Four Symbols — Japanese names: SEIRYU, SUZAKU, BYAKKO, GENBU | SEIRYU→IX (6); SUZAKU→SW (6); BYAKKO→GO (6); GENBU→NSU (4) | **22** | 1 | The four directional guardians are externally documented, but the best literal fit is poor. 🐉 would identify only one member of a set whose others are a bird, tiger, and tortoise. **NOT ACCEPTED.** |
+| Four Symbols — Chinese pinyin: QINGLONG, ZHUQUE, BAIHU, XUANWU | QINGLONG→GO (6); ZHUQUE→T (7); BAIHU→IX (5); XUANWU→NSU (5) | **23** | 2 | Same directional structure under a second naming form; no improvement sufficient to support a mapping. **NOT ACCEPTED.** |
+| Four Symbols — English labels: AZURE DRAGON, VERMILION BIRD, WHITE TIGER, BLACK TORTOISE | AZURE DRAGON→AADMNNOT (9); VERMILION BIRD→IILNOSV (8); WHITE TIGER→IPTTU (9); BLACK TORTOISE→AGIJLOOT (9) | **35** | 4 | Canonical English labels fit the directional concept but not the remaining alphagrams. **NOT ACCEPTED.** |
+| Four Heavenly Kings — Japanese names: JIKOKUTEN, ZOCHOTEN, KOMOKUTEN, TAMONTEN | JIKOKUTEN→IPTTU (8); ZOCHOTEN→CCDNOOTU (6); KOMOKUTEN→MOO (6); TAMONTEN→AADMNNOT (4) | **24** | 3 | Cardinal order is Tamonten north, Jikokuten east, Zochoten south, Komokuten west. The Japanese-name fit remains poor (the earlier Sanskrit-derived name screen scored 34). **NOT ACCEPTED.** |
+
+The Shanghai Museum and the National Research Institute for Cultural Properties support the Four Symbols and their east/south/west/north assignments. The Japan Tourism Agency supports the Four Heavenly Kings and their north/east/south/west guardians. These references establish the external traditions and positions, not Jane Street's intended emoji mapping.
+
+**Research disposition by unresolved emoji:**
+
+| Emoji | Current evidence boundary |
+|---|---|
+| 👸 | No source-backed four-member cardinal roster established. |
+| 🐷 | The four U.S. swine-breed roster remains a semantic grouping without a cardinal-order rule; its lexical screen scored 29. |
+| 🖼️ | PALISADES and PUTTI remain lexical/context leads; MADONNA is an equally close alternative to MONTANA for one source. No coherent four-term set or positions are established. |
+| 🧐 | No source-backed four-member cardinal roster established; isolated lexical hits are not promoted. |
+| 🐉 | Four Dragon Kings scored 19; Four Symbols transliterations scored 22, 23, and 35. No roster is accepted. |
+| 🏛️ | Four Heavenly Kings scored 34 in Sanskrit-derived names and 24 in Japanese names. The four-order architectural subset remains structurally incomplete because the cited classical set contains five orders. No roster is accepted. |
+
+The expanded screens do not establish any additional emoji group. The 13 provisional clusters / 52 provisional assignments remain unchanged; six emoji and 23 source sequences plus Ø remain unresolved. No hypothesis ID is added, no cardinal position is assigned, and no global residual or extraction rule is inferred.
+
 ### Secondary-source status review — 2026-11-05
 
 The additional public sources reviewed in this session do not close a formalization blocker:
@@ -383,6 +431,9 @@ Secondary research leads, accessed 2026-11-05:
 - [PyPI, cmudict 1.1.3](https://pypi.org/project/cmudict/) — documents the Python wrapper and its GPL-3.0-or-later package licence; the wrapper is not a project dependency and no package code or dictionary files are included in OFRL.
 - [The National Gallery, Putti glossary](https://www.nationalgallery.org.uk/paintings/glossary/putti) — defines putti as winged infants commonly depicted in religious and other artworks; supports the lexical/context lead only, not a four-member emoji grouping.
 
+- [Shanghai Museum, Sheng plaque with Four-Celestial-Creatures Design](https://www.shanghaimuseum.net/mu/frontend/pg/m/article/id/CI00004310) — collection record for the Four Symbols and their east/south/west/north assignments; contextual evidence only.
+- [National Research Institute for Cultural Properties, Japanese Garden Dictionary — Four Directional Deities](https://www.nabunken.go.jp/org/bunka/jgd/pages/FourDirectionalDeities.html) — corroborates the Japanese names Seiryū, Suzaku, Byakko, and Genbu and their cardinal positions; contextual evidence only.
+
 Programme rationale: Jane Street, [Puzzles](https://www.janestreet.com/puzzles/).
 
 This note contains OFRL-authored analysis and limited structural observations. It intentionally excludes the full puzzle payload, images, and official solution. No redistribution rights for those materials are assumed.
@@ -402,3 +453,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.8.0 | 2026-11-05 | Completed CM-T0007: audited all twelve candidate clusters, 48 unique source assignments, exact/residual counts, aggregate residual vector, evidence strength, and the 27+Ø inventory remainder; no puzzle rule established |
 | 0.9.0 | 2026-11-05 | Added H-016, a source-grounded but unaccepted Diamond Model candidate for 💻; recorded four feature terms, diagram positions, +U/−E residuals, six remaining emoji, and a caveated CMUdict lexical lead scan; CM-T0008 remains in progress |
 | 0.9.1 | 2026-11-05 | Screened four established four-member structures against the 23 remaining sequences with one-to-one minimum-cost character-multiset distance; recorded Dragon Kings (19), Heavenly Kings (34), swine breeds (29), and four selected architectural orders (23) as tested but not accepted; no new group promoted |
+| 0.9.2 | 2026-11-06 | Expanded the remaining-inventory lexical ambiguity audit; documented equally close alternative readings; screened Chinese Four Symbols and Japanese Four Heavenly Kings transliterations by exhaustive minimum-cost matching; no new group or global rule accepted |
