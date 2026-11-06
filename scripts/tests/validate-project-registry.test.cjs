@@ -205,7 +205,7 @@ test("required release gates scale by risk, project type and data classification
   });
   for (const required of [
     "scope_and_claims", "evidence_and_limitations", "licence_and_ip", "founder_approval",
-    "reproducibility", "domain_review", "data_rights", "numeric_and_financial_controls",
+    "reproducibility", "domain_review", "data_rights", "privacy_legal_review", "numeric_and_financial_controls",
     "dependency_and_sbom", "independent_domain_review",
   ]) assert.ok(r2Financial.includes(required), required);
 
