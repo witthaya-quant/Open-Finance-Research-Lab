@@ -3,7 +3,7 @@
 # Pressure Points — Initial Problem Formalization
 
 **Case ID:** OFRL-CM-001-CS-001  
-**Formalization version:** 0.9.2  
+**Formalization version:** 0.10.0  
 **Source:** Jane Street, Pressure Points (November 2026)  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
@@ -87,7 +87,7 @@ This is not yet a mathematical model of the puzzle. No mapping function, objecti
 | U-009 | How the 19 emoji clues partition and orient the 76 candidate entries | Determines whether four-member theme groups and cardinal positions are valid | Complete source-grounded grouping and a reproducible orientation rule |
 | U-010 | Whether letter-count residuals between candidate words are intentional | Determines whether the title implies a defined letter-transfer or transformation operation | A rule that explains every residual across all groups and independently reproduces the output |
 
-All ten items remain unresolved in version 0.5.0.
+All ten items remain unresolved at version 0.10.0. H-017 adds a conditional external candidate map, but does not close the source-rule, output-schema, or puzzle-intent blockers.
 
 ### 4.1 External research leads — hypotheses, not established rules
 
@@ -294,7 +294,7 @@ The Shanghai Museum and the National Research Institute for Cultural Properties 
 | 🐉 | Four Dragon Kings scored 19; Four Symbols transliterations scored 22, 23, and 35. No roster is accepted. |
 | 🏛️ | Four Heavenly Kings scored 34 in Sanskrit-derived names and 24 in Japanese names. The four-order architectural subset remains structurally incomplete because the cited classical set contains five orders. No roster is accepted. |
 
-The expanded screens do not establish any additional emoji group. The 13 provisional clusters / 52 provisional assignments remain unchanged; six emoji and 23 source sequences plus Ø remain unresolved. No hypothesis ID is added, no cardinal position is assigned, and no global residual or extraction rule is inferred.
+Historical pre-H-017 disposition (2026-11-06): the expanded negative screens had not established an additional group at that point. The inventory was still 13 provisional clusters / 52 assignments, with six emoji and 23 sequences plus Ø outside those earlier provisional groups. H-017 was added afterward as a separate conditional third-party map; it does not promote these earlier hypotheses to accepted facts. No global residual or extraction rule was inferred by the earlier screen.
 
 ### CM-T0008 — Source-led directional-roster and visual false-positive screens (2026-11-06)
 
@@ -312,7 +312,72 @@ The three scores and tie counts were independently cross-checked with a second e
 
 **Disposition across the six unresolved emoji.** No new group is accepted. 👸 still lacks a source-backed four-member roster and positional convention. 🐷 retains the previously screened swine-breed set only as a non-directional semantic grouping. 🖼️ retains PALISADES, PUTTI, and VIOLINS as separate lexical/context leads; the Anemoi roster is not accepted. 🧐 is not mapped to the Monopoly mascot on the basis of a monocle. 🐉 retains the previously screened Dragon Kings and Four Symbols variants as not accepted. 🏛️ retains Char Dham and Amnaya Peethams as tested-but-not-accepted rosters. No hypothesis ID is added, no cardinal position is assigned, and no residual or extraction rule is inferred.
 
-### Secondary-source status review — 2026-11-05
+### CM-T0008 — H-017: Third-party 19-theme candidate map and independent strict audit (2026-11-06)
+
+**Disposition: NOT ACCEPTED as Jane Street's solution.** H-017 records a complete candidate map published by an independent third party. It is a material research lead and a reproducible conditional exact-cover result; it is not an official Jane Street solution, and the original puzzle page does not state the candidate rule in prose.
+
+**External source and provenance.** The reviewed material is the November 2026 folder in [Aditi-Sahay/Jane-Street-Puzzles](https://github.com/Aditi-Sahay/Jane-Street-Puzzles/tree/b8cfe34d46347b1ec7f894d63a4b74e255bdc517/2026/November), pinned to commit `b8cfe34d46347b1ec7f894d63a4b74e255bdc517`. The folder contains a README, a copied question representation, a solution note, and `solver.py`. The README states that its author submitted an answer and appeared on Jane Street's leaderboard; OFRL has not independently verified that claim. The repository and solution are therefore treated as third-party research, not an official Jane Street publication. No puzzle payload, screenshot, source code, or third-party file has been copied into OFRL.
+
+**Candidate rule stated by the third party.** Each of 19 emoji themes is proposed to have four target terms. Each four-term group is required to produce exactly two exact character-multiset matches, one source sequence with one surplus character, and one source sequence missing one character. This 2/1/1 rule is a third-party hypothesis; it is not a rule statement located on Jane Street's puzzle page.
+
+**Strict comparison used for the independent audit.** For a target term `w` and source sequence `s`, let `n_w(c)` and `n_s(c)` be the multiplicity of character `c`. Define `Delta(c) = n_s(c) - n_w(c)`, `P = sum_c max(Delta(c), 0)`, and `M = sum_c max(-Delta(c), 0)`. These definitions count surplus and deficit multiplicities separately. The only accepted states are: exact when (P=0,M=0); source surplus when (P=1,M=0); and target deficit when (P=0,M=1). A comparison with both positive and negative character differences is inadmissible, even when the source-side positive counts sum to one. This two-sided test is stricter than the comparator in the published third-party script.
+
+**Source ordinal convention.** To avoid reproducing the puzzle's sequence payload, the 75 displayed letter strings are referred to by OFRL analysis identifiers `S001`–`S075`, in their displayed source order. The leading empty marker is denoted `Ø`. These ordinals are not Jane Street identifiers. Each cell records `target term → source ordinal (operation)`; `+X` means the source has one surplus X, `−X` means the target has one additional X, and `=` means exact equality. Terms appear in the order used by the pinned third-party source. Where that source supplies T/R/B/L slot labels, those are code labels, not proof of a universal geographic N/E/S/W convention.
+
+| Emoji / candidate theme | Four target-to-source assignments in source order | Position metadata in the third-party source |
+|---|---|---|
+| 👸 Queen band | MAY → S037 (+N); MERCURY → S046 (=); DEACON → S018 (=); TAYLOR → S038 (−L) | No positions supplied (`?`) |
+| 🧭 Compass | NORTH → S057 (+E); EAST → S039 (−E); SOUTH → S065 (=); WEST → S060 (=) | T/R/B/L |
+| 🐷 Pigpen X-grid | S → S073 (+W); U → Ø (−U); V → S075 (=); T → S074 (=) | T/R/B/L |
+| ⚽ Barcelona diamond | MESSI → S054 (+E); XAVI → S036 (−V); BUSQUETS → S040 (=); INIESTA → S027 (=) | T/R/B/L |
+| 🎮 PlayStation face buttons | TRIANGLE → S025 (+S); CIRCLE → S042 (−E); CROSS → S048 (=); SQUARE → S029 (=) | T/R/B/L |
+| 🖼️ Sistine Madonna | MADONNA → S009 (+T); SAINTBARBARA → S001 (−N); PUTTI → S068 (=); SAINTSIXTUS → S034 (=) | T/R/B/L |
+| 🧐 Monopoly corners | FREEPARKING → S022 (+R); GOTOJAIL → S030 (=); GO → S064 (=); JAILJUSTVISITING → S032 (−G) | T/R/B/L |
+| ⚾ Baseball diamond | SECOND → S043 (+O); FIRST → S061 (=); HOME → S056 (=); THIRD → S049 (−H) | T/R/B/L |
+| 💻 Diamond Model | ADVERSARY → S007 (+U); CAPABILITY → S003 (=); VICTIM → S047 (=); INFRASTRUCTURE → S020 (−E) | T/R/B/L |
+| 🐉 Beijing imperial altars | EARTH → S024 (+G); SUN → S071 (=); HEAVEN → S023 (=); MOON → S070 (−N) | T/R/B/L |
+| 🕹️ Joystick / D-pad | UP → S066 (+H); RIGHT → S062 (=); DOWN → S050 (=); LEFT → S055 (−T) | T/R/B/L |
+| 🏛️ Washington, D.C. diamond | NORTHPORTALESTATES → S010 (+E); NORTHEASTBOUNDARY → S004 (=); BLUEPLAINS → S028 (−B); PALISADES → S006 (=) | T/R/B/L |
+| 🎶 Orchestra seating | PERCUSSION → S045 (+X); DOUBLEBASSES → S013 (=); CONDUCTOR → S041 (−R); VIOLINS → S067 (=) | T/R/B/L |
+| ⭐ Crux / Southern Cross | GACRUX → S017 (+C); IMAI → S033 (=); ACRUX → S021 (−U); MIMOSA → S035 (=) | T/R/B/L |
+| 🕓 Clock face | TWELVE → S052 (+H); THREE → S053 (=); SIX → S069 (−S); NINE → S058 (=) | T/R/B/L |
+| ⛵ Ship | BOW → S016 (+A); STARBOARD → S005 (=); STERN → S059 (−S); PORT → S072 (=) | T/R/B/L |
+| 🏜️ Colorado neighbours | WYOMING → S063 (+N); KANSAS → S012 (=); NEWMEXICO → S044 (−E); UTAH → S031 (=) | T/R/B/L |
+| 🪷 India | HIMACHALPRADESH → S002 (+G); WESTBENGAL → S014 (=); TAMILNADU → S008 (−L); GUJARAT → S011 (=) | T/R/B/L |
+| ⚠️ NFPA 704 hazard diamond | FIRE → S051 (+E); INSTABILITY → S015 (=); SPECIAL → S019 (−S); HEALTH → S026 (=) | T/R/B/L |
+
+**Independent strict-audit result.** Two separately implemented character-multiset checkers (Python and JavaScript) independently reproduced the candidate assignments. For each of the 19 fixed target rosters, exactly one four-entry assignment satisfies the strict 2-exact / 1-surplus / 1-deficit condition. Across all rosters:
+- 76 of 76 visible entries are consumed exactly once; no source ordinal is reused and no entry is left over.
+- The 19 groups contain 38 exact matches, 19 source-surplus matches, and 19 target-deficit matches.
+- The leading `Ø` marker is treated as an empty source sequence and matches target `U` as a one-character deficit (−U).
+- The exact-cover result is conditional on the third-party's 19 target rosters and proposed 2/1/1 constraint. It is not uniqueness over all possible semantic rosters, nor proof that Jane Street intended these themes, slot labels, or rule.
+
+**Conditional residual extraction.** Following the emoji/theme and target-term order in the pinned third-party source, surplus characters concatenate to `NEWESTROUGHEXCHANGE`; deficit characters concatenate to `LEUVENGHENTBRUSSELS`. These are observations conditional on that ordering and map, not yet an official extraction rule.
+
+The deficit phrase contains LEUVEN, GHENT, and BRUSSELS, three cities named in the Flemish Diamond description already recorded in SRC-008; Antwerp is the omitted fourth city. The surplus phrase can be read as “NEWEST ROUGH EXCHANGE”. The Antwerpsche Diamantkring's own history describes its founding on 10 October 1929 in response to rough-diamond trade, and its About page identifies it as one of the four Antwerp exchanges (SRC-007 and SRC-058). A municipal heritage account dates it to 1930 rather than 1929 (SRC-059), so the exact year is source-dependent; both records place it after the older exchanges they identify. Together these facts make `ANTWERPSCHE DIAMANTKRING` a coherent candidate output. Its 11/12 word lengths also match the visible terminal notation `(11 12)`. Length coincidence alone is not proof, and the semantic chain remains an interpretation of third-party residuals rather than a Jane Street rule.
+
+**Published-code defect — the third-party solver is not a valid independent verifier.** In `solver.py`, `compare_letters` computes `Counter(sequence) - Counter(word)`. When that positive difference sums to one, it returns a source-surplus result without checking the reverse difference `Counter(word) - Counter(sequence)`. For example, comparing target `MAY` with source `T` returns a false `+T` candidate even though M, A, and Y are absent. Source `V` is another false candidate. In the Queen roster, the published candidate-generation step therefore has three apparent choices (AMNY, T, V), not one. The script's `len(valid_solutions) != 1` guard consequently raises before the first theme is solved against the pinned input. The map above was not accepted on the authority of that script; it was reconstructed using the strict two-sided test.
+
+The third-party README also says “79 letter strings”, while its `question.md` representation and `solver.py` input contain 76 marker/sequence entries and the script asserts an input length of 76. This is a source-documentation inconsistency. It does not change the 75-string inventory recorded from Jane Street.
+
+**Semantic and positional evidence remains heterogeneous.**
+
+| Candidate area | External cross-check | Current evidence boundary |
+|---|---|---|
+| 👸 Queen band | QueenOnline identifies the four classic members (SRC-024); the princess/queen cue is direct | Strong member-set context; no cardinal positions are provided. This competes with the earlier H-014 placement of the same Queen roster under 🎶; neither association is source-stated by Jane Street. |
+| 🐷 Pigpen X-grid | A cipher reference places S/T/U/V in the X-shaped portion of the Pigpen alphabet (SRC-048) | Plausible direct wordplay and four-position layout; variants exist and no source establishes the puzzle-specific association. |
+| ⚽ Barcelona diamond | A FIGC-hosted tactical thesis depicts a dynamic diamond involving Messi, Xavi, Iniesta, and Yaya Touré—not Busquets (SRC-052) | The published diagram does not corroborate this exact four-player roster. H-015's Gareth/Iniesta/Busquets/Messi roster is a competing lead; neither quartet is accepted. |
+| 🖼️ Sistine Madonna | The National Gallery's account identifies the Virgin, Saint Sixtus, Saint Barbara, and two cherubs at the bottom (SRC-049) | Strong composition/member-set context; text confirms flanking and bottom placement but does not itself specify left/right assignment. |
+| 🧐 Monopoly corners | A secondary board reference lists GO, Jail/Just Visiting, Free Parking, and Go to Jail as the four corner spaces (SRC-050) | Four corners are not automatically four cardinal vertices; the source does not establish a T/R/B/L or N/E/S/W convention. The earlier monocle-to-mascot association remains a false positive (SRC-044). |
+| 🐉 Beijing imperial altars | Visit Beijing explicitly locates Earth north, Sun east, Moon west, and Heaven south; The Met describes the dragon as a symbol of imperial authority (SRC-046/SRC-047) | Strong directional and contextual alignment, but the emoji-to-imperial-altars association remains inferential. |
+| 🏛️ Washington, D.C. diamond | D.C. sources identify Blue Plains at the District's southern tip, Palisades in the upper northwest, and North Portal Estates / Northeast Boundary as localities (SRC-053–SRC-057) | The District does not have official neighborhood boundaries; available neighborhood layers are descriptive/labeling products, not authoritative geometric vertices. The proposed four-location diamond is provisional. |
+| 🎶 Orchestra seating | Berliner Philharmoniker explains that conductors choose arrangements; percussion is generally at the back, while double basses may be left or right and string layouts vary (SRC-051) | The candidate roster is plausible, but it does not have one universal four-point seating geometry. |
+
+The source map also changes some earlier associations: Queen moves from the 🎶 hypothesis H-014 to 👸, while 🎶 becomes an orchestra-seating candidate; the football roster H-015 is replaced by a Barcelona-diamond roster that is not corroborated by the cited diagram. These are competing hypotheses, not silent corrections to the historical record. Prior H-001–H-016 records remain intact.
+
+**Research disposition.** H-017 demonstrates a conditional 19-roster exact cover and a plausible output interpretation, but it does not close U-001–U-010, VAL-014, or VAL-015. The role of Ø, source-authorized membership of all 19 groups, the relationship between T/R/B/L and any actual cardinal frame, the extraction order, the meaning of “(11 12)”, and uniqueness/completeness conditions remain unproved. The case remains INCOMPLETE / BLOCKED — NO-GO FOR SOLVER IMPLEMENTATION. Do not copy or repair the third-party Python script in OFRL, and do not create a Rust solver or Cargo workspace until the formalization and correctness-predicate gates pass.
+
+### Secondary-source status review — 2026-11-05 (dated pre-H-017 checkpoint)
 
 The additional public sources reviewed in this session do not close a formalization blocker:
 
@@ -324,15 +389,15 @@ The additional public sources reviewed in this session do not close a formalizat
 - Real Madrid's official Gareth Bale profile and FC Barcelona's official profiles for Iniesta, Busquets, and Messi corroborate the player identities in H-015; these references do not establish the candidate grouping or cardinal order.
 - The Jane Street Archive search result displays November “Pressure Points” followed by “Puzzle Solution” text. The search result does not expose an anchor destination; the directly opened Archive HTML is a stale cached representation beginning at August 2026. No direct solution URL or solution body was retrieved.
 
-Accordingly, the candidate phrase remains externally reported but **not independently verified by OFRL**. A correct-submission list, a search-result label, or a solver-status statement cannot replace a complete derivation. No new group is promoted from a lead to an accepted mapping by this source review.
+At this 2026-11-05 review checkpoint, the candidate phrase was externally reported but **not independently verified by OFRL**. A correct-submission list, search-result label, or solver-status statement could not replace a complete derivation. H-017, documented separately above from a pinned third-party repository reviewed on 2026-11-06, later adds a reproducible conditional candidate map; it does not authenticate the third-party submission claim or establish Jane Street's intended groups.
 
 ### Cross-group evidence boundary
 
 H-007 through H-012 expanded the initial four-cluster inventory to ten themes; H-014 and H-015 brought the recorded candidate inventory to twelve. Their contextual sources corroborate selected facts and conventions but do **not** establish Jane Street's intended emoji mappings or a common residual rule. The CM-T0007 audit separately assessed those twelve clusters without promoting any to fact. H-016 is a new CM-T0008 lead for 💻, based on the four vertices of the published Diamond Model of Intrusion Analysis; it is not part of the completed twelve-cluster CM-T0007 audit.
 
-After H-016's four source entries are included provisionally, 13 candidate clusters account for 52 distinct source sequences. The remaining inventory is 23 sequences plus Ø, or 24 visible items, with six emoji still lacking candidate groups. The equality 24 = 6 × 4 remains arithmetic alignment only.
+At the pre-H-017 checkpoint, H-016 brought the provisional inventory to 13 candidate clusters / 52 source assignments, leaving 23 sequences plus Ø and six emoji without candidate rosters. This remains the historical CM-T0008 intermediate state. H-017 records a separate third-party candidate map covering 19 rosters / 76 entries conditionally; it does not retroactively convert earlier hypotheses into accepted facts or prove the 19×4 interpretation.
 
-The residuals from the first twelve clusters remain as audited in CM-T0007. H-016 adds +U for ADVERSARY and −E for INFRASTRUCTURE. Across all 52 provisional assignments there are 27 exact pairs and 25 residual-bearing pairs, with 14 surplus and 12 deficit characters. The aggregate net residual is +A×2, +C, +G, +H, +N×2, +O, −E, −L×2, −S×2, −T. This still does not yield one global transformation or extraction rule.
+The residuals from the first twelve clusters remain as audited in CM-T0007; H-016 adds +U for ADVERSARY and −E for INFRASTRUCTURE. Those 52 provisional assignments are a historical intermediate audit, not the H-017 candidate map. Under H-017's third-party rosters the independent strict audit instead finds 38 exact / 19 source-surplus / 19 target-deficit matches and the two conditional extraction strings recorded in H-017. The relationship between these strings and Jane Street's intended rule remains unproved.
 
 ### CM-T0007 — Candidate-cluster independent audit (2026-11-05)
 
@@ -374,7 +439,7 @@ No edit-distance normalization, silent spelling change, or unrecorded pluralizat
 
 
 
-**Evidence required before accepting any of H-001 through H-016:**
+**Evidence required before accepting any of H-001 through H-017:**
 1. Explain the semantic role of the leading marker and account for all 76 entries.
 2. Define the four positions and show why each emoji produces exactly four relevant vertices.
 3. Provide a reproducible mapping from every source entry to exactly one vertex, with no omissions or collisions.
@@ -446,6 +511,21 @@ Secondary research leads, accessed 2026-11-05:
 - [Carnegie Mellon University, CMU Pronouncing Dictionary](https://github.com/cmusphinx/cmudict) — exploratory English pronunciation lexicon used through the locally installed `cmudict` 1.1.3 wrapper; its maintainers warn that errors, omissions, and inconsistencies may remain. Lexical candidate generation only, not an authoritative word or proper-name inventory.
 - [PyPI, cmudict 1.1.3](https://pypi.org/project/cmudict/) — documents the Python wrapper and its GPL-3.0-or-later package licence; the wrapper is not a project dependency and no package code or dictionary files are included in OFRL.
 - [The National Gallery, Putti glossary](https://www.nationalgallery.org.uk/paintings/glossary/putti) — defines putti as winged infants commonly depicted in religious and other artworks; supports the lexical/context lead only, not a four-member emoji grouping.
+- [Aditi-Sahay, Jane-Street-Puzzles — November 2026 folder, pinned commit](https://github.com/Aditi-Sahay/Jane-Street-Puzzles/tree/b8cfe34d46347b1ec7f894d63a4b74e255bdc517/2026/November) — third-party candidate map, prose solution note, and solver code; not an official Jane Street solution and not copied into OFRL.
+- [Visit Beijing, Four Great Temples of Beijing](https://english.visitbeijing.com.cn/article/47OMbo9hGyQ) — gives the four imperial-altar locations around the Forbidden City; contextual evidence only.
+- [The Metropolitan Museum of Art, Tray with dragon and Chinese characters](https://www.metmuseum.org/art/collection/search/40224) — describes the dragon as a symbol of imperial authority in the particular object record; contextual evidence only.
+- [CipherPad, Pigpen Cipher Alphabet](https://cipherpad.dev/learn/pigpen-cipher-alphabet) — documents the common S/T/U/V X-grid layout and notes variants exist; not a Jane Street clue rule.
+- [The National Gallery, London, Jakob Schlesinger after Raphael, The Sistine Madonna](https://www.nationalgallery.org.uk/paintings/jakob-schlesinger-after-raphael-the-sistine-madonna) — identifies the Virgin, Saint Sixtus, Saint Barbara, and two cherubs at the bottom; its text does not state the left/right assignment.
+- [MonopolyClub, Classic U.S. Board Layout](https://monopolyclub.com/rules/classic/board-layout) — lists the four classic corner spaces; independent secondary board reference, not evidence that board corners are cardinal vertices.
+- [Berliner Philharmoniker, Who decides where the sections of the orchestra sit?](https://www.berliner-philharmoniker.de/en/stories/who-decides-the-seating-arrangement-of-the-musicians-on-stage/) — confirms conductor discretion, percussion toward the back, and variable positions for strings and double basses.
+- [FIGC, Occupying spaces and positional fluidity](https://www.figc.it/media/256232/thesis-occupying-spaces-and-positional-fluidity-ridotta.pdf) — its Barcelona diamond diagram identifies Messi, Xavi, Iniesta, and Yaya Touré; it does not corroborate Busquets in that depicted quartet.
+- [D.C. GIS, Administrative / Other Boundaries layers](https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Administrative_Other_Boundaries/MapServer/layers) — warns that D.C. has no official neighborhood boundaries and that neighborhood layers are descriptive / label-placement products, not authoritative geometric vertices.
+- [D.C. Office of Motion Picture and Television Development, Blue Plains in Southwest DC](https://entertainment.dc.gov/release/blue-plains-southwest-dc-recognized-one-city-location-month) — states Blue Plains sits at the southernmost tip of the District.
+- [D.C. Office on Aging, FY2014 ADRC RFA](https://opgs.dc.gov/sites/default/files/dc/sites/opgs/publication/attachments/2014_ADRC_RFA.pdf) — includes North Portal Estates in its Ward 4 community list; does not establish an exact northernmost point.
+- [D.C. Office of Advisory Neighborhood Commissions, ANC 7C](https://oanc.dc.gov/anc-profile/anc-7c) — lists Northeast Boundary among the neighborhoods represented by ANC 7C; it does not establish a precise east vertex.
+- [D.C. Office of Planning, About Ward 3](https://planning.dc.gov/ar/page/about-ward-3) — places Palisades among neighborhoods in the upper northwest quadrant; quadrant context, not an exact west boundary point.
+- [Antwerpsche Diamantkring, History](https://diamantkring.be/about/history/) — gives the bourse's founding date as 10 October 1929 and describes the rough-diamond trade context.
+- [City of Antwerp, Open Monumentendag — Beurs voor Diamanthandel](https://magazine.antwerpen.be/open-monumentendag-2023/beurs-voor-diamanthandel?category=default) — municipal heritage account describes the four exchanges and dates the Antwerpse Diamantkring to 1930; note the one-year difference from the bourse's own history.
 - [University of Chicago, Encyclopaedia Romana — Anemoi: The Greek Winds](https://penelope.uchicago.edu/~grout/Encyclopaedia_romana/greece/architecture/winds.html) — contextual reference for the four Homeric cardinal winds and their directions; it does not establish a picture-emoji association.
 - [Orissa Review, The Four Dhams (July 2008)](https://magazines.odisha.gov.in/orissareview/2008/July-2008/engpdf/July-2008-or.pdf) — cultural article describing Badrinath north, Dwarka west, Rameshwaram south, and Puri east; the issue states that published views are not necessarily those of the Government of Odisha.
 - [Government of India, Ministry of Tourism, Rajya Sabha Starred Question No. 22 (8 December 2022)](https://tourism.gov.in/sites/default/files/2022-12/SQ.22%20for%2008.12.2022.pdf) — confirms the four Char Dham destinations; the table does not itself specify cardinal directions.
@@ -476,3 +556,4 @@ This note contains OFRL-authored analysis and limited structural observations. I
 | 0.9.1 | 2026-11-05 | Screened four established four-member structures against the 23 remaining sequences with one-to-one minimum-cost character-multiset distance; recorded Dragon Kings (19), Heavenly Kings (34), swine breeds (29), and four selected architectural orders (23) as tested but not accepted; no new group promoted |
 | 0.9.2 | 2026-11-06 | Expanded the remaining-inventory lexical ambiguity audit; documented equally close alternative readings; screened Chinese Four Symbols and Japanese Four Heavenly Kings transliterations by exhaustive minimum-cost matching; no new group or global rule accepted |
 | 0.9.3 | 2026-11-06 | Exhaustively screened Four Anemoi, Char Dham, and Four Amnaya Peetham rosters; recorded the Monopoly monocle false-positive check; no emoji mapping or new hypothesis accepted |
+| 0.10.0 | 2026-11-06 | Added H-017, a third-party 19-roster conditional exact-cover map independently checked with a strict two-sided multiset test; documented residual extraction, semantic conflicts, the published comparator defect, and the continuing no-go solver gate |

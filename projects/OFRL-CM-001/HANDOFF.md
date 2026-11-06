@@ -76,6 +76,10 @@ Agents must not create additional files, branches, issues, PRs, dependencies, or
 - Distinguish exact arithmetic, numerical approximation, statistical estimate, and heuristic result.
 - Do not claim financial applicability or trading performance without a separate defensible mapping and relevant empirical/economic validation.
 - Respect the Data Policy, License Policy, and Publication/IP Boundary. Public availability is not redistribution permission.
+- Current CM-T0008 continuation: audit H-017 as a **conditional third-party candidate map**, not an accepted solution. Challenge semantic membership, positional geometry, extraction ordering, and the role of Ø. Preserve the Queen/H-014 versus Orchestra and football/H-015 versus Barcelona conflicts.
+- The pinned third-party `solver.py` has a two-sided multiset-comparison defect; do not rely on it as an executable verifier, copy it, or adapt it into OFRL. Use the strict criterion documented in PROBLEM_FORMALIZATION.md H-017 for any further manual cross-check.
+- Do not repeat previously screened negative rosters without new independent source evidence. Keep the official Jane Street solution task open unless an actual direct official target and body are retrieved.
+- H-017's 76/76 exact cover and candidate Antwerp phrase do not authorize solver implementation. No Cargo workspace, Rust solver, dependency, benchmark, or project-specific workflow until the formalization and correctness-predicate gates pass.
 
 ## 6. End-of-task protocol
 
