@@ -91,7 +91,7 @@ No blanket licence allow-list or legal approval is created by this document. In 
 
 ## 5. Security advisory assessment
 
-The earlier PR #11 dependency audit is historical evidence only:
+The earlier [PR #11 dependency audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/11) is historical evidence only. The new workflow uses the [verified cargo-audit 0.22.2 release](https://github.com/rustsec/rustsec/releases/tag/cargo-audit%2Fv0.22.2) and [Cargo fetch](https://doc.rust-lang.org/cargo/commands/cargo-fetch.html) against the current committed lockfiles. The historical audit was:
 
 - Tool: RustSec `cargo-audit 0.22.2`.
 - Advisory DB commit: `965bf9ad083b58e6340d65829d85217b18be9290`.
@@ -123,7 +123,7 @@ The current preview workflow uses `cargo-cyclonedx 0.5.9`. Its published locked 
 
 The exception remains restricted to the ephemeral, read-only preview SBOM generator. It is not an OFRL-IB-001 application runtime dependency and does not authorize use in a distributable production runtime.
 
-The upstream release page currently identifies `cargo-cyclonedx 0.5.9` as the latest `cargo-cyclonedx` release found in this review. No later `cargo-cyclonedx` release resolving the transitive dependency was identified. The upstream project also publishes a prebuilt Linux binary with a release checksum; using that binary can avoid compiling the tool's dependency graph in OFRL CI, but does not remove or independently clear the dependency embedded in the generator. It is therefore an execution-boundary mitigation, not a replacement for source/security review.
+The [upstream cargo-cyclonedx release page](https://github.com/CycloneDX/cyclonedx-rust-cargo/releases) currently identifies `cargo-cyclonedx 0.5.9` as the latest `cargo-cyclonedx` release found in this review. No later `cargo-cyclonedx` release resolving the transitive dependency was identified. The upstream project also publishes a prebuilt Linux binary with a release checksum; using that binary can avoid compiling the tool's dependency graph in OFRL CI, but does not remove or independently clear the dependency embedded in the generator. It is therefore an execution-boundary mitigation, not a replacement for source/security review.
 
 Alternative generators or an SPDX-based pipeline may be evaluated only against the same acceptance requirements: complete component/dependency coverage, exact lockfile identity, licence metadata fidelity, deterministic output, target handling, checksum verification, maintenance and source review. No replacement is selected by this record.
 
