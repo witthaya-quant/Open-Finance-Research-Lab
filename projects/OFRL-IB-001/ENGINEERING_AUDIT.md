@@ -117,6 +117,8 @@ The current `.github/dependabot.yml` schedules weekly update proposals for the a
 
 **Current disposition:** lockfile identity, registry-source classification, target-specific preview SBOM evidence, and update automation are partially evidenced. Package-source/repository provenance mapping, exact source-archive licence and notice review, current advisory triage for the eventual production graph, and a complete package-level acceptance record remain open. The yanked `xml-rs 0.8.19` exception remains limited to the preview generator and is due for review by 2027-02-04. No production dependency graph is approved while IB-T004 remains gated, and no official release SBOM/checksum or publication authorization exists.
 
+IB-T005's specialist evidence register and its source-archive / current RustSec automation are being delivered in [DEPENDENCY_REVIEW.md](DEPENDENCY_REVIEW.md) and [PR #34](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/34). The workflow is not accepted until its exact-head run and artifacts are verified; package-level legal/security dispositions remain manual and OPEN.
+
 Open items remain:
 
 - Source provenance and source-level licence/notice review for dependencies intended for distribution.
