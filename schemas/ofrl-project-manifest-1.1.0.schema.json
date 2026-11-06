@@ -188,7 +188,8 @@
         "independent_assurance_required",
         "independent_assurance_rationale",
         "gates",
-        "authorization"
+        "authorization",
+        "residual_risk_assessment"
       ],
       "properties": {
         "assessment_version": {
@@ -528,6 +529,189 @@
               }
             }
           ]
+        },
+        "residual_risk_assessment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "outcome",
+            "reviewed_by",
+            "reviewer_role",
+            "reviewed_at",
+            "next_review_at",
+            "evidence",
+            "risks"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "NOT_ASSESSED",
+                "ASSESSED"
+              ]
+            },
+            "outcome": {
+              "enum": [
+                "NOT_ASSESSED",
+                "NO_RESIDUAL_RISKS",
+                "RESIDUAL_RISKS_RECORDED"
+              ]
+            },
+            "reviewed_by": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 2,
+              "maxLength": 128
+            },
+            "reviewer_role": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 3,
+              "maxLength": 160
+            },
+            "reviewed_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            },
+            "next_review_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date"
+            },
+            "evidence": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 8,
+                "maxLength": 2048
+              }
+            },
+            "risks": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "risk_id",
+                  "summary",
+                  "severity",
+                  "decision",
+                  "control_owner",
+                  "review_due_at",
+                  "expires_at",
+                  "expiry_condition",
+                  "rationale",
+                  "evidence",
+                  "accepted_by",
+                  "accepted_by_role",
+                  "accepted_at",
+                  "decision_reference"
+                ],
+                "properties": {
+                  "risk_id": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9][A-Z0-9._-]{2,63}$"
+                  },
+                  "summary": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 1000
+                  },
+                  "severity": {
+                    "enum": [
+                      "LOW",
+                      "MEDIUM",
+                      "HIGH",
+                      "CRITICAL"
+                    ]
+                  },
+                  "decision": {
+                    "enum": [
+                      "OPEN",
+                      "MITIGATED",
+                      "TRANSFERRED",
+                      "ACCEPTED",
+                      "CLOSED"
+                    ]
+                  },
+                  "control_owner": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 128
+                  },
+                  "review_due_at": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "expiry_condition": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 1000
+                  },
+                  "rationale": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 2000
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 2048
+                    }
+                  },
+                  "accepted_by": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 2,
+                    "maxLength": 128
+                  },
+                  "accepted_by_role": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 3,
+                    "maxLength": 160
+                  },
+                  "accepted_at": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "format": "date"
+                  },
+                  "decision_reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "minLength": 8,
+                    "maxLength": 2048
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
