@@ -3,11 +3,11 @@
 # OFRL-CM-001 — Data Manifest
 
 **Dataset ID:** OFRL-CM-001-SOURCE-REGISTER  
-**Dataset version:** 0.10.0  
+**Dataset version:** 0.11.0  
 **Data classification:** Public Source (reference-only; no source puzzle payload stored)  
 **Data owner / steward:** Project Owner  
 **Created or retrieved:** 2026-11-05  
-**Last reviewed:** 2026-11-06
+**Last reviewed:** 2026-11-07
 
 ## 1. Purpose and intended use
 
@@ -21,7 +21,7 @@ The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The re
 |---|---|---|---|---|---|
 | SRC-001 | Jane Street | https://www.janestreet.com/puzzles/ | 2026-11-05 | Primary source for Jane Street's stated purpose of its puzzle programme | Third-party website; no redistribution of page content |
 | SRC-002 | Jane Street | https://www.janestreet.com/puzzles/pressure-points-index/ | 2026-11-05 | Original source of the November 2026 Pressure Points puzzle | Third-party puzzle content; redistribution permission not established; URL reference only |
-| SRC-003 | Jane Street | https://www.janestreet.com/puzzles/archive/ | 2026-11-06 | Recheck the live Archive listing and the November 2026 Pressure Points solution status | Search index surfaced “November 2026: Pressure Points” followed by “Puzzle Solution”; the accessible Archive HTML still returned a cached snapshot listing through August 2026 and exposed no November href or direct solution body; no target URL inferred |
+| SRC-003 | Jane Street | https://www.janestreet.com/puzzles/archive/ | 2026-11-07 | Recheck the live Archive listing and the November 2026 Pressure Points solution status | The directly opened Archive page lists the November puzzle and displays “Solution” as plain text without an exposed anchor/destination; its linked “Puzzle” entry opens the puzzle/submission page. Search-index text also shows “Puzzle Solution” but supplies no direct target; no solution URL inferred and no body retrieved |
 | SRC-004 | Jane Street Blog | https://blog.janestreet.com/asic-puzzle-results/ | 2026-11-05 | Methodological context on diverse solution methods and verification in a separate ASIC challenge | Third-party article; citation and link only; not a first-pilot input |
 | SRC-005 | Puzzling Stack Exchange | https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026 | 2026-11-05 | Community discussion reporting candidate anagrams, near-place-name residuals, and unresolved questions about the title, marker, emoji clues, and terminal notation | User-generated secondary discussion; not authoritative rules, not a complete mapping, and not a verified solution |
 | SRC-006 | Kaia | https://www.kaiaz.me/now/ | 2026-11-05 | Secondary solver-status lead reporting a 76-entry / 19-by-4 cardinal-vertex hypothesis and candidate phrase ANTWERPSCHE DIAMANTKRING | Personal research notes; the reviewed page does not provide a complete derivation; hypothesis only, not an official or OFRL-verified solution |
@@ -114,16 +114,17 @@ No normalized puzzle dataset or redistribution-ready fixture is created in this 
 
 ### Official-archive and solution retrieval status
 
-Historical Archive review (2026-11-05): the search result at that time displayed “November 2026: Pressure Points” followed by “Puzzle Solution”, without exposing the anchor target; the directly opened Archive HTML was a stale cached representation beginning at August 2026. The 2026-11-06 recheck adds current index evidence and is recorded separately in §4 below. The historical review did not retrieve a November solution URL or body. The official puzzle page exposed a list of correct submissions dated 2026-11-02, but the page reviewed did not provide a worked derivation.
+Historical checks on 2026-11-05 and 2026-11-06 found a search-index label for “Puzzle Solution” but no verified November solution destination. The earlier directly opened Archive representation was stale and showed older entries. That historical result is superseded by the live direct-page check below; it remains part of the retrieval history, not the current page state.
 
-Evidence states as of 2026-11-06:
-- Current search-index result for the official Archive displays “November 2026: Pressure Points” followed by “Puzzle Solution”: **OBSERVED (index text only)**.
-- The directly opened Archive HTML available in this review remains a cached snapshot whose newest visible puzzle is August 2026; it exposes no November solution link: **OBSERVED (accessible page representation)**.
-- November solution anchor/href target: **NOT VERIFIED**.
-- Direct solution URL and body: **NOT RETRIEVED**.
+Live direct-page check (2026-11-07):
+- The opened Jane Street Archive page displays “November 2026: Pressure Points”. The “Puzzle” entry is an exposed link to the current puzzle page; the following word “Solution” is rendered as plain text, with no exposed anchor or destination in the page representation: **OBSERVED**.
+- The directly opened Pressure Points page displays the puzzle content and answer-submission form. It does not expose a worked solution or derivation: **OBSERVED**.
+- Search-index text also displays “November 2026: Pressure Points” followed by “Puzzle Solution”, but the index text is not a direct URL or link target: **OBSERVED (index text only)**.
+- November solution anchor/href target: **NOT EXPOSED / NOT RETRIEVED**.
+- Direct official solution URL and body: **NOT RETRIEVED**.
 - Official worked derivation: **NOT INSPECTED**.
 
-The new index evidence means the earlier wording “no November solution entry” is no longer appropriate. It still does not provide a direct destination or the solution body. Do not infer or construct a URL from the search snippet, and do not close CM-T0010 or a mathematical formalization blocker on the index label alone.
+The current live page therefore improves the direct-page evidence but does not satisfy CM-T0010. Do not infer or construct a URL from the plain-text label or search snippet. Keep the official-solution gate blocked until Jane Street exposes a direct target and its body can be inspected. The third-party H-017 candidate map remains a separate hypothesis and is not a substitute for the official source.
 
 ### Third-party candidate-map status (not an official solution)
 
@@ -131,7 +132,7 @@ SRC-045 is an independently authored public repository. Its pinned README claims
 
 ## 5. Collection or generation method
 
-Source references were reviewed on 2026-11-05 and 2026-11-06. CM-T0008 used a local CMUdict 1.1.3 lexical lead screen, exhaustive one-to-one multiset screens for structured rosters, and an independent strict two-sided character-multiset audit of the third-party H-017 candidate rosters. The audit uses source ordinals S001–S075 plus Ø; the full puzzle sequence list is not stored. The third-party Python code was reviewed for correctness but not copied or executed as an authoritative solver. These are research transformations, not automated source collection. OFRL has not implemented a scraper or periodic source monitor.
+Source references were reviewed on 2026-11-05, 2026-11-06, and 2026-11-07. CM-T0008 used a local CMUdict 1.1.3 lexical lead screen, exhaustive one-to-one multiset screens for structured rosters, and an independent strict two-sided character-multiset audit of the third-party H-017 candidate rosters. The audit uses source ordinals S001–S075 plus Ø; the full puzzle sequence list is not stored. The third-party Python code was reviewed for correctness but not copied or executed as an authoritative solver. These are research transformations, not automated source collection. OFRL has not implemented a scraper or periodic source monitor.
 
 ## 6. Transformations and exclusions
 
@@ -153,7 +154,7 @@ No third-party source file is stored, so no source-file checksum is claimed. If 
 
 - The live source may change after the access date.
 - The page's visible content does not, by itself, establish all problem rules.
-- The Archive search result displays November puzzle and “Puzzle Solution” text, but does not expose the solution anchor target; the directly opened HTML is a stale cached snapshot. The direct solution URL and solution content have not been retrieved.
+- The live Archive page displays the November puzzle and unlinked “Solution” text; its exposed “Puzzle” link leads to the puzzle/submission page. No direct solution target, URL, body, or worked derivation is exposed as of 2026-11-07.
 - No right to reproduce the puzzle text, images, or official solution is assumed.
 - The separate ASIC article provides context on methods and verification but is not evidence about the Pressure Points puzzle's underlying structure.
 
