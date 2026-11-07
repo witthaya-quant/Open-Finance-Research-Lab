@@ -25,7 +25,7 @@ fn node_index(time: usize, up_moves: usize) -> usize {
     let (left, right) = if time % 2 == 0 {
         (time / 2, time + 1)
     } else {
-        (time, (time + 1) / 2)
+        (time, time.div_ceil(2))
     };
     left * right + up_moves
 }
@@ -132,8 +132,8 @@ fn independent_verifier_rejects_corrupted_node_value() {
     let input = model(3);
     let mut result = price_american_put(&input, 10).expect("valid model");
 
-    let corrupted_index = node_index(2, 0);
-    result.nodes[corrupted_index].option_value += r(1, 1);
+    let corrupted_index = node_index(0, 0);
+    result.nodes[corrupted_index].option_value -= r(1, 1);
 
     assert!(matches!(
         verify_optimality_certificate(&input, &result, 10),
