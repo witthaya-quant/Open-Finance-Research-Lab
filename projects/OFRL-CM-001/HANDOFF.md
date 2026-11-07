@@ -6,21 +6,22 @@
 **Repository:** `witthaya-quant/Open-Finance-Research-Lab`  
 **Canonical project-management record:** [PROJECT_CONTROL.md](PROJECT_CONTROL.md)  
 **Practice methodology:** [PRACTICE_PLAYBOOK.md](PRACTICE_PLAYBOOK.md)  
-**Current admission PR:** [#29](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
-**Authorized working branch:** `research/ofrl-cm-001-admission-and-pilot`
+**Admission PR (merged):** [#29](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29) — merge commit `42e4a806c950f6efebc260e636e8ff3b98f51dd8`  
+**Working branch:** Task-specific follow-on branches must be created from the verified live `main` head; this procedure file does not designate a permanent active branch.
 
 ## 1. Non-negotiable first read
 
 At the start of every new chat, agent session, or delegated task:
 
-1. Read `PROJECT_CONTROL.md` from the live authorized branch. It is the only project-level source of truth for current scope, status, phases, tasks, dependencies, blockers, and next actions.
+1. Fetch live `main` and read `PROJECT_CONTROL.md` from that revision. It is the only project-level source of truth for current scope, status, phases, tasks, dependencies, blockers, and next actions.
 2. Read this file for continuation and repository-safety procedure.
-3. Fetch live PR #29 metadata and verify repository, state, base, head branch, exact head SHA, Draft/merged state, and mergeability.
-4. Fetch live `main` SHA and compare `main...${branch}`; record ahead/behind counts and merge base.
-5. Fetch the full PR changed-file list and diff. Confirm all paths remain within the task's authorized path set and project boundary.
-6. Inspect PR comments, reviews, review threads, and workflow runs for the exact head SHA.
-7. Read only the specialist documents needed for the selected task ID in `PROJECT_CONTROL.md`.
-8. Work only on the smallest evidence-backed task. Update the task register and specialist evidence when acceptance criteria are met.
+3. Verify that admission PR #29 remains closed/merged as `42e4a806c950f6efebc260e636e8ff3b98f51dd8`; treat its old admission branch as historical and read-only.
+4. Identify the branch and PR for the selected task from live GitHub state. If the task has no active branch, create one from the freshly verified `main` SHA; never infer a write target from a prior conversation.
+5. Compare the task branch with `main`; record ahead/behind counts and merge base.
+6. Fetch the active task PR's full changed-file list and diff, if a PR exists. Confirm all paths remain within the task's authorized path set and project boundary.
+7. Inspect task-PR comments, reviews, review threads, and workflow runs for its exact head SHA.
+8. Read only the specialist documents needed for the selected task ID in `PROJECT_CONTROL.md`.
+9. Work only on the smallest evidence-backed task. Update the task register and specialist evidence when acceptance criteria are met.
 
 Never use a SHA in a prior conversation, handoff, or copied report as a write token. Live GitHub state must be fetched before every write batch.
 
@@ -61,10 +62,11 @@ Agents must not create additional files, branches, issues, PRs, dependencies, or
 - Repository: `witthaya-quant/Open-Finance-Research-Lab` only.
 - Project boundary: `projects/OFRL-CM-001/**`; `PROJECT_CATALOG.md` only for an explicitly authorized catalog change.
 - Never modify `projects/OFRL-IB-001/**`, other project directories, shared schemas, scripts, fixtures, workflows, or root policies without separate explicit authorization.
-- Do not force-push, rewrite history, reset, close, retarget, mark PR #29 ready, merge PR #29, or merge `main` into the working branch unless the owner explicitly authorizes that exact operation.
-- Before every write, re-fetch the current PR head. Create a commit parented to that exact head and update the ref non-force with an expected-SHA check. Abort if the head differs.
-- After every write, re-fetch PR metadata, changed paths, compare counts, exact-head workflows, and review state.
-- Do not create a follow-on branch while PR #29 remains open unless the owner explicitly approves a lifecycle change. Do not place solver implementation or unrelated framework work into the admission PR.
+- Do not force-push, rewrite history, reset, reopen, retarget, or otherwise mutate PR #29 or its merged admission branch. PR #29 was merged as `42e4a806c950f6efebc260e636e8ff3b98f51dd8`.
+- Every material follow-on task must use a separate CM-001 topic branch created from the freshly fetched `main` head and a separate PR. Do not repurpose the admission branch.
+- Before every write, re-fetch the current task branch head. Create commits parented to that exact head and update the ref non-force with an expected-SHA check. Abort if the head differs.
+- After every write, re-fetch active task-PR metadata, changed paths, compare counts, exact-head workflows, and review state.
+- Do not merge `main` into a follow-on branch unless the specific integration need exists and the owner authorizes that exact operation. Do not place solver implementation or unrelated framework work into a documentation/control PR.
 - No Cargo workspace, solver, benchmark suite, or project-specific software workflow until an admitted case passes formalization and method-selection gates.
 
 ## 5. Research and evidence discipline
@@ -91,6 +93,6 @@ Before handing work back:
 4. Verify project manifest/document links when affected.
 5. Re-fetch the exact GitHub head and CI for the submitted commit.
 6. Report repository, branch, PR, head SHA, exact changed paths, validation/CI, remaining blockers, and next task ID.
-7. Leave PR #29 Draft and unmerged unless the owner explicitly instructs otherwise.
+7. Leave follow-on PRs open and unmerged unless the owner explicitly authorizes the specific merge operation. PR #29 is already merged and must not be treated as pending.
 
 If project state conflicts with this protocol or the control register, stop writing, inspect live evidence, and report the discrepancy. Do not silently reconcile conflicting sources by guesswork.
