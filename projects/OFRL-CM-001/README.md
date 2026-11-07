@@ -65,12 +65,12 @@ The programme combines mathematical problem-solving, strategic reasoning and gam
 
 | Deliverable | Status | Evidence |
 |---|---|---|
-| Separate project identity and manifest | Prepared in this branch | project.json; repository-policy CI passed on PR revision |
+| Separate project identity and manifest | Merged into `main` through PR #29 | project.json; merge commit `42e4a806…`; exact-head checks passed |
 | Project research specification | Prepared | RESEARCH_SPECIFICATION.md |
 | Shared case-study protocol | Prepared | CASE_STUDY_PROTOCOL.md |
 | First-pilot source record | Prepared | DATA_MANIFEST.md |
 | Pressure Points formalization | H-017/H-018 candidate model rejected as a complete source-grounded explanation under CM-T0009; official puzzle answer remains unverified and formal semantics remain blocked | PROBLEM_FORMALIZATION.md § CM-T0009; TEST-046 |
-| Official Jane Street solution | Live Archive page lists the November puzzle and displays “Solution” as unlinked text; no direct target/body retrieved | CM-T0010 BLOCKED; DATA_MANIFEST.md §4; TEST-044 |
+| Official Jane Street solution | Search index lists the November puzzle and “Puzzle Solution”, but the latest page retrieval is stale/cached and the direct puzzle-page open returns a cache miss; no verified target/body | CM-T0010 BLOCKED; DATA_MANIFEST.md §4; TEST-044/047 |
 | Solver or solution | Not started; not authorized by this phase | Deferred |
 | Comparative solver benchmark | Not started | Deferred |
 | Financial-engineering application claim | Not established | Must be assessed case by case |
@@ -141,7 +141,7 @@ Primary source:
 Methodological context, not a pilot input:
 - Jane Street Blog, [Results from the ASIC puzzle](https://blog.janestreet.com/asic-puzzle-results/), 2 October 2026. This describes a separate hardware-reverse-engineering challenge and is cited only as an example of diverse solution approaches and verification issues.
 
-Access date for the sources above: 2026-11-05. Third-party source material is not relicensed by OFRL.
+Initial source access: 2026-11-05. Jane Street Archive and puzzle-page retrieval rechecked: 2026-11-07. Third-party source material is not relicensed by OFRL.
 
 ## Licensing and disclosure
 

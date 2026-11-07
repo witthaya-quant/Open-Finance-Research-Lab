@@ -21,7 +21,7 @@ The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The re
 |---|---|---|---|---|---|
 | SRC-001 | Jane Street | https://www.janestreet.com/puzzles/ | 2026-11-05 | Primary source for Jane Street's stated purpose of its puzzle programme | Third-party website; no redistribution of page content |
 | SRC-002 | Jane Street | https://www.janestreet.com/puzzles/pressure-points-index/ | 2026-11-05 | Original source of the November 2026 Pressure Points puzzle | Third-party puzzle content; redistribution permission not established; URL reference only |
-| SRC-003 | Jane Street | https://www.janestreet.com/puzzles/archive/ | 2026-11-07 | Recheck the live Archive listing and the November 2026 Pressure Points solution status | The directly opened Archive page lists the November puzzle and displays “Solution” as plain text without an exposed anchor/destination; its linked “Puzzle” entry opens the puzzle/submission page. Search-index text also shows “Puzzle Solution” but supplies no direct target; no solution URL inferred and no body retrieved |
+| SRC-003 | Jane Street | https://www.janestreet.com/puzzles/archive/ | 2026-11-07 | Recheck the November 2026 Archive listing and determine whether an official solution target can be retrieved | The search-index result lists “November 2026: Pressure Points” followed by “Puzzle Solution”, but this is extracted index text. The current page-open result is a stale cached representation beginning at August 2026, and the direct puzzle-page open returned a cache miss. No current November solution href, direct URL, or body was independently retrieved; no URL inferred |
 | SRC-004 | Jane Street Blog | https://blog.janestreet.com/asic-puzzle-results/ | 2026-11-05 | Methodological context on diverse solution methods and verification in a separate ASIC challenge | Third-party article; citation and link only; not a first-pilot input |
 | SRC-005 | Puzzling Stack Exchange | https://puzzling.stackexchange.com/questions/141272/jane-streets-recent-puzzle-pressure-points-nov-2026 | 2026-11-05 | Community discussion reporting candidate anagrams, near-place-name residuals, and unresolved questions about the title, marker, emoji clues, and terminal notation | User-generated secondary discussion; not authoritative rules, not a complete mapping, and not a verified solution |
 | SRC-006 | Kaia | https://www.kaiaz.me/now/ | 2026-11-05 | Secondary solver-status lead reporting a 76-entry / 19-by-4 cardinal-vertex hypothesis and candidate phrase ANTWERPSCHE DIAMANTKRING | Personal research notes; the reviewed page does not provide a complete derivation; hypothesis only, not an official or OFRL-verified solution |
@@ -116,15 +116,16 @@ No normalized puzzle dataset or redistribution-ready fixture is created in this 
 
 Historical checks on 2026-11-05 and 2026-11-06 found a search-index label for “Puzzle Solution” but no verified November solution destination. The earlier directly opened Archive representation was stale and showed older entries. That historical result is superseded by the live direct-page check below; it remains part of the retrieval history, not the current page state.
 
-Live direct-page check (2026-11-07):
-- The opened Jane Street Archive page displays “November 2026: Pressure Points”. The “Puzzle” entry is an exposed link to the current puzzle page; the following word “Solution” is rendered as plain text, with no exposed anchor or destination in the page representation: **OBSERVED**.
-- The directly opened Pressure Points page displays the puzzle content and answer-submission form. It does not expose a worked solution or derivation: **OBSERVED**.
-- Search-index text also displays “November 2026: Pressure Points” followed by “Puzzle Solution”, but the index text is not a direct URL or link target: **OBSERVED (index text only)**.
-- November solution anchor/href target: **NOT EXPOSED / NOT RETRIEVED**.
+Supplemental official-source recheck (2026-11-07, after the initial direct-page audit):
+- The Jane Street search-index result now displays “November 2026: Pressure Points” followed by “Puzzle Solution”: **OBSERVED AS INDEX TEXT**.
+- Opening the Archive URL through the current page-retrieval interface returned a cached representation whose crawl metadata was approximately two months old and whose visible entries began at August 2026; it did not expose the November entry in that representation: **OBSERVED AS STALE/CACHED PAGE CONTENT**.
+- Opening the direct Pressure Points page through the same interface returned a cache-miss response; no current page body or outbound links were available from that request: **RETRIEVAL FAILED / NO PAGE BODY**.
+- The earlier same-day direct-page audit recorded the “Puzzle” entry as linked and “Solution” as unlinked plain text. The newer index extraction and stale/cached page response do not allow that earlier rendering to be reconfirmed as the current live DOM.
+- November solution anchor/href target: **NOT INDEPENDENTLY RETRIEVED**.
 - Direct official solution URL and body: **NOT RETRIEVED**.
 - Official worked derivation: **NOT INSPECTED**.
 
-The current live page therefore improves the direct-page evidence but does not satisfy CM-T0010. Do not infer or construct a URL from the plain-text label or search snippet. Keep the official-solution gate blocked until Jane Street exposes a direct target and its body can be inspected. The third-party H-017 candidate map remains a separate hypothesis and is not a substitute for the official source.
+These observations expose a retrieval/caching discrepancy; they do not establish that Jane Street has published a directly accessible solution, nor that no solution exists. Search-index text is not a URL or verified anchor. Keep CM-T0010 and VAL-017 BLOCKED until the actual official destination and body can be fetched and inspected. Do not infer or construct a URL from the index label. The third-party H-017 candidate map remains a separate hypothesis and is not a substitute for the official source.
 
 ### Third-party candidate-map status (not an official solution)
 
