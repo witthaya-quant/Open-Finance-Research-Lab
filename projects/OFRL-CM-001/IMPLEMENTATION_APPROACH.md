@@ -2,7 +2,7 @@
 
 # OFRL-CM-001 — Implementation Approach
 
-**Document version:** 0.2.0  
+**Document version:** 0.2.1  
 **Project:** OFRL-CM-001  
 **Owner:** Project Owner  
 **Last reviewed:** 2026-11-07  

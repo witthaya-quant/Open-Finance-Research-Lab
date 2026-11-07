@@ -2,12 +2,12 @@
 
 # OFRL-CM-001 — Engineering Architecture
 
-**Architecture version:** 1.0.0  
+**Architecture version:** 1.0.1  
 **Project:** OFRL-CM-001  
 **First admitted software-bearing case:** OFRL-CM-001-CS-002 — Finite-Binomial American Put  
 **Owner:** Project Owner  
 **Last reviewed:** 2026-11-07  
-**Status:** Initial case-specific architecture approved; implementation validation in progress  
+**Status:** Initial case-specific architecture approved; code revision 65d19861 passed exact-head validation on Rust 1.85.0 and 1.99.1; PR #37 awaits Founder review  
 **Project control:** [PROJECT_CONTROL.md](PROJECT_CONTROL.md)
 
 ## 1. Purpose and boundary

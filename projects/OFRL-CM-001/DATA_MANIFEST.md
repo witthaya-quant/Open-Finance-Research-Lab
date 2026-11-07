@@ -3,7 +3,7 @@
 # OFRL-CM-001 — Data Manifest
 
 **Dataset ID:** OFRL-CM-001-SOURCE-REGISTER  
-**Dataset version:** 0.12.0  
+**Dataset version:** 0.13.0  
 **Data classification:** Public Source (reference-only; no source puzzle payload stored)  
 **Data owner / steward:** Project Owner  
 **Created or retrieved:** 2026-11-05  

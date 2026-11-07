@@ -10,7 +10,8 @@
 > **Project version:** 0.3.0  
 > **Owner:** Kenny (Witthaya Maidee)  
 > **Manifest:** [project.json](project.json)  
-> **Initial case study:** Jane Street — Pressure Points (November 2026)
+> **Original research pilot:** Jane Street — Pressure Points (November 2026)  
+> **First computational case:** Finite-Binomial American Put — Optimal Stopping (CS-002)
 
 ## Purpose
 
@@ -72,7 +73,7 @@ The programme combines mathematical problem-solving, strategic reasoning and gam
 | Pressure Points formalization | INCOMPLETE / BLOCKED; H-017/H-018 rejected as a complete source-grounded explanation under CM-T0009 | PROBLEM_FORMALIZATION.md § CM-T0009; TEST-046 |
 | Official Jane Street solution | Live Archive page lists the November puzzle and displays “Solution” as unlinked text; no direct target/body retrieved | CM-T0010 BLOCKED; DATA_MANIFEST.md §4; TEST-044 |
 | Pressure Points solver or solution | Not started; solver remains NO-GO while source semantics are unresolved | CM-T0010/T0011 BLOCKED; deferred |
-| First computational case — American Put | ADMITTED — finite-horizon, no-dividend binomial American Put with exact-rational valuation and an independent Bellman verifier | cases/2026-11-american-put/README.md; PROBLEM_FORMALIZATION.md; ENGINEERING_ARCHITECTURE.md |
+| First computational case — American Put | ADMITTED and IMPLEMENTED — finite-horizon no-dividend binomial American Put; exact-rational valuation and independent Bellman verifier passed two-toolchain CI on code revision 65d19861; PR #37 remains unreleased and under review | cases/2026-11-american-put/README.md; PROBLEM_FORMALIZATION.md; ENGINEERING_ARCHITECTURE.md; VALIDATION_MATRIX.md |
 | Comparative solver benchmark | Not started; no benchmark programme authorized | Deferred |
 | Financial-engineering application claim | Not established | Must be assessed case by case |
 
@@ -89,6 +90,10 @@ OFRL does not reproduce the full puzzle statement, its images, the complete sour
 The first computational case is [Finite-Binomial American Put — Optimal Stopping](cases/2026-11-american-put/README.md). It studies a finite-horizon, recombining binomial model with a fixed gross risk-free return, no dividends, and an American put payoff. The formalization defines the admissible parameter domain, risk-neutral probability, state lattice, stopping-time objective, Bellman recurrence, and correctness predicate before computation.
 
 The initial implementation is a case-specific Rust library using exact arbitrary-precision rational arithmetic. It returns a full node-value and exercise-policy certificate; a separately implemented verifier checks the terminal conditions, Bellman dominance inequalities, and policy attainability. All inputs are synthetic. No market data, production pricing interface, trading recommendation, or external execution path is in scope. The project remains R1 and research-only; any public reusable pricing or decision-support release requires a separate risk and release assessment.
+
+## First-case learning record
+
+The initial Practice Playbook v0.2.0 incorporates lessons from CS-002 on state sufficiency, recombination, stopping-policy enumeration, exact rational arithmetic, Bellman certificates, resource guards, dependency controls and research/market-use boundaries. This learning update does not admit a second case; future case admission remains a separate owner decision.
 
 ## Research method
 

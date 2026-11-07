@@ -6,7 +6,7 @@
 **Parent project:** OFRL-CM-001  
 **Case type:** Quantitative mathematical research with a case-specific Rust research prototype  
 **Admission date:** 2026-11-07  
-**Case status:** ADMITTED — formalization complete; initial implementation under validation  
+**Case status:** ADMITTED — formalization and initial implementation validated; PR #37 awaits Founder review  
 **Evidence maturity:** 0 — Proposed  
 **Primary academic reference:** Cox, Ross and Rubinstein (1979)
 
@@ -113,6 +113,6 @@ This case is an educational and analytical research artifact. It is not calibrat
 ## 8. Current disposition
 
 **Research status:** Formal model admitted.  
-**Implementation status:** Initial library and verification tests submitted for exact-head CI.  
+**Implementation status:** The case-specific library, exact-rational tests, independent Bellman verifier and exhaustive policy cross-check passed exact-head CI on Rust 1.85.0 and 1.99.1 (code revision `65d19861fbd4a78ed133bf2a244dce056c653006`). PR #37 remains unmerged and unreleased.  
 **Release status:** Not released.  
 **Financial application:** No production or trading application is claimed.
