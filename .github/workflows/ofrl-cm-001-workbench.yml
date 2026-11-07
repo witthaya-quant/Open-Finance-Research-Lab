@@ -61,12 +61,10 @@ jobs:
           rustc --version
           cargo --version
 
-      - name: Generate initial package lockfile when absent
+      - name: Verify committed lockfile and frozen dependency graph
         run: |
-          if [[ ! -f Cargo.lock ]]; then
-            cargo generate-lockfile
-          fi
-          cargo metadata --locked --format-version 1 --no-deps > /dev/null
+          test -f Cargo.lock
+          cargo metadata --locked --format-version 1 > /dev/null
 
       - name: Check formatting
         run: cargo fmt --all -- --check
@@ -82,11 +80,3 @@ jobs:
           RUSTDOCFLAGS: "-D warnings"
         run: cargo doc --locked --no-deps
 
-      - name: Upload initial package lockfile
-        if: matrix.rust == '1.85.0'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: cm-001-american-put-lockfile-bootstrap
-          path: projects/OFRL-CM-001/cases/2026-11-american-put/workbench/Cargo.lock
-          if-no-files-found: error
-          retention-days: 1

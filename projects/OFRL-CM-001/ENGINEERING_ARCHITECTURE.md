@@ -164,7 +164,19 @@ The library returns exact rational values. Human-readable decimal formatting is 
 | Parallelism | Not selected; the model is a small finite lattice |
 | Workspace | Not used; one package does not require a workspace |
 
-The chosen library dependencies declare permissive MIT OR Apache-2.0 licensing. The exact resolved versions, checksums, and transitive dependency metadata are preserved in the lockfile and reviewed as part of the implementation PR. The lockfile does not replace source-level licence, security-advisory, or maintenance review.
+The package-local Cargo.lock (format v4) resolves exactly five third-party packages:
+
+| Package | Version | Dependency role | Published license identifier |
+|---|---:|---|---|
+| num-bigint | 0.4.8 | Direct | MIT OR Apache-2.0 |
+| num-rational | 0.4.2 | Direct | MIT OR Apache-2.0 |
+| num-integer | 0.1.47 | Transitive | MIT OR Apache-2.0 |
+| num-traits | 0.2.19 | Transitive | MIT OR Apache-2.0 |
+| autocfg | 1.5.1 | Transitive build dependency | Apache-2.0 OR MIT |
+
+The declared license alternatives were checked against the published package metadata/source records for [num-bigint](https://docs.rs/crate/num-bigint/0.4.8), [num-rational](https://docs.rs/crate/num-rational/0.4.2), [num-integer](https://docs.rs/crate/num-integer/0.1.47), [num-traits](https://docs.rs/crate/num-traits/0.2.19), and [autocfg](https://docs.rs/crate/autocfg/1.5.1). The lockfile records the exact registry versions and checksums; the Cargo manifest pins both direct runtime dependencies exactly and enables no optional serialization, random-number, or floating-point feature set.
+
+This is a bounded manifest/declared-license review, not a statement that a formal security-advisory scan or SBOM has been completed. Those remain explicit pre-release checks. The lockfile does not replace source-level security, maintenance, transitive license, or release review.
 
 ## 6. Test and verification strategy
 
