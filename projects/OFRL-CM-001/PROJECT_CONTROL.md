@@ -5,7 +5,7 @@
 **Project ID:** `OFRL-CM-001`  
 **Project:** Computational Methods & Problem-Solving Case Studies  
 **Owner:** Kenny (Witthaya Maidee)  
-**Control version:** 1.0.4  
+**Control version:** 1.0.5  
 **Last reviewed:** 2026-11-07  
 **Lifecycle:** In Development  
 **Risk tier:** R1 — Analytical  
@@ -129,15 +129,15 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 
 | Task ID | Phase | Task / required result | Status | Dependency / exit evidence |
 |---|---|---|---|---|
-| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — live audit recorded** | Exact PR head `f6753297…`, main `cdbf345c…`, ahead 31 / behind 219, 14 changed paths, zero comments/reviews/review threads, and exact-head CI 3/3 PASS recorded in §7 |
+| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — exact-head audit recorded** | Exact PR head `a54df250…`, main `cdbf345c…`, ahead 32 / behind 219, 14 changed paths, zero comments/reviews/review threads, and all three exact-head workflows / required validation checks completed successfully; evidence recorded in §7 |
 | CM-T0002 | P0 | Resolve branch integration and PR #29 merge readiness | **HOLD — owner decision required** | Main is 219 commits ahead of the merge base; this branch is 31 commits ahead. Since the merge base, main changes 52 paths and PR #29 changes 14 paths with zero path overlap; GitHub reports mergeable and exact-head CI 3/3 PASS. Recommendation: after Founder review and explicit owner authorization, mark Ready and merge with a merge commit to preserve the research/SSOT history; do not rebase or merge main into this branch. Keep HOLD until the owner authorizes the lifecycle transition |
 | CM-T0003 | P0/P1 | Establish one canonical project-management register and remove duplicate handoff/roadmap authority | **PASS** | PROJECT_CONTROL.md is canonical; HANDOFF.md is procedure-only; exact-head Repository Policy run #42017737205 passed |
 | CM-T0004 | P1 | Define project mandate, workstreams, phase gates, and delivery acceptance | **PASS** | PROJECT_CONTROL.md §§2–6 and DECISION_LOG.md D-011–D-014; exact-head Repository Policy run #42017737205 passed |
 | CM-T0005 | P1 | Establish the initial Quantitative Practice Playbook | **PASS — initial v0.1.0 baseline** | PRACTICE_PLAYBOOK.md content audit; exact-head Repository Policy run #42017737205 passed |
 | CM-T0006 | P1 | Align manifest, README, research specification, implementation approach, protocol, and validation links with the approved scope | **PASS** | project.json v0.2.0, PROJECT_CATALOG.md type row, README and specialist cross-links; Repository Policy run #42017737205 passed |
 | CM-T0007 | P2 | Independently audit all 12 current Pressure Points candidate clusters and their residuals | **PASS — audit complete; no candidate promoted to fact** | PROBLEM_FORMALIZATION.md §4 CM-T0007 audit: 48 distinct source assignments, 25 exact / 23 residual-bearing comparisons, 13 surplus / 11 deficit letters, semantic/positional evidence graded separately; no global rule derived |
-| CM-T0008 | P2 | Investigate the remaining emoji clues and unassigned visible items without assuming the 19×4 model | **PASS — H-017/H-018 candidate screening complete; no official mapping accepted** | H-017's third-party rosters were independently audited with strict two-sided multiset checks: 19 fixed rosters have one assignment each, conditionally covering 76/76 entries once (38 exact, 19 surplus, 19 deficit; Ø→U). H-018 completed source-led membership/positional challenges for the previously open clues and documented the remaining limits: Queen's Deacon/Taylor left-right swap; Barcelona's dynamic rather than fixed diamond; Sistine Madonna, Pigpen and Beijing relative layouts; approximate D.C. locality geometry; a conditional 45° Monopoly board transform but no accepted monocle-to-Monopoly clue link; and no universal orchestra seating order. No mapping is accepted as Jane Street's intended rule. See PROBLEM_FORMALIZATION.md H-017/H-018, DATA_MANIFEST.md SRC-045–SRC-067, and VALIDATION_MATRIX.md TEST-035–045. CM-T0008 closes screening only; P2 remains BLOCKED with U-001–U-010, VAL-014/015, T0009–T0011, and the solver/workbench gate NO-GO |
-| CM-T0009 | P2 | Determine the role of Ø, sequence ordering, residual transformation, and terminal notation | **BLOCKED** | Must derive one consistent interpretation or reject the current model |
+| CM-T0008 | P2 | Investigate the remaining emoji clues and unassigned visible items without assuming the 19×4 model | **PASS — H-017/H-018 candidate screening complete; no official mapping accepted** | H-017's third-party rosters were independently audited with strict two-sided multiset checks: 19 fixed rosters have one assignment each, conditionally covering 76/76 entries once (38 exact, 19 surplus, 19 deficit; Ø→U). H-018 completed source-led membership/positional challenges for the previously open clues and documented the remaining limits: Queen's Deacon/Taylor left-right swap; Barcelona's dynamic rather than fixed diamond; Sistine Madonna, Pigpen and Beijing relative layouts; approximate D.C. locality geometry; a conditional 45° Monopoly board transform but no accepted monocle-to-Monopoly clue link; and no universal orchestra seating order. No mapping is accepted as Jane Street's intended rule. See PROBLEM_FORMALIZATION.md H-017/H-018, DATA_MANIFEST.md SRC-045–SRC-067, and VALIDATION_MATRIX.md TEST-035–045. CM-T0008 closes screening only; P2 remains BLOCKED with U-001–U-010, VAL-014/015, T0010–T0011, and the solver/workbench gate NO-GO |
+| CM-T0009 | P2 | Determine the role of Ø, sequence ordering, residual transformation, and terminal notation | **PASS — current H-017 model rejected as a complete source-grounded explanation** | PROBLEM_FORMALIZATION.md § CM-T0009 records the rejection test and limits: Ø→U, roster/term order, 2/1/1 residual extraction, and (11 12) interpretation remain third-party assumptions or unresolved semantics. Candidate output is retained as conditional, not rejected as false. TEST-046 PASS. U-001–U-010, VAL-014/015, and the Pressure Points case remain open/blocking |
 | CM-T0010 | P2 | Retrieve and inspect a direct official solution, if Jane Street publishes an actual linked target | **BLOCKED — no direct official target exposed as of 2026-11-07** | The live Archive page lists the November puzzle and renders “Solution” as unlinked text; the “Puzzle” link opens the puzzle/submission page, not a solution. Search-index text is not a destination. Direct official URL/body remain NOT RETRIEVED; see DATA_MANIFEST.md SRC-003/§4 and VALIDATION_MATRIX.md TEST-044/VAL-017 |
 | CM-T0011 | P2 | Independently derive output and establish soundness/completeness/uniqueness claims as applicable | **BLOCKED** | Formal specification and acceptance predicate required |
 | CM-T0012 | P3 | Select the first case suitable for Rust computational implementation | **NOT STARTED** | Case passes formalization and method-selection gates; need not be Pressure Points |
@@ -148,29 +148,30 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 ## 7. Recorded GitHub verification snapshot
 
 **Snapshot date:** 2026-11-07  
-**Snapshot commit:** [`f6753297f91f937aae5caccca95356f8b80357d5`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/f6753297f91f937aae5caccca95356f8b80357d5)  
+**Snapshot commit:** [`a54df250b8c81e411b56f1f340ac6ccda78bc56e`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/a54df250b8c81e411b56f1f340ac6ccda78bc56e)  
 **Repository:** `witthaya-quant/Open-Finance-Research-Lab`  
 **PR:** [#29 — Project admission and Pressure Points research pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
 **Branch observed:** `research/ofrl-cm-001-admission-and-pilot`
 
 At this exact live snapshot:
-- Branch / PR head: `f6753297f91f937aae5caccca95356f8b80357d5`.
+- Branch / PR head: `a54df250b8c81e411b56f1f340ac6ccda78bc56e`.
 - PR state: Open / Draft / Not merged; GitHub reports `mergeable: true`.
 - Base branch: `main`; observed main head: `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`; merge base: `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`.
-- Compare: branch ahead 31 / behind 219.
+- Compare: branch ahead 32 / behind 219.
 - PR changed files: 14. All are confined to `PROJECT_CATALOG.md` and `projects/OFRL-CM-001/**`; no path under `projects/OFRL-IB-001/**`, `.github/**`, `schemas/**`, `scripts/**`, or `fixtures/**` is changed.
 - Since the merge base, `main` changes 52 paths and PR #29 changes 14 paths; the changed-path intersection is empty (0 overlaps).
 - PR issue comments: 0; reviews: 0; review threads: 0.
 - All three workflows completed successfully on this exact head:
-  - [OFRL Repository Policy #42232618375](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42232618375)
-  - [OFRL-IB-001 Rust Runtime Semantic Validator #42232618377](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42232618377)
-  - [OFRL-IB-001 Numeric and Input Contract Checks #42232618423](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42232618423)
+  - [OFRL Repository Policy #42334105504](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42334105504)
+  - [OFRL-IB-001 Rust Runtime Semantic Validator #42334105462](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42334105462)
+  - [OFRL-IB-001 Numeric and Input Contract Checks #42334105415](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42334105415)
+- The associated check runs completed successfully. The repository-policy, JSON Schema, Decimal contract (Rust 1.85.0/1.99.1), and semantic-validator (Rust 1.85.0/1.99.1) contexts passed.
 
 The two IB-001 workflows ran because of repository PR-event behavior. Their success is repository/software validation only; it is not evidence of changes to IB-001 or mathematical correctness for CM-001.
 
-**Merge assessment:** The current diff remains isolated to the admitted CM-001 project and its single Project Catalog row. GitHub reports the PR mergeable, and the 52 main-side paths changed since the merge base do not overlap the 14 PR paths. After Founder review and explicit owner authorization, the recommended integration is a normal merge commit to preserve the project admission and research/SSOT history. Do not rebase or merge `main` into the research branch. This integration publishes the project admission baseline; it does not declare Pressure Points solved or authorize a solver, Cargo workspace, or release.
+**Merge assessment:** The current diff remains isolated to the admitted CM-001 project and its single Project Catalog row. GitHub reports the PR mergeable, and the 52 main-side paths changed since the merge base do not overlap the 14 PR paths. After Founder review and explicit owner authorization, the recommended integration is a normal merge commit to preserve the project admission and research/SSOT history. Do not rebase or merge `main` into the research branch. This integration publishes the project admission and bounded research baseline; it does not declare Pressure Points solved or authorize a solver, Cargo workspace, or release.
 
-**Snapshot boundary:** This is a frozen record of the exact `f6753297…` research head. A subsequent documentation commit advances the branch and must receive its own exact-head validation; this snapshot is not a substitute for re-fetching live refs before future repository operations.
+**Snapshot boundary:** This is a frozen record of the exact `a54df250…` head before the documentation update that records CM-T0009. The following commit must be validated independently; this snapshot is not a substitute for re-fetching live refs before future repository operations.
 
 **Live-state rule:** At every new chat or task, agents MUST re-fetch PR #29, branch `HEAD`, `main`, compare counts, changed paths, comments/reviews, and exact-head workflows.
 
@@ -241,4 +242,4 @@ A no-go disposition is a valid research outcome, but it must retain the research
 
 ## 11. Next permitted work
 
-CM-T0008 screening is complete; do not reopen it without new independent evidence. The next permitted P2 work is CM-T0009 (derive or reject the role of Ø, displayed sequence ordering, the global residual transformation, and terminal notation), CM-T0010 (retrieve the direct official solution target and body if available; the Archive index label alone is insufficient), and CM-T0011 (independently derive the output and assess soundness, completeness, and uniqueness as applicable). Keep the Pressure Points case INCOMPLETE / BLOCKED while U-001–U-010 and VAL-014/VAL-015 remain unresolved. Do not create a solver, Cargo workspace, dependencies, benchmarks, or workflow until the formalization/method-selection gate passes.
+CM-T0008 screening and CM-T0009's bounded model-rejection task are complete; do not reopen either without new independent evidence. The next permitted P2 work is CM-T0010 (retrieve and inspect a direct official solution target/body if Jane Street exposes one; do not infer a URL from an index label) and CM-T0011 (independently derive the output and assess soundness, completeness, and uniqueness only after an authoritative rule set and correctness predicate exist). Keep the Pressure Points case INCOMPLETE / BLOCKED while U-001–U-010 and VAL-014/VAL-015 remain unresolved. Do not create a solver, Cargo workspace, dependencies, benchmarks, or workflow until the formalization/method-selection gate passes.

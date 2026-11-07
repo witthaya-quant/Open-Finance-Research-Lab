@@ -3,11 +3,11 @@
 # Pressure Points — Initial Problem Formalization
 
 **Case ID:** OFRL-CM-001-CS-001  
-**Formalization version:** 0.11.0  
+**Formalization version:** 0.12.0  
 **Source:** Jane Street, Pressure Points (November 2026)  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
-**Status:** INCOMPLETE — BLOCKED ON RULE SEMANTICS
+**Status:** INCOMPLETE — CURRENT CANDIDATE MODEL REJECTED AS A FORMAL EXPLANATION; SOURCE RULE SEMANTICS UNRESOLVED
 
 ## 1. Purpose of this note
 
@@ -394,7 +394,33 @@ The source map also changes some earlier associations: Queen moves from the 🎶
 
 **Cross-theme conclusion.** H-018 improves the evidence grade for the Barcelona quartet, Sistine Madonna composition, Pigpen X-grid convention, Beijing altar directions, and approximate D.C. localities. It also identifies exactly why the Queen two-lion positions remain non-unique, why the Monopoly corner transform is conditional and its monocle association is a false lead, and why orchestra seating is not fixed. The third-party roster map therefore has complete *source-entry coverage* under its own 2/1/1 hypothesis, but it does not establish 19 source-authorized semantic groups or 76 uniquely supported cardinal positions. Queen still has a left/right swap ambiguity; the 🧐 clue-to-Monopoly association is not accepted; and several positions are conventions or approximate geometries rather than fixed N/E/S/W points.
 
-**CM-T0008 disposition.** The approved screening task is complete: the six previously open emoji have been investigated, the candidate/negative outcomes and positional limits are recorded, and no unsupported candidate is promoted to fact. This closes the *screening task* only. It does not close the Pressure Points case, U-001–U-010, VAL-014/VAL-015, or the no-go solver gate. Those remain controlled by CM-T0009–CM-T0011 and the case closure criteria.
+**CM-T0008 disposition.** The approved screening task is complete: the six previously open emoji have been investigated, the candidate/negative outcomes and positional limits are recorded, and no unsupported candidate is promoted to fact. This closes the *screening task* only. It does not close the Pressure Points case, U-001–U-010, VAL-014/VAL-015, or the no-go solver gate. Those remain controlled by CM-T0010–CM-T0011 and the case closure criteria.
+
+### CM-T0009 — Bounded rejection of H-017 as a complete source-grounded model (2026-11-07)
+
+**Task disposition: PASS — the current candidate model is rejected as a formally established explanation. No alternative rule is accepted.**
+
+This task required either one consistent interpretation of the leading `Ø` marker, displayed ordering, residual transformation, and terminal notation, or an evidence-based rejection of the current model. The review below tests the H-017/H-018 candidate construction against that acceptance standard. It does not claim that the third-party candidate answer is false.
+
+| Element | What the primary source establishes | What H-017 assumes or adds | Disposition |
+|---|---|---|---|
+| Leading `Ø` | A leading `Ø` symbol is visibly present before the sequence block. Its semantic type and operational role are not stated in the accessible puzzle rules. | Treats `Ø` as an empty source sequence and assigns it to target `U` as a one-character deficit under the Pigpen roster. | The `Ø → U` match is conditional on the third-party roster and 2/1/1 hypothesis. The source does not define `Ø` as an empty string, a wildcard, a missing entry, or a puzzle token. No role is accepted. |
+| Displayed sequence ordering | The 75 letter sequences are displayed in nondecreasing lexicographical order. This is an observable presentation property. | Uses the third-party roster order and the term order inside those rosters to arrange residual characters. | Alphabetical presentation does not establish that source order is an extraction order. No source rule maps displayed order or emoji order to a semantic traversal. |
+| Residual transformation | The source provides the visible sequences and clues, but no accessible rule specifies a multiset-difference operation, a 2-exact / 1-surplus / 1-deficit condition, or a residual-reading procedure. | Introduces a 2/1/1 condition and concatenates surplus/deficit characters according to the third-party theme and target-term order. | The strict multiset checker verifies the arithmetic of a *fixed candidate roster*. It does not validate roster membership, establish the 2/1/1 rule, or define an author-specified extraction order. The resulting strings are conditional outputs, not a source-derived transformation. |
+| Terminal notation `(11 12)` | The notation is visible at the end of the puzzle. Its meaning is not defined in the accessible source. | Interprets it as the lengths of a two-word answer; the candidate phrase ANTWERPSCHE DIAMANTKRING happens to have word lengths 11 and 12. | Length agreement is a consistency check for that candidate, not a sufficient acceptance predicate. The source does not establish that the pair denotes word lengths rather than indices, coordinates, parameters, or another constraint. |
+
+**Rejection criterion applied.** A complete explanatory model must define each correctness-critical element from source-grounded rules or an authoritative worked example, determine the relevant ordering and transformation without importing an unapproved third-party convention, and produce an output whose acceptance condition can be independently checked. A conditional exact cover over externally proposed rosters is not sufficient.
+
+**Findings.**
+1. H-017's 76/76 coverage and 38 exact / 19 surplus / 19 deficit counts are reproducible *conditional on* the 19 third-party rosters and the proposed 2/1/1 constraint. They do not establish that Jane Street supplied or intended those rosters.
+2. `Ø → U` follows only after adopting the proposed Pigpen roster and its target term. It is not forced by the primary source.
+3. The puzzle's lexicographically sorted display does not determine how residuals should be traversed. The residual strings in H-017 depend on an externally supplied roster/term order that is not justified by an official rule.
+4. The 11/12 word-length fit of ANTWERPSCHE DIAMANTKRING is supportive context only. It does not establish the interpretation of `(11 12)` or prove that this is the required output.
+5. H-018 records unresolved or conditional clue membership and position evidence, including the Queen left/right swap, the unaccepted monocle-to-Monopoly association, approximate D.C. locality geometry, and variable orchestra layout. These prevent treating the 19 proposed groups as uniquely source-validated cardinal groups.
+
+**Bounded conclusion.** Reject H-017/H-018 as a *complete, source-grounded formal model* for Pressure Points. Retain the third-party exact-cover map, residual strings, and ANTWERPSCHE DIAMANTKRING as conditional research hypotheses only. This is not a finding that the candidate answer is wrong, not a claim that Jane Street has no solution, and not a completed derivation. No replacement model is proposed.
+
+**Status consequences.** CM-T0009 is complete through its explicit rejection path. U-001–U-010 remain unresolved where source semantics are absent; VAL-005 remains BLOCKED; VAL-014 and VAL-015 remain BLOCKED; CM-T0010 remains BLOCKED pending a direct official solution target/body; and CM-T0011 remains BLOCKED because no authoritative rule set or correctness predicate exists. Pressure Points remains INCOMPLETE / BLOCKED. Rust solver/Cargo workspace remains NO-GO.
 
 ### Secondary-source status review — 2026-11-05 (dated pre-H-017 checkpoint)
 
