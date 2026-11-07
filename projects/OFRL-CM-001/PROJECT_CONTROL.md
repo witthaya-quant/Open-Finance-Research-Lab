@@ -129,8 +129,8 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 
 | Task ID | Phase | Task / required result | Status | Dependency / exit evidence |
 |---|---|---|---|---|
-| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — exact-head audit recorded** | Exact PR head `a54df250…`, main `cdbf345c…`, ahead 32 / behind 219, 14 changed paths, zero comments/reviews/review threads, and all three exact-head workflows / required validation checks completed successfully; evidence recorded in §7 |
-| CM-T0002 | P0 | Resolve branch integration and PR #29 merge readiness | **HOLD — owner decision required** | The compare baseline at `bd3633c4…` was 33 commits ahead / 219 behind the merge base; the subsequent one-file Project Control refresh `619b4721…` advances the current branch to 34 ahead / 219 behind. The compared path sets remain 52 main-side paths versus 14 PR paths with zero overlap; GitHub reports mergeable. Re-fetch exact refs, ahead/behind counts, changed paths, and exact-head CI immediately before integration. Recommendation: after Founder review, exact-head CI PASS, and explicit owner authorization, mark Ready and merge with a merge commit to preserve the research/SSOT history; do not rebase or merge main into this branch. Keep HOLD until the owner authorizes the lifecycle transition |
+| CM-T0001 | P0 | Re-audit PR #29, exact head, main divergence, changed paths, reviews, and CI | **PASS — exact-head audit recorded** | Verified checkpoint `cfcf7dbe…`, main `cdbf345c…`, ahead 35 / behind 219, 14 changed paths confined to the approved CM-001 admission scope, zero comments/reviews/review threads, and 3/3 workflows plus all 7 check contexts PASS; see §7 |
+| CM-T0002 | P0 | Resolve branch integration and PR #29 merge readiness | **HOLD — owner decision required** | At verified checkpoint `cfcf7dbe…`, PR #29 is Open/Draft/Unmerged and GitHub reports mergeable; branch compare is 35 ahead / 219 behind the merge base. The main-side 52 changed paths and PR's 14 changed paths have zero overlap. Exact-head CI passed 3/3 workflows and 7/7 check contexts. Recommendation: after Founder review and explicit owner authorization, mark Ready and merge with a merge commit to preserve the 35-commit research/evidence history; do not rebase or merge main into the research branch. This publishes the admission/research-pilot baseline only; it does not solve Pressure Points or authorize Rust implementation |
 | CM-T0003 | P0/P1 | Establish one canonical project-management register and remove duplicate handoff/roadmap authority | **PASS** | PROJECT_CONTROL.md is canonical; HANDOFF.md is procedure-only; exact-head Repository Policy run #42017737205 passed |
 | CM-T0004 | P1 | Define project mandate, workstreams, phase gates, and delivery acceptance | **PASS** | PROJECT_CONTROL.md §§2–6 and DECISION_LOG.md D-011–D-014; exact-head Repository Policy run #42017737205 passed |
 | CM-T0005 | P1 | Establish the initial Quantitative Practice Playbook | **PASS — initial v0.1.0 baseline** | PRACTICE_PLAYBOOK.md content audit; exact-head Repository Policy run #42017737205 passed |
@@ -148,30 +148,30 @@ Only this table is the canonical project task list. Task IDs are stable; statuse
 ## 7. Recorded GitHub verification snapshot
 
 **Snapshot date:** 2026-11-07  
-**Snapshot commit:** [`a54df250b8c81e411b56f1f340ac6ccda78bc56e`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/a54df250b8c81e411b56f1f340ac6ccda78bc56e)  
+**Verified checkpoint commit:** [`cfcf7dbe42bac3ec1ac80a249764cc28c110558a`](https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/cfcf7dbe42bac3ec1ac80a249764cc28c110558a)  
 **Repository:** `witthaya-quant/Open-Finance-Research-Lab`  
 **PR:** [#29 — Project admission and Pressure Points research pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29)  
-**Branch observed:** `research/ofrl-cm-001-admission-and-pilot`
+**Branch:** `research/ofrl-cm-001-admission-and-pilot`
 
-At this exact live snapshot:
-- Branch / PR head: `a54df250b8c81e411b56f1f340ac6ccda78bc56e`.
+At this verified checkpoint:
+- PR #29 and the branch both point to `cfcf7dbe42bac3ec1ac80a249764cc28c110558a`.
 - PR state: Open / Draft / Not merged; GitHub reports `mergeable: true`.
 - Base branch: `main`; observed main head: `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`; merge base: `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa`.
-- Compare: branch ahead 32 / behind 219.
-- PR changed files: 14. All are confined to `PROJECT_CATALOG.md` and `projects/OFRL-CM-001/**`; no path under `projects/OFRL-IB-001/**`, `.github/**`, `schemas/**`, `scripts/**`, or `fixtures/**` is changed.
-- Since the merge base, `main` changes 52 paths and PR #29 changes 14 paths; the changed-path intersection is empty (0 overlaps).
-- PR issue comments: 0; reviews: 0; review threads: 0.
-- All three workflows completed successfully on this exact head:
-  - [OFRL Repository Policy #42334105504](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42334105504)
-  - [OFRL-IB-001 Rust Runtime Semantic Validator #42334105462](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42334105462)
-  - [OFRL-IB-001 Numeric and Input Contract Checks #42334105415](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42334105415)
-- The associated check runs completed successfully. The repository-policy, JSON Schema, Decimal contract (Rust 1.85.0/1.99.1), and semantic-validator (Rust 1.85.0/1.99.1) contexts passed.
+- Branch compare: 35 commits ahead / 219 behind.
+- PR changed files: 14, confined to `PROJECT_CATALOG.md` and `projects/OFRL-CM-001/**`. No IB-001 file, other project, shared schema, fixture, script, workflow, or root policy is changed.
+- Since the merge base, `main` changes 52 paths and PR #29 changes 14 paths; the path intersection is empty.
+- PR conversation comments: 0; submitted reviews: 0; review threads: 0.
+- Exact-checkpoint workflows: all 3/3 completed successfully:
+  - [OFRL Repository Policy #42334357911](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42334357911)
+  - [OFRL-IB-001 Rust Runtime Semantic Validator #42334357957](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42334357957)
+  - [OFRL-IB-001 Numeric and Input Contract Checks #42334357881](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42334357881)
+- All 7 associated check contexts completed successfully: `repository-policy`, Model input JSON Schema, Decimal contract on Rust 1.85.0 and 1.99.1, Semantic validator on Rust 1.85.0 and 1.99.1, and Numeric envelope derivation.
 
-The two IB-001 workflows ran because of repository PR-event behavior. Their success is repository/software validation only; it is not evidence of changes to IB-001 or mathematical correctness for CM-001.
+The two IB-001 workflows run because of repository PR-event behavior. Their results validate repository/software checks on the PR commit only; they do not indicate any IB-001 file changes and do not prove CM-001 mathematical correctness.
 
-**Merge assessment:** The current diff remains isolated to the admitted CM-001 project and its single Project Catalog row. GitHub reports the PR mergeable, and the 52 main-side paths changed since the merge base do not overlap the 14 PR paths. After Founder review and explicit owner authorization, the recommended integration is a normal merge commit to preserve the project admission and research/SSOT history. Do not rebase or merge `main` into the research branch. This integration publishes the project admission and bounded research baseline; it does not declare Pressure Points solved or authorize a solver, Cargo workspace, or release.
+**Integration recommendation:** Following Founder review and explicit owner authorization, merge PR #29 with a normal merge commit. GitHub reports mergeable, the compared path sets have no overlap, and the successful checks are tied to the exact checkpoint above. A merge commit preserves the research/evidence sequence represented by the 35 commits; do not rebase or merge `main` into the research branch. This PR publishes project admission and the current bounded research baseline; it does not declare the puzzle solved, close VAL-014/015, or authorize a solver, Cargo workspace, or release.
 
-**Snapshot boundary:** This is a frozen record of the exact `a54df250…` head before the documentation update that records CM-T0009. The following commit must be validated independently; this snapshot is not a substitute for re-fetching live refs before future repository operations.
+**Snapshot boundary:** This section records the verified checkpoint before the present one-file Project Control refresh. The refresh is metadata-only; its new commit must receive its own required checks before any merge decision. Re-fetch live refs and exact-head CI immediately before integration.
 
 **Live-state rule:** At every new chat or task, agents MUST re-fetch PR #29, branch `HEAD`, `main`, compare counts, changed paths, comments/reviews, and exact-head workflows.
 
