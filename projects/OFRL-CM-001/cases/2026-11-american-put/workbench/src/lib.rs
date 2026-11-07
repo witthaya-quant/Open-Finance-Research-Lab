@@ -39,9 +39,7 @@ impl AmericanPutModel {
             }
         }
 
-        if !(self.down_factor < self.risk_free_gross
-            && self.risk_free_gross < self.up_factor)
-        {
+        if !(self.down_factor < self.risk_free_gross && self.risk_free_gross < self.up_factor) {
             return Err(ModelError::NoArbitrageViolation);
         }
 
@@ -51,8 +49,7 @@ impl AmericanPutModel {
 
     pub fn risk_neutral_up_probability(&self) -> Result<Rational, ModelError> {
         self.validate()?;
-        Ok((&self.risk_free_gross - &self.down_factor)
-            / (&self.up_factor - &self.down_factor))
+        Ok((&self.risk_free_gross - &self.down_factor) / (&self.up_factor - &self.down_factor))
     }
 }
 
@@ -89,7 +86,9 @@ pub struct Valuation {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ModelError {
-    NonPositiveParameter { name: &'static str },
+    NonPositiveParameter {
+        name: &'static str,
+    },
     NoArbitrageViolation,
     NodeCountOverflow,
     ResourceLimitExceeded {
@@ -110,19 +109,36 @@ impl Error for ModelError {}
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum VerificationError {
     InvalidModel(ModelError),
-    NodeCountMismatch { expected: usize, actual: usize },
+    NodeCountMismatch {
+        expected: usize,
+        actual: usize,
+    },
     ResourceLimitExceeded {
         required_nodes: usize,
         maximum_nodes: usize,
     },
     RiskNeutralProbabilityMismatch,
-    NodeMetadataMismatch { index: usize },
-    SpotMismatch { index: usize },
-    ExerciseValueMismatch { index: usize },
-    ContinuationMismatch { index: usize },
-    TerminalConditionViolation { index: usize },
-    BellmanDominanceViolation { index: usize },
-    PolicyAttainabilityViolation { index: usize },
+    NodeMetadataMismatch {
+        index: usize,
+    },
+    SpotMismatch {
+        index: usize,
+    },
+    ExerciseValueMismatch {
+        index: usize,
+    },
+    ContinuationMismatch {
+        index: usize,
+    },
+    TerminalConditionViolation {
+        index: usize,
+    },
+    BellmanDominanceViolation {
+        index: usize,
+    },
+    PolicyAttainabilityViolation {
+        index: usize,
+    },
     RootValueMismatch,
 }
 
@@ -139,8 +155,12 @@ impl Error for VerificationError {}
 /// The triangular-number calculation divides an even factor before
 /// multiplication and uses checked arithmetic.
 pub fn lattice_node_count(periods: usize) -> Result<usize, ModelError> {
-    let mut left = periods.checked_add(1).ok_or(ModelError::NodeCountOverflow)?;
-    let mut right = periods.checked_add(2).ok_or(ModelError::NodeCountOverflow)?;
+    let mut left = periods
+        .checked_add(1)
+        .ok_or(ModelError::NodeCountOverflow)?;
+    let mut right = periods
+        .checked_add(2)
+        .ok_or(ModelError::NodeCountOverflow)?;
 
     if left % 2 == 0 {
         left /= 2;
@@ -170,8 +190,7 @@ pub fn price_american_put(
         });
     }
 
-    let q = (&model.risk_free_gross - &model.down_factor)
-        / (&model.up_factor - &model.down_factor);
+    let q = (&model.risk_free_gross - &model.down_factor) / (&model.up_factor - &model.down_factor);
     let one_minus_q = one() - &q;
 
     let mut spots = Vec::new();
@@ -213,8 +232,7 @@ pub fn price_american_put(
             let up_child = node_index(time + 1, up_moves + 1);
             let down_child = node_index(time + 1, up_moves);
 
-            let continuation = (&q * &values[up_child]
-                + &one_minus_q * &values[down_child])
+            let continuation = (&q * &values[up_child] + &one_minus_q * &values[down_child])
                 / &model.risk_free_gross;
             let exercise = put_payoff(&model.strike, &spots[index]);
 
@@ -249,8 +267,7 @@ pub fn price_american_put(
             } else {
                 let up_child = node_index(time + 1, up_moves + 1);
                 let down_child = node_index(time + 1, up_moves);
-                let continuation = (&q * &values[up_child]
-                    + &one_minus_q * &values[down_child])
+                let continuation = (&q * &values[up_child] + &one_minus_q * &values[down_child])
                     / &model.risk_free_gross;
 
                 let decision = match exercise.cmp(&continuation) {
@@ -291,12 +308,10 @@ pub fn verify_optimality_certificate(
     valuation: &Valuation,
     maximum_nodes: usize,
 ) -> Result<(), VerificationError> {
-    model
-        .validate()
-        .map_err(VerificationError::InvalidModel)?;
+    model.validate().map_err(VerificationError::InvalidModel)?;
 
-    let expected_count = lattice_node_count(model.periods)
-        .map_err(VerificationError::InvalidModel)?;
+    let expected_count =
+        lattice_node_count(model.periods).map_err(VerificationError::InvalidModel)?;
 
     if expected_count > maximum_nodes {
         return Err(VerificationError::ResourceLimitExceeded {
@@ -305,17 +320,14 @@ pub fn verify_optimality_certificate(
         });
     }
 
-    if valuation.nodes.len() != expected_count
-        || valuation.lattice_node_count != expected_count
-    {
+    if valuation.nodes.len() != expected_count || valuation.lattice_node_count != expected_count {
         return Err(VerificationError::NodeCountMismatch {
             expected: expected_count,
             actual: valuation.nodes.len(),
         });
     }
 
-    let q = (&model.risk_free_gross - &model.down_factor)
-        / (&model.up_factor - &model.down_factor);
+    let q = (&model.risk_free_gross - &model.down_factor) / (&model.up_factor - &model.down_factor);
     let one_minus_q = one() - &q;
 
     if valuation.risk_neutral_up_probability != q {
@@ -370,9 +382,7 @@ pub fn verify_optimality_certificate(
                 return Err(VerificationError::ContinuationMismatch { index });
             }
 
-            if node.option_value < expected_exercise
-                || node.option_value < expected_continuation
-            {
+            if node.option_value < expected_exercise || node.option_value < expected_continuation {
                 return Err(VerificationError::BellmanDominanceViolation { index });
             }
 

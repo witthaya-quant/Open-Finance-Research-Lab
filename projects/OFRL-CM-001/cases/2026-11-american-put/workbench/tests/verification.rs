@@ -176,11 +176,7 @@ fn exhaustive_history_and_markov_policy_spaces_match_bellman_value() {
             for time in 0..input.periods {
                 let shift = input.periods - time - 1;
                 let is_up = ((path >> shift) & 1) == 1;
-                path_probability *= if is_up {
-                    &q
-                } else {
-                    &down_probability
-                };
+                path_probability *= if is_up { &q } else { &down_probability };
             }
 
             let mut spot = input.initial_spot.clone();
@@ -207,15 +203,11 @@ fn exhaustive_history_and_markov_policy_spaces_match_bellman_value() {
 
             let (time, payoff_value) = match exercise_time {
                 Some(time) => (time, payoff(&input.strike, &spot)),
-                None => (
-                    input.periods,
-                    payoff(&input.strike, &spot),
-                ),
+                None => (input.periods, payoff(&input.strike, &spot)),
             };
 
-            expected_value += path_probability
-                * payoff_value
-                * rational_power(&inverse_discount, time);
+            expected_value +=
+                path_probability * payoff_value * rational_power(&inverse_discount, time);
         }
 
         if expected_value > history_max {
@@ -239,11 +231,7 @@ fn exhaustive_history_and_markov_policy_spaces_match_bellman_value() {
             for time in 0..input.periods {
                 let shift = input.periods - time - 1;
                 let is_up = ((path >> shift) & 1) == 1;
-                path_probability *= if is_up {
-                    &q
-                } else {
-                    &down_probability
-                };
+                path_probability *= if is_up { &q } else { &down_probability };
             }
 
             let mut spot = input.initial_spot.clone();
@@ -272,9 +260,8 @@ fn exhaustive_history_and_markov_policy_spaces_match_bellman_value() {
                 None => (input.periods, payoff(&input.strike, &spot)),
             };
 
-            expected_value += path_probability
-                * payoff_value
-                * rational_power(&inverse_discount, time);
+            expected_value +=
+                path_probability * payoff_value * rational_power(&inverse_discount, time);
         }
 
         if expected_value > markov_max {
