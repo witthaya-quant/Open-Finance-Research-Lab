@@ -65,10 +65,10 @@ The programme combines mathematical problem-solving, strategic reasoning and gam
 
 | Deliverable | Status | Evidence |
 |---|---|---|
-| Separate project identity and manifest | Prepared in this branch | project.json; repository-policy CI passed on PR revision |
-| Project research specification | Prepared | RESEARCH_SPECIFICATION.md |
-| Shared case-study protocol | Prepared | CASE_STUDY_PROTOCOL.md |
-| First-pilot source record | Prepared | DATA_MANIFEST.md |
+| Separate project identity and manifest | Registered on `main` | project.json; PR #29 merged as `42e4a806c950f6efebc260e636e8ff3b98f51dd8` |
+| Project research specification | Published on `main` | RESEARCH_SPECIFICATION.md |
+| Shared case-study protocol | Published on `main` | CASE_STUDY_PROTOCOL.md |
+| First-pilot source record | Published on `main` | DATA_MANIFEST.md |
 | Pressure Points formalization | H-017/H-018 candidate model rejected as a complete source-grounded explanation under CM-T0009; official puzzle answer remains unverified and formal semantics remain blocked | PROBLEM_FORMALIZATION.md § CM-T0009; TEST-046 |
 | Official Jane Street solution | Live Archive page lists the November puzzle and displays “Solution” as unlinked text; no direct target/body retrieved | CM-T0010 BLOCKED; DATA_MANIFEST.md §4; TEST-044 |
 | Solver or solution | Not started; not authorized by this phase | Deferred |
