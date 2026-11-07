@@ -3,15 +3,15 @@
 # OFRL-CM-001 — Data Manifest
 
 **Dataset ID:** OFRL-CM-001-SOURCE-REGISTER  
-**Dataset version:** 0.11.0  
-**Data classification:** Public Source (reference-only; no source puzzle payload stored)  
+**Dataset version:** 0.13.0  
+**Data classification:** Mixed — third-party source references plus OFRL-authored synthetic model parameters; no Pressure Points payload or market data stored  
 **Data owner / steward:** Project Owner  
 **Created or retrieved:** 2026-11-05  
 **Last reviewed:** 2026-11-07
 
 ## 1. Purpose and intended use
 
-This manifest records provenance for the first OFRL-CM-001 case study and the contextual material used to explain the research motivation.
+This manifest records provenance for OFRL-CM-001's original Pressure Points research pilot, its admitted American Put computational case, and contextual material used to explain the programme's research motivation.
 
 The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The research objective is to formalize the problem and assess appropriate mathematical and computational methods independently. The objective is not to reproduce Jane Street's proprietary research or infer a trading strategy.
 
@@ -86,6 +86,8 @@ The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The re
 | SRC-065 | D.C. Office of Planning, “About Ward 3” | https://planning.dc.gov/ar/page/about-ward-3 | 2026-11-06 | Cross-check the broad location of Palisades for the west-side candidate in the Washington, D.C. diamond | D.C. Planning describes Ward 3 in the upper northwest quadrant and lists Palisades among its neighborhoods; supports broad quadrant context, not an exact west boundary vertex |
 | SRC-066 | D.C. Office of Planning, “DC Office of Planning Mapping Services” | https://planning.dc.gov/page/dc-office-planning-mapping-services | 2026-11-06 | Verify the official status of D.C. neighborhood boundaries before using localities as exact geometric vertices | The Office of Planning explicitly states D.C. has no official neighborhood boundaries and that it does not try to draw them; this limits the Washington diamond to approximate locality geometry |
 | SRC-067 | Hasbro, “Monopoly Go to Jail” official product instructions | https://instructions.hasbro.com/en-us/instruction/monopoly-go-to-jail | 2026-11-06 | Corroborate the Monopoly board's four-corner-square structure used in the conditional 45-degree rotation check | Hasbro describes the distinctive Monopoly board and its four corner squares as protected game elements; exact corner names/order are separately recorded in SRC-050; official product context only |
+| SRC-068 | Cox, Ross and Rubinstein (1979), “Option Pricing: A Simplified Approach”, Journal of Financial Economics 7(3), 229–263, DOI 10.1016/0304-405X(79)90015-1 | https://doi.org/10.1016/0304-405X(79)90015-1 | 2026-11-07 | Primary academic reference for the discrete-time binomial option-pricing model, risk-neutral probability, and early-exercise valuation of American options | Publisher/author rights remain applicable; bibliographic citation and link only. No article text, table, figure, or code is copied into OFRL |
+| SRC-069 | MIT OpenCourseWare, 15.450 Analytics of Finance, Leonid Kogan, “Introduction to Dynamic Programming” (Fall 2010) | https://ocw.mit.edu/courses/15-450-analytics-of-finance-fall-2010/434ff3cbe0f9753416e4979d9ef1e34a_MIT15_450F10_lec05.pdf | 2026-11-07 | Academic context for finite-horizon optimal stopping, adapted stopping decisions and the Bellman recursion for American-option valuation | Course material is third-party; citation and link only. No lecture text, slides, figures, or code are copied into OFRL |
 
 Jane Street's Puzzles page states that puzzles are published every month or two and explains the firm's own rationale for using puzzles: creative problem-solving is relevant to identifying new problems in financial markets and developing potentially novel ways to solve them. This is recorded as the source's stated motivation, not as an OFRL claim that every puzzle represents a financial problem.
 
@@ -110,7 +112,7 @@ No personal or confidential data is intentionally collected for this pilot.
 
 The retrieved Pressure Points page visibly presents a leading symbol, a block of uppercase-letter sequences, a separate emoji-clue block, and a terminal notation. The formal meaning of these elements has not been established.
 
-No normalized puzzle dataset or redistribution-ready fixture is created in this manifest revision. The S001–S075 identifiers in PROBLEM_FORMALIZATION.md are OFRL ordinal references to the source display order; they do not reproduce the underlying sequence strings.
+No normalized puzzle dataset or redistribution-ready fixture is created for Pressure Points. The S001–S075 identifiers in its formalization are OFRL ordinal references only. The admitted American Put case uses one OFRL-authored synthetic parameter set documented in its own PROBLEM_FORMALIZATION.md; no market observations, external instrument data or user data are collected. The synthetic values are illustrative inputs, not a benchmark dataset or a calibration sample.
 
 ### Official-archive and solution retrieval status
 
@@ -132,11 +134,11 @@ SRC-045 is an independently authored public repository. Its pinned README claims
 
 ## 5. Collection or generation method
 
-Source references were reviewed on 2026-11-05, 2026-11-06, and 2026-11-07. CM-T0008 used a local CMUdict 1.1.3 lexical lead screen, exhaustive one-to-one multiset screens for structured rosters, and an independent strict two-sided character-multiset audit of the third-party H-017 candidate rosters. The audit uses source ordinals S001–S075 plus Ø; the full puzzle sequence list is not stored. The third-party Python code was reviewed for correctness but not copied or executed as an authoritative solver. These are research transformations, not automated source collection. OFRL has not implemented a scraper or periodic source monitor.
+Source references were reviewed on 2026-11-05, 2026-11-06, and 2026-11-07. The American Put case uses a synthetic finite-binomial parameter set, with its deterministic generation/selection method and assumptions recorded in cases/2026-11-american-put/PROBLEM_FORMALIZATION.md; no external market data is downloaded or transformed. CM-T0008 used a local CMUdict 1.1.3 lexical lead screen, exhaustive one-to-one multiset screens for structured rosters, and an independent strict two-sided character-multiset audit of the third-party H-017 candidate rosters. The audit uses source ordinals S001–S075 plus Ø; the full puzzle sequence list is not stored. The third-party Python code was reviewed for correctness but not copied or executed as an authoritative solver. These are research transformations, not automated source collection. OFRL has not implemented a scraper or periodic source monitor.
 
 ## 6. Transformations and exclusions
 
-No source puzzle data has been transcribed into a local dataset. The case-specific formalization note contains structural observations, candidate terms, and S001–S075 ordinal references in place of the original sequence strings; it does not reproduce the full puzzle payload.
+No source puzzle data has been transcribed into a local dataset. The Pressure Points formalization uses source ordinals only. The American Put formalization records only a synthetic input tuple and mathematically derived exact rational outputs; no third-party dataset, market series or source table is stored.
 
 ## 7. Quality controls
 
@@ -148,7 +150,7 @@ No source puzzle data has been transcribed into a local dataset. The case-specif
 
 ## 8. Integrity and versioning
 
-No third-party source file is stored, so no source-file checksum is claimed. If an independently created synthetic fixture is proposed later, its generation method, schema, checksum, and rights assessment must be documented before inclusion.
+No third-party source file or numeric dataset is stored. The American Put inputs are fixed synthetic scenario parameters written in the formalization note and test source; no standalone dataset file is required. Their exact rational outputs are derived by the model and reproduced by tests. A source-file checksum is not applicable to the cited academic papers because their contents are not stored.
 
 ## 9. Limitations and known risks
 
@@ -160,7 +162,7 @@ No third-party source file is stored, so no source-file checksum is claimed. If 
 
 ## 10. Access, retention, and release decision
 
-**Stored material:** Source references and limited OFRL-authored notes.  
+**Stored material:** Source references, limited OFRL-authored notes, and an independently authored synthetic case parameter tuple embedded in documentation/tests.  
 **Storage:** Public OFRL repository.  
 **Redistribution of third-party puzzle material:** Not established; not included.  
 **Release approval:** This manifest is an OFRL-authored provenance record. It does not grant permission to redistribute Jane Street materials.

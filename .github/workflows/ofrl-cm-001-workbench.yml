@@ -1,0 +1,82 @@
+name: OFRL-CM-001 American Put Workbench
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "projects/OFRL-CM-001/**"
+      - ".github/workflows/ofrl-cm-001-workbench.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "projects/OFRL-CM-001/**"
+      - ".github/workflows/ofrl-cm-001-workbench.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust-workbench:
+    name: American Put workbench (Rust ${{ matrix.rust }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        rust:
+          - "1.85.0"
+          - "1.99.1"
+    defaults:
+      run:
+        shell: bash
+        working-directory: projects/OFRL-CM-001/cases/2026-11-american-put/workbench
+
+    steps:
+      # actions/checkout v7.0.1, pinned to its verified release commit.
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Install selected Rust toolchain
+        working-directory: .
+        env:
+          RUST_TOOLCHAIN: ${{ matrix.rust }}
+        run: |
+          export PATH="$HOME/.cargo/bin:$PATH"
+          if ! command -v rustup >/dev/null 2>&1; then
+            echo "::error::rustup is not present on the ubuntu-24.04 runner; refusing to execute an unpinned remote bootstrap script." >&2
+            exit 1
+          fi
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --component rustfmt --component clippy
+          rustup default "$RUST_TOOLCHAIN"
+          rustc --version
+          cargo --version
+
+      - name: Verify committed lockfile and frozen dependency graph
+        run: |
+          test -f Cargo.lock
+          cargo metadata --locked --format-version 1 > /dev/null
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run Clippy
+        run: cargo clippy --locked --all-targets -- -D warnings
+
+      - name: Run tests
+        run: cargo test --locked --all-targets -- --nocapture
+
+      - name: Build documentation
+        env:
+          RUSTDOCFLAGS: "-D warnings"
+        run: cargo doc --locked --no-deps
+

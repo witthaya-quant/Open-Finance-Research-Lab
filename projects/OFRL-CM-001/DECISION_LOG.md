@@ -4,8 +4,8 @@
 
 **Project ID:** OFRL-CM-001  
 **Project owner:** Kenny (Witthaya Maidee)  
-**Baseline version:** 0.2.0  
-**Last reviewed:** 2026-11-05
+**Baseline version:** 0.3.0  
+**Last reviewed:** 2026-11-07
 
 This log records decisions specific to OFRL-CM-001. Lab-wide matters remain governed by the central OFRL policies and Decision Register.
 
@@ -27,6 +27,9 @@ This log records decisions specific to OFRL-CM-001. Lab-wide matters remain gove
 | D-012 | Establish PROJECT_CONTROL.md as the sole project-management source of truth | Approved by Founder on 2026-11-05 | Current scope, workstreams, phase status, task register, blockers, and next actions must exist in one canonical register. README and HANDOFF are navigation/procedure; specialist documents own only their domain evidence. | PROJECT_CONTROL.md §1; README.md; HANDOFF.md |
 | D-013 | Classify the programme as Research and Quantitative Research | Approved by Founder on 2026-11-05 | The programme studies quantitative research methods and financial mathematics as well as general mathematical problem-solving. Empirical controls apply when an admitted case uses empirical or market data. | project.json; RESEARCH_SPECIFICATION.md; root PROJECT_STANDARDS.md |
 | D-014 | Defer the Software project type and executable Workbench authorization until the first implementation case is admitted | Approved by Founder on 2026-11-05 | The Rust workbench is an approved target direction, but no executable code, build workflow, Cargo workspace, or dependency is authorized until a case passes formalization and method-selection gates and software architecture/review controls are satisfied. | IMPLEMENTATION_APPROACH.md; PROJECT_CONTROL.md P3; root PROJECT_STANDARDS.md and PROJECT_LIFECYCLE.md |
+
+| D-015 | Admit Finite-Binomial American Put — Optimal Stopping as OFRL-CM-001-CS-002 and the first computational case | Approved by Founder on 2026-11-07 | The finite-horizon no-dividend binomial American Put has explicit state transitions, no-arbitrage conditions, payoff, stopping set and Bellman acceptance predicate. It supports exact, reproducible dynamic-programming computation and independent optimal-stopping verification. This is a research-only synthetic case; it does not reopen Pressure Points and does not authorize market-data calibration, production valuation, investment advice or trading. | cases/2026-11-american-put/README.md; PROBLEM_FORMALIZATION.md; DATA_MANIFEST.md SRC-068–SRC-069 |
+| D-016 | Establish the initial case-specific Rust architecture and software controls for CS-002 | Approved for execution under the Founder-authorized CM-T0013 mandate; recorded 2026-11-07 | Use one library package at cases/2026-11-american-put/workbench, exact arbitrary-precision rational arithmetic (num-rational/num-bigint), a full-node valuation certificate, a separately implemented Bellman verifier, explicit lattice-node resource limits and path-scoped project CI. Keep the case research-only at R1; re-assess the risk tier before any decision-support or reusable public release. Add the Software project type and validation profile because the admitted deliverable contains executable code. Do not add a workspace, CLI, benchmark framework, extra crate, or generic abstraction. | ENGINEERING_ARCHITECTURE.md; IMPLEMENTATION_APPROACH.md §11; case PROBLEM_FORMALIZATION.md; project-local CI workflow |
 
 ## 2. Open decisions
 
@@ -69,3 +72,5 @@ Each deferred item requires a separate scope and evidence gate before work begin
 | 2026-11-05 | D-009 | Project implementation-language default recorded for justified computational software | Kenny | PR #29 |
 | 2026-11-05 | D-010 | Shared-policy inheritance and controlled project/case directory boundaries | Kenny | PR #29 |
 | 2026-11-05 | D-011–D-014 | Quantitative practice programme, single PM source of truth, programme classification, and gated Rust workbench | Founder-authorized; recorded by project aide | PR #29 project-scope documentation update |
+| 2026-11-07 | D-015 | Admit the finite-binomial American Put as CS-002 and the first computational case | Founder-authorized | Current CM-001 workstream |
+| 2026-11-07 | D-016 | Record the case-specific exact-rational Rust architecture, verifier and software controls | Approved for execution within the authorized scope | ENGINEERING_ARCHITECTURE.md; CM-T0013 |
