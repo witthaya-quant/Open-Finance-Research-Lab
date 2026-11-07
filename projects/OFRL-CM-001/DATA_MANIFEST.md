@@ -4,14 +4,14 @@
 
 **Dataset ID:** OFRL-CM-001-SOURCE-REGISTER  
 **Dataset version:** 0.13.0  
-**Data classification:** Public Source (reference-only; no source puzzle payload stored)  
+**Data classification:** Mixed — third-party source references plus OFRL-authored synthetic model parameters; no Pressure Points payload or market data stored  
 **Data owner / steward:** Project Owner  
 **Created or retrieved:** 2026-11-05  
 **Last reviewed:** 2026-11-07
 
 ## 1. Purpose and intended use
 
-This manifest records provenance for the first OFRL-CM-001 case study and the contextual material used to explain the research motivation.
+This manifest records provenance for OFRL-CM-001's original Pressure Points research pilot, its admitted American Put computational case, and contextual material used to explain the programme's research motivation.
 
 The first pilot is the November 2026 Jane Street puzzle, Pressure Points. The research objective is to formalize the problem and assess appropriate mathematical and computational methods independently. The objective is not to reproduce Jane Street's proprietary research or infer a trading strategy.
 

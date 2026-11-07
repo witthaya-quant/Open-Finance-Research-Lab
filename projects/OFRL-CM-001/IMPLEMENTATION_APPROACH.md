@@ -6,7 +6,7 @@
 **Project:** OFRL-CM-001  
 **Owner:** Project Owner  
 **Last reviewed:** 2026-11-07  
-**Status:** Approved project-level direction; initial case-specific architecture approved and implementation under validation
+**Status:** Case-specific architecture approved; initial implementation passed two-toolchain exact-head CI; PR #37 awaits Founder review
 
 ## 1. Purpose and governing decision
 

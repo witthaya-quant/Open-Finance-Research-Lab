@@ -209,7 +209,7 @@ All six required status contexts passed:
 **Base branch at admission:** \`main\` at \`7228bb37bb7a8e93345891dede319a089e8e0132\`  
 **Software revision validated:** \`65d19861fbd4a78ed133bf2a244dce056c653006\`  
 **PR state at this record:** Open; ready for Founder review; not merged; not released  
-**Changed paths:** 17, confined to the CM-001 project, one case directory, one library package, the CM-001 workflow and Dependabot entry, and the central Project Catalog type classification.
+**Changed paths:** 18, confined to the CM-001 project, one case directory, one library package, the CM-001 workflow and Dependabot entry, and the central Project Catalog type classification.
 
 The case-specific Rust package has one library crate and a committed package-local Cargo.lock. It has no workspace, CLI, generic solver framework, benchmark suite, database, network client or trading interface. The project manifest records the Software type/profile, mixed data classification and case documentation. Dependabot covers only the new Cargo package path. No path under \`projects/OFRL-IB-001/**\` was changed; the repository-wide IB-001 checks ran because they are part of the repository's PR validation behavior, not because this work modified that project.
 

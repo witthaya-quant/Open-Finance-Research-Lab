@@ -5,7 +5,7 @@
 **Project ID:** OFRL-CM-001  
 **Project owner:** Kenny (Witthaya Maidee)  
 **Baseline version:** 0.3.0  
-**Last reviewed:** 2026-11-05
+**Last reviewed:** 2026-11-07
 
 This log records decisions specific to OFRL-CM-001. Lab-wide matters remain governed by the central OFRL policies and Decision Register.
 
