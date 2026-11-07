@@ -2,11 +2,11 @@
 
 # OFRL-CM-001 — Implementation Approach
 
-**Document version:** 0.1.0  
+**Document version:** 0.2.0  
 **Project:** OFRL-CM-001  
 **Owner:** Project Owner  
-**Last reviewed:** 2026-11-05  
-**Status:** Approved project-level direction; implementation gates remain conditional
+**Last reviewed:** 2026-11-07  
+**Status:** Approved project-level direction; initial case-specific architecture approved and implementation under validation
 
 ## 1. Purpose and governing decision
 
@@ -172,6 +172,16 @@ Each is decided only when the formal problem and implementation requirements jus
 
 ## 10. Current implementation status
 
-For the Pressure Points pilot, executable implementation is **BLOCKED** because the complete rule semantics and required output are not yet established. The wider Rust workbench remains a gated programme deliverable: a different, fully specified and admitted case may justify its first implementation, but it must pass the same research, architecture, numeric-integrity, verification, and repository-policy controls.
+For the Pressure Points pilot, executable implementation remains **BLOCKED** because the complete rule semantics and required output are not yet established. This gate applies only to Pressure Points; it does not prevent an independently specified case from using computation.
 
-No Rust package, Cargo workspace, solver, verifier, CLI, dependency, or project-specific CI workflow is claimed to exist at this stage.
+The first computational case, Finite-Binomial American Put — Optimal Stopping (CS-002), has been admitted. Its case-specific Rust package and project-local CI are being implemented under the separate architecture in [ENGINEERING_ARCHITECTURE.md](ENGINEERING_ARCHITECTURE.md). This does not create a generic solver framework or authorize any production pricing, live market-data integration, investment recommendation or trade execution.
+
+## 11. Initial case-specific implementation baseline
+
+The first admitted software-bearing case uses one library package under `cases/2026-11-american-put/workbench/`; no Cargo workspace is justified for a single package. The library uses exact arbitrary-precision rational arithmetic via `num-rational` and `num-bigint`, with direct versions pinned and a committed package-local `Cargo.lock`. Rust 1.85.0 is the minimum supported toolchain; CI also checks Rust 1.99.1.
+
+The output includes the complete recombining lattice node values and exercise/continue/indifferent decisions. A separately implemented verifier checks the node metadata, immediate-exercise lower bound, one-step continuation bound, terminal payoff, and policy attainability. This forms a finite-horizon Bellman optimality certificate. Reduced instances are cross-checked against exhaustive enumeration of history-dependent stopping policies. Resource sizing uses checked triangular-number arithmetic and a caller-supplied maximum node count.
+
+The package is deterministic and offline at runtime. It uses no market data, networking, randomness, persistent storage, CLI, workbook, solver service, benchmark framework or external trading interface. No generalization to additional option styles, dividends, multiple underlying assets, stochastic rates or non-binomial processes is implied. Such changes require a new formalization and decision. Before any release as reusable pricing/decision-support software, reassess risk tier, independent assurance, numeric/contract conventions, dependency/SBOM, and release authorization.
+
+The project-local workflow is `.github/workflows/ofrl-cm-001-workbench.yml` and is path-scoped to CM-001. It does not alter or reuse any OFRL-IB-001 workflow. The dependency update path is registered separately in `.github/dependabot.yml` as required by the repository dependency policy.
