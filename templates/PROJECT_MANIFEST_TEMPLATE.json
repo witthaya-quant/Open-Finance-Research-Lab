@@ -1,6 +1,6 @@
 {
-  "$schema": "../../schemas/ofrl-project-manifest-1.0.0.schema.json",
-  "schema_version": "1.0.0",
+  "$schema": "../../schemas/ofrl-project-manifest-1.1.0.schema.json",
+  "schema_version": "1.1.0",
   "project_id": "OFRL-XX-001",
   "title": "Replace with the approved project title",
   "lifecycle_status": "proposed",
@@ -10,7 +10,7 @@
   "risk_tier": "R0",
   "owner": "Project owner",
   "created_at": "2026-11-04",
-  "updated_at": "2026-11-04",
+  "updated_at": "2026-11-06",
   "summary": "Describe the problem, intended use, deliverable, and current boundary without overstating implementation or evidence.",
   "evidence_maturity": 0,
   "license_profile": "Select the approved profile from LICENSE_POLICY.md",
@@ -24,5 +24,31 @@
     "PROJECT_SPECIFICATION.md",
     "VALIDATION_MATRIX.md"
   ],
-  "release_status": "not_released"
+  "release_status": "not_released",
+  "release_readiness": {
+    "assessment_version": "1.0.0",
+    "assessment_status": "NOT_ASSESSED",
+    "operational_mode": "RESEARCH_ONLY",
+    "independent_assurance_required": false,
+    "independent_assurance_rationale": "Independent assurance is assigned according to the project's risk tier, intended use, and material claims before release.",
+    "gates": [],
+    "authorization": {
+      "status": "NOT_AUTHORIZED",
+      "authority": null,
+      "authority_role": null,
+      "authorized_at": null,
+      "decision_record": null,
+      "source_commit": null
+    },
+    "residual_risk_assessment": {
+      "status": "NOT_ASSESSED",
+      "outcome": "NOT_ASSESSED",
+      "reviewed_by": null,
+      "reviewer_role": null,
+      "reviewed_at": null,
+      "next_review_at": null,
+      "evidence": [],
+      "risks": []
+    }
+  }
 }

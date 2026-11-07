@@ -18,11 +18,26 @@ const schemaPath = path.join(
   "schemas",
   "ofrl-ib-001-model-input-0.1.0.schema.json"
 );
-const fixturePath = path.join(
+const corpusPath = path.join(
   rootDir,
   "fixtures",
-  "synthetic",
-  "ofrl-ib-001-case-a.input.v0.1.0.json"
+  "contracts",
+  "ofrl-ib-001-shared-corpus.v0.1.0.json"
+);
+const numericProfileSchemaPath = path.join(
+  rootDir,
+  "schemas",
+  "ofrl-ib-001-numeric-profile-0.1.0.schema.json"
+);
+const numericProfileFixturePath = path.join(
+  rootDir,
+  "projects",
+  "OFRL-IB-001",
+  "tools",
+  "numeric-envelope",
+  "test",
+  "fixtures",
+  "synthetic-profile.test-only.json"
 );
 
 function readJson(filePath) {
@@ -35,10 +50,6 @@ function readJson(filePath) {
   }
 }
 
-function clone(value) {
-  return JSON.parse(JSON.stringify(value));
-}
-
 function printErrors(errors) {
   return (errors || []).map((error) => ({
     instancePath: error.instancePath,
@@ -49,34 +60,93 @@ function printErrors(errors) {
   }));
 }
 
-function assertValid(validate, label, payload) {
-  const valid = validate(payload);
-  if (!valid) {
+function assertExpectedKeys(value, expectedKeys, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(label + " must be a JSON object");
+  }
+
+  const actualKeys = Object.keys(value).sort();
+  const sortedExpected = [...expectedKeys].sort();
+  if (
+    actualKeys.length !== sortedExpected.length ||
+    actualKeys.some((key, index) => key !== sortedExpected[index])
+  ) {
     throw new Error(
-      label + " unexpectedly failed:\n" +
-      JSON.stringify(printErrors(validate.errors), null, 2)
+      label + " has an invalid property set; expected " +
+      sortedExpected.join(", ") + "; received " + actualKeys.join(", ")
     );
   }
-  console.log("PASS: " + label);
 }
 
-function assertInvalid(validate, label, payload) {
-  const valid = validate(payload);
-  if (valid) {
-    throw new Error(label + " unexpectedly passed schema validation");
+function isWithin(parentPath, candidatePath) {
+  const relative = path.relative(parentPath, candidatePath);
+  return relative === "" ||
+    (!relative.startsWith(".." + path.sep) &&
+      relative !== ".." &&
+      !path.isAbsolute(relative));
+}
+
+function resolveFixturePath(rootPath, fixturesPath, input, caseId) {
+  if (
+    typeof input !== "string" ||
+    input.length === 0 ||
+    input.includes("\\") ||
+    path.posix.isAbsolute(input)
+  ) {
+    throw new Error(caseId + " must use a non-empty relative POSIX fixture path");
   }
-  console.log(
-    "PASS: invalid payload rejected — " + label +
-    " (" + (validate.errors || []).length + " validation error(s))"
-  );
+
+  const segments = input.split("/");
+  if (
+    segments[0] !== "fixtures" ||
+    segments.some((segment) => segment === "" || segment === "." || segment === "..")
+  ) {
+    throw new Error(caseId + " input must remain under fixtures/ without traversal segments");
+  }
+
+  let resolvedPath;
+  try {
+    resolvedPath = fs.realpathSync(path.resolve(rootPath, input));
+  } catch (error) {
+    throw new Error(caseId + " input cannot be resolved: " + error.message);
+  }
+
+  if (!isWithin(rootPath, resolvedPath) || !isWithin(fixturesPath, resolvedPath)) {
+    throw new Error(caseId + " input resolves outside the repository fixtures directory");
+  }
+  if (!fs.statSync(resolvedPath).isFile()) {
+    throw new Error(caseId + " input does not resolve to a regular file");
+  }
+
+  return resolvedPath;
 }
 
 function main() {
+  const realRoot = fs.realpathSync(rootDir);
+  const realFixtures = fs.realpathSync(path.join(realRoot, "fixtures"));
   const schema = readJson(schemaPath);
-  const fixture = readJson(fixturePath);
+  const corpus = readJson(corpusPath);
 
   if (schema.$schema !== "https://json-schema.org/draft/2020-12/schema") {
     throw new Error("Input schema must declare JSON Schema Draft 2020-12");
+  }
+  if (
+    corpus.corpus_version !== "0.1.0" ||
+    !Array.isArray(corpus.cases) ||
+    corpus.cases.length === 0
+  ) {
+    throw new Error("Shared contract corpus must have version 0.1.0 and a non-empty cases array");
+  }
+  if (corpus.schema_id !== schema.$id) {
+    throw new Error("Shared contract corpus schema_id does not match the input schema $id");
+  }
+  assertExpectedKeys(
+    corpus,
+    ["corpus_version", "schema_id", "description", "cases"],
+    "Shared contract corpus"
+  );
+  if (typeof corpus.description !== "string" || corpus.description.trim().length === 0) {
+    throw new Error("Shared contract corpus description must be non-empty");
   }
 
   const ajv = new Ajv2020({
@@ -87,64 +157,102 @@ function main() {
   addFormats(ajv);
 
   console.log("Ajv version: " + require("ajv/package.json").version);
-  console.log("Schema: " + path.relative(rootDir, schemaPath));
-  console.log("Fixture: " + path.relative(rootDir, fixturePath));
+  console.log("Schema: " + path.relative(realRoot, schemaPath));
+  console.log("Corpus: " + path.relative(realRoot, corpusPath));
 
-  // Compilation is itself a validation gate: malformed or unsupported
-  // schema constructs must stop the job before any payload is accepted.
+  // Schema compilation is a gate: unsupported or malformed schema constructs
+  // must stop the job before any payload can be accepted.
   const validate = ajv.compile(schema);
-  console.log("PASS: Draft 2020-12 schema compiled");
+  console.log("PASS: Draft 2020-12 model-input schema compiled");
 
-  assertValid(validate, "canonical synthetic Case A fixture", fixture);
+  const numericProfileSchema = readJson(numericProfileSchemaPath);
+  if (
+    numericProfileSchema.$schema !== "https://json-schema.org/draft/2020-12/schema" ||
+    numericProfileSchema.$id !== "urn:ofrl:schema:ofrl-ib-001-numeric-profile:0.1.0"
+  ) {
+    throw new Error("Numeric Profile schema must declare the expected Draft 2020-12 identity");
+  }
+  const validateNumericProfile = ajv.compile(numericProfileSchema);
+  const numericProfileFixture = readJson(numericProfileFixturePath);
+  if (!validateNumericProfile(numericProfileFixture)) {
+    throw new Error(
+      "Test-only Numeric Profile fixture is invalid:\\n" +
+      JSON.stringify(printErrors(validateNumericProfile.errors), null, 2)
+    );
+  }
+  if (numericProfileFixture.approval_state !== "test_only" ||
+      numericProfileFixture.approvals !== null) {
+    throw new Error("Numeric Profile test fixture must remain explicitly unapproved");
+  }
+  const invalidNumericProfile = {
+    ...numericProfileFixture,
+    accidental_property: "must be rejected"
+  };
+  if (validateNumericProfile(invalidNumericProfile)) {
+    throw new Error("Numeric Profile schema unexpectedly accepted an unknown property");
+  }
+  console.log("PASS: Numeric Profile input schema compiled and test-only fixture validated");
 
-  const maximumScale = clone(fixture);
-  maximumScale.forecast_periods[0].assumptions.dso =
-    "0.1234567890123456789012345678";
-  assertValid(
-    validate,
-    "28-digit fractional scale remains schema-valid",
-    maximumScale
-  );
+  const seenIds = new Set();
+  const seenInputs = new Set();
+  const expectedCaseKeys = [
+    "id",
+    "input",
+    "schema_valid",
+    "runtime_status",
+    "diagnostic_codes"
+  ];
 
-  const numericToken = clone(fixture);
-  numericToken.historical_periods[0].income_statement.revenue = 1000;
-  assertInvalid(validate, "JSON numeric token for Decimal field", numericToken);
+  for (const item of corpus.cases) {
+    assertExpectedKeys(item, expectedCaseKeys, "Shared corpus case");
 
-  const unknownRootField = clone(fixture);
-  unknownRootField.unexpected_field = "must be rejected";
-  assertInvalid(validate, "unknown root field", unknownRootField);
+    if (typeof item.id !== "string" || item.id.length === 0 || seenIds.has(item.id)) {
+      throw new Error("Every shared corpus case must have a unique non-empty id");
+    }
+    seenIds.add(item.id);
 
-  const unknownNestedField = clone(fixture);
-  unknownNestedField.forecast_periods[0].assumptions.unapproved_driver = "1";
-  assertInvalid(validate, "unknown nested assumption", unknownNestedField);
+    if (
+      typeof item.schema_valid !== "boolean" ||
+      !["accepted", "rejected"].includes(item.runtime_status) ||
+      !Array.isArray(item.diagnostic_codes) ||
+      !item.diagnostic_codes.every((code) => typeof code === "string" && code.length > 0)
+    ) {
+      throw new Error("Corpus case " + item.id + " has invalid expected results");
+    }
 
-  const negativeZero = clone(fixture);
-  negativeZero.historical_periods[0].income_statement.net_income = "-0";
-  assertInvalid(validate, "negative zero", negativeZero);
+    if (!item.schema_valid && item.runtime_status !== "rejected") {
+      throw new Error(
+        "Schema-invalid case " + item.id + " must also be rejected by the Rust runtime"
+      );
+    }
 
-  const excessiveScale = clone(fixture);
-  excessiveScale.forecast_periods[0].assumptions.dso =
-    "1.00000000000000000000000000000";
-  assertInvalid(validate, "29 fractional digits", excessiveScale);
+    if (new Set(item.diagnostic_codes).size !== item.diagnostic_codes.length) {
+      throw new Error("Corpus case " + item.id + " contains duplicate diagnostic codes");
+    }
 
-  const nonSyntheticSource = clone(fixture);
-  nonSyntheticSource.historical_periods[0].source.classification =
-    "public_filing";
-  assertInvalid(validate, "non-synthetic source in V1 schema", nonSyntheticSource);
+    const inputPath = resolveFixturePath(realRoot, realFixtures, item.input, item.id);
+    if (seenInputs.has(inputPath)) {
+      throw new Error("Shared corpus input path is duplicated: " + item.input);
+    }
+    seenInputs.add(inputPath);
 
-  const missingSourceReference = clone(fixture);
-  delete missingSourceReference.historical_periods[0].source.source_reference;
-  assertInvalid(
-    validate,
-    "missing historical source reference",
-    missingSourceReference
-  );
+    const payload = readJson(inputPath);
+    const actualSchemaValidity = validate(payload);
+    if (actualSchemaValidity !== item.schema_valid) {
+      throw new Error(
+        "Schema expectation mismatch for " + item.id + ": expected " +
+        item.schema_valid + ", received " + actualSchemaValidity + "\\n" +
+        JSON.stringify(printErrors(validate.errors), null, 2)
+      );
+    }
 
-  const invalidCalendarDate = clone(fixture);
-  invalidCalendarDate.historical_periods[0].end_date = "2023-02-30";
-  assertInvalid(validate, "invalid calendar date", invalidCalendarDate);
+    console.log(
+      "PASS: " + item.id + " — JSON Schema " +
+      (actualSchemaValidity ? "ACCEPT" : "REJECT")
+    );
+  }
 
-  console.log("PASS: all model-input JSON Schema checks completed");
+  console.log("PASS: all " + corpus.cases.length + " shared contract corpus cases completed");
 }
 
 try {

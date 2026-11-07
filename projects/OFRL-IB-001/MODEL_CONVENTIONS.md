@@ -191,7 +191,7 @@ A zero denominator in a historical ratio produces N/A with an explanatory note. 
 
 ## 14. Canonical numeric and Excel interoperability policy
 
-The Rust calculation engine is authoritative. Monetary calculations use the approved fixed-point Decimal representation and checked operations. Intermediate calculations are not rounded.
+The Rust calculation engine is authoritative. Monetary calculations use the arithmetic backend approved in the versioned Numeric Profile, with checked operations and explicit division / rounding semantics. The production backend has not yet been selected. The application does not apply presentation rounding inside schedules; the chosen backend may still produce finite-precision results for repeating divisions, which must be quantified and remain within the approved arithmetic-error budget.
 
 Canonical JSON/CSV inputs and outputs represent monetary values and rates as decimal strings, accompanied by currency, scale, period, and schema-version metadata. This is the authoritative reproducibility path.
 

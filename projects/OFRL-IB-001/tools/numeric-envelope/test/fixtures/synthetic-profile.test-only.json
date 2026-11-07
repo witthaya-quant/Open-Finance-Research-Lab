@@ -1,0 +1,102 @@
+{
+  "schema_id": "urn:ofrl:schema:ofrl-ib-001-numeric-profile:0.1.0",
+  "profile_id": "TEST-ONLY-SYNTHETIC-NOT-APPROVED",
+  "profile_version": "0.0.0",
+  "convention_version": "0.1.0",
+  "approval_state": "test_only",
+  "reporting_currency": "USD",
+  "unit_scale": "thousands",
+  "day_count_basis": 365,
+  "source_precision": {
+    "monetary_max_integer_digits": 8,
+    "monetary_max_fraction_digits": 2,
+    "ratio_max_integer_digits": 1,
+    "ratio_max_fraction_digits": 4,
+    "days_max_integer_digits": 4,
+    "days_max_fraction_digits": 2
+  },
+  "opening_balance_sheet": {
+    "cash_max": "1000.0",
+    "accounts_receivable_max": "120.0",
+    "inventory_max": "80.0",
+    "gross_ppe_max": "600.0",
+    "accumulated_depreciation_max": "200.0",
+    "accounts_payable_max": "50.0",
+    "interest_bearing_debt_max": "300.0",
+    "share_capital_max": "800.0",
+    "retained_earnings_absolute_max": "450.0"
+  },
+  "historical_period": {
+    "income_statement": {
+      "revenue_absolute_max": "1350.0",
+      "cogs_absolute_max": "540.0",
+      "operating_expenses_absolute_max": "337.5",
+      "depreciation_absolute_max": "40.0",
+      "interest_expense_absolute_max": "15.0",
+      "income_tax_expense_absolute_max": "84.2",
+      "net_income_absolute_max": "336.8"
+    },
+    "balance_sheet": {
+      "cash_max": "1493.6",
+      "accounts_receivable_max": "162.0",
+      "inventory_max": "108.0",
+      "gross_ppe_max": "780.0",
+      "accumulated_depreciation_max": "305.0",
+      "accounts_payable_max": "81.0",
+      "interest_bearing_debt_max": "280.0",
+      "share_capital_max": "800.0",
+      "retained_earnings_absolute_max": "1177.6"
+    },
+    "cash_flow_statement": {
+      "net_income_absolute_max": "336.8",
+      "depreciation_addback_absolute_max": "40.0",
+      "change_in_operating_nwc_absolute_max": "21.0",
+      "cash_from_operations_absolute_max": "355.8",
+      "capex_absolute_max": "70.0",
+      "cash_from_investing_absolute_max": "70.0",
+      "debt_drawdowns_absolute_max": "40.0",
+      "principal_repayments_absolute_max": "70.0",
+      "dividends_absolute_max": "60.0",
+      "cash_from_financing_absolute_max": "110.0",
+      "net_change_in_cash_absolute_max": "175.8",
+      "opening_cash_absolute_max": "1317.8",
+      "closing_cash_absolute_max": "1493.6"
+    }
+  },
+  "forecast_drivers": {
+    "revenue_growth_max": "0.05",
+    "cogs_pct_revenue_max": "0.40",
+    "operating_expenses_pct_revenue_max": "0.25",
+    "dso_max": "44.00",
+    "dio_max": "73.00",
+    "dpo_max": "54.75",
+    "capex_pct_revenue_max": "0.052",
+    "depreciation_rate_max": "0.055",
+    "debt_drawdowns_max_per_period": "20.0",
+    "interest_rate_max": "0.05",
+    "tax_rate_max": "0.20",
+    "dividend_payout_ratio_max": "0.20"
+  },
+  "arithmetic_policy": {
+    "division_fractional_scale": null,
+    "division_rounding_mode": null,
+    "reporting_fraction_digits": null,
+    "reporting_rounding_mode": null
+  },
+  "resource_limits": {
+    "max_intermediate_scale": 48,
+    "max_coefficient_digits": 48,
+    "max_input_bytes": 1048576,
+    "max_cpu_ms": 1000,
+    "max_peak_memory_mib": 128,
+    "max_concurrent_runs": 1
+  },
+  "error_budgets": {
+    "minimum_material_amount": "0.01",
+    "arithmetic_approximation_absolute": "0.0001",
+    "accounting_identity_absolute": "0.0001",
+    "schedule_rollforward_absolute": "0.0001",
+    "display_export_absolute": "0.01"
+  },
+  "approvals": null
+}

@@ -60,6 +60,11 @@ The model is not a statutory reporting engine, audit opinion, tax calculation sy
 - [Engineering architecture](ENGINEERING_ARCHITECTURE.md)
 - [Model input contract](MODEL_INPUT_CONTRACT.md)
 - [Numeric envelope](NUMERIC_ENVELOPE.md)
+- [Numeric Profile worksheet](NUMERIC_PROFILE_WORKSHEET.md)
+- [Numeric Profile derivation](NUMERIC_PROFILE_DERIVATION.md)
+- [Numeric backend evaluation protocol](NUMERIC_BACKEND_EVALUATION.md)
+- [Numeric Profile input schema](../../schemas/ofrl-ib-001-numeric-profile-0.1.0.schema.json)
+- [Numeric envelope derivation tool](tools/numeric-envelope/derive.cjs) (analysis tooling only; not part of the Rust runtime)
 - [Validation and error contract](VALIDATION_ERROR_CONTRACT.md)
 - [Rust runtime semantic validator](RUNTIME_VALIDATOR.md)
 - [Synthetic reference case A](SYNTHETIC_REFERENCE_CASE.md)
@@ -84,3 +89,52 @@ Banks, insurers, REITs, consolidated groups, multi-currency operations, leases, 
 ## Data and licensing
 
 The first reproducible case will use synthetic data created specifically for this project. No company financial statements or licensed market-data feeds will be redistributed. Code is licensed under Apache-2.0; project documentation is licensed under CC BY 4.0. See the repository licensing and data policies.
+
+
+## Engineering and evidence documents
+
+- [Engineering Audit](ENGINEERING_AUDIT.md)
+- [System Design and Control Architecture](SYSTEM_DESIGN.md)
+- [Implementation Roadmap](IMPLEMENTATION_ROADMAP.md) — **sole execution source of truth** for task IDs, phases, dependencies, blockers and next actions.
+
+All agents and contributors must start from the Implementation Roadmap and use its existing task IDs. This README is navigation only; it must not become a parallel status board. Project specifications, model conventions, architecture, decision log, validation matrix and Numeric Profile worksheet retain their specialist authority as mapped in the roadmap. Do not create duplicate roadmaps, handoff summaries, task trackers or folders without an explicitly authorized task.
+- [Numeric Profile Decision Worksheet](NUMERIC_PROFILE_WORKSHEET.md)
+- [Numeric Profile Derivation and Backend Decision Basis](NUMERIC_PROFILE_DERIVATION.md)
+- [Numeric Backend Evaluation Protocol](NUMERIC_BACKEND_EVALUATION.md)
+- [Shared Schema/Rust contract corpus](../../fixtures/contracts/ofrl-ib-001-shared-corpus.v0.1.0.json)
+
+## Current implementation and approval boundaries
+
+The engineering foundation described in this README is merged to `main` through PR #13 at `593d04d125522e5ec42bea06da6b94c3c2abf604`. The validated PR source head was `17b77e385f9980ff00c6ab1466361a54a5d34d23`; all six required Ruleset contexts, Numeric Envelope derivation and Release Candidate Preview passed on that exact source head. The Release Candidate Preview is a CLI input-validator preview only, not a released forecast model.
+
+The merged implementation includes the bounded CLI input reader (1 MiB max-plus-one read and invalid UTF-8 rejection), the versioned shared Schema/Rust contract corpus, typed deserialization diagnostics with RFC 6901 JSON Pointers, the audit/design/roadmap documents, Numeric Profile schema and worksheet, exact candidate-neutral derivation, division-error propagation, candidate-specific static capacity evaluator and Numeric Backend Evaluation Protocol.
+
+### Repository layout
+
+The project files are separated by responsibility rather than collected in one undifferentiated directory:
+
+```text
+.github/workflows/                         CI and preview workflows
+fixtures/contracts/                        Versioned positive, negative and mutation fixtures
+schemas/                                   Machine-readable JSON Schemas
+scripts/                                   Schema/corpus validation entry points
+projects/OFRL-IB-001/
+  *.md                                     Project specifications, audit, decisions and policies
+  crates/ofrl_cli/                         CLI transport and command boundary
+  crates/ofrl_model/
+    src/                                   Typed domain, diagnostics and validation
+    tests/                                 Shared-corpus and diagnostic regression tests
+  tools/numeric-envelope/
+    *.cjs                                  Exact derivation and candidate-capacity tools
+    test/                                  Tool tests and test-only synthetic profile
+```
+
+The 42 files delivered by PR #13 follow these categories: CI workflows; contract fixtures; project documentation and decision records; Rust CLI/model implementation; Rust regression tests; numeric-envelope tools/tests; the machine-readable profile schema; and the AJV validation script. No unrelated project directory was included.
+
+### Numeric evidence and approval boundary
+
+The validated test-only Numeric Envelope artifact (`13393328236`) contains 287 arithmetic nodes. The `rust_decimal 1.43.0` static screen reports `STATIC_BOUND_EXCEEDS_LIMIT` on 37 conservative nodes (19 scale-related reasons overlap coefficient reasons); BigDecimal remains `CONDITIONAL` on 50 division-dependent nodes. The profile is explicitly `TEST-ONLY-SYNTHETIC-NOT-APPROVED`; runtime correctness is `NOT_EXECUTED`, operational resources are `NOT_MEASURED`, no backend is selected and the Production Forecast Engine is not authorized. These results are tooling evidence, not a business-domain recommendation or an observed runtime overflow.
+
+Issue #23 was automatically closed when PR #13 merged. Issue #28 remains OPEN for Model Owner decisions. Finite input bounds, source precision, intermediate scale/coefficient limits, separate error budgets and CPU/memory/concurrency limits are still unresolved. Independent Finance/Accounting review and source-level dependency licence/security acceptance also remain open.
+
+The Production Forecast Engine, forecast Structural Integrity / Scenario Feasibility, canonical ModelRun provenance and XLSX reporting remain unimplemented.

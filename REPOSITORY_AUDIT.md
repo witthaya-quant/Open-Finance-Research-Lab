@@ -3,10 +3,10 @@
 # OFRL Repository Audit
 
 **Audit ID:** OFRL-AUDIT-2026-001  
-**Audit date:** 2026-11-04  
+**Audit date:** 2026-11-06  
 **Scope:** Repository-wide governance and operating controls for every current and future project, including project registration, research operations, software engineering, dependencies, CI/CD, data, publication, release, and project maturity  
 **Audit owner:** Founder / Principal Maintainer  
-**Status:** Baseline assessment; remediation tracked through Pull Requests and Issues
+**Status:** Updated portfolio audit; current GitHub read-back is recorded in §10. Sections 2–8 retain the 2026-11-04 baseline history and are superseded where §10 reports newer live state.
 
 ## 1. Executive assessment
 
@@ -21,6 +21,9 @@ This audit separates three states:
 - **Manual GitHub configuration:** settings that cannot be activated merely by committing documentation.
 
 ## 2. Scope and evidence boundary
+
+> **Historical snapshot notice:** The original state descriptions and remediation statuses in §§2–8 are preserved as the 2026-11-04 audit baseline. They are not a live repository view. Section 10 is the current 2026-11-06 GitHub/API read-back and takes precedence wherever status differs. Do not act on old branch names, PR states, or CI results without a fresh fetch.
+
 
 The audit inspected the default branch, repository metadata, current project inventory, existing workflows, OFRL-IB-001 specifications/source/tests, and the proposed governance and portfolio-control branch for PR #14. At the snapshot, OFRL-IB-001 was the only project directory under `projects/`; the audit therefore assessed the universal controls required for future projects separately from the detailed maturity of the current project.
 
@@ -83,7 +86,7 @@ Priority definitions:
 | AUD-019 | P1 | Synthetic data could bypass the Data Manifest requirement | The registry validator required the `data` profile only for selected non-synthetic classifications and did not require a manifest for synthetic data, although the Data Policy covers non-trivial synthetic datasets | **Implemented; initial CI verification passed at commit `1dcb3afd6f301d1e6756fa676904cff3d19f76d3`:** every non-`none` data classification now requires `DATA_MANIFEST.md` and the `data` profile; OFRL-IB-001 registers its synthetic Case A dataset explicitly. The documentation follow-up in the current PR head is revalidated by its own workflow run. |
 | AUD-020 | P1 | Registry rules for future project types lacked regression coverage | CI validated the current project, whose declared types did not exercise data, benchmark, prototype, or infrastructure rules | **Implemented; initial CI verification passed at commit `1dcb3afd6f301d1e6756fa676904cff3d19f76d3`:** Node built-in regression tests cover all supported project-type mappings, validation profiles, document alternatives, data controls, and lifecycle/release consistency. The documentation follow-up in the current PR head is revalidated by its own workflow run. |
 | AUD-021 | P1 | Project documentation contained a stale implementation status | `SYNTHETIC_REFERENCE_CASE.md` said schema and runtime validation were pending while the schema, Rust validator, and CI checks were already implemented | **Corrected; initial CI verification passed at commit `1dcb3afd6f301d1e6756fa676904cff3d19f76d3`:** the status statement now distinguishes implemented input validation from the unfinished forecast engine. The documentation follow-up in the current PR head is revalidated by its own workflow run. |
-| AUD-022 | P1 | Risk-tier release readiness is only partially machine-enforced | The registry validator requires a threat model and security profile for R3, but does not gate promotion to release on recorded Founder approval, independent domain/security review, privacy/legal applicability, incident response, rollback, or operational safeguards; R2 review expectations are also primarily procedural | **Open — design and implementation required:** define structured, risk-proportionate release evidence and approval states, then enforce lifecycle gates and test valid exceptions / NOT APPLICABLE decisions |
+| AUD-022 | P1 | Risk-tier release readiness was partially machine-enforced at the audit baseline | At the audit baseline the registry enforced only the R3 threat-model/security-profile requirement; R2 review evidence, independent assurance, residual-risk records and publication authorization were not machine-enforced | **Remediated on main by PR #32; Issue #19 closed completed:** manifest schema 1.1.0, risk/type-specific gate inventory, assessor/conflict evidence, residual-risk review/expiry, distinct assessment/authorization states and release-transition checks are enforced by the registry validator. Project-specific release approvals remain separate. |
 
 ## 5. OFRL-IB-001 maturity assessment
 
@@ -182,14 +185,120 @@ The following status distinguishes a documented control, an implemented control 
 | AUD-019 — synthetic data manifest enforcement | **Implemented; CI passed** | Non-`none` data classifications, including synthetic, require a Data Manifest and `data` validation profile. OFRL-IB-001 declares its synthetic Case A dataset. The validator and regression tests pass in PR #18. |
 | AUD-020 — registry regression coverage | **Implemented on the audit branch; CI pending** | Added test coverage for all supported project-type mappings, validation profiles, document alternatives, data classification rules, and release-state combinations. |
 | AUD-021 — stale synthetic-case status | **Corrected; CI passed** | The reference-case status distinguishes implemented input validation from the unimplemented forecast calculation engine and model-level validation. PR #18 repository-policy CI passes with the correction. |
-| AUD-022 — risk-tier release readiness | **Open — design required** | R3 currently requires only the security profile and threat model at registry admission. A separate release-readiness control must evidence approval, independent review, applicable privacy/legal assessment, operational safeguards, incident response, and rollback. R2 review requirements should also be recorded proportionately. |
+| AUD-022 — risk-tier release readiness | **Implemented and merged; Issue #19 closed completed** | PR #32 added manifest schema 1.1.0, risk/type-specific release gates, reviewer/conflict evidence, residual-risk disposition/expiry, separate release authorization and lifecycle enforcement. Required CI and preview checks passed on exact source head `582c88a78636f6a43fbedb14b2f2ffded1ee8678`; merge commit `79158e9225ec3976191e693a55206d40a025be6d`. Actual project release decisions remain project-specific. |
 
 The PR branch has passing repository-policy, Rust semantic-validator, Decimal-contract, and OFRL-IB-001 model-input schema checks at the validated heads. The main branch ruleset is active with six required GitHub Actions checks; the isolated Decimal POC has its own Cargo-generated lockfile and locked CI evidence on PR #20. Release SBOM/checksums, source-level licence/notice and security review, account continuity execution, R2/R3 release-readiness gates, and project-specific financial-model validation remain open.
 
 ## 9. Audit interpretation
+
+**Control baseline update:** PR #31 merged as `66a73fcd19a9b33f2dcebf1ebd66b2de1c3ed562`; PR #32 merged as `79158e9225ec3976191e693a55206d40a025be6d`. Root Issue #19 / AUD-022 is closed completed. The v1.1.0 release-readiness contract and registry enforcement are active on `main`; this does not authorize any project's release or live operation.
+
 
 The audit does not recommend adding a GitHub Organization, changing the public repository to a restrictive source-available licence, adopting a CLA/CAA without a licensing need, or creating Maintainer/Code Owner roles before people are appointed.
 
 The recommended operating model remains a Founder-led public repository under the Founder's personal account, with fork-based contributions and a separately controlled private research workstream.
 
 Every finding should be closed by evidence: a merged change, a verified GitHub setting, a passing check, a completed review, or an explicitly accepted residual risk. Updating the wording of a document alone does not close an operational control finding.
+
+
+## 10. Current portfolio and delivery read-back — 2026-11-06
+
+**Evidence baseline:** the current default branch was fetched at main commit `79158e9225ec3976191e693a55206d40a025be6d` after PR #32 merged. Manifest schema 1.1.0 and risk-tier release-readiness enforcement are active on main. This is a point-in-time API audit, not a claim that repository security settings outside accessible GitHub endpoints have been verified.
+
+### 10.1 Repository controls
+
+| Control | Current finding | Disposition |
+|---|---|---|
+| Default-branch protection | Ruleset OFRL-main-protection, ID 26516806, returned by GitHub with enforcement ACTIVE | Configured control verified; retain all six required contexts |
+| Governance / foundation | PR #14 merged to main at `cc2d01b3ffd1d63d32fe87430967a4a86ecbffaa` | AUD-002 is resolved; historical PR #14 pending wording in §4 is superseded |
+| Repository-wide policy gate | repository-policy workflow exists on main and is a required Ruleset context | Implemented; continue testing documentation-only and project-code changes |
+| Project registry | Project manifest schema, project lifecycle/standards and registry validator are on main | Implemented; current Project Catalog remains the authoritative admission list |
+| Schema validator tooling | package.json, package-lock.json and validation shell script are on main | Issue #9 is closed as completed; PR #12 was closed without merge after exact blob comparison showed its core files already existed on main |
+| Release-readiness enforcement | Manifest schema 1.1.0, risk/type-specific gate derivation, reviewer/conflict evidence, residual-risk assessment/ownership/expiry and separate authorization are on main | **IMPLEMENTED — PR #32 merged; Issue #19 closed completed**; actual project-specific release gates and approvals remain outstanding until recorded in the individual project manifest |
+| Account continuity | Policy is documented; actual personal-account MFA/recovery/successor/backup settings are not proven by repository files | Founder action remains manual and must be confirmed separately |
+| GitHub Advanced Security | Secret scanning, push protection, Dependabot alerts and code scanning settings were not verified by the available repository read-back | UNKNOWN; do not infer enabled or disabled |
+| Maintainer independence | Repository governance remains Stage 0 / Founder-maintained | No independent review evidence may be claimed until an eligible person submits an actual review |
+
+### 10.2 Registered portfolio
+
+The current main-branch Project Catalog registers **one** project:
+
+| Project | Main status | What is actually delivered |
+|---|---|---|
+| OFRL-IB-001 — Integrated Three-Statement Financial Model | In Development; R2; evidence maturity 0 / Proposed; not released | Input contract, synthetic validation fixture, Rust historical semantic validator, hardened CLI input boundary, typed diagnostics, shared Schema/Rust corpus and test-only numeric derivation tooling. No production forecast engine, forecast result, ModelRun, Scenario Feasibility engine or XLSX report yet. |
+
+OFRL-CM-001 is proposed in draft PR #29 but is **not registered on main** and is not yet an admitted OFRL project. Do not describe its Pressure Points pilot, workstream register or validation as a main-branch OFRL capability before admission. Its PROJECT_CONTROL.md is a useful pattern for project-level single-source-of-truth management, but its branch snapshot must be re-fetched before reuse.
+
+### 10.3 Current open issues and decision gates
+
+| Issue | Current state | Required action |
+|---|---|---|
+| [#2 — IB V1 scope and forecast-engine gates](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/2) | OPEN; legacy parent tracker has 31 checked / 6 unchecked items but contains older branch/status statements | Reconcile it to the canonical IB Implementation Roadmap; do not treat the old checklist as current task truth |
+| [#16 — Rust supply-chain controls before release](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/16) | OPEN; 24 checked / 10 unchecked | Finish release-source SBOM, source-level licence/notice/security review, temporary generator exception disposition, checksums and authorization before official release |
+| [#19 — risk-tier release readiness](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/19) | CLOSED / completed; implementation merged in PR #32 | No remaining repository-level implementation action. Project-specific risk assessments and release decisions remain separate |
+| [#28 — finite V1 numeric input domain](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/28) | OPEN; 0/9 criteria checked; no approved versioned Numeric Profile | Model Owner must provide finite domain and precision decisions; Finance/Accounting and Engineering record their own separate decisions |
+| [#23 — typed deserialization diagnostics](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/23) | CLOSED / completed; 9/9 criteria checked | No remaining implementation action for EA-06 |
+
+### 10.4 Open Pull Requests — current exact branch state
+
+The following open PR states and comparisons were fetched against current main `79158e9225ec3976191e693a55206d40a025be6d` on 2026-11-06. Branch comparisons are measured against that commit even where a PR targets another base branch. Every CI result is valid only for the exact SHA stated; it must not be carried to a newer head.
+
+| PR | State / purpose | Head and divergence | CI / blocker / disposition |
+|---|---|---|---|
+| [#11 — numeric foundations research](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/11) | Open / Draft | `120ccd3414fb7018011ea3991800728f86736319`; 77 ahead / 377 behind current main; diverged | Eight checks succeeded on that exact old head, but it is not current main evidence. The 800-output BM-002/BM-003 material and Python reference are branch-only. Do not merge the branch directly; selectively review and port only required evidence to a fresh main-based branch, rerun checks and update the project record. |
+| [#21 — CycloneDX candidate release pipeline](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/21) | Open / Draft | `c8e2f1966d17e0b9623a63a16d2d14565077f355`; PR base is `supply-chain/decimal-poc-lockfile`; 2 ahead / 240 behind current main; diverged | Six required contexts succeeded on the old head; the additional candidate-bundle job failed because the generator produced no matching binary-specific SBOM file. No release artifact was established. Do not merge directly; reconsider only after source/target/output-path investigation on a fresh base. Main's PR #22 preview is separate and uses the narrower preview contract. |
+| [#25 — upload-artifact dependency update](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/25) | Open / non-draft; Dependabot | `6b638c17584e134e8537fbaddf742d075d0965cc`; 1 ahead / 9 behind current main; diverged | Eight contexts succeeded on that old head. Update against current main and require exact-head CI before merge decision. |
+| [#26 — setup-node dependency update](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/26) | Open / non-draft; Dependabot | `ac31c444811239f070e0aff7445230f27a4d4244`; 1 ahead / 9 behind current main; diverged | Seven contexts succeeded on that old head. Update against current main and require exact-head CI before merge decision. |
+| [#29 — OFRL-CM-001 admission and pilot](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/29) | Open / Draft | `3b18860a769b2c1751535099b7335feb007ca8e5`; 23 ahead / 218 behind current main; diverged | Seven workflows succeeded on the exact old head. It is not admitted on main. The formalization still records unresolved Pressure Points semantics and no solver authorization. Rebase/port only after a fresh admission review; no solver or case completion should be inferred from green CI. |
+
+
+PR #12 was closed without merge after the three core schema-tooling files were found byte-for-byte identical by Git blob SHA on main and its old head. Issue #9 was then closed as completed. This is a duplicate-branch resolution, not a PR merge. PR #31 merged as `66a73fcd19a9b33f2dcebf1ebd66b2de1c3ed562`, establishing the canonical IB execution register. PR #32 then merged as `79158e9225ec3976191e693a55206d40a025be6d`; Issue #19 / AUD-022 is closed completed and the release-readiness control is active on main.
+
+### 10.5 What remains before OFRL-IB-001 V1 can be called complete
+
+The remaining implementation sequence is controlled by the existing `projects/OFRL-IB-001/IMPLEMENTATION_ROADMAP.md`, now version 0.9.0 and the sole IB task register:
+
+1. Model Owner domain and source-precision decisions (Issue #28).
+2. Finance/Accounting review of the V1 formula conventions, materiality, rounding and separate error budgets.
+3. Engineering derivation of magnitude, pre-normalization scale, coefficient capacity, division-error propagation and resource envelope against the approved domain.
+4. Backend selection only after correctness, numeric-domain, resource and dependency gates pass.
+5. Canonical Rust forecast engine and separate Structural Integrity / Scenario Feasibility outcomes.
+6. Canonical ModelRun, deterministic provenance and CLI run/inspect/export contract.
+7. Analyst-facing XLSX generated only from canonical ModelRun values and reconciled to them.
+8. Release hardening, current SBOM/checksum and source-level legal/security review, application of the merged risk-tier release-readiness controls to OFRL-IB-001, R2 domain assurance and reproducible independent review.
+
+The numerical tolerance currently written in Validation Matrix v0.1.0 is proposed, not approved. It must not be used to grade production model outputs until its owner and versioned approval record are explicit. No candidate backend or business-domain bound is selected by the test-only synthetic profile or POC stress points.
+
+### 10.6 What follows IB-001: portfolio development aligned to the OFRL Mission
+
+OFRL's Vision is to build an open, evolving body of financial knowledge, methods and practical tools that people can inspect, test, use, adapt and improve. Its Mission is to investigate financial and business problems with different perspectives and turn useful research into reproducible models, software and practical resources. Completing IB-001 V1 is therefore one important deliverable, not completion of OFRL itself.
+
+The portfolio should expand through evidence-led project admission, not by creating a project for every topic in the Vision at once:
+
+| Sequence | Candidate direction | Admission rule / useful outcome |
+|---|---|---|
+| P-Next-01 | OFRL-CM-001 — Computational Methods & Problem-Solving Case Studies | First complete the PR #29 admission review, reconcile the branch to current main, and ensure its one canonical PROJECT_CONTROL.md remains the sole task register. Pressure Points must remain blocked/incomplete until the full formal rule, output predicate and verification are established; no solver is authorized by candidate clusters alone. |
+| P-Next-02 | Quantitative finance / financial mathematics research | Admit a bounded research question with a baseline, assumptions, mathematical derivation, alternative method, reproducible tests and independent verification plan. Do not launch a broad “quant” mega-project without a defined contribution. |
+| P-Next-03 | Derivatives, volatility, market microstructure and liquidity | Select one concrete problem (for example, pricing/hedging, volatility surface behaviour, liquidity measurement or execution-cost methodology) only after a research proposal defines data rights, objective, benchmark and evaluation design. |
+| P-Next-04 | Portfolio, risk and investment analytics | Build on validated methods only; specify risk measures, model assumptions, backtest controls, leakage/selection-bias controls, costs and reproducibility before any decision-use claim. |
+| P-Next-05 | Financial data, research infrastructure and reusable tools | Admit shared components only after at least two real projects demonstrate the same need. Keep common schemas/scripts/workflows in root-level shared locations only when a genuine shared contract exists; otherwise retain project-local boundaries. |
+
+These are candidate workstreams, not approved projects or a promise to implement every topic. Each new project must pass the root Project Lifecycle admission gate, have a unique ID, an approved project manifest/catalog entry, explicit risk and evidence maturity, a single project-level management source of truth and its own domain validation profile. Keep one active case per research project unless a recorded decision justifies parallel cases.
+
+### 10.7 Portfolio-level residual controls
+
+- OFRL-IB-001 project-level R2 release evidence and independent financial-model review remain outstanding under IB-T010; the repository-level release-readiness enforcement itself is now implemented on main.
+- Issue #16: official release supply-chain, source/licence/notice and artifact controls.
+- Founder account continuity: configure and test MFA, recovery, successor and backup controls; code alone cannot prove personal account settings.
+- Advanced Security settings: verify each actual setting in GitHub or report it UNKNOWN.
+- Branch hygiene: resolve stale/diverged PRs through explicit supersede/port/close decisions, never by blind merges or carrying old CI conclusions forward.
+- Contribution capacity: appoint reviewers or maintainers only when real qualified people are available; never fabricate independence, CODEOWNERS or approval records.
+
+### 10.8 Meaning of “100% complete”
+
+OFRL is an evolving research lab; its Vision cannot be marked globally 100% complete by finishing a finite list of projects. Use separate completion states:
+- **IB-001 V1 complete:** every V1 deliverable and release gate in §7 passes, the authorized release is traceable to reviewed source, and all limitations/exclusions are published.
+- **Project portfolio operational:** admitted projects have owners, one source of truth each, declared evidence maturity, validation, release state and maintained handoffs; portfolio controls and root governance are enforced.
+- **OFRL Mission in operation:** the lab repeatedly admits, investigates, tests, compares and publishes useful, reproducible work across justified research areas. This is sustained operation, not a terminal 100% milestone.
+
+No new project directory, generic framework or broad architecture should be created just to make the portfolio appear complete. New work requires a problem, evidence plan, owner, bounded deliverable and explicit admission decision.

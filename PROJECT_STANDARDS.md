@@ -176,6 +176,21 @@ The Founder may assign a higher tier than examples suggest. When uncertain, use 
 
 R3 activity is not automatically prohibited, but it requires explicit approval and additional evidence before implementation against live systems or public release. Research-only simulation must remain isolated from live credentials and execution.
 
+### 4.1 Release-readiness evidence by risk tier
+
+The versioned project manifest (schema 1.1.0) records release evidence separately from lifecycle state and publication authorization. Applicable gates use only these dispositions: `PASS`, `FAIL`, `NOT RUN`, `BLOCKED`, and `NOT APPLICABLE`. Every disposition carries a rationale, recorder and date; a PASS also requires a named assessor and evidence reference. A NOT APPLICABLE decision requires a substantive rationale.
+
+- **R0:** scope/claims, evidence/limitations, licence/IP and Founder review before publication.
+- **R1:** R0 controls plus reproducibility and research-method/domain review.
+- **R2:** R1 controls plus project-type controls such as financial/numeric controls and dependency/SBOM evidence. Independent assurance is explicitly decided and explained; financial models require it before release.
+- **R3:** R2-relevant controls plus mandatory independent domain review, independent security review, privacy/legal applicability, operational safeguards, incident response, rollback/recovery and Founder approval. Privacy/legal review may be marked NOT APPLICABLE only with a reasoned assessment. The threat-model and security-profile admission checks remain in force.
+
+Any non-`none` data classification also requires both `data_rights` and an explicit `privacy_legal_review`; the latter may be NOT APPLICABLE only with a substantive scope-based rationale. R3 requires `privacy_legal_review` regardless of data classification.
+
+The versioned `residual_risk_assessment` records the review owner, reviewer role, review date, next review date, evidence references, and any residual-risk summaries. Each recorded risk requires a stable ID, severity, disposition, control owner, review due date, expiry date, expiry condition, rationale and evidence reference. An `ACCEPTED` risk additionally requires a named accepting authority, role, date and decision reference. An `ELIGIBLE_FOR_AUTHORIZATION` assessment cannot contain an `OPEN` residual risk. Use only sanitized summaries and access-controlled evidence references; do not place confidential review notes, personal data, credentials, or restricted evidence in the public manifest.
+
+The registry rejects promotion to `pre_release` or `released` unless the assessment is eligible and a separate authorization is recorded. `LIVE_EXTERNAL` is restricted to an R3 project with released and authorized status. Maintenance requires evidence of correction/support controls. The validator checks manifest structure, gate coverage, references and state consistency; it does **not** verify reviewer qualifications, conduct a legal opinion, or authenticate the substance of external evidence. Those remain human governance decisions and must be evidenced by actual review records.
+
 ## 5. Cross-project validation profiles
 
 A project may select one or more validation profiles in its manifest:
@@ -211,10 +226,10 @@ Review intensity must reflect risk and the type of claim:
 
 - R0: Founder or delegated Maintainer review; correct attribution and scope.
 - R1: Research-method review; data and empirical design reviewed where relevant.
-- R2: Domain review of calculations, interfaces, validation evidence, and operational limitations.
-- R3: Independent domain and security/privacy review as relevant; live use or external action must not rely solely on Founder self-review.
+- R2: Proportionate domain review of calculations, interfaces, validation evidence, and operational limitations. The manifest must explicitly state whether independent assurance is required and why; R2 financial models require independent domain assurance before release.
+- R3: Independent domain and security review, privacy/legal applicability, operational safeguards, incident response, and rollback/recovery before release or live external operation. Founder self-review is never counted as independent assurance.
 
-During Stage 0, the Founder may approve their own work because no independent Maintainer exists. This must be disclosed as Founder approval, not independent review. For R2/R3 claims requiring independent assurance, the project must remain exploratory or unreleased until appropriate external review can be obtained or the claim is narrowed honestly.
+During Stage 0, the Founder may approve their own work because no independent Maintainer exists. The manifest records this as Founder approval, not independent review. R2 independent assurance is claim- and risk-proportionate; financial models must set it to required before release. R3 always requires independent assurance. If the required qualified reviewer is unavailable, the project remains unreleased or the intended claim/use is narrowed; a Boolean field or AI-generated assessment does not prove reviewer independence or competence.
 
 ## 8. Common non-conformance rules
 

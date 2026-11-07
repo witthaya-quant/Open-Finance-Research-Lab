@@ -5,6 +5,7 @@ use serde_json::Value;
 
 use crate::diagnostics::{Diagnostic, DiagnosticCategory, DiagnosticCode, ValidationReport};
 use crate::domain::{BalanceSheet, CalendarDate, CashFlowStatement, IncomeStatement, ModelInput};
+use crate::typed_deserialization::validate_model_input_shape;
 
 const V1_SCHEMA_VERSION: &str = "0.1.0";
 const V1_DAY_COUNT_BASIS: u16 = 365;
@@ -36,9 +37,24 @@ pub fn validate_input_json(input: &str) -> ValidationReport {
         }
     };
 
+    if let Err(diagnostic) = validate_model_input_shape(&value) {
+        return ValidationReport::rejected(*diagnostic);
+    }
+
     let model = match serde_json::from_value::<ModelInput>(value) {
         Ok(model) => model,
-        Err(error) => return deserialize_failure(error.to_string()),
+        Err(_) => {
+            return ValidationReport::rejected(Diagnostic::error(
+                DiagnosticCode::InputDeserializationFailed,
+                DiagnosticCategory::InputSyntax,
+                "The typed V1 decoder rejected a value after contract preflight.",
+                None,
+                None,
+                None,
+                None,
+                None,
+            ));
+        }
     };
 
     if model.schema_version != V1_SCHEMA_VERSION {
@@ -55,7 +71,6 @@ pub fn validate_input_json(input: &str) -> ValidationReport {
     }
 
     let mut diagnostics = Vec::new();
-
     validate_metadata(&model, &mut diagnostics);
     validate_periods(&model, &mut diagnostics);
     validate_opening_balance_sheet(&model, &mut diagnostics);
@@ -63,81 +78,6 @@ pub fn validate_input_json(input: &str) -> ValidationReport {
     validate_forecast_assumptions(&model, &mut diagnostics);
 
     ValidationReport::from_diagnostics(diagnostics)
-}
-
-fn deserialize_failure(message: String) -> ValidationReport {
-    let (code, category, human_message) = if message.contains("DECIMAL_STRING_REQUIRED") {
-        (
-            DiagnosticCode::DecimalStringRequired,
-            DiagnosticCategory::InputSyntax,
-            "A Decimal field was supplied as a JSON number or another non-string token.".to_owned(),
-        )
-    } else if message.contains("JSON_TYPE_MISMATCH") {
-        (
-            DiagnosticCode::JsonTypeMismatch,
-            DiagnosticCategory::InputSyntax,
-            "A field has the wrong JSON type.".to_owned(),
-        )
-    } else if message.contains("DECIMAL_TEXT_NON_CANONICAL") {
-        (
-            DiagnosticCode::DecimalTextNonCanonical,
-            DiagnosticCategory::InputSyntax,
-            "A Decimal string does not use the canonical base-10 grammar.".to_owned(),
-        )
-    } else if message.contains("DECIMAL_SCALE_EXCEEDED") {
-        (
-            DiagnosticCode::DecimalScaleExceeded,
-            DiagnosticCategory::InputSyntax,
-            "A Decimal string exceeds the maximum supported fractional scale.".to_owned(),
-        )
-    } else if message.contains("DECIMAL_OUT_OF_RANGE") {
-        (
-            DiagnosticCode::DecimalOutOfRange,
-            DiagnosticCategory::InputSyntax,
-            "A Decimal string is outside the supported representation or loses information when parsed.".to_owned(),
-        )
-    } else if message.contains("unknown field") {
-        (
-            DiagnosticCode::UnknownField,
-            DiagnosticCategory::Schema,
-            "The input contains a field that is not declared in this schema version.".to_owned(),
-        )
-    } else if message.contains("missing field") {
-        (
-            DiagnosticCode::RequiredFieldMissing,
-            DiagnosticCategory::Schema,
-            "The input is missing a required field.".to_owned(),
-        )
-    } else if message.contains("invalid value") || message.contains("unknown variant") {
-        (
-            DiagnosticCode::InvalidEnumValue,
-            DiagnosticCategory::Schema,
-            "The input contains a value outside the declared enumeration.".to_owned(),
-        )
-    } else if message.contains("invalid type") {
-        (
-            DiagnosticCode::JsonTypeMismatch,
-            DiagnosticCategory::InputSyntax,
-            "A field has the wrong JSON type.".to_owned(),
-        )
-    } else {
-        (
-            DiagnosticCode::InvalidEnumValue,
-            DiagnosticCategory::Schema,
-            "The input could not be deserialized into the closed V1 model contract.".to_owned(),
-        )
-    };
-
-    ValidationReport::rejected(Diagnostic::error(
-        code,
-        category,
-        human_message,
-        None,
-        None,
-        None,
-        None,
-        Some(message),
-    ))
 }
 
 #[allow(clippy::too_many_arguments)]
