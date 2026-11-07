@@ -437,7 +437,7 @@ fn node_index(time: usize, up_moves: usize) -> usize {
     let (left, right) = if time % 2 == 0 {
         (time / 2, time + 1)
     } else {
-        (time, (time + 1) / 2)
+        (time, time.div_ceil(2))
     };
     left * right + up_moves
 }

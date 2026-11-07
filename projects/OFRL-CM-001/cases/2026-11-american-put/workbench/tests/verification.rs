@@ -4,6 +4,7 @@ use american_put_workbench::{
 };
 use num_bigint::BigInt;
 use num_rational::BigRational;
+use std::cmp::Ordering;
 
 fn r(numerator: i64, denominator: i64) -> Rational {
     BigRational::new(BigInt::from(numerator), BigInt::from(denominator))
@@ -180,7 +181,6 @@ fn exhaustive_history_and_markov_policy_spaces_match_bellman_value() {
             }
 
             let mut spot = input.initial_spot.clone();
-            let mut up_moves = 0_usize;
             let mut exercise_time = None;
 
             for time in 0..input.periods {
@@ -195,7 +195,6 @@ fn exhaustive_history_and_markov_policy_spaces_match_bellman_value() {
                 let is_up = ((path >> shift) & 1) == 1;
                 if is_up {
                     spot *= &input.up_factor;
-                    up_moves += 1;
                 } else {
                     spot *= &input.down_factor;
                 }
@@ -210,11 +209,13 @@ fn exhaustive_history_and_markov_policy_spaces_match_bellman_value() {
                 path_probability * payoff_value * rational_power(&inverse_discount, time);
         }
 
-        if expected_value > history_max {
-            history_max = expected_value;
-            history_maximizers = 1;
-        } else if expected_value == history_max {
-            history_maximizers += 1;
+        match expected_value.cmp(&history_max) {
+            Ordering::Greater => {
+                history_max = expected_value;
+                history_maximizers = 1;
+            }
+            Ordering::Equal => history_maximizers += 1,
+            Ordering::Less => {}
         }
     }
 
@@ -264,11 +265,13 @@ fn exhaustive_history_and_markov_policy_spaces_match_bellman_value() {
                 path_probability * payoff_value * rational_power(&inverse_discount, time);
         }
 
-        if expected_value > markov_max {
-            markov_max = expected_value;
-            markov_maximizers = 1;
-        } else if expected_value == markov_max {
-            markov_maximizers += 1;
+        match expected_value.cmp(&markov_max) {
+            Ordering::Greater => {
+                markov_max = expected_value;
+                markov_maximizers = 1;
+            }
+            Ordering::Equal => markov_maximizers += 1,
+            Ordering::Less => {}
         }
     }
 
