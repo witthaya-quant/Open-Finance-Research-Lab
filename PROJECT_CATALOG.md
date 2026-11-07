@@ -11,6 +11,7 @@ Every project below must have a current `project.json` manifest. The manifest is
 | Project ID | Project | Types | Lifecycle | Risk | Evidence |
 |---|---|---|---|---|---|
 | [OFRL-IB-001](projects/OFRL-IB-001/README.md) | Integrated Three-Statement Financial Model | Research, Financial Model, Software | In Development | R2 | 0 — Proposed |
+| [OFRL-CM-001](projects/OFRL-CM-001/README.md) | Computational Methods & Problem-Solving Case Studies | Research, Quantitative Research | In Development | R1 | 0 — Proposed |
 
 ## Adding a project
 
