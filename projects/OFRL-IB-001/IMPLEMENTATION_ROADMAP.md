@@ -2,9 +2,9 @@
 
 # OFRL-IB-001 — Implementation Roadmap
 
-**Roadmap version:** 0.9.0  
+**Roadmap version:** 0.9.8  
 **Status:** Canonical project delivery register; execution remains gated by recorded decisions  
-**Audit baseline:** main at 5f8f578c387150214a1f438c3d67da48652eb4cb  
+**Audit baseline:** main at cdbf345c6e27f1cd82f3419b164eb4a65575c09b  
 **Date:** 2026-11-06
 
 ## 1. Delivery principles
@@ -27,6 +27,7 @@ The V1 scope remains one generic non-financial operating company, three annual h
 | Acceptance criteria and validation evidence | VALIDATION_MATRIX.md and linked workflow/test evidence | A parallel test tracker |
 | Model Owner numeric inputs awaiting approval | NUMERIC_PROFILE_WORKSHEET.md and Issue #28 | Fixtures, benchmark values, stress-test values or chat guesses |
 | Audit findings and residual controls | ENGINEERING_AUDIT.md | A second findings register |
+| IB-001 dependency source, licence, notice and advisory evidence | DEPENDENCY_REVIEW.md | A duplicate task board or portfolio-wide findings register |
 
 GitHub Issues and Pull Requests provide discussion, review and implementation evidence. They do not replace this task register. README is navigation and a concise public status summary, not a competing roadmap.
 
@@ -150,6 +151,15 @@ Use [`NUMERIC_BACKEND_EVALUATION.md`](NUMERIC_BACKEND_EVALUATION.md) as the cand
 - Preserve SBOMs, checksums and exact source/build identity.
 
 PR #11's dependency inventory and advisory results remain on its unmerged branch and are point-in-time evidence only. The isolated Decimal Contract POC lockfile and locked CI, plus the preview-only CLI SBOM/checksum workflow, are on main through PRs #20/#22. The main preview pipeline does not close source-level licence/notice review, advisory disposition, multi-platform release evidence or official-release authorization. Issue #16 remains open for these release gates. The yanked xml-rs 0.8.19 preview-generator exception is time-bounded and must be reviewed before official release.
+
+PR #34 adds a locked source-archive inventory and current-head RustSec audit workflow, plus the project-scoped dependency review record. The hardened workflow compares locked registry package identities and Cargo metadata in both directions, fails closed on missing/extra/duplicate package identities or unexpected sources, and validates the complete inventory and RustSec evidence artifacts before PASS. Cargo source configuration changes also trigger the workflow. After merge, it repeats source and RustSec review weekly on the default branch (Monday 06:17 UTC) and remains manually dispatchable; it does not add a required Ruleset context.
+
+The final dependency-audit run [#42229312405](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312405) checked out source commit `0158b1adacff08ff3587c01722cefb75bfa85be0`. Its schema 1.2.0 artifact (ID `13507007891`; archive SHA-256 `818c24d7b272f89b206897cfbb607db5dd05ac8759d051ae51aa071a3355a2ef`) independently verified 107/107 registry archive checksums, 107/107 source-manifest/Cargo-metadata cross-checks and 107/107 licence-text candidates. The application lockfile SHA-256 was `485a9c8d5e7d04a7abf0cd266540c7499dd49c51999c3c553532ad9200864c90`; the Decimal Contract POC lockfile SHA-256 was `288b19b1e97cab000df902961af302d0ba4413bad5dabd731da7feddaf4f9d56`. Both committed lockfiles passed RustSec with 0 vulnerabilities / 0 warnings against database commit `26fd2d43f7280a1fb925a3743ec463017afe7119` (1,409 advisory records); scanner version `cargo-audit 0.22.2`, Rust 1.85.0, no ignore list. The downloaded artifact SHA-256 matched GitHub's digest. On the same source commit, Repository Policy run [#42229312477](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312477), Numeric and Input Contract run [#42229312556](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312556), and Rust Runtime Semantic Validator run [#42229312412](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312412) also passed; the semantic validator passed on Rust 1.85.0 and 1.99.1. The final exact PR-head CI therefore passed all four workflow groups.
+
+This evidence belongs to the unmerged PR source commit, not `main`. Subsequent synchronization commits on PR #34 modify documentation only; they do not change the workflow, manifests or lockfiles used by this run. All 107 human source/licence reviews remain PENDING; the preview-generator exception and official-release gates remain open. The dependency review record is the specialist evidence source for IB-T005; this roadmap remains the sole task/status register.
+
+**Main-branch baseline verified 2026-11-06 (`cdbf345c6e27f1cd82f3419b164eb4a65575c09b`):** the application lockfile contains 54 package records (52 registry, two local) and no Git sources; the separate Decimal POC lockfile contains 56 records (55 registry, one local). The application lockfile blob is identical to the one used by the PR #22 preview run, but that run was triggered by `pull_request` on source `3ca98dd26de97098f68fa0ca45b92fbb466f1d19`, not by the current `main` commit. The four workflows on `main` do not currently run `cargo audit` / RustSec. PR #11's scan remains unmerged and cannot satisfy the current advisory gate. Dependabot schedules weekly updates for Cargo, GitHub Actions and npm; this is update automation rather than advisory or licence clearance. Exact source-archive review and package-level licence/notice dispositions remain NOT COMPLETE.
+
 
 #### Workstream D — Independent finance and accounting review
 
@@ -311,7 +321,7 @@ This table is the only active IB task list. Task IDs are stable. A task moves to
 | IB-T002 | Finance/Accounting policy review | Review V1 equations, operating assumptions, accounting links, materiality, rounding, and separate arithmetic / accounting-identity / schedule-roll-forward / workbook display error budgets | **BLOCKED — qualified review required** | Follows T001 domain definition; record reviewer, competence/scope, evidence, findings and decision. Do not substitute AI analysis or founder notes for independent review. |
 | IB-T003 | Engineering numeric envelope | Derive five-year maximum magnitudes, pre-normalization scales, coefficient bounds at every material formula node, division context/error propagation and finite resource envelope | **BLOCKED — approved input policy required** | After T001/T002 policy inputs, rerun the main-branch exact derivation, derive just-below/at/just-above boundary cases and measure runtime resources. |
 | IB-T004 | Production arithmetic backend | Select or reject rust_decimal, BigDecimal or another justified candidate using correctness, representability, precision, determinism, resource, source/licence and migration gates | **NOT STARTED — gated** | T001–T003 plus Workstream D review; no candidate is selected by weighted score if any hard gate fails. |
-| IB-T005 | Dependency and source acceptance | Complete package-source/provenance, licence/notice, advisory, exception and reproducible-build disposition for the eventual production dependency graph | **OPEN — Issue #16** | Main preview is not an official release SBOM. Work may proceed in parallel only where it does not assume the final backend; resolve yanked generator exception before release. |
+| IB-T005 | Dependency and source acceptance | Complete package-source/provenance, licence/notice, advisory, exception and reproducible-build disposition for the eventual production dependency graph | **OPEN — PR #34 schema 1.2.0 inventory/advisory automation PASS; human acceptance pending** | Complete human package-level source/licence/notice disposition against the content-specific licensing policy, review exceptions and generator toolchain, then rerun against the approved production graph after IB-T004; official release evidence remains separate. |
 | IB-T006 | Canonical Rust forecast engine | Implement operating forecast, supporting schedules and integrated IS/BS/CFS inside existing ofrl_model boundaries | **NOT STARTED — blocked by Phase 2 exit** | No new crate or alternate formula engine. Implement only after T001–T004 and T002 review are accepted. |
 | IB-T007 | Forecast validation | Structural Integrity and Scenario Feasibility, formula coverage, edge/boundary/property tests, no-plug and funding-shortfall behaviour | **NOT STARTED — depends on T006** | Use approved numeric policy and the existing Validation Matrix after its tolerance gates are versioned and approved. |
 | IB-T008 | ModelRun, provenance and CLI | Deterministic canonical result contract, SHA-256 input/output fingerprints, policy/backend/engine identity, formula lineage and safe atomic writes | **NOT STARTED — depends on T006/T007** | Extend existing ofrl_cli; preserve distinct validation, calculation, integrity and feasibility outcomes. |
