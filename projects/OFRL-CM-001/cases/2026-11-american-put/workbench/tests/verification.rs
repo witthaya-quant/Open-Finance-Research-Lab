@@ -97,22 +97,58 @@ fn maturity_only_model_returns_intrinsic_value() {
 }
 
 #[test]
-fn rejects_non_positive_parameters_and_arbitrage_domain() {
-    let mut non_positive = model(3);
-    non_positive.initial_spot = r(0, 1);
-    assert!(matches!(
-        price_american_put(&non_positive, 100),
-        Err(ModelError::NonPositiveParameter {
-            name: "initial_spot"
-        })
-    ));
+fn rejects_every_non_positive_parameter_and_no_arbitrage_boundary() {
+    let mut invalid_cases = Vec::new();
 
-    let mut arbitrage = model(3);
-    arbitrage.risk_free_gross = r(6, 5);
-    assert_eq!(
-        price_american_put(&arbitrage, 100),
-        Err(ModelError::NoArbitrageViolation)
-    );
+    let mut candidate = model(3);
+    candidate.initial_spot = r(0, 1);
+    invalid_cases.push((candidate, "initial_spot"));
+
+    let mut candidate = model(3);
+    candidate.strike = r(0, 1);
+    invalid_cases.push((candidate, "strike"));
+
+    let mut candidate = model(3);
+    candidate.up_factor = r(0, 1);
+    invalid_cases.push((candidate, "up_factor"));
+
+    let mut candidate = model(3);
+    candidate.down_factor = r(0, 1);
+    invalid_cases.push((candidate, "down_factor"));
+
+    let mut candidate = model(3);
+    candidate.risk_free_gross = r(0, 1);
+    invalid_cases.push((candidate, "risk_free_gross"));
+
+    for (candidate, expected_name) in invalid_cases {
+        assert!(matches!(
+            price_american_put(&candidate, 100),
+            Err(ModelError::NonPositiveParameter { name }) if name == expected_name
+        ));
+    }
+
+    for invalid in [
+        {
+            let mut value = model(3);
+            value.risk_free_gross = value.down_factor.clone();
+            value
+        },
+        {
+            let mut value = model(3);
+            value.risk_free_gross = value.up_factor.clone();
+            value
+        },
+        {
+            let mut value = model(3);
+            value.risk_free_gross = r(7, 5);
+            value
+        },
+    ] {
+        assert_eq!(
+            price_american_put(&invalid, 100),
+            Err(ModelError::NoArbitrageViolation)
+        );
+    }
 }
 
 #[test]
@@ -124,6 +160,18 @@ fn rejects_resource_limit_before_building_lattice() {
             required_nodes: 10,
             maximum_nodes: 9
         })
+    );
+}
+
+#[test]
+fn lattice_node_count_reports_integer_overflow() {
+    assert_eq!(
+        lattice_node_count(usize::MAX),
+        Err(ModelError::NodeCountOverflow)
+    );
+    assert_eq!(
+        lattice_node_count(usize::MAX - 1),
+        Err(ModelError::NodeCountOverflow)
     );
 }
 
