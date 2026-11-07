@@ -69,8 +69,8 @@ The programme combines mathematical problem-solving, strategic reasoning and gam
 | Project research specification | Prepared | RESEARCH_SPECIFICATION.md |
 | Shared case-study protocol | Prepared | CASE_STUDY_PROTOCOL.md |
 | First-pilot source record | Prepared | DATA_MANIFEST.md |
-| Pressure Points formalization | H-017 conditional 76-entry candidate map and H-018 positional challenge recorded; rule semantics and official mapping remain unresolved | cases/2026-11-pressure-points/; H-017/H-018 |
-| Official Jane Street solution | Archive index shows a November “Puzzle Solution” label; direct href/body not retrieved | CM-T0010 remains open |
+| Pressure Points formalization | H-017/H-018 candidate model rejected as a complete source-grounded explanation under CM-T0009; official puzzle answer remains unverified and formal semantics remain blocked | PROBLEM_FORMALIZATION.md § CM-T0009; TEST-046 |
+| Official Jane Street solution | Live Archive page lists the November puzzle and displays “Solution” as unlinked text; no direct target/body retrieved | CM-T0010 BLOCKED; DATA_MANIFEST.md §4; TEST-044 |
 | Solver or solution | Not started; not authorized by this phase | Deferred |
 | Comparative solver benchmark | Not started | Deferred |
 | Financial-engineering application claim | Not established | Must be assessed case by case |

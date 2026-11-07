@@ -8,7 +8,8 @@
 **Source publication label:** November 2026  
 **Source URL:** https://www.janestreet.com/puzzles/pressure-points-index/  
 **Access date:** 2026-11-05  
-**Case status:** INCOMPLETE — CM-T0008 candidate screening complete; H-017 remains conditional; source-rule and completeness validation remain BLOCKED  
+**Last research review:** 2026-11-07  
+**Case status:** INCOMPLETE / BLOCKED — CM-T0008 screening complete; CM-T0009 rejected H-017 as a complete source-grounded model; CM-T0010 and CM-T0011 remain blocked  
 **Evidence maturity:** 0 — Proposed
 
 ## 1. Why this case was selected
@@ -53,10 +54,11 @@ The full sequence list, emoji sequence, images, and official solution are intent
 | Formal input and output semantics established | BLOCKED |
 | CM-T0007 audit of twelve candidate clusters: 48 distinct source assignments checked; 25 exact candidate anagrams and 23 residual-bearing pairs; semantic fit and positional evidence graded separately | PASS — audit only, not proof of puzzle intent |
 | CM-T0008 candidate work: H-017 complete-map audit plus H-018 evidence-led semantic/positional challenge of the previously open clues | PASS — screening complete; no candidate mapping accepted as an official Jane Street rule; Queen slot swap, 🧐 clue link, and exact global semantics remain unresolved |
+| CM-T0009 — bounded model-rejection assessment | PASS — H-017/H-018 are rejected as a complete source-grounded explanation; Ø→U, 2/1/1 residual operation, extraction order and `(11 12)` interpretation remain unproven. Candidate `ANTWERPSCHE DIAMANTKRING` is retained as conditional, not disproved and not verified |
 | Local letter-count residuals reproduced for the documented candidate groups | PASS |
 | Community-reported anagram readings registered as unverified leads | PASS |
 | Secondary solver-status sources reviewed and correctly classified as leads, not proofs | PASS |
-| Official Archive index now lists November Pressure Points / Puzzle Solution; direct solution URL and worked derivation retrieved | BLOCKED — index text observed; direct href and solution body not retrieved |
+| Official Jane Street Archive / solution retrieval | BLOCKED — live Archive lists the November puzzle and unlinked “Solution” text; the “Puzzle” link opens the puzzle/submission page; no direct solution target/body or worked derivation retrieved (CM-T0010; DATA_MANIFEST.md §4; TEST-044) |
 | Source-validated 19 emoji groups and 76 cardinal assignments reconstructed | BLOCKED — H-017 conditionally covers 76/76 source entries, but Queen's left/right member assignment, 🧐 clue membership, and source-authorized 19-group/cardinal rules remain unverified |
 | One global letter-reallocation / extraction rule explained across all 19 groups | BLOCKED |
 | Candidate output phrase independently verified | BLOCKED |
@@ -86,7 +88,7 @@ These are questions, not proposed answers. Hypotheses H-001 to H-017 and blocker
 
 Do not select SAT, CSP, graph search, string matching, anagram search, or another method until the rules support that representation.
 
-**CM-T0008 remains in progress.** The next work is to independently challenge H-017's weakest semantic and positional assignments, especially the Queen/Orchestra conflict, the Barcelona-versus-football quartet, Monopoly corner orientation, Washington D.C. neighborhood geometry, and the role of Ø. Do not repeat previously tested negative rosters unless new independent evidence changes the candidate set. Do not rely on the defective third-party Python comparator. Keep all exact-cover conclusions conditional; leave the official solution task open and preserve the no-go solver gate until source rules and the correctness predicate are established.
+**CM-T0008 is complete and CM-T0009 is PASS through the bounded rejection path.** The candidate H-017/H-018 construction has been rejected as a complete source-grounded explanation because the primary source does not define the role of Ø, the 2/1/1 residual operation, a traversal/extraction order, or the meaning of `(11 12)`. This does not establish that the conditional candidate answer is false. The next research tasks are CM-T0010 (retrieve a direct official solution target/body only if Jane Street exposes one) and CM-T0011 (independent derivation and correctness assessment only after authoritative rules and an acceptance predicate exist). Do not infer a solution URL from the Archive's unlinked label or search-index text. Keep the case INCOMPLETE / BLOCKED and the solver/Cargo gate NO-GO.
 
 ## 7. Attribution
 
@@ -101,7 +103,7 @@ All puzzle content remains attributable to Jane Street. OFRL does not claim owne
 
 **Current disposition: INCOMPLETE / BLOCKED — not solved and not ready for solver implementation.**
 
-The current research round has reproduced a third-party candidate map for all 19 themes and 76 visible source entries under a strict 2-exact / 1-surplus / 1-deficit multiset rule. This is a conditional exact cover of nominated rosters, not a source-validated solution. H-018 improves the positional evidence for selected clues but leaves the Queen Deacon/Taylor left-right swap unresolved, the 🧐-to-Monopoly association unsupported, D.C. positions approximate, and orchestra seating non-universal. The role of Ø, source-authorized theme membership, the global residual/extraction rule, and uniqueness/completeness remain unresolved. The Archive search index now displays a November “Puzzle Solution” label, but the accessible HTML still exposes no direct November href or solution body; third-party submission claims do not close this gap.
+The current research round has reproduced a third-party candidate map for all 19 themes and 76 visible source entries under a strict 2-exact / 1-surplus / 1-deficit multiset rule. This is a conditional exact cover of nominated rosters, not a source-validated solution. H-018 improves selected positional evidence but leaves Queen's Deacon/Taylor left/right swap unresolved, the 🧐-to-Monopoly association unsupported, D.C. positions approximate, and orchestra seating non-universal. CM-T0009 subsequently rejects H-017/H-018 as a complete source-grounded formal explanation: Ø→U, source-authorized group membership, the 2/1/1 operation, extraction order, and the meaning of `(11 12)` remain unproved. The candidate phrase `ANTWERPSCHE DIAMANTKRING` remains conditional; it has not been disproved or independently verified as Jane Street's intended answer. The live Archive page displays “Solution” as unlinked text; no direct official target or solution body has been retrieved.
 
 This is a **no-go for solver implementation under the evidence currently available**, not a claim that the puzzle is unsolvable and not a declaration that the case has been solved. Do not create a Cargo workspace, choose dependencies, or implement a solver while the correctness predicate remains undefined.
 
