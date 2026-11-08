@@ -816,11 +816,11 @@ jobs:
                       require(
                           isinstance(legal_file.get("path"), str)
                           and isinstance(legal_file.get("size_bytes"), int)
+                          and legal_file.get("size_bytes") >= 0
                           and isinstance(legal_file.get("sha256"), str)
                           and len(legal_file["sha256"]) == 64
-                          and legal_file.get("has_non_whitespace_content") is (
-                              legal_file.get("size_bytes", 0) > 0
-                          ),
+                          and all(character in "0123456789abcdef" for character in legal_file["sha256"])
+                          and isinstance(legal_file.get("has_non_whitespace_content"), bool),
                           f"{name}: malformed legal-file evidence for {key}",
                       )
                   actual_candidates = [
