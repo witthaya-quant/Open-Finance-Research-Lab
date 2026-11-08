@@ -155,20 +155,41 @@ This is a classification improvement, not a legal approval or a claim that every
 
 The repository's [Licensing and Reuse Policy](../../LICENSE_POLICY.md) applies to OFRL-owned material. Third-party crates remain under their own terms. OFRL's Apache-2.0 software licence does not relicense dependencies or remove their notice obligations.
 
-Known POC metadata items requiring source-level confirmation include:
+### 4.2 SPDX expression distribution and priority source-review queue
 
-| Package(s) | Publisher-declared expression observed | Review requirement |
+The schema 1.3.0 artifact contains 55 unique package identities. Publisher-declared Cargo licence expressions, counted once per unique identity, are:
+
+| Expression recorded in Cargo metadata | Unique identities |
+|---|---:|
+| MIT OR Apache-2.0 | 35 |
+| MIT | 5 |
+| Apache-2.0 OR MIT | 3 |
+| Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT | 3 |
+| BSD-2-Clause OR Apache-2.0 OR MIT | 2 |
+| Unlicense/MIT (legacy slash form; not an SPDX operator) | 2 |
+| (MIT OR Apache-2.0) AND Unicode-3.0 | 1 |
+| Apache-2.0 | 1 |
+| Apache-2.0 OR BSL-1.0 (Boost Software License 1.0) | 1 |
+| MIT OR Apache-2.0 OR LGPL-2.1-or-later | 1 |
+| Unlicense OR MIT | 1 |
+| Total | 55 |
+
+Priority items for the human disposition queue:
+
+| Package identity / family | Technical observation from the exact source inventory | Required human determination |
 |---|---|---|
-| `csv 1.4.0`, `csv-core 0.1.13` | `Unlicense/MIT` in the POC review metadata | Inspect both source archive licence texts and required notice/attribution obligations; do not silently reinterpret the legacy slash form. |
-| `r-efi 5.3.0` | `MIT OR Apache-2.0 OR LGPL-2.1-or-later` | Confirm alternatives and any applicable LGPL distribution/source obligations. |
-| `ryu 1.0.23` | `Apache-2.0 OR BSL-1.0` | Confirm the applicable alternative and its terms. |
-| `unicode-ident 1.0.27` | `(MIT OR Apache-2.0) AND Unicode-3.0` | Preserve the Unicode notice in addition to the selected permissive licence terms. |
-| `wasi`, `wasip2`, `wit-bindgen` | Apache-2.0 with LLVM exception, Apache-2.0, or MIT alternatives across the inspected package metadata | Inspect exact package notices and exception text; preserve the exact licence expression. |
-| `zerocopy`, `zerocopy-derive` | `BSD-2-Clause OR Apache-2.0 OR MIT` | Confirm the source archive and notices for each package/version. |
+| csv 1.4.0, csv-core 0.1.13 | Both declare the legacy Unlicense/MIT string. Source candidates include COPYING, LICENSE-MIT and UNLICENSE. | Confirm the upstream dual-licensing statement, whether either option may be selected, attribution obligations, and whether the non-SPDX Cargo metadata string requires upstream clarification. Do not normalize the slash to OR without an explicit source/legal basis. |
+| memchr 2.8.3 | Declares Unlicense OR MIT; source candidates include COPYING, LICENSE-MIT and UNLICENSE. | Confirm exact source terms and notices for the selected alternative. |
+| r-efi 5.3.0 | Declares MIT OR Apache-2.0 OR LGPL-2.1-or-later; embedded licence material is in AUTHORS. | Confirm the complete alternative terms and whether the chosen alternative creates LGPL source/distribution obligations. The filename/content scan does not choose the alternative. |
+| ryu 1.0.23 | Declares Apache-2.0 OR BSL-1.0; source inventory identifies LICENSE-APACHE and LICENSE-BOOST. | Confirm the exact Boost Software License 1.0 terms and required notices; do not confuse BSL-1.0 with the Business Source License. |
+| unicode-ident 1.0.27 | Declares (MIT OR Apache-2.0) AND Unicode-3.0; inventory identifies LICENSE-APACHE, LICENSE-MIT and LICENSE-UNICODE. | Preserve the additional Unicode 3.0 notice/terms whichever permissive alternative is selected. |
+| wasi 0.11.1+wasi-snapshot-preview1, wasip2 1.0.4+wasi-0.2.12, wit-bindgen 0.57.1 | Declare Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT; archive inventory records the Apache, LLVM-exception and MIT text candidates. | Confirm which alternative is relied upon and preserve any applicable LLVM exception/notice. Keep exact versions and component scopes. |
+| zerocopy 0.8.63, zerocopy-derive 0.8.63 | Declare BSD-2-Clause OR Apache-2.0 OR MIT; inventory records the BSD, Apache and MIT text candidates. | Confirm the selected alternative and BSD attribution/disclaimer obligations for source and binary redistribution. |
+| rust_decimal 1.43.0 | Core numeric candidate; declares MIT, with a source LICENSE candidate. | Review the actual crate source/version, maintainership, security history and MIT notice obligations. A permissive expression does not imply backend approval. |
 
-This list is a review queue, not a complete package-by-package decision. It is derived from the earlier POC inventory and must be rechecked against the current source archives.
+The other 35 MIT OR Apache-2.0 identities, five additional MIT identities, three Apache-2.0 OR MIT identities and one Apache-only identity remain in the same 55-identity human review queue. The artifact contains the exact package/version/scope, publisher-declared expression, repository field, source-manifest comparison, legal-file paths, byte sizes and SHA-256 values; a source reviewer must follow the exact package tag/release and record the selected terms, notice requirements, provenance assessment and decision.
 
-No blanket licence allow-list or legal approval is created by this document. In particular, an SPDX expression with `OR` represents alternatives, while `AND` and `WITH` can impose combined terms or an exception. The correct downstream choice and required notices must be recorded against the exact package/version.
+**No package is marked legally accepted by this scan.** Cargo metadata and a matching source-archive manifest are publisher assertions consistent with the archive; they do not authenticate control of the linked repository, establish copyright ownership, or determine the legal effect of every licence alternative. The 107 scope records remain PENDING until the responsible reviewer records a package-identity-level decision with its applicability to each dependency scope.
 
 ## 5. Security advisory assessment
 
@@ -184,9 +205,9 @@ That scan does not satisfy the current-head advisory gate. The new workflow runs
 
 A clean point-in-time scan does not prove that a package is free of vulnerabilities, establish exploitability or reachability, cover operating-system libraries, or detect defects not represented in the RustSec database.
 
-### 5.1 Current RustSec result — PR #34 hardened dependency-audit run
+### 5.1 Current RustSec result — PR #34 isolated-policy dependency-audit run
 
-Workflow run [#42229312405](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312405) audited the exact committed application and Decimal Contract POC lockfiles at source commit `0158b1adacff08ff3587c01722cefb75bfa85be0` with checksum-pinned `cargo-audit 0.22.2`, `--deny warnings`, and no ignore list.
+Workflow run [#42475507915](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475507915) audited the exact committed application and Decimal Contract POC lockfiles at source commit 61dff7bef9328f53172c6120ec3cdb0ee7b48a41 with checksum-pinned cargo-audit 0.22.2, --deny warnings, no ignored advisories and no target filters.
 
 | Scope | Audit dependency count | Vulnerabilities | Warnings | Exit |
 |---|---:|---:|---:|---:|
@@ -194,17 +215,18 @@ Workflow run [#42229312405](https://github.com/witthaya-quant/Open-Finance-Resea
 | Decimal Contract POC | 56 | 0 | 0 | 0 |
 
 RustSec Advisory Database snapshot:
+- Canonical remote: https://github.com/RustSec/advisory-db.git.
+- Commit: 309392b18f6b17022f82c701f300433126901068.
+- Commit timestamp: 2026-11-06T16:34:32+01:00.
+- Advisory records reported: 1,422.
+- Both JSON reports record vulnerabilities.found=false, vulnerabilities.count=0, and an empty warnings object.
+- Effective report settings record ignore=[], target_arch=[], target_os=[], severity=null, and informational categories unmaintained, unsound, notice.
 
-- Commit: `26fd2d43f7280a1fb925a3743ec463017afe7119`.
-- Timestamp: `2026-11-05T09:50:49+01:00`.
-- Advisory records reported by the audit: 1,409.
-- Both JSON reports record `vulnerabilities.found=false`, `vulnerabilities.count=0`, and an empty `warnings` object. Informational warning categories Unmaintained, Unsound and Notice were enabled as deny-worthy warnings.
+The uploaded artifact is ID 13615595282, size 18,429 bytes, archive SHA-256 d9db1068251bfe11b4090443c1e1986917d3c95b00a85c45c93908032afa2b69. The downloaded ZIP digest was independently verified against GitHub's artifact digest. The JSON inventory reports schema 1.3.0, 107 scope records and 55 unique package identities; the two lockfile SHA-256 values match the committed baseline.
 
-The uploaded exact-run artifact is ID `13507007891`, size 17,550 bytes, archive SHA-256 `818c24d7b272f89b206897cfbb607db5dd05ac8759d051ae51aa071a3355a2ef`. The audit context records source commit `0158b1adacff08ff3587c01722cefb75bfa85be0`, Rust toolchain `1.85.0`, the checksum-pinned scanner archive, and the exact advisory database revision. The downloaded archive digest was independently verified against GitHub's artifact digest.
+The audit runs in an isolated temporary working directory with isolated HOME and CARGO_HOME, explicitly selects Rust 1.85.0 via RUSTUP_TOOLCHAIN, pins the canonical advisory database URL, fetches the database, and does not load repository or runner-user .cargo/audit.toml settings. It checks both committed lockfiles, does not filter to the runner target, does not ignore advisories, and retains yanked checking.
 
-The same source revision passed all four PR workflows: Repository Policy [#42229312477](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312477), Numeric and Input Contract [#42229312556](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312556), Rust Runtime Semantic Validator [#42229312412](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312412), and Dependency Audit [#42229312405](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42229312405). Both semantic-validator Rust toolchains (1.85.0 and 1.99.1) completed successfully. The Numeric Envelope and Decimal Contract / JSON Schema jobs also passed.
-
-This is successful, point-in-time evidence for the two lockfiles and database commit above. It is not proof of absence of vulnerabilities, exploitability, application defects, system-library risks or issues outside RustSec. It does not resolve the `xml-rs 0.8.19` exception in the separate CycloneDX generator graph. The scan must be repeated after dependency/manifest/lockfile/workflow changes and on the default branch after merge as required by the release process.
+This is successful, point-in-time advisory evidence for the two exact lockfiles and database commit above. It does not establish absence of every vulnerability, exploitability, reachability, application defects or system-library risks. It does not resolve the separate cargo-cyclonedx 0.5.9 / yanked xml-rs 0.8.19 preview-generator exception. Repeat the scan after dependency, manifest, lockfile or workflow changes and on the default branch after merge.
 
 ## 6. SBOM and release provenance
 
@@ -236,18 +258,18 @@ Alternative generators or an SPDX-based pipeline may be evaluated only against t
 
 | Control | Current disposition |
 |---|---|
-| Committed application lockfile and package inventory | PASS — baseline identities verified; 52 registry packages in the application lockfile |
-| Isolated POC lockfile and package inventory | PASS — separate baseline; 55 registry packages in the committed POC lockfile |
-| Registry source-archive integrity | PASS on hardened PR #34 dependency-audit source commit `0158b1a` — 107 / 107 archive SHA-256 values matched committed lockfile checksums; rerun on `main` after merge |
-| Cargo metadata/source-manifest cross-check | PASS on the same source commit — 107 / 107 package records matched for identity, licence expression, licence-file and repository fields; workflow now fails on missing/extra/duplicate metadata identities |
-| Licence/notice candidate discovery | PASS as inventory only — 107 / 107 package records have a detected licence-text candidate; all 107 remain pending human review |
-| Evidence artifact integrity gate | PASS — complete package inventory, lockfile hashes, source/tool/advisory identity and RustSec JSON reports were cross-checked before CI PASS |
-| Package-by-package source and repository provenance review | OPEN — all 107 records retain `source_review=PENDING`; publisher repository metadata is not proof of ownership/control |
-| Package-by-package licence, copyright, patent and notice disposition | OPEN — all 107 records retain `licence_review=PENDING`; alternatives, exceptions and distribution obligations require human disposition |
-| Current RustSec audit on both committed lockfiles | PASS on hardened PR #34 source commit — 0 vulnerabilities and 0 warnings on both lockfiles against the recorded 1,409-entry database snapshot; point-in-time only, rerun after merge and relevant changes |
-| Duplicate-version and source exception review | OPEN — five duplicate package names in the application lockfile require target/feature review; no Git sources were found in either current lockfile |
-| Preview-generator exception review | OPEN; restricted to the preview-only generator and due 2027-02-04 or earlier if upstream removes the yanked package |
+| Committed application lockfile and package inventory | PASS — 52 registry records; lockfile SHA-256 unchanged |
+| Isolated POC lockfile and package inventory | PASS — 55 registry records; independent lockfile SHA-256 unchanged |
+| Cross-scope identity reconciliation | PASS — 107 scope occurrences resolve to 55 unique (name, version, source) identities and 50 crate names; 52 shared, zero application-only, three POC-only |
+| Registry source-archive integrity | PASS on PR #34 schema 1.3.0 run — 107 / 107 archive SHA-256 values match the committed lockfile checksums |
+| Cargo metadata/source-manifest cross-check | PASS — 107 / 107 package records matched for identity, licence expression, licence-file and repository fields |
+| Licence/notice candidate discovery | PASS as automated inventory only — all 107 scope records have at least one non-empty licence-text candidate; all 55 unique package identities still require human review |
+| RustSec advisory audit | PASS on PR source 61dff7b — both committed lockfiles have 0 vulnerabilities and 0 warnings against the recorded 1,422-record database snapshot; no ignores or target filters |
+| Duplicate-version and source exception review | OPEN — five package-name families have multiple versions; target/feature paths must be reviewed; no Git sources were found in either current lockfile |
+| Package-level source/provenance disposition | OPEN — 55 unique identities remain pending; publisher repository metadata does not authenticate repository ownership/control |
+| Package-level licence, copyright, patent and notice disposition | OPEN — 55 unique identities remain pending; exact alternative terms and redistribution obligations require human determination |
+| Preview-generator exception | OPEN; confined to the preview-only generator and due 2027-02-04 or earlier if upstream removes the yanked package |
 | Official release SBOM/checksums and reproducible release identity | NOT DONE — requires the exact approved release source and supported target matrix |
 | Release authorization | NOT AUTHORIZED |
 
-**IB-T005 remains OPEN.** PR #34 delivers repeatable technical inventory and point-in-time advisory evidence; it does not approve any package or authorize distribution. The exact source audit is on an unmerged PR commit, not `main`; the scheduled default-branch recheck becomes active after merge. Human source/licence/notice dispositions, the generator exception, the eventual production dependency graph after IB-T004, official release SBOM/checksums, reproduction and publication authorization remain separate gates. No forecast engine work is authorized by this document.
+**IB-T005 remains OPEN.** PR #34 delivers repeatable source inventory, fail-closed artifact consistency checks and point-in-time advisory evidence; it does not approve any package or authorize distribution. The exact source audit is on an unmerged PR commit, not main; the scheduled default-branch recheck becomes active after merge. Human review of the 55 unique identities, duplicate-version target/feature paths, the preview-generator exception, the eventual production dependency graph after IB-T004, official release SBOM/checksums, clean-checkout reproduction and publication authorization remain separate gates. No Forecast Engine work is authorized by this document.
