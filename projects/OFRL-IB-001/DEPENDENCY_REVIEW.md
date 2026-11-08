@@ -2,12 +2,13 @@
 
 # OFRL-IB-001 — Dependency and Source Review
 
-**Review version:** 0.1.3  
+**Review version:** 0.1.4  
 **Task:** IB-T005 — Dependency and source acceptance  
 **Issue:** [#16 — Rust supply-chain controls](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/16)  
 **Status:** OPEN — automated source inventory and advisory evidence are verified on PR #34; human package-level source, licence, notice and release acceptance remain pending  
-**Baseline:** `main` at `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`  
-**Review date:** 2026-11-06
+**Baseline:** `main` at `7228bb37bb7a8e93345891dede319a089e8e0132`  
+**Initial lockfile review baseline:** `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`  
+**Review date:** 2026-11-08
 
 ## 1. Purpose and authority
 
@@ -33,7 +34,7 @@ The lockfiles below are separate trust and review boundaries. They must not be c
 | Application workspace | `Cargo.toml` / `Cargo.lock` | 54 | 52 | 2 (`ofrl_model`, `ofrl_cli`) | 0 |
 | Decimal Contract POC | `poc/decimal-contract/Cargo.toml` / `Cargo.lock` | 56 | 55 | 1 (`ofrl-decimal-contract-poc`) | 0 |
 
-These are lockfile inventory counts, not platform-specific runtime component counts. The application lockfile contains target-specific packages that are not all part of the current Linux CLI binary graph.
+These are lockfile inventory counts, not platform-specific runtime component counts. The application lockfile contains target-specific packages that are not all part of the current Linux CLI binary graph. The POC lockfile is a separate resolution boundary; the same crate identity appearing in both scopes is counted twice in the scope inventory, but only once in the cross-scope unique-identity queue.
 
 The application workspace currently supplies the Rust input domain, historical semantic validator, diagnostics and CLI. It is not yet the five-year forecast engine. The isolated Decimal Contract POC is not a production dependency and must remain separately reviewed.
 
@@ -42,7 +43,7 @@ The application workspace currently supplies the Rust input domain, historical s
 - Lockfile blob: `21ac76815662e765ee6502da059a312d2e9bc9eb`.
 - Registry source: crates.io registry.
 - No Git-sourced package is present.
-- Duplicate package names across locked versions: `getrandom`, `rand`, `rand_chacha`, `rand_core`, and `syn`.
+- Duplicate package names across locked versions: `getrandom`, `rand`, `rand_chacha`, `rand_core`, and `syn` (two versions each). The same five version families occur in both lockfile scopes.
 - Duplicate versions are inventory findings, not vulnerabilities. Their actual target and feature paths must be reviewed before they are banned or consolidated.
 
 ### 2.2 Decimal Contract POC baseline
@@ -50,7 +51,25 @@ The application workspace currently supplies the Rust input domain, historical s
 - Lockfile blob: `eb2ecaed4be37129070271108911ae57f03530ba`.
 - Registry source: crates.io registry.
 - No Git-sourced package is present.
+- The same five multi-version package families identified in §2.1 are also present in the POC lockfile; each exact package identity is shared across both lockfile scopes.
 - The POC's existing [DEPENDENCY_REVIEW.md](poc/decimal-contract/DEPENDENCY_REVIEW.md) is limited to this POC and explicitly leaves source-level legal/security review open.
+
+### 2.3 Cross-scope identity reconciliation
+
+The schema 1.3.0 artifact distinguishes lockfile-scope occurrences from unique package identities:
+
+| Measure | Verified count |
+|---|---:|
+| Application registry records | 52 |
+| Decimal Contract POC registry records | 55 |
+| Total scope records | 107 |
+| Unique (name, version, source) package identities | 55 |
+| Unique crate names (versions collapsed) | 50 |
+| Identities shared by both lockfiles | 52 |
+| Application-only identities | 0 |
+| POC-only identities | 3: csv 1.4.0, csv-core 0.1.13, ryu 1.0.23 |
+
+Accordingly, 107 is the number of package occurrences across two separately governed lockfiles, not 107 distinct packages. Human source/licence review should be tracked against the 55 unique package identities while retaining each of the 107 scope occurrences for dependency-context and SBOM applicability. Do not merge the two lockfiles or use the POC as a substitute for the application dependency graph.
 
 ## 3. Source provenance and archive integrity
 
@@ -62,14 +81,14 @@ The new [Dependency Audit workflow](../../.github/workflows/ofrl-ib-001-dependen
 2. Fetch the exact committed-lockfile package archives with `cargo fetch --locked`, without compiling or executing package build scripts.
 3. Let Cargo verify each downloaded registry archive against its lockfile checksum.
 4. Cross-check publisher-declared `license`, `license-file`, and `repository` fields against the downloaded source archive's `Cargo.toml`.
-5. Record candidate licence, copyright, patent, attribution and notice files by path, size and SHA-256.
+5. Record candidate licence, copyright, patent, attribution and notice files by path, size and SHA-256. Schema 1.3.0 expands filename discovery to include licence variants, COPYING/UNLICENSE, NOTICE, COPYRIGHT, PATENTS, AUTHORS, CONTRIBUTORS, ATTRIBUTION, ACKNOWLEDGEMENTS, CREDITS and third-party notice/licence files; explicitly declared license-file paths are checked even when their names are unconventional, and empty files do not count as licence-text candidates.
 6. Preserve the source revision, lockfile hashes, tool version and advisory database commit in the CI evidence artifact.
 7. Keep fetched source archives in the ephemeral runner Cargo cache; upload only the bounded inventory and audit evidence, not third-party source archives.
-
 8. Compare locked registry package identities with Cargo metadata in both directions and fail on missing, extra, or duplicate identities; reject unapproved non-crates.io or Git sources.
-9. Parse and cross-check the generated evidence artifact before passing: require complete scope/package coverage, archive checksum equality, metadata matches, licence-text candidates, exact lockfile hashes, exact source/tool/advisory identity, zero audit exit codes, and empty vulnerability/warning results. Preserve human source and licence review as `PENDING`; automation cannot grant legal acceptance.
+9. Parse and cross-check the generated evidence artifact before passing: require complete scope/package coverage, archive checksum equality, metadata matches, legal-file/candidate consistency, exact lockfile hashes, exact source/tool/advisory identity, zero audit exit codes, and empty vulnerability/warning results. Preserve human source and licence review as PENDING; automation cannot grant legal acceptance.
+10. Run cargo audit outside the checkout with an isolated temporary HOME and CARGO_HOME, an explicit Rust 1.85.0 toolchain override, the canonical RustSec advisory database URL, and fetching enabled. Enforce empty target-architecture/OS filters, no ignored advisories, no stale-database override, default yanked checks, --deny warnings, and validation of the effective JSON report settings.
 
-The workflow's pull-request path filters also include root and project-local Cargo source configuration files, so changes to registry/source resolution trigger the audit.
+The workflow's pull-request path filters include root and project-local Cargo source and audit configuration paths, so changes to registry resolution or cargo-audit policy trigger a new audit.
 
 **Interpretation boundary:** a crates.io source identifier and matching checksum establish which registry archive was retrieved. A package's `repository` field remains publisher-declared metadata; it is not proof that the linked upstream repository is owned or controlled by the publisher. File-name/hash inventory identifies review candidates; it is not a legal interpretation or copyright clearance.
 
