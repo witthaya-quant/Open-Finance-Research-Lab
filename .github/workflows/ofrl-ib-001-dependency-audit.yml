@@ -4,8 +4,10 @@ on:
   pull_request:
     paths:
       - ".github/workflows/ofrl-ib-001-dependency-audit.yml"
+      - ".cargo/audit.toml"
       - ".cargo/config"
       - ".cargo/config.toml"
+      - "projects/OFRL-IB-001/.cargo/audit.toml"
       - "projects/OFRL-IB-001/.cargo/config"
       - "projects/OFRL-IB-001/.cargo/config.toml"
       - "projects/OFRL-IB-001/Cargo.toml"
@@ -158,11 +160,13 @@ jobs:
           app_metadata, poc_metadata, app_lock, poc_lock, cache_root, output = map(pathlib.Path, sys.argv[1:])
           CRATES_IO = "registry+https://github.com/rust-lang/crates.io-index"
           LICENSE_TEXT_NAMES = re.compile(
-              r"^(license|licence|unlicense|copying)([-_.].*)?$",
+              r"^(?:licen[cs]es?|unlicense|copying)(?:[-_.].*)?$",
               re.IGNORECASE,
           )
           NOTICE_NAMES = re.compile(
-              r"^(license|licence|unlicense|copying|notice|copyright|patents|authors|contributors)([-_.].*)?$",
+              r"^(?:licen[cs]es?|unlicense|copying|notice|copyright|patents?|authors?|contributors?|"
+              r"attribution|acknowledg(?:e)?ments?|credits|"
+              r"third[-_. ]?party[-_. ]?(?:notices?|licen[cs]es?))(?:[-_. ].*)?$",
               re.IGNORECASE,
           )
           EMBEDDED_LICENSE_SECTIONS = re.compile(
@@ -322,17 +326,24 @@ jobs:
                               )
 
                           archive_root = pathlib.PurePosixPath(manifest_member.name).parts[0]
+                          declared_license_file_path = None
                           if source_license_file:
-                              license_member_path = (
+                              declared_license_file_path = (
                                   pathlib.PurePosixPath(archive_root) / source_license_file
                               ).as_posix()
-                              if not any(
-                                  member.isfile() and member.name == license_member_path
-                                  for member in bundle.getmembers()
-                              ):
+                              declared_license_members = [
+                                  member for member in bundle.getmembers()
+                                  if member.isfile() and member.name == declared_license_file_path
+                              ]
+                              if len(declared_license_members) != 1:
                                   errors.append(
-                                      f"{name}@{version}: source archive is missing declared license-file "
-                                      f"{source_license_file}"
+                                      f"{name}@{version}: source archive must contain exactly one declared "
+                                      f"license-file {source_license_file}"
+                                  )
+                                  declared_license_file_path = None
+                              elif not bundle.extractfile(declared_license_members[0]).read().strip():
+                                  errors.append(
+                                      f"{name}@{version}: declared license-file {source_license_file} is empty"
                                   )
 
                           legal_files = []
@@ -340,29 +351,44 @@ jobs:
                               if not member.isfile():
                                   continue
                               basename = pathlib.PurePosixPath(member.name).name
-                              if not NOTICE_NAMES.match(basename):
+                              is_declared_license_file = (
+                                  declared_license_file_path is not None
+                                  and member.name == declared_license_file_path
+                              )
+                              if not NOTICE_NAMES.match(basename) and not is_declared_license_file:
                                   continue
                               file_content = bundle.extractfile(member).read()
+                              has_non_whitespace_content = bool(file_content.strip())
                               decoded_content = file_content.decode("utf-8", errors="replace")
                               embedded_sections = sorted(set(
                                   section.upper()
                                   for section in EMBEDDED_LICENSE_SECTIONS.findall(decoded_content)
                               ))
-                              dedicated_license_name = bool(LICENSE_TEXT_NAMES.match(basename))
+                              dedicated_license_name = (
+                                  bool(LICENSE_TEXT_NAMES.match(basename))
+                                  or is_declared_license_file
+                              )
                               legal_files.append({
                                   "path": member.name.removeprefix(archive_root + "/"),
                                   "size_bytes": len(file_content),
                                   "sha256": sha256_bytes(file_content),
+                                  "has_non_whitespace_content": has_non_whitespace_content,
                                   "dedicated_license_filename": dedicated_license_name,
+                                  "declared_license_file": is_declared_license_file,
                                   "embedded_license_sections": embedded_sections,
                                   "is_license_text_candidate": (
-                                      dedicated_license_name or bool(embedded_sections)
+                                      has_non_whitespace_content
+                                      and (dedicated_license_name or bool(embedded_sections))
                                   ),
                               })
 
                           license_text_files = [
                               item for item in legal_files if item["is_license_text_candidate"]
                           ]
+                          if not license_text_files:
+                              errors.append(
+                                  f"{name}@{version}: no non-empty licence-text candidate was identified"
+                              )
 
                           records.append({
                               "name": name,
@@ -415,9 +441,27 @@ jobs:
               "decimal_contract_poc", poc_metadata, poc_lock, cache_root
           )
 
+          application_identities = {
+              (item["name"], item["version"], item["source"])
+              for item in application["packages"]
+          }
+          decimal_poc_identities = {
+              (item["name"], item["version"], item["source"])
+              for item in decimal_poc["packages"]
+          }
+          all_identities = application_identities | decimal_poc_identities
+
           report = {
-              "schema_version": "1.2.0",
+              "schema_version": "1.3.0",
               "review_state": "PENDING_MANUAL_SOURCE_AND_LICENCE_REVIEW",
+              "summary": {
+                  "scope_record_count": len(application["packages"]) + len(decimal_poc["packages"]),
+                  "unique_package_identity_count": len(all_identities),
+                  "unique_package_name_count": len({item[0] for item in all_identities}),
+                  "shared_identity_count": len(application_identities & decimal_poc_identities),
+                  "application_only_identity_count": len(application_identities - decimal_poc_identities),
+                  "decimal_contract_poc_only_identity_count": len(decimal_poc_identities - application_identities),
+              },
               "interpretation": (
                   "Inventory only. Cargo fetched dependencies under the committed lockfiles; each source archive "
                   "SHA-256 was checked against its Cargo.lock checksum. The source archive Cargo.toml was compared "
@@ -452,11 +496,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          export HOME="$RUNNER_TEMP/ofrl-audit-home"
           export CARGO_HOME="$RUNNER_TEMP/ofrl-cargo-home"
 
+          mkdir -p "$HOME" "$CARGO_HOME"
           output="$RUNNER_TEMP/ofrl-ib-001-dependency-audit"
-          mkdir -p "$output"
+          audit_work="$RUNNER_TEMP/ofrl-audit-work"
+          project_root="$GITHUB_WORKSPACE/$PROJECT_DIR"
+          mkdir -p "$output" "$audit_work"
           audit_failure=0
+
+          # Run outside the checkout with an isolated HOME so neither repository
+          # nor runner-user .cargo/audit.toml can narrow the advisory policy.
+          cd "$audit_work"
 
           run_audit() {
             local label="$1"
@@ -465,7 +517,12 @@ jobs:
             local exit_code=0
 
             set +e
-            cargo audit --file "$lockfile" --deny warnings --json > "$report"
+            cargo audit \
+              --db "$CARGO_HOME/advisory-db" \
+              --url "https://github.com/RustSec/advisory-db.git" \
+              --file "$lockfile" \
+              --deny warnings \
+              --json > "$report"
             exit_code=$?
             set -e
 
@@ -475,8 +532,8 @@ jobs:
             fi
           }
 
-          run_audit "application-workspace" "$PROJECT_DIR/Cargo.lock"
-          run_audit "decimal-contract-poc" "$PROJECT_DIR/poc/decimal-contract/Cargo.lock"
+          run_audit "application-workspace" "$project_root/Cargo.lock"
+          run_audit "decimal-contract-poc" "$project_root/poc/decimal-contract/Cargo.lock"
 
           advisory_db="$CARGO_HOME/advisory-db"
           if [[ ! -d "$advisory_db/.git" ]]; then
@@ -487,7 +544,7 @@ jobs:
           advisory_commit="$(git -C "$advisory_db" rev-parse HEAD)"
           advisory_commit_time="$(git -C "$advisory_db" show -s --format=%cI HEAD)"
           advisory_remote="$(git -C "$advisory_db" remote get-url origin)"
-          source_commit_time="$(git show -s --format=%cI "$SOURCE_SHA")"
+          source_commit_time="$(git -C "$GITHUB_WORKSPACE" show -s --format=%cI "$SOURCE_SHA")"
           cargo_audit_version="$(cargo audit --version 2>&1)"
 
           python3 - \
@@ -523,7 +580,23 @@ jobs:
                   "commit": advisory_commit,
                   "commit_time": advisory_time,
               },
-              "audit_command": "cargo audit --file <committed-lockfile> --deny warnings --json",
+              "audit_policy": {
+                  "working_directory": "isolated-runner-temp-outside-repository",
+                  "home_config": "isolated-empty-home",
+                  "project_audit_config_loaded": False,
+                  "database_url": "https://github.com/RustSec/advisory-db.git",
+                  "database_fetch": True,
+                  "allow_stale_database": False,
+                  "target_arch_filters": [],
+                  "target_os_filters": [],
+                  "ignored_advisories": [],
+                  "yanked_check": "enabled_by_default",
+              },
+              "audit_command": (
+                  "cargo audit --db <isolated-advisory-db> "
+                  "--url https://github.com/RustSec/advisory-db.git "
+                  "--file <absolute-committed-lockfile> --deny warnings --json"
+              ),
               "audit_scopes": [
                   "projects/OFRL-IB-001/Cargo.lock",
                   "projects/OFRL-IB-001/poc/decimal-contract/Cargo.lock",
@@ -531,8 +604,10 @@ jobs:
               "audit_exit_status": "FAIL" if audit_failure == "1" else "PASS",
               "interpretation": (
                   "Point-in-time advisory evidence for the exact lockfiles and database revision above. "
-                  "A clean result does not prove absence of vulnerabilities, exploitability, application defects, "
-                  "or risks outside the RustSec database. Warnings are denied and no ignore list is supplied."
+                  "The audit ran outside the checkout with an isolated HOME, no project/user audit configuration, "
+                  "the canonical RustSec database URL, database fetching enabled, no target filters, and no ignored "
+                  "advisories. A clean result does not prove absence of vulnerabilities, exploitability, application "
+                  "defects, or risks outside the RustSec database."
               ),
               "licence_status": "INVENTORY_ONLY_MANUAL_REVIEW_PENDING",
           }
@@ -600,7 +675,7 @@ jobs:
 
           inventory = load_json("package-source-inventory.json")
           context = load_json("audit-context.json")
-          require(inventory.get("schema_version") == "1.2.0", "unexpected inventory schema version")
+          require(inventory.get("schema_version") == "1.3.0", "unexpected inventory schema version")
           require(
               inventory.get("review_state") == "PENDING_MANUAL_SOURCE_AND_LICENCE_REVIEW",
               "manual legal/source review state must remain explicit",
@@ -617,7 +692,30 @@ jobs:
           advisory = context.get("rustsec_advisory_database", {})
           require(bool(advisory.get("commit")), "RustSec advisory database commit is missing")
           require(bool(advisory.get("commit_time")), "RustSec advisory database timestamp is missing")
-          require(bool(advisory.get("remote")), "RustSec advisory database remote is missing")
+          require(
+              advisory.get("remote") == "https://github.com/RustSec/advisory-db.git",
+              "RustSec advisory database remote is not the canonical repository",
+          )
+          audit_policy = context.get("audit_policy", {})
+          require(
+              audit_policy.get("working_directory") == "isolated-runner-temp-outside-repository"
+              and audit_policy.get("home_config") == "isolated-empty-home"
+              and audit_policy.get("project_audit_config_loaded") is False,
+              "cargo-audit repository/user configuration was not isolated",
+          )
+          require(
+              audit_policy.get("database_url") == "https://github.com/RustSec/advisory-db.git"
+              and audit_policy.get("database_fetch") is True
+              and audit_policy.get("allow_stale_database") is False,
+              "RustSec database source/freshness policy mismatch",
+          )
+          require(
+              audit_policy.get("target_arch_filters") == []
+              and audit_policy.get("target_os_filters") == []
+              and audit_policy.get("ignored_advisories") == []
+              and audit_policy.get("yanked_check") == "enabled_by_default",
+              "RustSec scope was narrowed or yanked checking was disabled",
+          )
 
           expected_scopes = {
               "application_workspace": "projects/OFRL-IB-001/Cargo.lock",
@@ -627,6 +725,31 @@ jobs:
           require(isinstance(scopes, list) and len(scopes) == 2, "inventory must contain exactly two dependency scopes")
           scope_map = {item.get("scope"): item for item in scopes}
           require(set(scope_map) == set(expected_scopes), "unexpected or missing dependency scope")
+
+          app_identities = {
+              (item.get("name"), item.get("version"), item.get("source"))
+              for item in scope_map["application_workspace"].get("packages", [])
+          }
+          poc_identities = {
+              (item.get("name"), item.get("version"), item.get("source"))
+              for item in scope_map["decimal_contract_poc"].get("packages", [])
+          }
+          all_identities = app_identities | poc_identities
+          identity_summary = inventory.get("summary", {})
+          require(
+              identity_summary.get("scope_record_count")
+              == len(scope_map["application_workspace"].get("packages", []))
+              + len(scope_map["decimal_contract_poc"].get("packages", [])),
+              "summary scope-record count does not match the two package inventories",
+          )
+          require(
+              identity_summary.get("unique_package_identity_count") == len(all_identities)
+              and identity_summary.get("unique_package_name_count") == len({item[0] for item in all_identities})
+              and identity_summary.get("shared_identity_count") == len(app_identities & poc_identities)
+              and identity_summary.get("application_only_identity_count") == len(app_identities - poc_identities)
+              and identity_summary.get("decimal_contract_poc_only_identity_count") == len(poc_identities - app_identities),
+              "summary unique/shared package identity counts are inconsistent",
+          )
 
           lockfile_hashes = {}
           for name, lockfile in expected_scopes.items():
@@ -674,6 +797,43 @@ jobs:
                       f"{name}: licence-text candidate not found for {key}",
                   )
                   require(
+                      isinstance(package.get("publisher_declared_license_expression"), str)
+                      and bool(package.get("publisher_declared_license_expression").strip()),
+                      f"{name}: publisher-declared licence expression is missing for {key}",
+                  )
+                  require(
+                      isinstance(package.get("publisher_repository_url"), str)
+                      and bool(package.get("publisher_repository_url").strip()),
+                      f"{name}: publisher-declared repository URL is missing for {key}",
+                  )
+                  legal_files = package.get("license_and_notice_files")
+                  candidates = package.get("license_text_files")
+                  require(
+                      isinstance(legal_files, list) and isinstance(candidates, list),
+                      f"{name}: legal-file inventory is missing for {key}",
+                  )
+                  for legal_file in legal_files:
+                      require(
+                          isinstance(legal_file.get("path"), str)
+                          and isinstance(legal_file.get("size_bytes"), int)
+                          and isinstance(legal_file.get("sha256"), str)
+                          and len(legal_file["sha256"]) == 64
+                          and legal_file.get("has_non_whitespace_content") is (
+                              legal_file.get("size_bytes", 0) > 0
+                          ),
+                          f"{name}: malformed legal-file evidence for {key}",
+                      )
+                  actual_candidates = [
+                      item for item in legal_files if item.get("is_license_text_candidate") is True
+                  ]
+                  require(
+                      candidates == actual_candidates
+                      and len(candidates) == package.get("license_text_candidate_count")
+                      and len(candidates) > 0
+                      and all(item.get("has_non_whitespace_content") is True for item in candidates),
+                      f"{name}: licence-text candidate evidence is incomplete for {key}",
+                  )
+                  require(
                       package.get("source_review") == "PENDING"
                       and package.get("licence_review") == "PENDING",
                       f"{name}: automated inventory must not self-approve legal review for {key}",
@@ -715,7 +875,15 @@ jobs:
                   f"{filename}: vulnerability findings are present",
               )
               require(report.get("warnings") == {}, f"{filename}: RustSec warnings are present")
-              require(report.get("settings", {}).get("ignore") == [], f"{filename}: advisory ignore list is not empty")
+              settings = report.get("settings", {})
+              require(settings.get("ignore") == [], f"{filename}: advisory ignore list is not empty")
+              require(settings.get("target_arch") == [], f"{filename}: CPU architecture filter narrowed advisory scope")
+              require(settings.get("target_os") == [], f"{filename}: operating system filter narrowed advisory scope")
+              require(settings.get("severity") is None, f"{filename}: severity threshold narrowed advisory scope")
+              require(
+                  set(settings.get("informational_warnings", [])) == {"unmaintained", "unsound", "notice"},
+                  f"{filename}: informational advisory categories are incomplete",
+              )
               database = report.get("database", {})
               require(database.get("last-commit") == advisory.get("commit"), f"{filename}: database commit mismatch")
               require(database.get("last-updated") == advisory.get("commit_time"), f"{filename}: database timestamp mismatch")
