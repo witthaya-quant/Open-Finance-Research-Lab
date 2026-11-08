@@ -2,11 +2,11 @@
 
 # OFRL-IB-001 — Dependency and Source Review
 
-**Review version:** 0.1.4  
+**Review version:** 0.1.5  
 **Task:** IB-T005 — Dependency and source acceptance  
 **Issue:** [#16 — Rust supply-chain controls](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/16)  
 **Status:** OPEN — automated source inventory and advisory evidence are verified on PR #34; human package-level source, licence, notice and release acceptance remain pending  
-**Baseline:** `main` at `7228bb37bb7a8e93345891dede319a089e8e0132`  
+**Baseline:** `main` at `7dcc2463fc8f9617576f970499c67223ee0640d9`  
 **Initial lockfile review baseline:** `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`  
 **Review date:** 2026-11-08
 
@@ -104,7 +104,7 @@ The latest source-inventory and advisory-evidence run for PR #34 completed succe
 - The audit context records the exact source commit, Rust 1.85.0, checksum-pinned `cargo-audit 0.22.2`, canonical RustSec database remote, fetched database commit/time, isolated home/work directory, explicit toolchain override, empty target filters, no ignored advisories and enabled yanked checks.
 - The inventory summary reconciles 107 scope records to 55 unique package identities / 50 crate names: 52 shared identities, zero application-only and three POC-only identities.
 - Missing/extra/duplicate package identities, source mismatches, missing declared licence files, empty licence candidates, evidence inconsistencies and unexpected non-registry sources fail closed.
-- This is PR-source evidence, not a `main` scan. The application and POC manifests/lockfiles are unchanged by this PR; the default-branch scan will run after merge under the same policy.
+- This artifact was generated against PR head `e04d628f01b18488c76617f00d2f03b375ac482a` before merge. That exact source tree is now integrated into `main` as the second parent of merge commit `7dcc2463fc8f9617576f970499c67223ee0640d9`. The run remains a PR-head-triggered scan rather than a scan triggered on the merge commit itself. The weekly default-branch workflow is now active; the first post-merge scheduled run is still pending.
 
 | Scope | Locked registry packages | Archive SHA-256 matches | Cargo metadata matches | Licence-text candidates | Packages without a candidate |
 |---|---:|---:|---:|---:|---:|
@@ -272,4 +272,4 @@ Alternative generators or an SPDX-based pipeline may be evaluated only against t
 | Official release SBOM/checksums and reproducible release identity | NOT DONE — requires the exact approved release source and supported target matrix |
 | Release authorization | NOT AUTHORIZED |
 
-**IB-T005 remains OPEN.** PR #34 delivers repeatable source inventory, fail-closed artifact consistency checks and point-in-time advisory evidence; it does not approve any package or authorize distribution. The exact source audit is on an unmerged PR commit, not main; the scheduled default-branch recheck becomes active after merge. Human review of the 55 unique identities, duplicate-version target/feature paths, the preview-generator exception, the eventual production dependency graph after IB-T004, official release SBOM/checksums, clean-checkout reproduction and publication authorization remain separate gates. No Forecast Engine work is authorized by this document.
+**IB-T005 remains OPEN.** PR #34 has merged the repeatable source-inventory and fail-closed advisory controls into `main` at `7dcc2463fc8f9617576f970499c67223ee0640d9`. The exact dependency scan was executed on the PR source head (now integrated as the merge commit's second parent); it is not represented as a scan triggered on the merge commit. The weekly default-branch recheck is active, with its first scheduled run pending. Human review of the 55 unique identities, duplicate-version target/feature paths, the preview-generator exception, the eventual production dependency graph after IB-T004, official release SBOM/checksums, clean-checkout reproduction and publication authorization remain separate gates. No Forecast Engine work is authorized by this document.
