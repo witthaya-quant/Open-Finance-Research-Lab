@@ -498,6 +498,7 @@ jobs:
           set -euo pipefail
           export HOME="$RUNNER_TEMP/ofrl-audit-home"
           export CARGO_HOME="$RUNNER_TEMP/ofrl-cargo-home"
+          export RUSTUP_TOOLCHAIN="$RUST_TOOLCHAIN"
 
           mkdir -p "$HOME" "$CARGO_HOME"
           output="$RUNNER_TEMP/ofrl-ib-001-dependency-audit"
@@ -584,6 +585,7 @@ jobs:
                   "working_directory": "isolated-runner-temp-outside-repository",
                   "home_config": "isolated-empty-home",
                   "project_audit_config_loaded": False,
+                  "rustup_toolchain_override": rust_toolchain,
                   "database_url": "https://github.com/RustSec/advisory-db.git",
                   "database_fetch": True,
                   "allow_stale_database": False,
@@ -700,7 +702,8 @@ jobs:
           require(
               audit_policy.get("working_directory") == "isolated-runner-temp-outside-repository"
               and audit_policy.get("home_config") == "isolated-empty-home"
-              and audit_policy.get("project_audit_config_loaded") is False,
+              and audit_policy.get("project_audit_config_loaded") is False
+              and audit_policy.get("rustup_toolchain_override") == "1.85.0",
               "cargo-audit repository/user configuration was not isolated",
           )
           require(
