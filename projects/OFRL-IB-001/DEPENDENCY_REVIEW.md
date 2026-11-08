@@ -2,11 +2,11 @@
 
 # OFRL-IB-001 — Dependency and Source Review
 
-**Review version:** 0.1.5  
+**Review version:** 0.1.6  
 **Task:** IB-T005 — Dependency and source acceptance  
 **Issue:** [#16 — Rust supply-chain controls](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/16)  
 **Status:** OPEN — automated source inventory and advisory evidence are verified on PR #34; human package-level source, licence, notice and release acceptance remain pending  
-**Baseline:** `main` at `7dcc2463fc8f9617576f970499c67223ee0640d9`  
+**Baseline:** `main` at `885dbe64f930bc8096e9240de08f2947e2b918db`  
 **Initial lockfile review baseline:** `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`  
 **Review date:** 2026-11-08
 
@@ -94,11 +94,11 @@ The workflow's pull-request path filters include root and project-local Cargo so
 
 The inventory computes SHA-256 against each lockfile checksum and hashes candidate licence, Unlicense, copyright, patent, attribution and notice files from the downloaded package archive. The package-level inventory is not considered accepted until the relevant source, licence, attribution, notice, patent, exception and redistribution obligations have been reviewed and dispositioned. Missing or inconsistent metadata must remain visible; it must not be inferred or silently accepted.
 
-The latest source-inventory and advisory-evidence run for PR #34 completed successfully against source commit `61dff7bef9328f53172c6120ec3cdb0ee7b48a41`:
+The latest source-inventory and advisory-evidence run for PR #34 completed successfully against source commit `e04d628f01b18488c76617f00d2f03b375ac482a`:
 
-- Workflow run: [#42475507915 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475507915).
-- Artifact: `ofrl-ib-001-dependency-audit-61dff7bef9328f53172c6120ec3cdb0ee7b48a41` (ID `13615595282`; 18,429 bytes; 30-day retention).
-- Artifact archive SHA-256: `d9db1068251bfe11b4090443c1e1986917d3c95b00a85c45c93908032afa2b69`; the downloaded ZIP was independently hashed and matched GitHub's reported digest.
+- Workflow run: [#42475893204 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475893204).
+- Artifact: `ofrl-ib-001-dependency-audit-e04d628f01b18488c76617f00d2f03b375ac482a` (ID `13615875196`; 18,429 bytes; 30-day retention).
+- Artifact archive SHA-256: `9194f7e1202cd07ac4ea992720dc644c439ccf86b554fb39df07f045797c92e8`; the downloaded ZIP was independently hashed and matched GitHub's reported digest.
 - Inventory schema: `1.3.0`.
 - Exact lockfile SHA-256 values remain unchanged: application `485a9c8d5e7d04a7abf0cd266540c7499dd49c51999c3c553532ad9200864c90`; Decimal Contract POC `288b19b1e97cab000df902961af302d0ba4413bad5dabd731da7feddaf4f9d56`.
 - The audit context records the exact source commit, Rust 1.85.0, checksum-pinned `cargo-audit 0.22.2`, canonical RustSec database remote, fetched database commit/time, isolated home/work directory, explicit toolchain override, empty target filters, no ignored advisories and enabled yanked checks.
@@ -123,10 +123,10 @@ The downloaded artifact was inspected directly. Every one of the 107 scope recor
 | POC-only identities | 3 (`csv`, `csv-core`, `ryu`) |
 
 The same source commit passed all four workflow groups:
-- Repository Policy [#42475508097](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475508097).
-- Numeric and Input Contract [#42475508184](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475508184).
-- Rust Runtime Semantic Validator [#42475507871](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475507871).
-- Dependency Audit [#42475507915](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475507915).
+- Repository Policy [#42475893167](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475893167).
+- Numeric and Input Contract [#42475893173](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475893173).
+- Rust Runtime Semantic Validator [#42475893185](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475893185).
+- Dependency Audit [#42475893204](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475893204).
 
 All six required Ruleset contexts and the two supplemental Numeric Envelope / Dependency Audit jobs passed on the exact source head. The semantic validator passed on Rust 1.85.0 and 1.99.1.
 
@@ -207,7 +207,7 @@ A clean point-in-time scan does not prove that a package is free of vulnerabilit
 
 ### 5.1 Current RustSec result — PR #34 isolated-policy dependency-audit run
 
-Workflow run [#42475507915](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475507915) audited the exact committed application and Decimal Contract POC lockfiles at source commit 61dff7bef9328f53172c6120ec3cdb0ee7b48a41 with checksum-pinned cargo-audit 0.22.2, --deny warnings, no ignored advisories and no target filters.
+Workflow run [#42475893204](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475893204) audited the exact committed application and Decimal Contract POC lockfiles at source commit e04d628f01b18488c76617f00d2f03b375ac482a with checksum-pinned cargo-audit 0.22.2, --deny warnings, no ignored advisories and no target filters.
 
 | Scope | Audit dependency count | Vulnerabilities | Warnings | Exit |
 |---|---:|---:|---:|---:|
@@ -222,7 +222,7 @@ RustSec Advisory Database snapshot:
 - Both JSON reports record vulnerabilities.found=false, vulnerabilities.count=0, and an empty warnings object.
 - Effective report settings record ignore=[], target_arch=[], target_os=[], severity=null, and informational categories unmaintained, unsound, notice.
 
-The uploaded artifact is ID 13615595282, size 18,429 bytes, archive SHA-256 d9db1068251bfe11b4090443c1e1986917d3c95b00a85c45c93908032afa2b69. The downloaded ZIP digest was independently verified against GitHub's artifact digest. The JSON inventory reports schema 1.3.0, 107 scope records and 55 unique package identities; the two lockfile SHA-256 values match the committed baseline.
+The uploaded artifact is ID 13615875196, size 18,429 bytes, archive SHA-256 9194f7e1202cd07ac4ea992720dc644c439ccf86b554fb39df07f045797c92e8. The downloaded ZIP digest was independently verified against GitHub's artifact digest. The JSON inventory reports schema 1.3.0, 107 scope records and 55 unique package identities; the two lockfile SHA-256 values match the committed baseline.
 
 The audit runs in an isolated temporary working directory with isolated HOME and CARGO_HOME, explicitly selects Rust 1.85.0 via RUSTUP_TOOLCHAIN, pins the canonical advisory database URL, fetches the database, and does not load repository or runner-user .cargo/audit.toml settings. It checks both committed lockfiles, does not filter to the runner target, does not ignore advisories, and retains yanked checking.
 
@@ -264,7 +264,7 @@ Alternative generators or an SPDX-based pipeline may be evaluated only against t
 | Registry source-archive integrity | PASS on PR #34 schema 1.3.0 run — 107 / 107 archive SHA-256 values match the committed lockfile checksums |
 | Cargo metadata/source-manifest cross-check | PASS — 107 / 107 package records matched for identity, licence expression, licence-file and repository fields |
 | Licence/notice candidate discovery | PASS as automated inventory only — all 107 scope records have at least one non-empty licence-text candidate; all 55 unique package identities still require human review |
-| RustSec advisory audit | PASS on PR source 61dff7b — both committed lockfiles have 0 vulnerabilities and 0 warnings against the recorded 1,422-record database snapshot; no ignores or target filters |
+| RustSec advisory audit | PASS on PR source e04d628 — both committed lockfiles have 0 vulnerabilities and 0 warnings against the recorded 1,422-record database snapshot; no ignores or target filters |
 | Duplicate-version and source exception review | OPEN — five package-name families have multiple versions; target/feature paths must be reviewed; no Git sources were found in either current lockfile |
 | Package-level source/provenance disposition | OPEN — 55 unique identities remain pending; publisher repository metadata does not authenticate repository ownership/control |
 | Package-level licence, copyright, patent and notice disposition | OPEN — 55 unique identities remain pending; exact alternative terms and redistribution obligations require human determination |
