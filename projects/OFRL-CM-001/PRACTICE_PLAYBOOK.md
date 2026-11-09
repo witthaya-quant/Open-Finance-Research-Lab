@@ -2,12 +2,12 @@
 
 # OFRL-CM-001 — Quantitative Problem-Solving Practice Playbook
 
-**Document version:** 0.1.0  
+**Document version:** 0.2.0  
 **Project:** OFRL-CM-001  
-**Status:** Initial programme design  
+**Status:** Initial programme design updated from the first admitted computational case  
 **Companion control:** [PROJECT_CONTROL.md](PROJECT_CONTROL.md)  
 **Owner:** Kenny (Witthaya Maidee)  
-**Last reviewed:** 2026-11-05
+**Last reviewed:** 2026-11-07
 
 ## 1. Purpose
 
@@ -265,7 +265,108 @@ Score each applicable dimension from 0 to 4 and provide evidence. A score is not
 
 A critical failure in formalization, source rights, or independent verification cannot be compensated for by a high total score.
 
-## 12. Playbook maintenance
+## 12. Lessons from the first computational case — CS-002
+
+The first computational case, [Finite-Binomial American Put — Optimal Stopping](cases/2026-11-american-put/README.md), provides an initial worked example of how the general practice loop becomes a bounded, executable research artifact. These lessons are case-derived guidance, not assumptions that every later case must share the same model or software architecture.
+
+### 12.1 Admission is separate from implementation
+
+A computational case must pass its own source/rights and mathematical-formalization gate. The blocked Pressure Points pilot was not relaxed or repurposed to justify software work; CS-002 was admitted because it has a self-contained model, explicit parameter domain, objective, transition law, and correctness predicate.
+
+Before selecting a method or creating code, state:
+- What is given, what is synthetic, and what is derived.
+- The exact admissible parameter domain and boundary conditions.
+- The state representation and why it is sufficient for future decisions.
+- The objective being optimized and the mathematical meaning of the output.
+- A correctness predicate that can reject a candidate independently of the candidate generator.
+
+A missing rule or acceptance condition remains a blocker. It must not be invented merely to make a solver possible.
+
+### 12.2 State sufficiency and policy spaces must be explicit
+
+In CS-002, a recombining binomial state is identified by \((n,j)\), where \(n\) is the time index and \(j\) is the number of up moves. Distinct path histories can recombine to the same state. Therefore, a Markov-node policy and a full-history stopping policy do not have the same policy space.
+
+For the three-period reference case:
+- The recombining lattice has 10 nodes in total and 6 non-terminal state nodes.
+- The non-recombining history tree has 7 non-terminal decision histories and 8 terminal paths.
+- There are \(2^6=64\) deterministic Markov-node policies and \(2^7=128\) deterministic history-dependent policies.
+- Exhaustive enumeration finds 4 and 8 maximizing policies respectively, while both policy spaces attain the same exact optimal value \(18325/2058\).
+
+The correct lesson is to count the actual decision locations in the chosen state/history representation. A unique optimal value does not imply a unique maximizing policy, and a tie in one state does not by itself imply multiple values.
+
+### 12.3 Separate candidate generation from certificate verification
+
+Backward induction generates the candidate node values and decisions. The verifier then derives each node's spot directly from the model inputs and checks:
+- Node inventory and \((n,j)\) metadata.
+- Exact state prices and immediate exercise payoffs.
+- Terminal payoff equality.
+- The one-step continuation value from the two child values.
+- Bellman dominance over both immediate exercise and continuation.
+- Attainability of the candidate value by the reported decision.
+- Consistency of the reported root value.
+
+The verifier must not call the valuation routine or accept its internal state as proof. For a reduced finite instance, a second method such as exhaustive stopping-policy enumeration adds a valuable cross-check. Deliberately corrupted values and metadata should be rejected.
+
+For stopping-policy enumeration, define the probability weighting carefully. The CS-002 reference test sums complete terminal paths and applies the payoff at the policy's first stopping time. Every terminal path is weighted by its full path probability; the conditional probabilities of unobserved suffixes sum to one. An equivalent prefix-probability calculation is also valid, provided that stopped suffixes are not counted twice or omitted.
+
+### 12.4 Numeric representation and resource limits are part of the model contract
+
+When every input and model operation is rational and the horizon is finite, exact rational arithmetic can eliminate floating-point rounding and tolerance decisions. It does not eliminate modelling error or make the model economically accurate.
+
+For a recombining binomial lattice with \(N\) periods, the node count is:
+
+\[
+M(N)=\frac{(N+1)(N+2)}{2}
+\]
+
+The number of lattice-node operations is \(O(N^2)\); arbitrary-precision integer bit complexity is a separate cost and must not be described as constant. A computational API should:
+- Validate positive parameters and the strict no-arbitrage domain before calculation.
+- Use checked integer arithmetic for size calculations.
+- Require an explicit caller resource ceiling.
+- Reject overflow and limit violations before allocation.
+- Return typed errors rather than partial or plausible-looking values.
+
+Choose the numeric representation from the mathematical domain. Exact rational arithmetic is justified here; it is not a blanket requirement for continuous, empirical, or stochastic cases.
+
+### 12.5 Minimal architecture is a research control
+
+CS-002 requires one library package, one locked dependency graph, one path-scoped project workflow, and a small public API. It does not justify a Cargo workspace, CLI, database, serialization layer, network service, benchmark harness, or generic option framework.
+
+Abstractions should be introduced only after repeated requirements across admitted cases demonstrate that they reduce complexity without weakening domain boundaries. A single case is not evidence for a general platform.
+
+### 12.6 Distinguish mathematical exactness from financial validity
+
+The CS-002 reference parameters are synthetic. The exact value is exact only for the finite-horizon, no-dividend, constant-factor binomial model stated in the formalization. The result is not a calibrated market price, forecast, investment recommendation, or executable trading input.
+
+A case report must separately state:
+1. Mathematical correctness for the formal model.
+2. Implementation and reproducibility evidence.
+3. Economic interpretation and applicability.
+4. Release and operational authorization.
+
+Passing the first two does not establish the latter two.
+
+### 12.7 First-case admission checklist for future computational work
+
+Before authorizing a later case to create software, require evidence for each applicable item:
+
+| Gate | Required evidence |
+|---|---|
+| Source and rights | Primary source, access/version record, permissible stored material, and original versus third-party content boundary |
+| Formal model | Complete symbols, parameter domains, units, assumptions, transitions, objective, boundary conditions, and output predicate |
+| State sufficiency | Explicit state/history definition and proof or rationale that it contains the information required by the decision rule |
+| Method selection | Why the chosen method follows from the problem structure; alternatives and complexity/resource limits |
+| Independent verification | Separate verifier, proof obligations, reference calculation, exhaustive reduced case, or another genuinely independent check |
+| Numeric integrity | Representation, rounding/overflow behavior, exactness or error budget, and resource ceiling |
+| Software boundary | Smallest justified package/API; no workspace, CLI, service, framework, or benchmark without a demonstrated requirement |
+| Supply chain | Pinned direct dependencies, committed lockfile, transitive inventory/licence review, toolchain/MSRV, and update path |
+| Reproducibility | Deterministic inputs, commands, exact toolchains, path-scoped CI, and evidence on the submitted code revision |
+| Claims and release | Research-only versus decision-support use, evidence maturity, residual risks, SBOM/release controls, and separate authorization |
+
+An unpassed correctness-critical gate blocks implementation. A passing admission checklist authorizes only the stated case and scope, not future case folders or general abstractions.
+
+## 13. Playbook maintenance
+
 
 The Playbook changes only when practice evidence, multiple cases, or an approved project decision justifies the change. Do not add methods merely to expand a catalogue. A method entry should include its mathematical structure, applicable problem conditions, assumptions, failure modes, verification requirements, and at least one admitted case or worked synthetic example.
 

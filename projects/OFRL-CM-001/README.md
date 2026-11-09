@@ -4,13 +4,14 @@
 
 > **Project ID:** OFRL-CM-001  
 > **Lifecycle:** In Development  
-> **Project type:** Research, Quantitative Research  
+> **Project type:** Research, Quantitative Research, Software  
 > **Risk tier:** R1 — Analytical  
 > **Evidence maturity:** 0 — Proposed  
-> **Project version:** 0.1.0  
+> **Project version:** 0.3.0  
 > **Owner:** Kenny (Witthaya Maidee)  
 > **Manifest:** [project.json](project.json)  
-> **Initial case study:** Jane Street — Pressure Points (November 2026)
+> **Original research pilot:** Jane Street — Pressure Points (November 2026)  
+> **First computational case:** Finite-Binomial American Put — Optimal Stopping (CS-002)
 
 ## Purpose
 
@@ -69,10 +70,11 @@ The programme combines mathematical problem-solving, strategic reasoning and gam
 | Project research specification | Published on `main` | RESEARCH_SPECIFICATION.md |
 | Shared case-study protocol | Published on `main` | CASE_STUDY_PROTOCOL.md |
 | First-pilot source record | Published on `main` | DATA_MANIFEST.md |
-| Pressure Points formalization | H-017/H-018 candidate model rejected as a complete source-grounded explanation under CM-T0009; official puzzle answer remains unverified and formal semantics remain blocked | PROBLEM_FORMALIZATION.md § CM-T0009; TEST-046 |
+| Pressure Points formalization | INCOMPLETE / BLOCKED; H-017/H-018 rejected as a complete source-grounded explanation under CM-T0009 | PROBLEM_FORMALIZATION.md § CM-T0009; TEST-046 |
 | Official Jane Street solution | Live Archive page lists the November puzzle and displays “Solution” as unlinked text; no direct target/body retrieved | CM-T0010 BLOCKED; DATA_MANIFEST.md §4; TEST-044 |
-| Solver or solution | Not started; not authorized by this phase | Deferred |
-| Comparative solver benchmark | Not started | Deferred |
+| Pressure Points solver or solution | Not started; solver remains NO-GO while source semantics are unresolved | CM-T0010/T0011 BLOCKED; deferred |
+| First computational case — American Put | ADMITTED and IMPLEMENTED — finite-horizon no-dividend binomial American Put; exact-rational valuation and independent Bellman verifier passed two-toolchain CI on code revision 65d19861; PR #37 remains unreleased and under review | cases/2026-11-american-put/README.md; PROBLEM_FORMALIZATION.md; ENGINEERING_ARCHITECTURE.md; VALIDATION_MATRIX.md |
+| Comparative solver benchmark | Not started; no benchmark programme authorized | Deferred |
 | Financial-engineering application claim | Not established | Must be assessed case by case |
 
 ## First pilot: Pressure Points
@@ -82,6 +84,16 @@ The first pilot is the November 2026 Jane Street puzzle, [Pressure Points](https
 The pilot is deliberately limited to source provenance, observable input structure, mathematical formalization, and identification of missing rule semantics. The source page presents letter sequences, emoji clues, a leading marker, and a terminal notation. The exact relationships and required output must be established before selecting an algorithm.
 
 OFRL does not reproduce the full puzzle statement, its images, the complete source data, or Jane Street's solution in this repository. See the [case-study record](cases/2026-11-pressure-points/README.md), [formalization note](cases/2026-11-pressure-points/PROBLEM_FORMALIZATION.md), and [Data Manifest](DATA_MANIFEST.md).
+
+## First computational case: Finite-Binomial American Put
+
+The first computational case is [Finite-Binomial American Put — Optimal Stopping](cases/2026-11-american-put/README.md). It studies a finite-horizon, recombining binomial model with a fixed gross risk-free return, no dividends, and an American put payoff. The formalization defines the admissible parameter domain, risk-neutral probability, state lattice, stopping-time objective, Bellman recurrence, and correctness predicate before computation.
+
+The initial implementation is a case-specific Rust library using exact arbitrary-precision rational arithmetic. It returns a full node-value and exercise-policy certificate; a separately implemented verifier checks the terminal conditions, Bellman dominance inequalities, and policy attainability. All inputs are synthetic. No market data, production pricing interface, trading recommendation, or external execution path is in scope. The project remains R1 and research-only; any public reusable pricing or decision-support release requires a separate risk and release assessment.
+
+## First-case learning record
+
+The initial Practice Playbook v0.2.0 incorporates lessons from CS-002 on state sufficiency, recombination, stopping-policy enumeration, exact rational arithmetic, Bellman certificates, resource guards, dependency controls and research/market-use boundaries. This learning update does not admit a second case; future case admission remains a separate owner decision.
 
 ## Research method
 
@@ -124,6 +136,10 @@ Project-specific requirements are recorded only in this project’s own specific
 - [Project manifest](project.json)
 - [Working handoff](HANDOFF.md) — continuation instructions and scope safeguards for future sessions.
 - [Research specification](RESEARCH_SPECIFICATION.md)
+- [Engineering architecture](ENGINEERING_ARCHITECTURE.md) — case-specific software architecture and validation boundary
+- [American Put case record](cases/2026-11-american-put/README.md)
+- [American Put mathematical formalization](cases/2026-11-american-put/PROBLEM_FORMALIZATION.md)
+- [Implementation principles](IMPLEMENTATION_APPROACH.md)
 - [Case-study protocol](CASE_STUDY_PROTOCOL.md)
 - [Decision log](DECISION_LOG.md)
 - [Validation matrix](VALIDATION_MATRIX.md)

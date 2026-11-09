@@ -25,6 +25,19 @@ updates:
       - rust
       - research-poc
 
+  - package-ecosystem: cargo
+    directory: /projects/OFRL-CM-001/cases/2026-11-american-put/workbench
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+      timezone: Asia/Bangkok
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - rust
+      - cm-001
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
