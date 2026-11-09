@@ -226,7 +226,7 @@ jobs:
           print("PASS: four feature-aware Cargo dependency trees and their SHA-256 evidence manifest were captured.")
           PY
 
-          app_lock_after=          app_lock_after="$(sha256sum "$app_lock" | awk '{print $1}')"
+          app_lock_after="$(sha256sum "$app_lock" | awk '{print $1}')"
           poc_lock_after="$(sha256sum "$poc_lock" | awk '{print $1}')"
 
           if [[ "$app_lock_before" != "$app_lock_after" || "$poc_lock_before" != "$poc_lock_after" ]]; then
