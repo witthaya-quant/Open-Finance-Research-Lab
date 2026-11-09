@@ -74,7 +74,7 @@
         "status": "PASS",
         "rationale": "The case formalization, exact reference result, test evidence and limitations are recorded. The project-level maturity remains 0; the case result is separately classified at Level 2 only for reproducibility.",
         "evidence": [
-          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/3dc13770fa479b0f30b4b5d8cb77c7538969410a/projects/OFRL-CM-001/VALIDATION_MATRIX.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/8795e0f517de158551190c43d4402df9f2103025/projects/OFRL-CM-001/VALIDATION_MATRIX.md",
           "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/0b1561fc38112de3d75c1985f21bdb5b93c70bb7/projects/OFRL-CM-001/cases/2026-11-american-put/README.md",
           "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/3dc13770fa479b0f30b4b5d8cb77c7538969410a/projects/OFRL-CM-001/PROJECT_CONTROL.md"
         ],
@@ -156,7 +156,7 @@
         "evidence": [
           "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/0b1561fc38112de3d75c1985f21bdb5b93c70bb7/projects/OFRL-CM-001/cases/2026-11-american-put/PROBLEM_FORMALIZATION.md",
           "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/0b1561fc38112de3d75c1985f21bdb5b93c70bb7/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md",
-          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/3dc13770fa479b0f30b4b5d8cb77c7538969410a/projects/OFRL-CM-001/VALIDATION_MATRIX.md"
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/8795e0f517de158551190c43d4402df9f2103025/projects/OFRL-CM-001/VALIDATION_MATRIX.md"
         ],
         "recorded_by": "OFRL project assistant",
         "recorded_at": "2026-11-09",
@@ -176,7 +176,7 @@
         "evidence": [
           "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/0b1561fc38112de3d75c1985f21bdb5b93c70bb7/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md",
           "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/0b1561fc38112de3d75c1985f21bdb5b93c70bb7/projects/OFRL-CM-001/cases/2026-11-american-put/PROBLEM_FORMALIZATION.md",
-          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/3dc13770fa479b0f30b4b5d8cb77c7538969410a/projects/OFRL-CM-001/VALIDATION_MATRIX.md"
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/8795e0f517de158551190c43d4402df9f2103025/projects/OFRL-CM-001/VALIDATION_MATRIX.md"
         ],
         "recorded_by": "OFRL project assistant",
         "recorded_at": "2026-11-09",
