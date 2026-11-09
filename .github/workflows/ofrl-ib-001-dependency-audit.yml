@@ -132,9 +132,101 @@ jobs:
           rustup run "$RUST_TOOLCHAIN" cargo fetch \
             --locked --manifest-path "$poc_manifest"
 
+          # Capture feature-aware dependency paths for the two separately governed scopes.
+          # The all-features view is a conservative superset, not a production activation claim.
+          cargo_version="$(rustup run "$RUST_TOOLCHAIN" cargo --version)"
 
+          capture_dependency_tree() {
+            local scope="$1"
+            local manifest="$2"
+            local feature_selection="$3"
+            local tree_file="$output/${scope}-${feature_selection}-target-all.cargo-tree.txt"
 
-          app_lock_after="$(sha256sum "$app_lock" | awk '{print $1}')"
+            if [[ "$feature_selection" == "default" ]]; then
+              rustup run "$RUST_TOOLCHAIN" cargo tree \
+                --locked \
+                --manifest-path "$manifest" \
+                --target all \
+                --edges features \
+                > "$tree_file"
+            elif [[ "$feature_selection" == "all-features" ]]; then
+              rustup run "$RUST_TOOLCHAIN" cargo tree \
+                --locked \
+                --manifest-path "$manifest" \
+                --target all \
+                --all-features \
+                --edges features \
+                > "$tree_file"
+            else
+              echo "::error::Unsupported dependency-tree feature selection: $feature_selection"
+              return 2
+            fi
+
+            if [[ ! -s "$tree_file" ]]; then
+              echo "::error::Cargo dependency tree is empty: $tree_file"
+              return 1
+            fi
+          }
+
+          capture_dependency_tree "application-workspace" "$app_manifest" "default"
+          capture_dependency_tree "application-workspace" "$app_manifest" "all-features"
+          capture_dependency_tree "decimal-contract-poc" "$poc_manifest" "default"
+          capture_dependency_tree "decimal-contract-poc" "$poc_manifest" "all-features"
+
+          python3 - "$output" "$SOURCE_SHA" "$RUST_TOOLCHAIN" "$cargo_version" <<'PY'
+          import hashlib
+          import json
+          import pathlib
+          import sys
+
+          output = pathlib.Path(sys.argv[1])
+          source_commit, rust_toolchain, cargo_version = sys.argv[2:]
+          specifications = [
+              ("application_workspace", "default", "application-workspace-default-target-all.cargo-tree.txt"),
+              ("application_workspace", "all_features", "application-workspace-all-features-target-all.cargo-tree.txt"),
+              ("decimal_contract_poc", "default", "decimal-contract-poc-default-target-all.cargo-tree.txt"),
+              ("decimal_contract_poc", "all_features", "decimal-contract-poc-all-features-target-all.cargo-tree.txt"),
+          ]
+
+          views = []
+          for scope, feature_selection, filename in specifications:
+              path = output / filename
+              payload = path.read_bytes()
+              if not payload.strip():
+                  raise SystemExit(f"FAIL: empty Cargo dependency-tree evidence: {filename}")
+              views.append({
+                  "scope": scope,
+                  "feature_selection": feature_selection,
+                  "target_selection": "all",
+                  "edge_selection": ["features"],
+                  "file": filename,
+                  "size_bytes": len(payload),
+                  "sha256": hashlib.sha256(payload).hexdigest(),
+              })
+
+          evidence = {
+              "schema_version": "1.0.0",
+              "project_id": "OFRL-IB-001",
+              "source_commit": source_commit,
+              "rust_toolchain": rust_toolchain,
+              "cargo_version": cargo_version,
+              "target_selection": "all",
+              "edge_selection": ["features"],
+              "interpretation": {
+                  "default": "Cargo default-feature dependency graph across all target specifications.",
+                  "all_features": "Conservative graph with all declared features enabled across all target specifications; not a production feature-activation claim.",
+                  "limit": "Tree evidence records dependency and feature paths. It does not grant source, licence, security, or release acceptance.",
+              },
+              "views": views,
+          }
+          (output / "cargo-tree-evidence.json").write_text(
+              json.dumps(evidence, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          print("PASS: four feature-aware Cargo dependency trees and their SHA-256 evidence manifest were captured.")
+          PY
+
+          app_lock_after=          app_lock_after="$(sha256sum "$app_lock" | awk '{print $1}')"
           poc_lock_after="$(sha256sum "$poc_lock" | awk '{print $1}')"
 
           if [[ "$app_lock_before" != "$app_lock_after" || "$poc_lock_before" != "$poc_lock_after" ]]; then
@@ -646,7 +738,12 @@ jobs:
             application-workspace.cargo-audit.json \
             decimal-contract-poc.cargo-audit.json \
             audit-exit-codes.txt \
-            lockfile-sha256.txt
+            lockfile-sha256.txt \
+            application-workspace-default-target-all.cargo-tree.txt \
+            application-workspace-all-features-target-all.cargo-tree.txt \
+            decimal-contract-poc-default-target-all.cargo-tree.txt \
+            decimal-contract-poc-all-features-target-all.cargo-tree.txt \
+            cargo-tree-evidence.json
           do
             if [[ ! -s "$output/$required" ]]; then
               echo "::error::Required dependency evidence is missing: $required"
@@ -660,6 +757,7 @@ jobs:
           fi
 
           python3 - "$output" "$SOURCE_SHA" "$CARGO_AUDIT_VERSION" "$CARGO_AUDIT_SHA256" <<'PY'
+          import hashlib
           import json
           import pathlib
           import sys
@@ -677,7 +775,38 @@ jobs:
 
           inventory = load_json("package-source-inventory.json")
           context = load_json("audit-context.json")
+          tree_evidence = load_json("cargo-tree-evidence.json")
           require(inventory.get("schema_version") == "1.3.0", "unexpected inventory schema version")
+          require(tree_evidence.get("schema_version") == "1.0.0", "unexpected Cargo tree evidence schema version")
+          require(tree_evidence.get("project_id") == "OFRL-IB-001", "wrong project identity in Cargo tree evidence")
+          require(tree_evidence.get("source_commit") == expected_source_sha, "Cargo tree source SHA mismatch")
+          require(tree_evidence.get("rust_toolchain") == "1.85.0", "unexpected Cargo tree Rust toolchain")
+          require(bool(tree_evidence.get("cargo_version")), "Cargo tree version is missing")
+          require(tree_evidence.get("target_selection") == "all", "Cargo tree target selection is incomplete")
+          require(tree_evidence.get("edge_selection") == ["features"], "Cargo tree feature edges are missing")
+          expected_tree_views = {
+              ("application_workspace", "default", "application-workspace-default-target-all.cargo-tree.txt"),
+              ("application_workspace", "all_features", "application-workspace-all-features-target-all.cargo-tree.txt"),
+              ("decimal_contract_poc", "default", "decimal-contract-poc-default-target-all.cargo-tree.txt"),
+              ("decimal_contract_poc", "all_features", "decimal-contract-poc-all-features-target-all.cargo-tree.txt"),
+          }
+          actual_tree_views = set()
+          for view in tree_evidence.get("views", []):
+              identity = (view.get("scope"), view.get("feature_selection"), view.get("file"))
+              require(identity not in actual_tree_views, "duplicate Cargo tree evidence view")
+              actual_tree_views.add(identity)
+              require(view.get("target_selection") == "all", "Cargo tree view omits target coverage")
+              require(view.get("edge_selection") == ["features"], "Cargo tree view omits feature edges")
+              tree_path = output / view.get("file", "")
+              require(tree_path.is_file(), "Cargo tree evidence file is missing")
+              tree_payload = tree_path.read_bytes()
+              require(bool(tree_payload.strip()), "Cargo tree evidence file is empty")
+              require(view.get("size_bytes") == len(tree_payload), "Cargo tree evidence size mismatch")
+              require(
+                  view.get("sha256") == hashlib.sha256(tree_payload).hexdigest(),
+                  "Cargo tree evidence SHA-256 mismatch",
+              )
+          require(actual_tree_views == expected_tree_views, "Cargo tree evidence view coverage is incomplete")
           require(
               inventory.get("review_state") == "PENDING_MANUAL_SOURCE_AND_LICENCE_REVIEW",
               "manual legal/source review state must remain explicit",
