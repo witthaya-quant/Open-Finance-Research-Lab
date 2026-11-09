@@ -2,13 +2,13 @@
 
 # OFRL-IB-001 — Dependency and Source Review
 
-**Review version:** 0.1.6  
+**Review version:** 0.1.7  
 **Task:** IB-T005 — Dependency and source acceptance  
 **Issue:** [#16 — Rust supply-chain controls](https://github.com/witthaya-quant/Open-Finance-Research-Lab/issues/16)  
-**Status:** OPEN — automated source inventory and advisory evidence are verified on PR #34; human package-level source, licence, notice and release acceptance remain pending  
-**Baseline:** `main` at `885dbe64f930bc8096e9240de08f2947e2b918db`  
+**Status:** OPEN — PR #34 source inventory / RustSec controls and PR #43 resolved dependency-path evidence are verified; human package-level source, licence, notice and release acceptance remain pending  
+**Baseline:** `main` at `a02fe250cffac1e8efe86059da422f688443a2db`  
 **Initial lockfile review baseline:** `cdbf345c6e27f1cd82f3419b164eb4a65575c09b`  
-**Review date:** 2026-11-08
+**Review date:** 2026-11-09
 
 ## 1. Purpose and authority
 
@@ -43,15 +43,15 @@ The application workspace currently supplies the Rust input domain, historical s
 - Lockfile blob: `21ac76815662e765ee6502da059a312d2e9bc9eb`.
 - Registry source: crates.io registry.
 - No Git-sourced package is present.
-- Duplicate package names across locked versions: `getrandom`, `rand`, `rand_chacha`, `rand_core`, and `syn` (two versions each). The same five version families occur in both lockfile scopes.
-- Duplicate versions are inventory findings, not vulnerabilities. Their actual target and feature paths must be reviewed before they are banned or consolidated.
+- Five lockfile-level multi-version package families remain: `getrandom` (0.2.17 / 0.3.4), `rand` (0.8.8 / 0.9.5), `rand_chacha` (0.3.1 / 0.9.0), `rand_core` (0.6.4 / 0.9.5), and `syn` (2.0.119 / 3.0.9). Each family is present in both lockfile scopes.
+- PR #43's current resolved-graph evidence found no member of these families as an active duplicate in the selected application graph under either captured selected-package feature configuration across all target specifications (see §3.1). Lockfile multiplicity remains an inventory fact; do not ban or consolidate packages solely from the lockfile list.
 
 ### 2.2 Decimal Contract POC baseline
 
 - Lockfile blob: `eb2ecaed4be37129070271108911ae57f03530ba`.
 - Registry source: crates.io registry.
 - No Git-sourced package is present.
-- The same five multi-version package families identified in §2.1 are also present in the POC lockfile; each exact package identity is shared across both lockfile scopes.
+- The same five lockfile-level multi-version families are present in the POC lockfile; each exact package identity is shared across both scopes. PR #43 found no active duplicate identity in the selected POC dependency graphs for the captured selected-package feature configurations (see §3.1).
 - The POC's existing [DEPENDENCY_REVIEW.md](poc/decimal-contract/DEPENDENCY_REVIEW.md) is limited to this POC and explicitly leaves source-level legal/security review open.
 
 ### 2.3 Cross-scope identity reconciliation
@@ -130,6 +130,23 @@ The same source commit passed all four workflow groups:
 
 All six required Ruleset contexts and the two supplemental Numeric Envelope / Dependency Audit jobs passed on the exact source head. The semantic validator passed on Rust 1.85.0 and 1.99.1.
 
+### 3.1 Feature-aware dependency-path and resolved-duplicate evidence — PR #43
+
+PR #43 extended the existing Dependency Audit workflow without changing either manifest or lockfile. It was squash-merged to `main` on 2026-11-09 as `a02fe250cffac1e8efe86059da422f688443a2db`.
+
+- Exact PR source head: `74e057e7f191e44b6246bb9afa7dff79994121e9`.
+- Workflow run: [#42556567844 — OFRL-IB-001 Dependency Audit](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42556567844).
+- Artifact: `ofrl-ib-001-dependency-audit-74e057e7f191e44b6246bb9afa7dff79994121e9` (ID `13647119934`; 24,123 bytes; 30-day retention).
+- Downloaded ZIP SHA-256: `c893ecd66c14fed571c84b293e5ac339d7056db48597f64499f9be23822dd77c`; independently hashed and matched GitHub's artifact digest.
+- Evidence manifest: schema `1.0.0`, source commit `74e057e7f191e44b6246bb9afa7dff79994121e9`, Rust `1.85.0`, Cargo `1.85.0 (d73d2caf9 2024-12-31)`.
+- Four forward dependency-tree views were captured separately for the application workspace and Decimal Contract POC: default features and all features of the packages selected by each manifest, with `--target all` and `--edges features`. Within each scope the default and all-selected-package-feature outputs were byte-identical: Application 5,207 bytes (SHA-256 `81d8e1bf91c971346d183c2ae1fa0fd6b64fa832fe0ce46810b06938e7c50391`); POC 4,441 bytes (SHA-256 `85bb29673b9406dff775cac7f3749bed189eded7c25260a600e90d47d394bb8d`).
+- Four duplicate-only views were captured for the same two scopes and feature selections using `cargo tree --duplicates --target all`. All four files exist, have zero bytes, carry the SHA-256 of an empty file (`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`), and are validated as `has_active_duplicates=false`.
+- Cargo's `--duplicates` mode selects packages resolved at multiple versions and defaults to normal/build/dev dependency edges. Cargo 1.85 rejects combining this mode with `--edges features`; the workflow therefore preserves separate forward feature-path and duplicate-only views rather than silently weakening either check. See the [Cargo tree command reference](https://doc.rust-lang.org/cargo/commands/cargo-tree.html).
+- **Current graph result:** no package identity is resolved in multiple versions in either selected root dependency graph for the captured application or POC configurations, across all target specifications. The five multi-version families remain in the lockfiles, but are not active duplicates in these four selected graphs. This result does not establish how every unselected optional feature of every transitive dependency behaves, and it is not a disposition for a future production graph. Cargo's `--all-features` applies to all packages selected by the command; it does not mean every possible optional feature in the full transitive closure is forced on. Re-run against the approved production graph after IB-T004 and whenever package selection, manifests, features or targets change.
+- The inventory remains schema `1.3.0`: 107 lockfile-scope records, 55 unique `(name, version, source)` identities, 50 crate names, 52 shared identities, zero application-only and three POC-only identities.
+- RustSec reports remain PASS for both exact lockfiles: Application 54 dependencies and POC 56 dependencies; zero vulnerabilities, zero warnings, exit code 0 for both. The run used checksum-pinned `cargo-audit 0.22.2`, isolated HOME/work directory, the canonical RustSec database remote, fetched database commit `7a40350e1b8ba5b656d909f88222a8059a83d88d` (2026-11-08 16:03:42 -07:00), no target filters, no ignored advisories, and no project/user audit configuration.
+- This was a PR-head-triggered audit, not a separate scan triggered on merge commit `a02fe250...`. The scheduled default-branch scan remains a separate recurring control. No source/licence/notice decision is inferred from a clean RustSec result or an empty duplicate-only report.
+
 ## 4. Licence, copyright and notice review
 
 ### 4.1 r-efi 5.3.0 — licence material embedded in AUTHORS
@@ -205,7 +222,7 @@ That scan does not satisfy the current-head advisory gate. The new workflow runs
 
 A clean point-in-time scan does not prove that a package is free of vulnerabilities, establish exploitability or reachability, cover operating-system libraries, or detect defects not represented in the RustSec database.
 
-### 5.1 Current RustSec result — PR #34 isolated-policy dependency-audit run
+### 5.1 Historical RustSec result — PR #34 isolated-policy dependency-audit run
 
 Workflow run [#42475893204](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42475893204) audited the exact committed application and Decimal Contract POC lockfiles at source commit e04d628f01b18488c76617f00d2f03b375ac482a with checksum-pinned cargo-audit 0.22.2, --deny warnings, no ignored advisories and no target filters.
 
@@ -227,6 +244,21 @@ The uploaded artifact is ID 13615875196, size 18,429 bytes, archive SHA-256 9194
 The audit runs in an isolated temporary working directory with isolated HOME and CARGO_HOME, explicitly selects Rust 1.85.0 via RUSTUP_TOOLCHAIN, pins the canonical advisory database URL, fetches the database, and does not load repository or runner-user .cargo/audit.toml settings. It checks both committed lockfiles, does not filter to the runner target, does not ignore advisories, and retains yanked checking.
 
 This is successful, point-in-time advisory evidence for the two exact lockfiles and database commit above. It does not establish absence of every vulnerability, exploitability, reachability, application defects or system-library risks. It does not resolve the separate cargo-cyclonedx 0.5.9 / yanked xml-rs 0.8.19 preview-generator exception. Repeat the scan after dependency, manifest, lockfile or workflow changes and on the default branch after merge.
+
+### 5.2 Latest RustSec result — PR #43 exact-head dependency-audit run
+
+Workflow run [#42556567844](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42556567844) audited the application and isolated Decimal Contract POC committed lockfiles at PR source head `74e057e7f191e44b6246bb9afa7dff79994121e9`.
+
+| Scope | Audit dependency count | Vulnerabilities | Warnings | Exit |
+|---|---:|---:|---:|---:|
+| Application workspace | 54 | 0 | 0 | 0 |
+| Decimal Contract POC | 56 | 0 | 0 | 0 |
+
+The audit used `cargo-audit 0.22.2` and RustSec database commit `7a40350e1b8ba5b656d909f88222a8059a83d88d` (commit time `2026-11-08T16:03:42-07:00`). The effective policy records an empty ignore list, empty target-architecture/OS filters, database fetching enabled, stale-database override disabled, an isolated HOME and work directory, and no project/user audit configuration loaded. Both JSON reports have zero vulnerabilities and an empty warnings object.
+
+Artifact ID `13647119934` (24,123 bytes; SHA-256 `c893ecd66c14fed571c84b293e5ac339d7056db48597f64499f9be23822dd77c`) contains the source inventory, both RustSec reports, lockfile hashes, four feature-path trees, four duplicate-only trees and their SHA-256 manifest. The downloaded ZIP digest was independently verified against GitHub's artifact digest. All 107 source/licence inventory records remain `PENDING`; this scan does not approve publisher-declared licence alternatives, copyright, provenance or redistribution obligations.
+
+The run was triggered by the PR #43 source head and is not a separate post-merge `main` scan. The weekly default-branch recheck remains required. Repeat this audit after dependency/configuration changes and against the approved production graph; no clean point-in-time result is a release authorization.
 
 ## 6. SBOM and release provenance
 
@@ -265,11 +297,11 @@ Alternative generators or an SPDX-based pipeline may be evaluated only against t
 | Cargo metadata/source-manifest cross-check | PASS — 107 / 107 package records matched for identity, licence expression, licence-file and repository fields |
 | Licence/notice candidate discovery | PASS as automated inventory only — all 107 scope records have at least one non-empty licence-text candidate; all 55 unique package identities still require human review |
 | RustSec advisory audit | PASS on PR source e04d628 — both committed lockfiles have 0 vulnerabilities and 0 warnings against the recorded 1,422-record database snapshot; no ignores or target filters |
-| Duplicate-version and source exception review | OPEN — five package-name families have multiple versions; target/feature paths must be reviewed; no Git sources were found in either current lockfile |
+| Duplicate-version and source exception review | PARTIAL — PR #43 found no active duplicate package identities in four selected Application/POC resolved-graph views across all targets; five multi-version families remain in both lockfiles, and the eventual approved production graph / any newly enabled optional features still require re-review; no Git sources were found in either lockfile |
 | Package-level source/provenance disposition | OPEN — 55 unique identities remain pending; publisher repository metadata does not authenticate repository ownership/control |
 | Package-level licence, copyright, patent and notice disposition | OPEN — 55 unique identities remain pending; exact alternative terms and redistribution obligations require human determination |
 | Preview-generator exception | OPEN; confined to the preview-only generator and due 2027-02-04 or earlier if upstream removes the yanked package |
 | Official release SBOM/checksums and reproducible release identity | NOT DONE — requires the exact approved release source and supported target matrix |
 | Release authorization | NOT AUTHORIZED |
 
-**IB-T005 remains OPEN.** PR #34 has merged the repeatable source-inventory and fail-closed advisory controls into `main` at `7dcc2463fc8f9617576f970499c67223ee0640d9`. The exact dependency scan was executed on the PR source head (now integrated as the merge commit's second parent); it is not represented as a scan triggered on the merge commit. The weekly default-branch recheck is active, with its first scheduled run pending. Human review of the 55 unique identities, duplicate-version target/feature paths, the preview-generator exception, the eventual production dependency graph after IB-T004, official release SBOM/checksums, clean-checkout reproduction and publication authorization remain separate gates. No Forecast Engine work is authorized by this document.
+**IB-T005 remains OPEN.** PR #34 delivered the schema 1.3.0 source-inventory and isolated RustSec controls; PR #43 added feature-aware and duplicate-only dependency graph evidence to the same workflow and merged it to `main` as `a02fe250cffac1e8efe86059da422f688443a2db`. The PR #43 audit ran against source head `74e057e7f191e44b6246bb9afa7dff79994121e9`; it is not represented as a scan triggered on the merge commit. The four selected Application/POC graph views contained no active duplicate package identities, but the five lockfile-level multi-version families remain present and no automatic consolidation is authorized. The 55 unique package identities still require human source/provenance/licence/notice decisions; the preview-generator exception remains time-bounded; and the eventual production graph after IB-T004 requires a new exact-head review. Official release SBOM/checksums, clean-checkout reproduction and publication authorization remain separate gates. The weekly default-branch scan remains a separate scheduled control. No Forecast Engine work is authorized by this document.
