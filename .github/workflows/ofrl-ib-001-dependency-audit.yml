@@ -197,7 +197,6 @@ jobs:
                 --target all \
                 --all-features \
                 --duplicates \
-                --edges features \
                 > "$tree_file"
             else
               echo "::error::Unsupported duplicate-tree feature selection: $feature_selection"
