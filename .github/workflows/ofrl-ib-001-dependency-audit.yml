@@ -815,8 +815,13 @@ jobs:
             decimal-contract-poc-all-features-target-all.duplicates.cargo-tree.txt \
             cargo-tree-evidence.json
           do
-            if [[ ! -s "$output/$required" ]]; then
-              echo "::error::Required dependency evidence is missing: $required"
+            if [[ "$required" == *.duplicates.cargo-tree.txt ]]; then
+              if [[ ! -f "$output/$required" ]]; then
+                echo "::error::Required duplicate-tree evidence file is missing: $required"
+                exit 1
+              fi
+            elif [[ ! -s "$output/$required" ]]; then
+              echo "::error::Required dependency evidence is missing or empty: $required"
               exit 1
             fi
           done
