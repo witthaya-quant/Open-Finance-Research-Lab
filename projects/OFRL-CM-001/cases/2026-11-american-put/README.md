@@ -6,8 +6,8 @@
 **Parent project:** OFRL-CM-001  
 **Case type:** Quantitative mathematical research with a case-specific Rust research prototype  
 **Admission date:** 2026-11-07  
-**Case status:** ADMITTED — formalization and initial implementation validated; PR #37 awaits Founder review  
-**Evidence maturity:** 0 — Proposed  
+**Case status:** ADMITTED — case-specific implementation merged to `main`; research-only and unreleased  
+**Evidence maturity:** 2 — Reproducible (synthetic reference result only; not independently replicated or market-validated)  
 **Primary academic reference:** Cox, Ross and Rubinstein (1979)
 
 ## 1. Research objective
@@ -112,7 +112,10 @@ This case is an educational and analytical research artifact. It is not calibrat
 
 ## 8. Current disposition
 
+**Evidence-maturity boundary:** Level 2 applies only to reproduction of the specified synthetic model result through the documented Rust package, committed lockfile, exact-result tests, verifier and post-sync CI. It does not establish robustness across a broader parameter/model domain, independent external replication, empirical performance, market calibration, economic usefulness or production readiness. The parent project remains at its own separately recorded maturity level.
+
+
 **Research status:** Formal model admitted.  
-**Implementation status:** The case-specific library, exact-rational tests, independent Bellman verifier and exhaustive policy cross-check passed exact-head CI on Rust 1.85.0 and 1.99.1 (code revision `65d19861fbd4a78ed133bf2a244dce056c653006`). PR #37 remains unmerged and unreleased.  
+**Implementation status:** The case-specific library, exact-rational tests, independent Bellman verifier and exhaustive policy cross-check passed all 9 post-sync checks on Rust 1.85.0 and 1.99.1 (reviewed branch head `38c4da0cb175ed39d46ad0ef11616aba4ee6a3c9`). PR #37 was merged to `main` as `9004693006b425956364461de529b9a6a43da4a8` on 2026-11-09. See [Workbench CI](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42554995949), [Repository Policy](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42554995969), [Numeric/Input Contract](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42554995917), and [Semantic Validator](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42554995925).  
 **Release status:** Not released.  
 **Financial application:** No production or trading application is claimed.
