@@ -189,7 +189,6 @@ jobs:
                 --manifest-path "$manifest" \
                 --target all \
                 --duplicates \
-                --edges features \
                 > "$tree_file"
             elif [[ "$feature_selection" == "all-features" ]]; then
               rustup run "$RUST_TOOLCHAIN" cargo tree \
@@ -262,7 +261,7 @@ jobs:
                   "scope": scope,
                   "feature_selection": feature_selection,
                   "target_selection": "all",
-                  "edge_selection": ["features"],
+                  "edge_selection": ["normal", "build", "dev"],
                   "file": filename,
                   "size_bytes": len(payload),
                   "sha256": hashlib.sha256(payload).hexdigest(),
@@ -860,10 +859,10 @@ jobs:
           require(tree_evidence.get("target_selection") == "all", "Cargo tree target selection is incomplete")
           require(tree_evidence.get("edge_selection") == ["features"], "Cargo tree feature edges are missing")
           expected_tree_views = {
-              ("application_workspace", "default", "application-workspace-default-target-all.cargo-tree.txt"),
-              ("application_workspace", "all_features", "application-workspace-all-features-target-all.cargo-tree.txt"),
-              ("decimal_contract_poc", "default", "decimal-contract-poc-default-target-all.cargo-tree.txt"),
-              ("decimal_contract_poc", "all_features", "decimal-contract-poc-all-features-target-all.cargo-tree.txt"),
+              ("application_workspace", "workspace_default", "application-workspace-default-target-all.cargo-tree.txt"),
+              ("application_workspace", "workspace_all_features", "application-workspace-all-features-target-all.cargo-tree.txt"),
+              ("decimal_contract_poc", "workspace_default", "decimal-contract-poc-default-target-all.cargo-tree.txt"),
+              ("decimal_contract_poc", "workspace_all_features", "decimal-contract-poc-all-features-target-all.cargo-tree.txt"),
           }
           actual_tree_views = set()
           for view in tree_evidence.get("views", []):
@@ -894,7 +893,7 @@ jobs:
               require(identity not in actual_duplicate_views, "duplicate Cargo duplicate-tree evidence view")
               actual_duplicate_views.add(identity)
               require(view.get("target_selection") == "all", "duplicate-tree view omits target coverage")
-              require(view.get("edge_selection") == ["features"], "duplicate-tree view omits feature edges")
+              require(view.get("edge_selection") == ["normal", "build", "dev"], "duplicate-tree view dependency-edge selection mismatch")
               tree_path = output / view.get("file", "")
               require(tree_path.is_file(), "Cargo duplicate-tree evidence file is missing")
               tree_payload = tree_path.read_bytes()
