@@ -2,11 +2,11 @@
 
 # OFRL-CM-001 — Implementation Approach
 
-**Document version:** 0.2.1  
+**Document version:** 0.2.2  
 **Project:** OFRL-CM-001  
 **Owner:** Project Owner  
-**Last reviewed:** 2026-11-07  
-**Status:** Case-specific architecture approved; initial implementation passed two-toolchain exact-head CI; PR #37 awaits Founder review
+**Last reviewed:** 2026-11-09  
+**Status:** CS-002 case-specific implementation merged to `main`; all post-sync exact-head checks passed; research-only and unreleased
 
 ## 1. Purpose and governing decision
 
@@ -174,7 +174,7 @@ Each is decided only when the formal problem and implementation requirements jus
 
 For the Pressure Points pilot, executable implementation remains **BLOCKED** because the complete rule semantics and required output are not yet established. This gate applies only to Pressure Points; it does not prevent an independently specified case from using computation.
 
-The first computational case, Finite-Binomial American Put — Optimal Stopping (CS-002), has been admitted. Its case-specific Rust package and project-local CI are being implemented under the separate architecture in [ENGINEERING_ARCHITECTURE.md](ENGINEERING_ARCHITECTURE.md). This does not create a generic solver framework or authorize any production pricing, live market-data integration, investment recommendation or trade execution.
+The first computational case, Finite-Binomial American Put — Optimal Stopping (CS-002), has been admitted and its case-specific Rust package has been merged to `main` through [PR #37](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/37). The post-sync revision passed the CM-001 workbench, repository policy, numeric/input and semantic-validator workflows on Rust 1.85.0 and 1.99.1. The package remains an R1 research prototype: this does not authorize a production pricing service, live market-data integration, investment recommendation, decision-support deployment or trade execution. Current delivery and release readiness remain controlled by [PROJECT_CONTROL.md](PROJECT_CONTROL.md).
 
 ## 11. Initial case-specific implementation baseline
 

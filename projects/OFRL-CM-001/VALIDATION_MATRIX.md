@@ -6,7 +6,7 @@
 **Project version / baseline:** 0.3.0  
 **Risk tier:** R1  
 **Owner:** Kenny (Witthaya Maidee)  
-**Last updated:** 2026-11-07
+**Last updated:** 2026-11-09
 
 ## 1. Validation rules
 
@@ -151,3 +151,13 @@ These checks establish representation-level properties only; they do not resolve
 **Independent review:** Not yet performed  
 **Unresolved blockers:** Pressure Points rule semantics and authoritative output definition  
 **Publication status:** Not released
+
+| VAL-038 | PR #37 post-sync integration scope and exact-head validation | Integration / repository governance | Inspect the final post-sync commit, PR merge result, exact changed paths, merge ancestry and all required exact-head checks | PR #37 is merged by a normal merge commit; all 9 exact-head checks pass; the PR diff contains exactly 18 approved paths and no path under `projects/OFRL-IB-001/**`; resulting `main` equals the merge commit | PASS | [PR #37](https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/37); merge commit `9004693006b425956364461de529b9a6a43da4a8`; Project Control §7.4 | Project Owner |
+
+| VAL-039 | Practice Playbook v0.2.0 publication-readiness assessment | Research / education / publication | Review methodological coverage, evidence basis, instructional claims, source/rights boundary and whether the Playbook has been tested across learners and distinct admitted domains | The practice loop, tracks, hypothesis workflow, method selection, verification, rubric and first-case lessons are documented; however, no learner trial/outcome evidence, independent instructional review or multi-domain case evidence exists. It remains a development-stage practice specification, not a validated curriculum or separately authorized publication | BLOCKED | `PRACTICE_PLAYBOOK.md` §§1–13; Project Control §7.4; no learner-trial or external instructional-review evidence recorded | Project Owner |
+
+| VAL-040 | CS-002 synthetic result reproducibility and evidence-maturity assessment | Research / quantitative / reproducibility | Compare the maturity rubric with the formal specification, documented reproduction commands, committed lockfile, exact result assertions, independent Bellman verifier, exhaustive reduced-instance checks and post-sync two-toolchain CI | The synthetic reference result and implementation are reproducible from the documented package and locked dependencies; exact (q=5/8), (V_{0,0}=18325/2058), node decisions and verifier checks pass CI on Rust 1.85.0 and 1.99.1. Assign Level 2 — Reproducible to this case result only; this does not establish Level 3 robustness, Level 4 independent replication, market calibration or economic usefulness | PASS — Level 2 for the stated synthetic result only | [CM-001 Workbench run #42554995949](https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42554995949); cases/2026-11-american-put/README.md; PROBLEM_FORMALIZATION.md; ENGINEERING_ARCHITECTURE.md; RESEARCH_STANDARDS.md §6 | Project Owner |
+
+| VAL-041 | CS-002 Rust workbench software-release readiness | Software / supply chain / security / release | Review locked build, dependency inventory, SBOM, source-level licence/advisory checks, security assessment, artifact provenance/checksums, maintenance/support and explicit release authorization | Research-prototype build and tests pass on two toolchains; nevertheless no release-scoped SBOM, completed release-level vulnerability/source review, distributable build artifact with checksums/provenance, component support commitment or Founder release authorization exists. Keep the package R1 research-only and unreleased | BLOCKED | ENGINEERING_ARCHITECTURE.md §§5–8; DEPENDENCY_POLICY.md §§2–7; SECURITY.md; RELEASE_POLICY.md §§4–7; project.json release_readiness | Project Owner |
+
+| VAL-042 | Project-level release-readiness manifest and authorization-state consistency | Governance / release control | Validate the project manifest against schema 1.1.0 and confirm the full gate inventory, blocker dispositions, operational mode, authorization and lifecycle state | All 16 applicable release gates are recorded; assessment is BLOCKED; operational mode remains RESEARCH_ONLY; release_status remains not_released; authorization remains NOT_AUTHORIZED with null authorization fields; residual-risk assessment is explicitly NOT_ASSESSED. The manifest does not imply a release or risk acceptance | PASS — control state recorded; release remains blocked | project.json schema 1.1.0; RELEASE_POLICY.md §10.1; Project Control §§6–7.4 | Project Owner |

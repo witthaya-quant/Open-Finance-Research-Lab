@@ -12,7 +12,7 @@
   "risk_tier": "R1",
   "owner": "Kenny (Witthaya Maidee)",
   "created_at": "2026-11-05",
-  "updated_at": "2026-11-07",
+  "updated_at": "2026-11-09",
   "summary": "A quantitative problem-solving research programme that develops disciplined hypothesis formation, mathematical formalization, strategic reasoning, mathematics in finance, and reproducible computational analysis through source-grounded case studies and a gated Rust workbench. It includes the blocked Jane Street Pressure Points pilot and the admitted Finite-Binomial American Put first computational case. All software remains research-only, case-scoped, and independent of OFRL-IB-001.",
   "evidence_maturity": 0,
   "license_profile": "apache-2.0-software_cc-by-4.0-documentation",
@@ -44,11 +44,254 @@
   "version": "0.3.0",
   "release_readiness": {
     "assessment_version": "1.0.0",
-    "assessment_status": "NOT_ASSESSED",
+    "assessment_status": "BLOCKED",
     "operational_mode": "RESEARCH_ONLY",
     "independent_assurance_required": false,
-    "independent_assurance_rationale": "The current R1 scope remains analytical and RESEARCH_ONLY. The admitted Rust package is a case-specific research prototype using synthetic inputs; it is not released as a reusable pricing service, operational decision-support system, or trading component. No market data or live action is integrated. Reassess risk tier and independent assurance before any public reusable pricing or decision-support release.",
-    "gates": [],
+    "independent_assurance_rationale": "The current scope remains R1 analytical and RESEARCH_ONLY, using one synthetic finite-binomial case with no market data, deployed pricing service or live action. The internal mathematical and software checks are documented, but the AI-assisted assessment is not independent assurance. Reassess this setting before reusable pricing, operational decision support or any higher-risk use.",
+    "gates": [
+      {
+        "gate_id": "scope_and_claims",
+        "status": "PASS",
+        "rationale": "The project scope, admitted case, synthetic-only inputs, intended educational use and prohibited production/trading uses are explicit. No broader pricing or financial-performance claim is made.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/PROJECT_CONTROL.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/README.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/PROBLEM_FORMALIZATION.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09",
+        "assessor": {
+          "identity": "OpenAI ChatGPT",
+          "role": "AI-assisted project readiness aide",
+          "independent": false,
+          "conflict_status": "DISCLOSED",
+          "conflict_rationale": "This assessment was prepared by an AI assistant participating in the same project workstream; it is not independent human assurance and must not be treated as such.",
+          "review_reference": "https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/9004693006b425956364461de529b9a6a43da4a8"
+        }
+      },
+      {
+        "gate_id": "evidence_and_limitations",
+        "status": "PASS",
+        "rationale": "The case formalization, exact reference result, test evidence and limitations are recorded. The project-level maturity remains 0; the case result is separately classified at Level 2 only for reproducibility.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/VALIDATION_MATRIX.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/README.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/PROJECT_CONTROL.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09",
+        "assessor": {
+          "identity": "OpenAI ChatGPT",
+          "role": "AI-assisted project readiness aide",
+          "independent": false,
+          "conflict_status": "DISCLOSED",
+          "conflict_rationale": "This assessment was prepared by an AI assistant participating in the same project workstream; it is not independent human assurance and must not be treated as such.",
+          "review_reference": "https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/9004693006b425956364461de529b9a6a43da4a8"
+        }
+      },
+      {
+        "gate_id": "data_rights",
+        "status": "PASS",
+        "rationale": "The admitted case stores OFRL-authored synthetic parameters and bibliographic/source references only; no third-party puzzle payload, market feed, client record or external dataset is redistributed.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/DATA_MANIFEST.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/README.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09",
+        "assessor": {
+          "identity": "OpenAI ChatGPT",
+          "role": "AI-assisted project readiness aide",
+          "independent": false,
+          "conflict_status": "DISCLOSED",
+          "conflict_rationale": "This assessment was prepared by an AI assistant participating in the same project workstream; it is not independent human assurance and must not be treated as such.",
+          "review_reference": "https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/9004693006b425956364461de529b9a6a43da4a8"
+        }
+      },
+      {
+        "gate_id": "licence_and_ip",
+        "status": "PASS",
+        "rationale": "The repository distinguishes Apache-2.0 software from CC BY 4.0 documentation and records external academic sources as references only; third-party rights are not relicensed by OFRL.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/LICENSE_POLICY.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/PUBLICATION_AND_IP_BOUNDARY.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09",
+        "assessor": {
+          "identity": "OpenAI ChatGPT",
+          "role": "AI-assisted project readiness aide",
+          "independent": false,
+          "conflict_status": "DISCLOSED",
+          "conflict_rationale": "This assessment was prepared by an AI assistant participating in the same project workstream; it is not independent human assurance and must not be treated as such.",
+          "review_reference": "https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/9004693006b425956364461de529b9a6a43da4a8"
+        }
+      },
+      {
+        "gate_id": "reproducibility",
+        "status": "PASS",
+        "rationale": "The workbench has a package-local committed Cargo.lock, pinned direct dependencies, documented commands and successful post-sync CI on Rust 1.85.0 and 1.99.1 for the exact reviewed revision.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/README.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/actions/runs/42554995949"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09",
+        "assessor": {
+          "identity": "OpenAI ChatGPT",
+          "role": "AI-assisted project readiness aide",
+          "independent": false,
+          "conflict_status": "DISCLOSED",
+          "conflict_rationale": "This assessment was prepared by an AI assistant participating in the same project workstream; it is not independent human assurance and must not be treated as such.",
+          "review_reference": "https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/9004693006b425956364461de529b9a6a43da4a8"
+        }
+      },
+      {
+        "gate_id": "domain_review",
+        "status": "PASS",
+        "rationale": "The finite-horizon model, strict no-arbitrage domain, risk-neutral probability, stopping-time objective and Bellman acceptance conditions are documented; the independent verifier and exhaustive reduced-instance tests support the stated synthetic result. This is an AI-assisted internal assessment, not external peer review.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/PROBLEM_FORMALIZATION.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/VALIDATION_MATRIX.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09",
+        "assessor": {
+          "identity": "OpenAI ChatGPT",
+          "role": "AI-assisted project readiness aide",
+          "independent": false,
+          "conflict_status": "DISCLOSED",
+          "conflict_rationale": "This assessment was prepared by an AI assistant participating in the same project workstream; it is not independent human assurance and must not be treated as such.",
+          "review_reference": "https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/9004693006b425956364461de529b9a6a43da4a8"
+        }
+      },
+      {
+        "gate_id": "numeric_and_financial_controls",
+        "status": "PASS",
+        "rationale": "The implementation uses exact rational arithmetic, rejects invalid and no-arbitrage boundary inputs, checks lattice-size overflow and enforces a caller-supplied node budget. It makes no market-calibration or net-of-cost claim.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/PROBLEM_FORMALIZATION.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/VALIDATION_MATRIX.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09",
+        "assessor": {
+          "identity": "OpenAI ChatGPT",
+          "role": "AI-assisted project readiness aide",
+          "independent": false,
+          "conflict_status": "DISCLOSED",
+          "conflict_rationale": "This assessment was prepared by an AI assistant participating in the same project workstream; it is not independent human assurance and must not be treated as such.",
+          "review_reference": "https://github.com/witthaya-quant/Open-Finance-Research-Lab/commit/9004693006b425956364461de529b9a6a43da4a8"
+        }
+      },
+      {
+        "gate_id": "dependency_and_sbom",
+        "status": "BLOCKED",
+        "rationale": "The lockfile, direct dependency pins and bounded declared-licence inventory are recorded, but no release-scoped SBOM has been generated or reviewed and the full source-level transitive licence/advisory assessment is incomplete.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/DEPENDENCY_POLICY.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/workbench/Cargo.lock"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09"
+      },
+      {
+        "gate_id": "independent_domain_review",
+        "status": "NOT APPLICABLE",
+        "rationale": "Independent assurance is not required for the current R1 analytical research-only scope under the recorded rationale; this is not an independent review and must be reassessed before higher-risk or operational use.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/RELEASE_POLICY.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/PROJECT_CONTROL.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09"
+      },
+      {
+        "gate_id": "security_review",
+        "status": "BLOCKED",
+        "rationale": "Repository workflow controls and CI pass, but a case-specific release-level security assessment and dependency advisory review have not been completed; successful CI is not a security clearance.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/SECURITY.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/DEPENDENCY_POLICY.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09"
+      },
+      {
+        "gate_id": "privacy_legal_review",
+        "status": "NOT APPLICABLE",
+        "rationale": "The case contains no personal, client, account, confidential or sensitive dataset; its only model inputs are OFRL-authored synthetic values and its external materials are bibliographic references. This is a scope-based disposition, not legal advice.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/DATA_MANIFEST.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/DATA_POLICY.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09"
+      },
+      {
+        "gate_id": "operational_safeguards",
+        "status": "NOT APPLICABLE",
+        "rationale": "No deployment, hosted service, network client, market-data interface, account integration, order path or live decision-support capability exists in the admitted workbench.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/README.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09"
+      },
+      {
+        "gate_id": "incident_response",
+        "status": "NOT APPLICABLE",
+        "rationale": "The workbench is not deployed as a consumer or production service; repository vulnerability reporting remains governed by the root security policy, while service-level incident operations are not applicable to this research prototype.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/SECURITY.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/README.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09"
+      },
+      {
+        "gate_id": "rollback_recovery",
+        "status": "NOT APPLICABLE",
+        "rationale": "There is no deployed service, persistent production state, live database or operational artifact to roll back or recover; the current deliverable is source code and research documentation in Git.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/cases/2026-11-american-put/README.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09"
+      },
+      {
+        "gate_id": "founder_approval",
+        "status": "BLOCKED",
+        "rationale": "Founder authorization to continue CM-001 work and merge PR #37 does not constitute release authorization. No release decision record, authorized source commit or explicit publication approval exists.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/PROJECT_CONTROL.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/RELEASE_POLICY.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/pull/37"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09"
+      },
+      {
+        "gate_id": "maintenance_and_corrections",
+        "status": "BLOCKED",
+        "rationale": "A component-specific support period, compatibility commitment, maintenance owner/cadence and correction/deprecation procedure have not been approved for a software release.",
+        "evidence": [
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/RELEASE_POLICY.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/ENGINEERING_ARCHITECTURE.md",
+          "https://github.com/witthaya-quant/Open-Finance-Research-Lab/blob/9004693006b425956364461de529b9a6a43da4a8/projects/OFRL-CM-001/PROJECT_CONTROL.md"
+        ],
+        "recorded_by": "OFRL project assistant",
+        "recorded_at": "2026-11-09"
+      }
+    ],
     "authorization": {
       "status": "NOT_AUTHORIZED",
       "authority": null,
