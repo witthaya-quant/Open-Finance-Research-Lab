@@ -175,6 +175,47 @@ jobs:
           capture_dependency_tree "decimal-contract-poc" "$poc_manifest" "default"
           capture_dependency_tree "decimal-contract-poc" "$poc_manifest" "all-features"
 
+          # Record only dependency identities resolved in more than one version
+          # by each root graph. Empty output is valid and means no active duplicate.
+          capture_duplicate_tree() {
+            local scope="$1"
+            local manifest="$2"
+            local feature_selection="$3"
+            local tree_file="$output/${scope}-${feature_selection}-target-all.duplicates.cargo-tree.txt"
+
+            if [[ "$feature_selection" == "default" ]]; then
+              rustup run "$RUST_TOOLCHAIN" cargo tree \
+                --locked \
+                --manifest-path "$manifest" \
+                --target all \
+                --duplicates \
+                --edges features \
+                > "$tree_file"
+            elif [[ "$feature_selection" == "all-features" ]]; then
+              rustup run "$RUST_TOOLCHAIN" cargo tree \
+                --locked \
+                --manifest-path "$manifest" \
+                --target all \
+                --all-features \
+                --duplicates \
+                --edges features \
+                > "$tree_file"
+            else
+              echo "::error::Unsupported duplicate-tree feature selection: $feature_selection"
+              return 2
+            fi
+
+            if [[ ! -f "$tree_file" ]]; then
+              echo "::error::Cargo duplicate-tree evidence file was not created: $tree_file"
+              return 1
+            fi
+          }
+
+          capture_duplicate_tree "application-workspace" "$app_manifest" "default"
+          capture_duplicate_tree "application-workspace" "$app_manifest" "all-features"
+          capture_duplicate_tree "decimal-contract-poc" "$poc_manifest" "default"
+          capture_duplicate_tree "decimal-contract-poc" "$poc_manifest" "all-features"
+
           python3 - "$output" "$SOURCE_SHA" "$RUST_TOOLCHAIN" "$cargo_version" <<'PY'
           import hashlib
           import json
@@ -184,10 +225,10 @@ jobs:
           output = pathlib.Path(sys.argv[1])
           source_commit, rust_toolchain, cargo_version = sys.argv[2:]
           specifications = [
-              ("application_workspace", "default", "application-workspace-default-target-all.cargo-tree.txt"),
-              ("application_workspace", "all_features", "application-workspace-all-features-target-all.cargo-tree.txt"),
-              ("decimal_contract_poc", "default", "decimal-contract-poc-default-target-all.cargo-tree.txt"),
-              ("decimal_contract_poc", "all_features", "decimal-contract-poc-all-features-target-all.cargo-tree.txt"),
+              ("application_workspace", "workspace_default", "application-workspace-default-target-all.cargo-tree.txt"),
+              ("application_workspace", "workspace_all_features", "application-workspace-all-features-target-all.cargo-tree.txt"),
+              ("decimal_contract_poc", "workspace_default", "decimal-contract-poc-default-target-all.cargo-tree.txt"),
+              ("decimal_contract_poc", "workspace_all_features", "decimal-contract-poc-all-features-target-all.cargo-tree.txt"),
           ]
 
           views = []
@@ -206,6 +247,28 @@ jobs:
                   "sha256": hashlib.sha256(payload).hexdigest(),
               })
 
+          duplicate_specifications = [
+              ("application_workspace", "workspace_default", "application-workspace-default-target-all.duplicates.cargo-tree.txt"),
+              ("application_workspace", "workspace_all_features", "application-workspace-all-features-target-all.duplicates.cargo-tree.txt"),
+              ("decimal_contract_poc", "workspace_default", "decimal-contract-poc-default-target-all.duplicates.cargo-tree.txt"),
+              ("decimal_contract_poc", "workspace_all_features", "decimal-contract-poc-all-features-target-all.duplicates.cargo-tree.txt"),
+          ]
+
+          duplicate_views = []
+          for scope, feature_selection, filename in duplicate_specifications:
+              path = output / filename
+              payload = path.read_bytes()
+              duplicate_views.append({
+                  "scope": scope,
+                  "feature_selection": feature_selection,
+                  "target_selection": "all",
+                  "edge_selection": ["features"],
+                  "file": filename,
+                  "size_bytes": len(payload),
+                  "sha256": hashlib.sha256(payload).hexdigest(),
+                  "has_active_duplicates": bool(payload.strip()),
+              })
+
           evidence = {
               "schema_version": "1.0.0",
               "project_id": "OFRL-IB-001",
@@ -215,11 +278,12 @@ jobs:
               "target_selection": "all",
               "edge_selection": ["features"],
               "interpretation": {
-                  "default": "Cargo default-feature dependency graph across all target specifications.",
-                  "all_features": "Conservative graph with all declared features enabled across all target specifications; not a production feature-activation claim.",
+                  "workspace_default": "Cargo default-feature dependency graph across all target specifications.",
+                  "workspace_all_features": "All features declared by the selected workspace members are enabled; Cargo feature unification is then reflected in their dependency graph. This does not activate every optional feature of every third-party dependency.",
                   "limit": "Tree evidence records dependency and feature paths. It does not grant source, licence, security, or release acceptance.",
               },
               "views": views,
+              "duplicate_views": duplicate_views,
           }
           (output / "cargo-tree-evidence.json").write_text(
               json.dumps(evidence, indent=2, sort_keys=True) + "\n",
@@ -745,6 +809,10 @@ jobs:
             application-workspace-all-features-target-all.cargo-tree.txt \
             decimal-contract-poc-default-target-all.cargo-tree.txt \
             decimal-contract-poc-all-features-target-all.cargo-tree.txt \
+            application-workspace-default-target-all.duplicates.cargo-tree.txt \
+            application-workspace-all-features-target-all.duplicates.cargo-tree.txt \
+            decimal-contract-poc-default-target-all.duplicates.cargo-tree.txt \
+            decimal-contract-poc-all-features-target-all.duplicates.cargo-tree.txt \
             cargo-tree-evidence.json
           do
             if [[ ! -s "$output/$required" ]]; then
@@ -809,6 +877,35 @@ jobs:
                   "Cargo tree evidence SHA-256 mismatch",
               )
           require(actual_tree_views == expected_tree_views, "Cargo tree evidence view coverage is incomplete")
+          expected_duplicate_views = {
+              ("application_workspace", "workspace_default", "application-workspace-default-target-all.duplicates.cargo-tree.txt"),
+              ("application_workspace", "workspace_all_features", "application-workspace-all-features-target-all.duplicates.cargo-tree.txt"),
+              ("decimal_contract_poc", "workspace_default", "decimal-contract-poc-default-target-all.duplicates.cargo-tree.txt"),
+              ("decimal_contract_poc", "workspace_all_features", "decimal-contract-poc-all-features-target-all.duplicates.cargo-tree.txt"),
+          }
+          actual_duplicate_views = set()
+          for view in tree_evidence.get("duplicate_views", []):
+              identity = (view.get("scope"), view.get("feature_selection"), view.get("file"))
+              require(identity not in actual_duplicate_views, "duplicate Cargo duplicate-tree evidence view")
+              actual_duplicate_views.add(identity)
+              require(view.get("target_selection") == "all", "duplicate-tree view omits target coverage")
+              require(view.get("edge_selection") == ["features"], "duplicate-tree view omits feature edges")
+              tree_path = output / view.get("file", "")
+              require(tree_path.is_file(), "Cargo duplicate-tree evidence file is missing")
+              tree_payload = tree_path.read_bytes()
+              require(view.get("size_bytes") == len(tree_payload), "Cargo duplicate-tree evidence size mismatch")
+              require(
+                  view.get("sha256") == hashlib.sha256(tree_payload).hexdigest(),
+                  "Cargo duplicate-tree evidence SHA-256 mismatch",
+              )
+              require(
+                  view.get("has_active_duplicates") is bool(tree_payload.strip()),
+                  "Cargo duplicate-tree active-duplicate state mismatch",
+              )
+          require(
+              actual_duplicate_views == expected_duplicate_views,
+              "Cargo duplicate-tree evidence view coverage is incomplete",
+          )
           require(
               inventory.get("review_state") == "PENDING_MANUAL_SOURCE_AND_LICENCE_REVIEW",
               "manual legal/source review state must remain explicit",
