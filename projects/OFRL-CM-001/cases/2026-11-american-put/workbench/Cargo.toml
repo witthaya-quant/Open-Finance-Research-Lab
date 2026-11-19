@@ -8,5 +8,5 @@ publish = false
 description = "Exact-rational finite-binomial American put valuation and Bellman certificate verification"
 
 [dependencies]
-num-bigint = { version = "=0.4.8", default-features = true }
+num-bigint = { version = "=0.5.1", default-features = true }
 num-rational = { version = "=0.4.2", default-features = true }
